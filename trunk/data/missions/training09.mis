@@ -1,0 +1,74 @@
+#
+# Mission Header
+#
+
+name Training: UFO Cultists
+description <bold>Rescue<default> <bold>mock victims<default> posing\
+ as scared cult members. The cult is on top of a skyscraper, waiting\
+ for their alien space craft to show up. Grab the scared cultists\
+\n\
+<bold>Return<default> to the <underline>helipad<default> at\
+ <underline>LAX<default> after you have picked up\
+ the mock victims.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Stormy Sparse
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_lax
+
+time_of_day 23:30
+
+#
+# Mission Objectives
+#
+
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 2 2
+mission_objective_message_success \
+Got the cultists, time to head home!
+mission_objective_message_fail \
+You failed to reach the cultists safely!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_lax
+mission_objective_message_success \
+Good job, you brought the cultists back safely!
+mission_objective_message_fail \
+You failed to bring the cultists back safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware
+translation -4060 44750 250
+set_human_mesg_enter Thanks, things were getting weird up here!
+create_human default    need_rescue alert aware
+translation -4070 44748 250
+set_human_mesg_enter Thanks for beaming me up!
+
+# These people will be the cultists. They do not need pick-up
+create_human default alert aware
+translation -4055 44755 250
+create_human default alert aware
+translation -4075 44740 250
+create_human default alert aware
+translation -4075 44755 250
+create_human default alert aware
+translation -4055 44740 250
+
+# Create player object
+player_model_file aircrafts/v22.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-4064	44748	250	40.0	1.0
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.5

@@ -1,0 +1,9 @@
+begin_header
+end_header
+
+range 4000
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+heightfield_load textures/test_world/plot02.hf  300 250 30  0 0 0  0 0 0
+end_model standard

@@ -1,0 +1,61 @@
+#
+# Mission Header
+#
+
+name Training: Traffic Accident
+description <bold>Rescue<default> a <bold>volunteer<default> posing\
+ as a traffic accident victim in downtown\
+ <underline>LA<default>.\
+\n\
+<bold>Return<default> to the <underline>roof<default> at\
+ <underline>Los Angeles Hospital<default> after you have picked up\
+ the mock victim.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Clear
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_lax
+
+time_of_day 23:00
+
+#
+# Mission Objectives
+#
+
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 1 1
+mission_objective_message_success \
+Got the victim, time to head home!
+mission_objective_message_fail \
+You failed to reach the victim safely!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_ucla
+mission_objective_message_success \
+Good job, you brought the victim back safely!
+mission_objective_message_fail \
+You failed to bring the victim back safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human victim_streatcher_assisted need_rescue lying on_streatcher
+translation 2660 40656 0
+set_human_mesg_enter Whew, I'm never driving drunk again!
+
+# Create player object
+player_model_file aircrafts/ka27.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	2660	40656	15	40.0	1.0
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.5

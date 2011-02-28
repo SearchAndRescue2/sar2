@@ -1,0 +1,64 @@
+#
+# Mission Header
+#
+
+name Training: Rescue In Poor Weather
+description Fly cautiously through the foggy weather to\
+ find and <bold>rescue<default> a <bold>mock victim<default>\
+ south of <underline>Malibu<default>.\
+\n\
+Fly at <bold>low altitudes<default> to stay under the fog\
+ (that is where the visibility is clearest). After you have\
+ found and picked up the <bold>mock victim<default>, head\
+ back to the <underline>Coast Guard station<default> at\
+ <underline>Los Angeles International<default>.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Foggy
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_lax
+
+# Time of day
+time_of_day 10:00
+
+#
+# Mission Objectives
+#
+
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 1 1
+mission_objective_message_success \
+Got the victim, time to head home!
+mission_objective_message_fail \
+You failed to reach the victim safely!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_lax
+mission_objective_message_success \
+Good job, you brought the victim back safely!
+mission_objective_message_fail \
+You failed to bring the victim back safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware in_water
+translation -43287.0 37103.0 0.0
+set_human_mesg_enter Thanks for the pick up!
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-43287	37103	0	40.0	1.0
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.5

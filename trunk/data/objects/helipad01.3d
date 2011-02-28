@@ -1,0 +1,60 @@
+# Helipad
+
+texture_load helipad01_tex textures/helipad01.tex
+
+type 6
+contact_cylendrical 10.0 0.0 3.0
+range 1000
+
+begin_model standard
+
+color 0.7 0.7 0.6 1.0
+texture_select
+begin_quads
+ normal 0 1 0
+ -10 10 0
+ 10  10 0
+ 10  10 3
+ -10 10 3
+end_quads
+
+begin_quads   
+ normal 1 0 0
+ 10 10  0
+ 10 -10 0
+ 10 -10 3
+ 10 10  3
+end_quads
+
+begin_quads
+ normal 0 -1 0
+ -10 -10 0
+ 10  -10 0
+ 10  -10 3
+ -10 -10 3
+end_quads
+
+begin_quads
+ normal -1 0 0
+ -10 10  0
+ -10 -10 0
+ -10 -10 3
+ -10 10  3
+end_quads
+
+color 1.0 1.0 1.0 1.0
+texture_select helipad01_tex
+begin_quads
+ normal 0 0 1
+ texture 0 1 
+ -10 10  3  
+ texture 1 1
+ 10  10  3  
+ texture 1 0
+ 10  -10 3  
+ texture 0 0
+ -10 -10 3  
+end_quads 
+
+
+end_model standard

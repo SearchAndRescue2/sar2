@@ -1,0 +1,65 @@
+#
+# Mission Header
+#
+
+name Training: Night Time Rescue
+description Anything can happen at any time, here you will\
+ need to find a <bold>mock victim<default> northwest of\
+ <underline>Catalina<default> at night.\
+\n\
+Turn your <bold>search light<default> on by pressing\
+ <bold>l<default>, it will help luminate the\
+ <bold>mock victim<default> when you fly near.\
+ Find and bring the <bold>mock victim<default> back to\
+ the <underline>Coast Guard station<default> at\
+ <underline>Los Angeles International<default>.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Clear
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_lax
+
+# Time of day
+time_of_day 22:00
+
+#
+# Mission Objectives
+#
+
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 1 1
+mission_objective_message_success \
+Got the victim, time to head home!
+mission_objective_message_fail \
+You failed to reach the victim safely!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_lax
+mission_objective_message_success \
+Good job, you brought the victim back safely!
+mission_objective_message_fail \
+You failed to bring the victim back safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware in_water
+translation -31212.0 -9073.0 0.0
+set_human_mesg_enter Brrrr, the waters are cold at night!
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-31212	-9073	0	40.0	1.0
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.5

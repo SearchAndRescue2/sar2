@@ -1,0 +1,239 @@
+#
+# Mission Header
+#
+
+name Mountain Rescue 3: Firemen rescue in mount Abantos
+description Last night a fire was declared \
+on the north face of <underline>mount \
+Abantos<default>. As the time passed \
+the situation got worse and the fire \
+extended over to wide area.\
+\n\
+Following a sudden change of the wind \
+a unit of firemen has been trapped \
+by the flames and need to be rescued.\
+\n\
+Your mission is to fly to mount Abantos, \
+locate and rescue the 10 firemen <bold>\
+before they are reached by fire.<default> \
+When you see them, try to land close to them \
+if its safe enough. Otherwise just hoist them \
+in one by one.\
+\n\
+You will start at the base of \
+Torrejon, as the military are offering \
+their V-22 Ospray for the job. Fly \
+north-west towards El Escorial following \
+the navigator.\
+\n\
+The situation is tough over there, with lots of fire \
+and smoke, so be careful.\
+\n\
+All scenery images are property of <bold>(C)INSTITUTO \
+GEOGRAFICO NACIONAL OF SPAIN (2009) <default>
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Scattered
+
+# Scenery file
+mission_scene_file scenery/guadarrama.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_torrejon
+
+# Time of day
+time_of_day 5:27
+
+#
+# Mission Objectives
+#
+
+mission_objective_new pick_up
+mission_objective_time_left 3600.0
+mission_objective_humans_tally 10 10
+mission_objective_message_success \
+All on board! Take them to the  \
+Fuenfria hospital to get checked.
+mission_objective_message_fail \
+You failed to rescue the firemen.
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_fuenfria
+mission_objective_message_success \
+Good job!
+mission_objective_message_fail \
+You failed to get to the hospital.
+
+#mission_objective_new arrive
+#mission_objective_time_left 0.0
+#mission_objective_arrive_at helipad_torrejon
+#mission_objective_message_success \
+#Good job!
+#mission_objective_message_fail \
+#You failed to get back to base!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware
+translation -9780 -18990 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 90 0 0
+
+create_human default    need_rescue alert aware
+translation -9783 -18993 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 75 0 0
+
+create_human default    need_rescue alert aware
+translation -9778 -18991 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 30 0 0
+
+create_human default    need_rescue alert aware
+translation -9775 -18983 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 176 0 0
+
+create_human default    need_rescue alert aware
+translation -9780 -18987 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 204 0 0
+
+create_human default    need_rescue alert aware
+translation -9784 -18989 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 273 0 0
+
+create_human default    need_rescue alert aware
+translation -9786 -18998 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 340 0 0
+
+create_human default    need_rescue alert aware
+translation -9781 -18992 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 300 0 0
+
+create_human default    need_rescue alert aware
+translation -9776 -18970 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 232 0 0
+
+create_human default    need_rescue alert aware
+translation -9774 -18975 2380.0
+set_human_mesg_enter Thank you!
+human_reference player run_towards
+rotate 357 0 0		 
+
+create_object 1
+model_file automobiles/firetruck_ap.3d
+translation -9780 -18973 2377
+rotate 155 0 0
+
+#fire		width height (ft)
+create_fire 18.0 100.0
+translation -9688 -18920 2377
+#						radius
+#smoke  	offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
+create_smoke    0.0     0.0     15.0        15.0  70.0 1  0         6000  20  0
+translation -9688 -18920 2377
+
+
+create_fire 20.0 103.0
+translation -9727 -18936 2377
+create_smoke    0.0     0.0     20.0        16.0  90.0 2 0         6000 20   1 
+translation -9727 -18936 2377
+
+create_fire 15 52
+translation -9758 -18945 2377
+create_smoke    0.0     0.0     14.0        10.0  50.0 3 0        8100 20	1
+translation -9758 -18945 2377
+
+create_fire 20.0 73
+translation -9803 -18924 2377
+create_smoke    0.0     0.0     20.0        18.0  93.0 1 0 8800 20 0
+translation -9803 -18924 2377
+
+create_fire 10.0 92.0
+translation -9856 -18962 2377
+create_smoke    0.0     0.0     5.0        7.0  69.0 2 0 6450 20 1
+translation -9856 -18962 2377
+
+create_fire 23.0 67.0
+translation -9837 -18993 2377
+create_smoke    0.0     0.0     13.0        15.0  84.0 3 0 6020 20  1
+translation -9837 -18993 2377
+
+create_fire 10.0 39.0
+translation -9812 -19015 2377
+create_smoke    0.0     0.0     8.0        5.0  70.0 1 0   8870 25 1
+translation -9812 -19015 2377
+
+create_fire 25.0 69.0
+translation -9788 -19100 2377
+create_smoke    0.0     0.0     21.0        20.0  60.0 2 0   8550 23 1
+translation -9788 -19100 2377
+
+create_fire 23.0 88.0
+translation -9745 -18986 2377
+create_smoke    0.0     0.0     9.0        15.0  80.0 3 0    10000 17 1
+translation -9745 -18986 2377
+
+create_fire 21.0 58.0
+translation -9725 -18969 2377
+create_smoke    0.0     0.0     10.0        13.0  59.0 0.7 0  8371 13
+translation -9725 -18969 2377
+
+create_fire 25.0 80.0
+translation -9714 -18973 2377
+create_smoke    0.0     0.0     21.0        17.0  53.0 1.3 0   7400 16 1
+translation -9714 -18973 2377
+
+create_fire 18.0 40.0
+translation -9700 -18970 2377
+create_smoke    0.0     0.0     7.0        9.0  28.0 1 0      6000 20 1
+translation -9700 -18970 2377
+
+create_fire 30.0 103.0
+translation -9630 -18980 2377
+create_smoke    0.0     0.0     20.0        15.0  60.0 1 0   8099 19 1
+translation -9630 -18980 2377
+
+create_fire 55.0 130.0
+translation -9603 -18764 2287
+create_smoke    0.0     0.0     20.0	    38.0  200.0 1 0   12000 25 1
+translation -9603 -18764 2287
+
+create_fire 40.0 103.0
+translation -9565 -19673 2737
+create_smoke    0.0     0.0     20.0        50.0  231.0 2 0   14400 13 1
+translation -9565 -19673 2737
+
+create_fire 51.0 103.0
+translation -10444 -18835 2753
+create_smoke    0.0     0.0     20.0        45.0  178.0 2.3 0  12400 18 1
+translation -10444 -18835 2753
+
+
+# Create player object
+player_model_file aircrafts/v22.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-9618	-22845	279.37	40.0	1.0
+#mission_add_intercept	0	28311	-47175	3	40.0	0.8
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.5

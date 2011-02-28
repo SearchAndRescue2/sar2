@@ -1,0 +1,23 @@
+# Palm tree 1
+texture_load palm02_tex textures/palm02.tex
+
+type 1
+range 2000
+crash_flags 0 1 0 0
+contact_cylendrical 2.0 0.0 6.0
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+texture_select palm02_tex
+begin_quads
+ normal 0 0 1
+ texture 0 0
+ -2 0 0
+ texture 1 0
+  2 0 0
+ texture 1 1
+  2 0 6
+ texture 0 1
+ -2 0 6
+end_quads
+end_model standard

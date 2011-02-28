@@ -1,0 +1,11 @@
+begin_header
+texture_load palos_verdes04 textures/los_angeles/pv04.tex 0.800000
+end_header
+
+range 10000
+
+begin_model standard
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+texture_select palos_verdes04
+heightfield_load textures/los_angeles/pv04.hf 9000 9000 550  0 0 0  0 0 0
+end_model standard

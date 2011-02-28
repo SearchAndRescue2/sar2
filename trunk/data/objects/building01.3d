@@ -1,0 +1,72 @@
+# Way too simple building
+#
+
+texture_load building01_tex textures/building01.tex
+
+type 1
+range 2000
+crash_flags 0 1 0 3
+contact_rectangular -6.0 6.0  -6.0 6.0  0.0 28.0
+
+begin_model standard
+
+# Walls
+color 1.0 1.0 1.0 1.0
+texture_select building01_tex
+begin_quads
+ normal 0 1 0
+ texture 1 0
+ -6 6 0
+ texture 0 0
+  6 6 0
+ texture 0 1
+  6 6 28
+ texture 1 1
+ -6 6 28
+end_quads
+begin_quads   
+ normal 1 0 0
+ texture 1 0
+ 6 6  0
+ texture 0 0
+ 6 -6 0
+ texture 0 1
+ 6 -6 28
+ texture 1 1
+ 6 6  28
+end_quads
+begin_quads
+ normal 0 -1 0
+ texture 0 0
+ -6 -6 0
+ texture 1 0
+ 6  -6 0
+ texture 1 1
+ 6  -6 28
+ texture 0 1
+ -6 -6 28
+end_quads
+begin_quads
+ normal -1 0 0
+ texture 0 0
+ -6 6  0
+ texture 1 0
+ -6 -6 0
+ texture 1 1
+ -6 -6 28
+ texture 0 1
+ -6 6  28
+end_quads
+texture_unselect
+
+# Roof
+color 0.83 0.82 0.80 1.0
+begin_quads
+ normal 0 0 1
+ -6 6  28
+ 6  6  28
+ 6  -6 28
+ -6 -6 28
+end_quads
+
+end_model standard

@@ -1,0 +1,66 @@
+#
+# Mission Header
+#
+
+name Training: Mountain Climbers
+description <bold>Rescue<default> <bold>mock victims<default> posing\
+ as lost mountain climbers.\
+\n\
+<bold>Return<default> to the <underline>helipad<default> at\
+ <underline>SMO<default> after you have picked up\
+ the mock victims.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Clear
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_ucla
+
+time_of_day 13:00
+
+#
+# Mission Objectives
+#
+
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 2 2
+mission_objective_message_success \
+Got the climbers, time to head home!
+mission_objective_message_fail \
+You failed to reach the climbers safely!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_smo
+mission_objective_message_success \
+Good job, you brought the climbers back safely!
+mission_objective_message_fail \
+You failed to bring the climbers back safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware
+translation -1260 16066 0
+set_human_mesg_enter Thanks, coming down will be much easier this way!
+create_human default    need_rescue alert aware
+# Note that human is along cliff but simulation will keep human above
+# ground level so we can safly set z to 0.
+#translation -2460 12656 15
+translation -1260 16056 0
+set_human_mesg_enter Thanks, it was getting lonely up here!
+
+# Create player object
+player_model_file aircrafts/ka27.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-1260	16056	15	40.0	1.0
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.5
