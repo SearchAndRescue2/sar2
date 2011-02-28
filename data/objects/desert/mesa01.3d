@@ -1,0 +1,11 @@
+begin_header
+texture_load desert_mesa01 textures/desert/mesa01.tex 0.950000
+end_header
+
+range 24000
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+texture_select desert_mesa01
+heightfield_load textures/desert/mesa01.hf  11000 6000 1400  0 0 0  0 0 0
+end_model standard

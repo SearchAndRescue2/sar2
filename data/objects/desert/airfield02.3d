@@ -1,0 +1,22 @@
+begin_header
+texture_load airfield02 textures/desert/airfield02.tex
+end_header
+
+range 9000
+
+begin_model standard
+#$model_flags 
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+texture_select airfield02
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -1600 1600 0
+ texcoord 1.0 1.0
+ 1600 1600 0
+ texcoord 1.0 0.0
+ 1600 -1600 0
+ texcoord 0.0 0.0
+ -1600 -1600 0
+end_quads
+end_model standard

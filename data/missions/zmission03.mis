@@ -1,0 +1,70 @@
+#
+# Mission Header
+#
+
+# Name of mission
+name Mission: Speed flight from LAX to Catalina and back
+
+# Description of mission (newlines and escapes accepted)
+description Take a long, fast flight in the <bold>F-22<default>. You will depart\
+ from <underline>Los Angeles airport<default> and <bold>head south<default>\
+ to the <underline>island<default>\
+ of <underline>Catalina<default>.\
+\n\
+After reaching the helipad on Catalina, take off again and return to\
+ <bold>Los Angeles airport<default>.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Stormy Dense
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_lax
+
+
+#
+# Mission Objectives
+#
+
+# Create first mission objective, type is: arrive
+# Possible types are; arrive, pick_up, and pick_up_arrive
+#
+mission_objective_new arrive
+
+# Time left to complete this objective once it starts, in seconds.
+# Can be non-positive to indicate unlimited time.
+mission_objective_time_left 0.0
+
+# Arrive at object (name of object from scene file)
+mission_objective_arrive_at helipad_cat
+
+# Mission success message
+mission_objective_message_success \
+You made it safely to the island! Now return to LAX.
+
+# Mission failure message
+mission_objective_message_fail \
+You failed to land safely at the designated airport!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_lax
+mission_objective_message_success \
+Welcome back!
+mission_objective_message_fail \
+You did not return home safely.
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Create player object
+player_model_file aircrafts/yf22.3d
+#select_object_by_name player
+rotate 0 0 0
+# mission_add_intercept 3 40.0 0.5
+# mission_add_intercept 0 -4530 -24900 0 40.0 1.0

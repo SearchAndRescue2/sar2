@@ -1,0 +1,70 @@
+#
+# Mission Header
+#
+
+# Name of mission
+name Training: Short flight from SMO to LAX
+
+# Description of mission (newlines and escapes accepted)
+description Introduction to basic flight, you will <bold>depart<default>\
+ from <underline>Santa Monica Municipal<default> and <bold>head south<default>\
+ to the <underline>Coast Guard station<default>\
+ at <underline>Los Angeles International<default>.\
+\n\
+Look for the <bold>helipad<default> and <bold>land<default> on it.\
+ Be sure to <bold>touch down lightly<default> to avoid damage to the\
+ aircraft.\
+\n\
+Use the <bold>map<default> (press <bold>m<default>) to help with\
+ your navigation.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Cloudy
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_smo
+
+
+#
+# Mission Objectives
+#
+
+# Create first mission objective, type is: arrive
+# Possible types are; arrive, pick_up, and pick_up_arrive
+#
+mission_objective_new arrive
+
+# Time left to complete this objective once it starts, in seconds.
+# Can be non-positive to indicate unlimited time.
+mission_objective_time_left 0.0
+
+# Arrive at object (name of object from scene file)
+mission_objective_arrive_at helipad_lax
+
+# Mission success message
+mission_objective_message_success \
+Very nice, you made it safely to the helipad!
+
+# Mission failure message
+mission_objective_message_fail \
+You failed to land safely at the designated helipad!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+#           type  range  model_file
+#add_object 1     3000   objects/palm01.3d
+#translation -12934 9203 0
+
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+#select_object_by_name player
+rotate 270 0 0
+mission_add_intercept 3 40.0 0.5

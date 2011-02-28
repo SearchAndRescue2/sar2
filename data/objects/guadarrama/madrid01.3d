@@ -1,0 +1,18 @@
+begin_header
+texture_load madrid01 textures/guadarrama/madrid01.tex 0.9
+end_header
+
+range 50000
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+texture_select madrid01
+texture_orient_xy -4867 -4867 9734 9734
+ begin_quads
+  normal 0 0 1
+  -4867 -4867  0 
+  -4867 4867 0  
+  4867 4867 0
+  4867 -4867 0
+ end_quads
+end_model standard

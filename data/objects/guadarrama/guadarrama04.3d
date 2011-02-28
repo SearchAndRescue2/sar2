@@ -1,0 +1,20 @@
+begin_header
+texture_load guadarrama04 textures/guadarrama/guadarrama04.tex 0.7000
+end_header
+
+range 83000
+range_far 200000
+#shade_model_smooth
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+texture_select guadarrama04
+texture_orient_xy -20750 -20750 41500 41500
+ begin_quads
+  normal 0 0 1
+  -20750 -20750 0 
+  -20750 20750 0  
+  20750 20750 0
+  20750 -20750 0
+ end_quads
+end_model standard

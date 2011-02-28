@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Search And Rescue II
+Exec=sar2
+Terminal=False
+Type=Application
+Categories=Game
+Value=1.0
+Icon=sar2

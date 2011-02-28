@@ -1,0 +1,105 @@
+                   S E A R C H   A N D   R E S C U E  I I
+
+                         V E R S I O N   0.1.0
+
+		     http://sar2.sourceforge.net/
+
+              Copyright (C) 1999-2003 WolfPack Entertainment
+                       http://wolfpack.twu.net/
+              Released under the GNU Public License v.2
+
+         (Read INSTALL for compiling and installation instructions.)
+
+--------
+CONTENTS
+
+	* News
+	* Introduction
+	* Requirements
+	* Installation
+	* Playing
+	* Contacts
+
+
+--------------------
+NEWS & RELEASE NOTES
+
+	Changable units (english/metric), press CTRL + U during
+	simulation to change the units.
+
+	Vertical acceleration (G's) are now calculated and displayed
+	during simulation.
+
+	Thunder and lightening effects.
+
+	New object loader function
+
+	New commands
+
+
+------------
+INTRODUCTION
+
+	Search and Rescue is an aircraft based rescue simulator,
+	challenging the player to save lives by rescuing victims in
+	different (customizeable) situations of distress.
+
+	The game is now stable and data files are under development
+	with a few features still being added.
+
+
+------------
+REQUIREMENTS
+
+	For UNIX/X:
+
+		* An implmentation of OpenGL or hardware acceleration
+		  (note that glut is not required). XFree86 4.x is
+		  recommended.
+
+		* SDL and SDL_Mixer (optional) for sound.
+
+		* Y2 for sound (optional -- obsolete).
+
+		* libjsw for joystick support (optional), needs Linux
+		  2.2.15 or newer.
+
+		* P166 or faster (if not using hardware acceleration).
+
+
+	For Windows:
+
+		* An implmentation of OpenGL or hardware acceleration
+		  (note that glut is not required).
+
+		* P166 or faster (if not using hardware acceleration).
+
+-------
+PLAYING
+
+	To run Search and Rescue, type:
+
+		/usr/games/SearchAndRescue	(for Linux)
+	-or-
+		SearchAndRescue.exe		(for Windows)
+
+	Or create a shortcut to the program file.
+
+	Once it is running, go to `options' and make sure all the values
+	are set properly.
+
+	Play an easy training mission first to get an idea of things,
+	press F1 in the game to see the quick help screen.
+
+	The complete manual for Search and Rescue can be found online at:
+
+        http://searchandrescue.sf.net
+
+
+--------
+CONTACTS
+
+See:
+	http://sar2.sf.net
+                                                         -----------------
+                                                         SEARCH AND RESCUE

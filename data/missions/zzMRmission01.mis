@@ -1,0 +1,86 @@
+#
+# Mission Header
+#
+
+name Mountain Rescue 1: Lost in La Pedriza
+description One person has been reported missing \
+in a local village. He might be lost in the the \
+close area of <underline>La Pedriza<default>.\
+\n\
+Follow navigation system and fly east to \
+<underline>Canto Cochino<default> to pickup \
+one of the natural park guards. He might provide more \
+info about where to look for the victim.\
+\n\
+All scenery images are property of <bold>(C)INSTITUTO \
+GEOGRAFICO NACIONAL OF SPAIN (2009) <default>
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Clear
+
+# Scenery file
+mission_scene_file scenery/guadarrama.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_navacerrada
+
+# Time of day
+time_of_day 11:00
+
+#
+# Mission Objectives
+#
+
+mission_objective_new arrive
+mission_objective_time_left 0
+mission_objective_arrive_at helipad_pedriza
+mission_objective_message_success \
+The park says the \
+missing person was last seen hiking on \
+the top of the mountain cirque north of \
+here.
+
+
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 1 1
+mission_objective_message_success \
+Found him. Get him back down to \
+Canto Cochino.
+mission_objective_message_fail \
+You failed to find the missing \
+person
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_pedriza
+mission_objective_message_success \
+Well done, head back to Navacerrada base.
+mission_objective_message_fail \
+You failed to bring the victim back safely!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_navacerrada
+mission_objective_message_success \
+Good job!
+mission_objective_message_fail \
+You failed to get back to base!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware
+translation 13730.0 -1177 3520.0
+set_human_mesg_enter I didn't know how to get back!
+
+# Create player object
+player_model_file aircrafts/ka27.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	11670	-5571.5	820.96	40.0	1.0
+#			ref	radius	urgency
+#mission_add_intercept	3	40.0	0.5

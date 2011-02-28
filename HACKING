@@ -1,0 +1,328 @@
+                   S E A R C H   A N D   R E S C U E
+
+                             HACKING GUIDE
+
+
+	For contributors, builders, or those interested in the finer
+	details behind the scenes; this document details the source
+	files with their related purpose in this program along with
+	outlines of non-intuitive areas of the code.
+
+	Note: Version represented in this document may be out of date,
+	verify version above with actual version of accompanying source.
+
+--------
+CONTENTS
+
+	* Source Layout
+
+-------------
+SOURCE LAYOUT
+
+	Note, $TOPLEVEL represents this source's toplevel directory.
+	Most (not all) .c and .cpp files will have an accompany .h file
+	with the same name.
+
+
+	In $TOPLEVEL/include:
+
+	These file are global include files for most of the general
+	globally shared functions.
+
+	In $TOPLEVEL/src:
+
+	This is the source directory for the program.
+
+	cmd.c		SAR Command line front end, passes inputs to
+			other functions in cmd*.c sources. See cmd.h
+			for a list of command and function pointer
+			referances.
+
+	cmd*.c		SAR Command line handler functions.
+
+	config.h	SAR Globally configurable constants.
+
+	cp.c		Control panel
+
+	cpins*.c	Control panel instruments
+
+	explosion.c	Explosion (and splash) object creation.
+
+	fire.c		Fire object creation.
+
+	gctl.c		Game controller (keyboard, joystick, etc) input
+			wrapper, takes input from device specific
+			functions and updates the game controller (gctl)
+			values which other functions rely on for
+			controller values.
+
+	gw.h		GUI wrapper header.
+
+	gww.cpp		MSW GUI wrapper functions.
+
+	gwx.c		X11 GUI wrapper functions.
+
+	gwx_dialog.c	X11 GUI dialog wrapper functions (since Xlib
+			does not have a built in dialog system).
+
+	horizon.c	Generates a 1d horizon texture.
+
+	human.c		Human object preset list, manages a preset list of
+			values for creation of standard human objects.
+
+	humanio.c	Human object preset list file IO.
+
+	image.c		IO and drawing of images, using the GUI
+			wrapper functions to draw them.
+
+	main.c		Program main function and other core
+			operations functions (including timming,
+			signal handler, GUI wrapper callbacks, etc).
+			See sar.h for header info.
+
+	matrixmath.c	Matrix translation and rotation utilities, mostly
+			for 3 * 1 or 3 * 3 matrix operations.
+
+	menu.c		SAR menu object (widgets) core.
+
+	menumap.c	SAR map menu object (widget) handler.
+
+	messages.c	Handles and draws messages printed on screen in
+			game.
+
+	mission.c	Mission handling core.
+
+	missionio.c	SAR .mis mission file IO.
+
+	musiclistio.c	SAR music file referance list IO.
+
+	obj.h		SAR object definations.
+
+	objio.c		SAR .3d object file IO, also has other object
+			load from file utils and routines.
+
+	objiocb.c	SAR scene and object file loading progress
+			callback.
+
+	objiopremodeled.c	Creates SAR premodeled objects.
+
+	objsound.c	SAR object sound source management.
+
+	objutils.c	SAR scene and object utility functions,
+			including deleting, checking, list io, etc.
+
+	optionio.c	SAR options/preferances file IO.
+
+	sar.h		SAR core header file.
+
+	sarcamp.c	Functions for dealing with random Campaigns.
+
+	sarcamp.h	Headers and definitions for working with Campaigns.
+
+	sardraw.c	SAR in game drawing routines, uses OpenGL
+			and a bit of the GUI wrapper code.
+
+	sardrawhelipad.c	SAR helipad drawing (also for drawing map
+				icon of helipad).
+
+	sardrawhuman.c	SAR human drawing.
+
+	sardrawpremodeled.c	Supplmentary functions for sardraw.c
+				to draw premodeled SAR objects.
+
+	sardrawrunway.c	SAR runway drawing (also for drawing map icon
+			of runway).
+
+	sarfio.c	SAR file format (scenery, mission, and log files)
+			IO.  This module allocates and deallocates 
+			parameters, see sarfioopen.c for actual loading
+			of parameters from file and sarfiosave.c for
+			actual writing of parameters to file.
+
+	sarfioopen.c	SAR file format loading, loads parameters from
+			file.
+
+	sarfiosave.c	SAR file format writing, writes parameters to
+			file.
+
+	sarfps.c	Frames per second tallying functions.
+
+	sarinstall.c		Creates/coppies global program
+				configuration and data files/dirs to
+				local user's directory.
+
+	sarkey.c	In game keyboard key handling, called from
+			functions in main.c. If key input is not
+			handled, it will be passed to the gctl.c
+			functions.
+
+	sarmenubuild.c	Creates the menu and their menu objects
+			(widgets), then sets up the initial data and
+			callbacks.
+
+	sarmenucb.c	SAR menu callback handlers.
+
+	sarmenuoptions.c SAR supplmentary callbacks for the options
+			menu, also includes options fetch and apply
+			to menu objects (widgets) functions. See also
+			optionio.c and sarmenucb.c.
+
+	sarsimbegin.c	SAR simulation begin procedure for free flight
+			and missions. This is used to switch from menus
+			to simulation and load a scenery or mission.
+
+	sarsimend.c	SAR simulation end procedure and tabulation for
+			missions. This is used to end a simulation (with
+			or without a mission) and switch back to the
+			menus.
+
+	sarsound.c	SAR sound object management, handles things like
+			sound object creations, background music updating,
+			and engine sound object adjustments. See also
+			scenesound.c and sound.c.
+
+	sarsplash.c	Splash screen procedure, called after graphics
+			wrapper is just initialized by SARInit().
+
+	sartime.c	SAR time utility functions.
+
+	sarutils.c	SAR primary utility functions that handle SAR
+			global and core level things.
+
+	sarreality.h	SAR simulation, reality, and timming constants.
+
+	sceneio.c	SAR .scn scene file loading, subsequently calls
+			load object routines in objio.c. The scene
+			deallocation function is also in here.
+
+	scenesound.c	Updates SAR scene sound resources, should be
+			used after all objects are loaded when sound needs
+			to be realized or during simulation when the sound
+			level changes.
+
+	sfm*.c		SAR Flight Dynamics Model (SFM) library, called
+			by the sim*.c functions.
+                        Note that this is really an intigrated library,
+                        it may be made into a shared library (so) later
+                        on.
+
+	sfm.c		SFM realm init, shutdown, and management.
+
+	sfmmath.c	SFM math utilities, includes conversions and
+			angle calculation functions.
+
+	sfmmodel.c	SFM flight dynamics model IO.
+
+	sfmsimforce.c	SFM flight dynamics model engine, simulates
+			forces acted on the fdm.
+
+	sim*.c		SAR simulation functions, calls and manages sfm*.c
+			functions.
+
+	simcb.c		SAR simulation callbacks for the SFM.
+
+	simcontact.c	SAR simulation object to object contact/collision
+			checking and handling.
+
+	simmanage.c	SAR simulation core functions, primary
+			calling source to the SFM functions.
+
+	simop.c		SAR simulation operations and procedures, mostly
+			procedure functions called by simmanage.c.
+
+	simsurface.c	SAR simulation surface checking, checks position
+			against landable/walkable ground.
+
+	simutils.c	SAR simulation calculation and simple
+			modification utility functions.
+
+	smoke.c		SAR smoke object creation. Simple convience
+			function to create a smoke object. See also
+			objutils.c
+
+	sound.c		Y2 sound wrapper, handles playing and management
+			of Y sound play objects. This is the lowest level
+			of code which communicates with the sound output
+			library and the rest of the program. See also
+			sarsound.c and scenesound.c
+
+	stategl.c	Used with gw*.c* sources, manages the state of
+			OpenGL so calling functions can enable/disable 
+			multiple times without wasting OpenGL bandwidth.
+
+	text3d.c	Generates gl output or a gl list of a 3d text
+			using the x3d.c module.
+
+	textinput.c	In game text input prompt handling, handles
+			drawing and key events forwarded to the text
+			prompt. Calling functions need check if prompt
+			is mapped before forwarding key event to it.
+
+	texturelistio.c	Standard textures list IO, loads a list of
+			referances to standard textures to be loaded
+			for each scene.
+
+	v3d*.c		Vertex 3D (V3D) visual models and textures IO.
+			Note that this is really an intigrated library,
+			it may be made into a shared library (so) later
+			on.
+
+	v3dfio.c	V3D visual model file IO.
+
+	v3dhf.c		V3D heightfield image file IO.
+
+	v3dmodel.c	V3D visual model IO.
+
+	v3dmh.c		V3D visual model header items IO, header items
+			used in recording the header block items in each
+			V3D visual model.
+
+	v3dmp.c		V3D visual model primitives IO, primitives used
+			on each V3D visual model.
+
+	v3dtex.c	V3D texture (image) file IO.
+
+	weather.c	Weather preset values initializing, management,
+			shutdown, and utilities. Include utility to update
+			a given scene structure with a selected preset
+			weather data entry.
+
+	weatherio.c	Weather file IO.
+
+	x3d.c		X3D model file format, for loading of compile
+			time gl models to gl output or gl list.
+
+
+	In $TOPLEVEL/src/fonts:
+
+	Compile time bitmap fonts (used by the gw module).
+
+
+	In $TOPLEVEL/src/gwdata:
+
+	Compile time data files for the graphics wrapper (gw module).
+
+
+	In $TOPLEVEL/src/gwdemos:
+
+	Demo programs for the graphics wrapper (extra).
+
+
+	In $TOPLEVEL/src/runway:
+
+	Compile time X3D models for the SAR runway.
+
+
+	In $TOPLEVEL/src/text3d:
+
+	Compile time X3D models for the text3d module.
+
+
+	In $TOPLEVEL/src/utils:
+
+	Utility programs used to generate the compile time fonts and
+	such (extra).
+
+
+                                                       --------------------
+                                                       SEARCH AND RESCUE II

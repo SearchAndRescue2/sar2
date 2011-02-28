@@ -1,0 +1,13 @@
+begin_header
+texture_load guadarrama01 textures/guadarrama/guadarrama01.tex 0.950000
+end_header
+
+range 83000
+range_far 200000
+#shade_model_smooth
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+texture_select guadarrama01
+heightfield_load textures/guadarrama/guadarrama01.hf  83000 83000 1700 0 0 0  0 0 0
+end_model standard

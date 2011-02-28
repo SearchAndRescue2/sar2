@@ -1,0 +1,21 @@
+#$view1 0.000000 0.000000 18.000000 0.000000 0.000000 5.000000
+#$view2 0.000000 0.000000 18.000000 0.000000 0.000000 5.000000
+#$view3 -1109.350945 -1310.605330 1590.055420 0.000000 0.000000 100.000000
+#$view4 -320.250000 -909.000000 2220.000000 0.000000 89.000000 0.000000 10.000000 250000.000000 40.000000 100.000000 10.000000 1 1 0 1 1
+begin_header
+texture_load los_angeles_base02 textures/los_angeles/base02.tex 0.950000
+end_header
+
+# Los Angeles northeast plot - Los Angeles city, Riverside and
+# San Bernardino mountains.
+#
+# Does not include Santa Catalina or San Clemente islands.
+#
+range 119459
+
+begin_model standard
+#$model_flags 
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+texture_select los_angeles_base02
+heightfield_load textures/los_angeles/base02.hf 135000.000000 135000.000000 3504.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+end_model standard

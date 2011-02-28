@@ -1,0 +1,90 @@
+#
+# Mission Header
+#
+
+name Training: Rescue Over Water
+description <bold>Rescue<default> a <bold>mock victim<default> from the\
+ waters just off <underline>Newport Beach<default>.\
+\n\
+Follow the <bold>waypoint<default> to the approximate area the victim\
+ was last spotted, use the <bold>map<default> (press <bold>m<default>)\
+ to help you navigate.\
+\n\
+Once you <bold>arrive<default> at the location, <bold>look<default> for\
+ the mock victim. Once you spot him, go to an <bold>external view<default>\
+ (press <bold>F5<default>) and <bold>lower<default> the <bold>rescue basket<default>\
+ (use <bold>ctrl + zoom in<default> and <bold>zoom out<default>).\
+ Hold the aircraft <bold>steady<default>! It takes a <bold>lot of\
+ practice<default>, so be patient. Manuver the <bold>rescue basket<default>\
+ over the mock victim and <bold>pick him up<default>.\
+\n\
+When you have the mock victim inside the basket, <bold>raise<default> the\
+ rescue basket back into the aircraft and then head back to the\
+ <underline>Coast Guard station<default> at <underline>Los Angeles\
+ International<default>.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Scattered
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_lax
+
+
+#
+# Mission Objectives
+#
+
+# Create first mission objective, type is: arrive
+# Possible types are; arrive, pick_up, and pick_up_arrive
+#
+mission_objective_new pick_up
+
+# Time left to complete this objective once it starts, in seconds.
+# Can be non-positive to indicate unlimited time.
+mission_objective_time_left 0.0
+
+# Total number of humans and initial number of humans that need to
+# be rescued (both values are usually the same).
+mission_objective_humans_tally 1 1
+
+# Mission success message
+mission_objective_message_success \
+The victim is in, now come home safely!
+
+# Mission failure message
+mission_objective_message_fail \
+You failed to reach the victim safely!
+
+
+# Second objective, go back home.
+#
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_lax
+mission_objective_message_success \
+Great, you made it back with the victim safely!
+mission_objective_message_fail \
+You failed to bring the victim back safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware in_water
+translation -13804 35640 0
+#                 r_rand z_rand
+#translate_random 50.0   0.0
+set_human_mesg_enter Thanks for the lift!
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-13804	35640	0	40.0	1.0
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.75

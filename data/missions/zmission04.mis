@@ -1,0 +1,78 @@
+#
+# Mission Header
+#
+
+# Name of mission
+name Mission: Find and rescue accident victim.
+
+# Description of mission (newlines and escapes accepted)
+description Depart from <bold>Santa Monica Airport<default> and\
+ fly north to the nearby valley. There has been a large explosion\
+ in the valley and we need you to locate and rescue any survivors.\
+\n\
+Transport any people you locate to the <bold>UCLA<default> hospital.
+
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Cloudy
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_smo
+
+
+#
+# Mission Objectives
+#
+
+# Create first mission objective, type is: arrive
+# Possible types are; arrive, pick_up, and pick_up_arrive
+#
+mission_objective_new pick_up
+
+# Time left to complete this objective once it starts, in seconds.
+# Can be non-positive to indicate unlimited time.
+mission_objective_time_left 0.0
+
+mission_objective_humans_tally 1 1
+
+mission_objective_message_success \
+The victim is in. Head for the hospital.
+
+mission_objective_message_fail \
+You were unable to reach the victim.
+
+# Arrive at object (name of object from scene file)
+mission_objective_new arrive
+
+mission_objective_time_left 0.0
+
+mission_objective_arrive_at helipad_ucla
+mission_objective_message_success \
+You made it back. Great work!
+mission_objective_message_fail \
+You failed to bring back the victim safely!
+
+
+# Place human
+create_human default need_rescue alert aware
+translation -19000.0 67860.0 0.0
+set_human_mesg_enter Holy smokes, that was close!
+
+create_fire 18.0 900.0
+translation -19100.0 67850.0 0.0
+create_smoke 0.0 0.0 28.0 15.0 45.0 -1.0 4500 6 2
+translation -19100.0 67850.0 0.0
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+#select_object_by_name player
+rotate 0 0 0
+

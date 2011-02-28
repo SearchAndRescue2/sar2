@@ -1,0 +1,86 @@
+#
+# Mission Header
+#
+
+name Training: Medium Endurance
+description Fly an <bold>HH-60 JayHawk<default> to find and\
+ pick up <bold>3 mock victims<default> east of the\
+ <underline>Channel Islands<default>. Make sure that you pick up\
+ all the <bold>mock victims<default> and then head towards the\
+ rooftop helipad at the <underline>UCLA Hospital<default>.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Stormy Sparse
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+# Time of day
+time_of_day 18:00
+
+#
+# Mission Objectives
+#
+
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 3 3
+mission_objective_message_success \
+Got the victim, now to head towards the hospital!
+mission_objective_message_fail \
+You failed to reach the victims safely!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_ucla
+mission_objective_message_success \
+Good job, you brought the victims back safely!
+mission_objective_message_fail \
+You failed to bring the victims back safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# US Coast Guard 378 foot cutter
+create_object 1
+model_file vessels/uscg378.3d
+range 12000
+translation -85650.0 15180.0 0.0
+rotate 270 0 0
+object_name uscg378_01
+# Helipad on above vessel
+create_helipad vehicle 29.0 18.0 3.2 USCG y y y y y uscg378_01 0.0 -58.5 36.0  0.0 0.0 0.0
+translate -85591.5.0 15180.0 36.0
+object_name helipad_uscg378_01
+object_map_description USCG Cutter Helipad
+range 2200
+
+# Begin at position and object name (position must be specified first
+# before object name, since we are starting at an arbitary position
+# instead of at a preset location on the scene file).
+#                    x        y       z       h  p b
+mission_begin_at_pos -85591.0 15180.0 36.0    90 0 0
+mission_begin_at helipad_uscg378_01
+
+
+# Human      type_name  flags
+create_human default    need_rescue alert aware in_water
+translation -87338.0 47746.0 0.0
+set_human_mesg_enter Thanks for the pick up!
+create_human default    need_rescue alert aware in_water
+translation -87345.0 47750.0 0.0
+set_human_mesg_enter Thanks for the pick up!
+create_human default    need_rescue alert aware in_water
+translation -87325.0 47748.0 0.0
+set_human_mesg_enter Thanks for the pick up!
+
+
+# Create player object
+player_model_file aircrafts/hh60.3d
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-87345	47750	0.0	40.0	1.0
+#			ref	radius	urgency
+mission_add_intercept	3	40.0	0.5

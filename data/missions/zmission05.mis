@@ -1,0 +1,78 @@
+#
+# Mission Header
+#
+
+# Name of mission
+name Mission: Transport VIP
+
+# Description of mission (newlines and escapes accepted)
+description Depart from <bold>Santa Monica Airport<default> and\
+ fly west by south-west to the <bold>Coast Guard vessel<default>. Pick up a passenger\
+ and return with them to <bold>Santa Monica Airport<default>.
+
+# Weather (valid values defined in weather.ini), must specify before
+# parameter mission_scene_file.
+weather Stormy Sparse
+
+# Scenery file
+mission_scene_file scenery/los_angeles.scn
+
+create_object 3
+model_file vessels/uscg378.3d
+translation -23758.0 34647.0 0.0
+rotate 310 0 0
+object_name uscg378_01
+# Helipad on vessel
+create_helipad vehicle 29.0 18.0 3.2 USCG y y y y y uscg378_01 0.0 -58.5 36.0  0.0 0.0 0.0
+object_name helipad_uscg
+object_map_description Coast Guard helipad
+range 2200
+
+
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_smo
+
+
+#
+# Mission Objectives
+#
+
+# Create first mission objective, type is: arrive
+# Possible types are; arrive, pick_up, and pick_up_arrive
+#
+mission_objective_new arrive
+
+# Time left to complete this objective once it starts, in seconds.
+# Can be non-positive to indicate unlimited time.
+mission_objective_time_left 0.0
+
+mission_objective_arrive_at helipad_uscg
+
+mission_objective_message_success \
+Pick-up complete. Return to Santa Monica airport!
+
+mission_objective_message_fail \
+You were unable to reach the ship.
+
+# Arrive at object (name of object from scene file)
+mission_objective_new arrive
+
+mission_objective_time_left 0.0
+
+mission_objective_arrive_at helipad_smo
+mission_objective_message_success \
+You made it back. Great work!
+mission_objective_message_fail \
+You failed to bring back the passenger safely!
+
+
+#
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Create player object
+player_model_file aircrafts/uh1d.3d
+#select_object_by_name player
+rotate 0 0 0
+

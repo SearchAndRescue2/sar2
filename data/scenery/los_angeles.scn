@@ -1,0 +1,282 @@
+# SAR Scene: Los Angeles and San Diego
+#
+name Los Angeles
+
+# Planet units	dms_x_offset	dms_y_offset	planet_radius_meters
+scene_gps	-118.366	33.63		6371000.0
+
+# Cant (magnetic) angle applied to true north
+scene_cant 5.0
+
+# Elevation from sea level in feet.
+scene_elevation 0.0
+
+
+# Load texture images and set named references to them:
+#
+texture_load water01_tex	textures/water01.tex		1.0
+texture_load building01_tex	textures/building01.tex		0.7
+texture_load building01_night_tex	textures/building01_night.tex	0.7
+texture_load building02_tex	textures/building02.tex		0.7
+texture_load building03_tex	textures/building03.tex		0.7
+texture_load building04_tex	textures/building04.tex		0.7
+texture_load wall01_tex		textures/wall01.tex		0.7
+
+
+# Ground base flags
+#                  is_water
+scene_ground_flags is_water
+
+# Ground base tile
+#                 tilew tileh closerng  color              texture
+scene_ground_tile 1000  1000  10000     0.22 0.36 0.53 1.0 water01_tex
+
+# Map representing entire scene
+#         width  height  texture_file
+scene_map 270000 270000  textures/los_angeles/scene_map.tex
+
+
+# #####################################################################
+# Registered locations
+#
+# Only used in Free Flight starting location selection (missions use
+# object names to match beginning location).
+#
+
+#                 x y z			h p b	name
+register_location -4931 -25183 0	48 0 0	Avalon/Catalina
+register_location -5430 35750 0		270 0 0	Los Angeles International
+register_location -7300 42580 0		270 0 0	Santa Monica Municipal
+register_location -4920 44800 93	270 0 0 UCLA Hospital
+#register_location -6560 18996 0		180 0 0	Default
+
+
+# #####################################################################
+# Begin loading base objects
+#
+# These objects need to be loaded first since they are drawn without
+# depth checking and drawn in order.
+#
+
+# Los Angeles base plots, lowest base layers
+#
+create_object 6
+#polygon_offset reverse write_depth
+model_file objects/los_angeles/plot01.3d
+translation -67500 67500 0
+
+create_object 6
+#polygon_offset reverse write_depth
+model_file objects/los_angeles/plot02.3d
+translation 67500 67500 0
+
+# Leave out Oceanside and San Diego for now, untill we have missions
+# in that area.
+#create_object 6
+#polygon_offset reverse write_depth
+#model_file objects/los_angeles/plot03.3d
+#translation 67500 -67500 0
+
+
+# Los Angeles west plot
+create_object 6
+polygon_offset
+model_file objects/los_angeles/west01.3d
+translation -5100 32800 0
+
+# Los Angeles downtown plot
+create_object 6
+polygon_offset
+model_file objects/los_angeles/downtown01.3d
+translation 12000 43000 0
+
+
+# Santa Catalina Island plot
+create_object 6
+# No depth test makes airport plot on the island display badly with 
+# the island plot, so don't use it (though it'll slow things down).
+#no_depth_test
+model_file objects/los_angeles/catalina01.3d
+translation -7700 -26600 0
+
+# Avalon airport plot object at Santa Catalina Island plot
+create_object 6
+#no_depth_test
+model_file objects/los_angeles/catalina_airport.3d
+contact_cylendrical 550.0 0.0 0.0
+translation -4580 -24860 1602
+rotate 0 0 0
+
+# Palos Verdes - detailed cliffs
+#
+# Use polygon_offset for plots 02 and 03 since they have a lot of
+# flat areas.
+#
+create_object 6
+model_file objects/los_angeles/pv01.3d
+translation -3000 17000 0
+
+create_object 6
+polygon_offset
+model_file objects/los_angeles/pv02.3d
+translation 6000 17000 0
+
+create_object 6
+polygon_offset
+model_file objects/los_angeles/pv03.3d
+translation 6000 8000 0
+
+create_object 6
+model_file objects/los_angeles/pv04.3d
+translation -3000 8000 0
+
+
+# Channel Islands
+
+# Santa Cruz Island
+create_object 6
+model_file objects/los_angeles/ci_sc01.3d
+translation -125000 43000 0
+
+# Santa Rosa Island
+create_object 6
+model_file objects/los_angeles/ci_sr01.3d
+translation -160000 38000 0
+
+# San Miguel Island
+create_object 6
+model_file objects/los_angeles/ci_sm01.3d
+translation -184000 46000 0
+
+
+
+# #####################################################################
+# Begin loading other objects
+#
+# These objects are drawn with depth checking and after the base
+# objects.
+#
+
+# Los Angeles International (LAX)
+create_helipad default 40.0 40.0 0.0 LAX y y y y y
+no_depth_test
+object_name helipad_lax
+object_map_description Helipad - Los Angeles International
+range 4000
+translation -5430 35750 0
+
+new_runway 8000.0 2720.0 45.0 0 11 100.0
+no_depth_test
+translation -5300 36480 0
+rotate 82 0 0
+
+new_runway 7000.0 3134.0 45.0 0 11 100.0
+no_depth_test
+translation -5400 36160 0
+rotate 82 0 0
+
+new_runway 8000.0 3684.0 45.0 0 11 100.0
+no_depth_test
+translation -3810 34800 0
+rotate 85 0 0
+
+new_runway 7000.0 3382.0 60.0 0 11 100.0
+no_depth_test
+translation -3880 34500 0
+rotate 85 0 0
+
+# LAX control tower
+#                 type          range length width height  walls_texture  roof_texture
+create_premodeled control_tower 6000  20     20    150     building04_tex wall01_tex
+translation -3619 35679 0
+
+# Buildings near LAX
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+create_premodeled building 4000  240    140   80      building01_tex building01_night_tex wall01_tex
+translation -2650 36900 0
+
+# Buildings near LAX
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+create_premodeled building 4000  280    180   60      building01_tex building01_night_tex wall01_tex
+translation -1710 35600 0
+
+
+# Santa Monica Municipal Airport
+new_runway 6000.0 1519.0 45.0 0 11 100.0
+no_depth_test
+translation -7580 42580 0
+rotate 37 0 0
+# Helipad
+create_helipad default 35.0 35.0 0.0 SMO y y y y y
+no_depth_test
+object_name helipad_smo
+object_map_description Helipad - Santa Monica Municipal
+range 4000
+translation -7300 42580 0
+rotate 0 0 0
+# Control tower
+#                 type          range length width height  walls_tex      roof_tex
+create_premodeled control_tower 6000  8      8     100     building01_tex wall01_tex
+translation -7520 43050 0 
+
+
+# Buildings around Santa Monica
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+create_premodeled building 4000  50     50    310     building03_tex building01_night_tex wall01_tex
+translation -7100 44885 0
+
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+create_premodeled building 4000  45     45    250     building01_tex building01_night_tex wall01_tex
+translation -4064 44748 0
+
+# UCLA hospital
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+create_premodeled building 5000  110    60    90      building02_tex building01_night_tex wall01_tex
+translation -4900 44800 0
+# Helipad at UCLA hospital's roof.
+create_helipad building 30.0 30.0 3.0 UCLA y y y y y
+#no_depth_test
+object_name helipad_ucla
+object_map_description Helipad - UCLA Hospital
+range 4000
+translation -4920 44800 93
+
+
+# Hotels near Marina Del Ray
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+#create_premodeled building 4000  50     60    50     building03_tex building01_night_tex wall01_tex
+#translation -22497 10282 0
+
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+#create_premodeled building 4000  60     90    40     building03_tex building01_night_tex wall01_tex
+#translation -21342 10470 0
+
+
+# Light houses at Palos Verdes
+#translation -5564.57 12360.91 133.84
+#translation 6552.06 10036.60 0.0
+
+
+
+# Avalon airport at Santa Catalina Island
+
+# Don't need ground.
+#create_object 6
+#contact_cylendrical 550.0 0.0 0.0
+#translation -16248 -32026 0
+#ground_elevation 1602
+
+new_runway 6500.0 987.0 35.0 0 11 100.0
+#no_depth_test
+polygon_offset
+translation -4600.53 -24885.96 1602
+rotate 48 0 0
+
+# Helipad at Catalina
+create_helipad default 30.0 30.0 3.0 Catalina y y y y y
+#no_depth_test
+object_name helipad_cat
+object_map_description Helipad - Catalina
+range 4000
+translation -4530 -24900 1602
+
