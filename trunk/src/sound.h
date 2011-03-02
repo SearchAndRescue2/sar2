@@ -27,11 +27,8 @@
 #define SND_PLAY_OPTION_MUTE		(1 << 0)
 #define SND_PLAY_OPTION_REPEATING	(1 << 1)
 
-#ifdef HAVE_SDL_MIXER
-#define SDL_H
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
-#endif
 
 /*
  *      Sound object play structure:
@@ -54,9 +51,7 @@ typedef struct {
 
 	/* Play options. */
 	snd_flags_t options;
-        #ifdef HAVE_SDL_MIXER
         Mix_Chunk *chunk;
-        #endif
 
 } snd_play_struct;
 
@@ -69,7 +64,7 @@ typedef struct {
 typedef struct {
 
 #define SNDSERV_TYPE_NONE	0
-#define SNDSERV_TYPE_Y		1
+/*#define SNDSERV_TYPE_Y		1*/
 #define SNDSERV_TYPE_SDL        2
 #define SOUND_DEFAULT           99
 

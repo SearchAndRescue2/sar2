@@ -2970,15 +2970,10 @@ to set button number"
 	{
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
 	    SARMenuSpinAddValue(menu, spin_num, "Off");
 	    SARMenuSpinAddValue(menu, spin_num, "Events");
 	    SARMenuSpinAddValue(menu, spin_num, "Events and Engine");
 	    SARMenuSpinAddValue(menu, spin_num, "Events, Engine, and Voice");
-#else
-	    SARMenuSpinAddValue(menu, spin_num, "No support");
-	    SARMenuObjectSetSensitive(display, menu, spin_num, False, False);
-#endif
 	}
 
 	/* Sound Priority Spin */
@@ -2991,14 +2986,9 @@ to set button number"
 	{
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
 	    SARMenuSpinAddValue(menu, spin_num, "Background");
 	    SARMenuSpinAddValue(menu, spin_num, "Foreground");
 	    SARMenuSpinAddValue(menu, spin_num, "Preempt");
-#else
-	    SARMenuSpinAddValue(menu, spin_num, "No support");
-	    SARMenuObjectSetSensitive(display, menu, spin_num, False, False);
-#endif
 	}
 
 	/* Music Switch */
@@ -3010,14 +3000,6 @@ to set button number"
 	    False, SAR_MENU_ID_OPT_MUSIC,
 	    SARMenuOptionsSwitchCB
 	);
-	if(switch_num > -1)
-	{
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
-
-#else
-	    SARMenuObjectSetSensitive(display, menu, switch_num, False, False);
-#endif
-	}
 
 	/* Volume Sliders */
 #ifdef __MSW__
@@ -3032,7 +3014,6 @@ to set button number"
 	);
 	if(slider_num > -1)
 	{
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
 	    SARMenuSliderSetValueBounds(
 		display, menu, slider_num,
 		0.0f, 1.0f, False
@@ -3041,12 +3022,6 @@ to set button number"
 		display, menu, slider_num,
 		0.0f, False
 	    );
-#else
-	    SARMenuObjectSetSensitive(
-		display, menu, slider_num,
-		False, False
-	    );
-#endif
 	}
 
 	/* Music Volume Slider */
@@ -3059,21 +3034,10 @@ to set button number"
 	);
 	if(slider_num > -1)
 	{
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
 	    SARMenuSliderSetValueBounds(
 		display, menu, slider_num,
 		0.0f, 1.0f, False
 	    );
-#else
-	    SARMenuSliderSetValue(
-		display, menu, slider_num,
-		0.0f, False
-	    );
-	    SARMenuObjectSetSensitive(
-		display, menu, slider_num,
-		False, False
-	    );
-#endif
 	}
 #else
 	/* UNIX Volume Sliders */
@@ -3087,7 +3051,6 @@ to set button number"
 	);
 	if(slider_num > -1)
 	{
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
 	    SARMenuSliderSetValueBounds(
 		display, menu, slider_num,
 		0.0f, 1.0f, False
@@ -3096,12 +3059,6 @@ to set button number"
 		display, menu, slider_num,
 		0.0f, False
 	    );
-#else
-	    SARMenuObjectSetSensitive(
-		display, menu, slider_num,
-		False, False
-	    );
-#endif
 	}
 
 	/* Sound Volume Slider */
@@ -3114,7 +3071,6 @@ to set button number"
 	);
 	if(slider_num > -1)
 	{
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
 	    SARMenuSliderSetValueBounds(
 		display, menu, slider_num,
 		0.0f, 1.0f, False
@@ -3123,12 +3079,6 @@ to set button number"
 		display, menu, slider_num,
 		0.0f, False
 	    );
-#else
-	    SARMenuObjectSetSensitive(
-		display, menu, slider_num,
-		False, False
-	    );
-#endif
 	}
 
 	/* Music Volume Slider */
@@ -3141,21 +3091,10 @@ to set button number"
 	);
 	if(slider_num > -1)
 	{
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
 	    SARMenuSliderSetValueBounds(
 		display, menu, slider_num,
 		0.0f, 1.0f, False
 	    );
-#else
-	    SARMenuSliderSetValue(
-		display, menu, slider_num,
-		0.0f, False
-	    );
-	    SARMenuObjectSetSensitive(
-		display, menu, slider_num,
-		False, False
-	    );
-#endif
 	}
 #endif	/* __MSW__ */
 
