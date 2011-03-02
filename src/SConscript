@@ -1,20 +1,28 @@
 env = Environment()
 
-env.Append(CFLAGS = ['-g', '-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
-'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
-'-D__USE_BSD', '-DHAVE_SDL_MIXER', '-Wno-write-strings', '-DJS_SUPPORT',
+# env.Append(CFLAGS = ['-g', '-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
+#'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
+#'-D__USE_BSD', '-DHAVE_SDL_MIXER', '-Wno-write-strings',
+#'-DUSE_XSHM', '-DHAVE_MWMUTIL_H', '-DHAVE_LIBXPM'])
+
+# env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
+# '-ffast-math', '-finline-functions', '-fexpensive-optimizations',
+# '-D__USE_BSD', '-DHAVE_SDL_MIXER', '-Wno-write-strings',
+# '-DUSE_XSHM', '-DHAVE_MWMUTIL_H', '-DHAVE_LIBXPM'])
+
+# speed up compilation
+env.Append(CPPFLAGS = ['-Wall', '-O0', '-finline-functions', 
+'-D__USE_BSD', '-DHAVE_SDL_MIXER', '-Wno-write-strings',
 '-DUSE_XSHM', '-DHAVE_MWMUTIL_H', '-DHAVE_LIBXPM'])
 
-env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
-'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
-'-D__USE_BSD', '-DHAVE_SDL_MIXER', '-Wno-write-strings', '-DJS_SUPPORT',
-'-DUSE_XSHM', '-DHAVE_MWMUTIL_H', '-DHAVE_LIBXPM'])
+
+
 # env.Append(CPPFLAGS = ['-D__cplusplus', '-Dc_plusplus'])
 # env.Append(CPPPATH = ['./include'])
 
 env.Append(LIBPATH = ['/usr/X11R6/lib/', '/usr/X11R6/lib/'])
 
-env.Append(LIBS = ['m', 'SDL', 'SDL_mixer', 'jsw', 'SM', 'ICE',
+env.Append(LIBS = ['m', 'SDL', 'SDL_mixer', 'SM', 'ICE',
 'X11','Xext','Xmu', 'Xpm', 'GL', 'GLU', 'pthread'])
 
 
