@@ -422,18 +422,51 @@ void GCtlUpdate(
                     
                     /* Hat */
                     
-                    if (axis_hat_x > -1)
+                    if ((axis_hat_x > -1) && (axis_hat_y > -1))
                     {
-                        gc->hat_x = SDL_JoystickGetAxis(
-                            gc->sdljoystick,joystick->axis_hat_x);
-                        js_def_hat_x = True;
-                    }
-                    
-                    if (axis_hat_y > -1)
-                    {
-                        gc->hat_y = SDL_JoystickGetAxis(
-                            gc->sdljoystick,joystick->axis_hat_y);
-                        js_def_hat_y = True;
+                        int pos = SDL_JoystickGetHat(gc->sdljoystick,0);
+                        switch (pos) {
+                            case SDL_HAT_CENTERED:
+                                gc->hat_y= 0.0f;
+                                gc->hat_x= 0.0f;
+                                break;
+                            case SDL_HAT_UP:
+                                gc->hat_y= 1.0f;
+                                gc->hat_x= 0.0f;
+                                break;
+                            case SDL_HAT_RIGHT:
+                                gc->hat_y= 0.0f;
+                                gc->hat_x= 1.0f;
+                                break;
+                            case SDL_HAT_DOWN:
+                                gc->hat_y= -1.0f;
+                                gc->hat_x= 0.0f;
+                                break;
+                            case SDL_HAT_LEFT:
+                                gc->hat_y= 0.0f;
+                                gc->hat_x= -1.0f;
+                                break;
+                            case SDL_HAT_RIGHTUP:
+                                gc->hat_y= 1.0f;
+                                gc->hat_x= 1.0f;
+                                break;
+                            case SDL_HAT_RIGHTDOWN:
+                                gc->hat_y= -1.0f;
+                                gc->hat_x= 1.0f;
+                                break;
+                            case SDL_HAT_LEFTUP:
+                                gc->hat_y= 1.0f;
+                                gc->hat_x= -1.0f;
+                                break;
+                            case SDL_HAT_LEFTDOWN:
+                                gc->hat_y= -1.0f;
+                                gc->hat_x= -1.0f;
+                                break;
+                            default:
+                                gc->hat_y= 0.0f;
+                                gc->hat_x= 0.0f;
+                                break;
+                        }
                     }
                     
                     
