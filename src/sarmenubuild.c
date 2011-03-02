@@ -2345,13 +2345,8 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	{
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
-#ifdef JS_SUPPORT
 	    SARMenuSpinAddValue(menu, spin_num, "Standard");
 	    SARMenuSpinAddValue(menu, spin_num, "USB");
-#else
-	    SARMenuSpinAddValue(menu, spin_num, "No support");
-	    SARMenuObjectSetSensitive(display, menu, spin_num, False, False);
-#endif  /* JS_SUPPORT */
 	}
 
 	/* First joystick (js0) axis roles */
@@ -2364,7 +2359,6 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	{
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
-#ifdef JS_SUPPORT
 	    SARMenuSpinAddValue(menu, spin_num, "Off");
 	    SARMenuSpinAddValue(menu, spin_num, "2D");
 	    SARMenuSpinAddValue(menu, spin_num, "2D with throttle");
@@ -2375,10 +2369,6 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARMenuSpinAddValue(menu, spin_num, "3D with hat");
 	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
 	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
-#else
-	    SARMenuSpinAddValue(menu, spin_num, "No support");
-	    SARMenuObjectSetSensitive(display, menu, spin_num, False, False);
-#endif	/* JS_SUPPORT */
 	}
 
 	/* Second joystick (js1) connection type */
@@ -2391,13 +2381,8 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	{
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
-#ifdef JS_SUPPORT
 	    SARMenuSpinAddValue(menu, spin_num, "Standard");
 	    SARMenuSpinAddValue(menu, spin_num, "USB");
-#else
-	    SARMenuSpinAddValue(menu, spin_num, "No support");
-	    SARMenuObjectSetSensitive(display, menu, spin_num, False, False);
-#endif  /* JS_SUPPORT */
 	}
 
 	/* Second joystick (js1) axis roles */
@@ -2410,7 +2395,6 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	{
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
-#ifdef JS_SUPPORT
 	    SARMenuSpinAddValue(menu, spin_num, "Off");
 	    SARMenuSpinAddValue(menu, spin_num, "2D");
 	    SARMenuSpinAddValue(menu, spin_num, "2D with throttle");
@@ -2421,10 +2405,7 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARMenuSpinAddValue(menu, spin_num, "3D with hat");
 	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
 	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
-#else
-	    SARMenuSpinAddValue(menu, spin_num, "No support");
-	    SARMenuObjectSetSensitive(display, menu, spin_num, False, False);
-#endif	/* JS_SUPPORT */
+
 	}
 
 	/* Joystick Priority Spin */
@@ -2437,24 +2418,15 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	{
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
-#ifdef JS_SUPPORT
 	    SARMenuSpinAddValue(menu, spin_num, "Background");
 	    SARMenuSpinAddValue(menu, spin_num, "Foreground");
 	    SARMenuSpinAddValue(menu, spin_num, "Preempt");
-#else
-	    SARMenuSpinAddValue(menu, spin_num, "No support");
-	    SARMenuObjectSetSensitive(display, menu, spin_num, False, False);
-#endif	/* JS_SUPPORT */
 	}
 
 	/* Test Joystick Button */
 	btn_num = SARMenuBuildStandardButton(
 	    core_ptr, menu, 0.75f, 0.74f, btn_width_std, btn_height_std,
-#if defined(JS_SUPPORT)
 	    True,
-#else
-	    False,
-#endif
 	    "Test...", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_TEST
 	);
 
@@ -2485,18 +2457,13 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	/* Joystick Button Mapping Button */
 	btn_num = SARMenuBuildStandardButton(
 	    core_ptr, menu, 0.75f, 0.92f, btn_width_std, btn_height_std,
-#if defined(JS_SUPPORT)
 	    True,
-#else
-	    False,
-#endif
 	    "Buttons", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JS_BTN
 	);
 
 
 	/* ****************************************************** */
 	/* Menu: Options->Controller->Buttons */
-#ifdef JS_SUPPORT
 	img_path = SARMenuBuildGetFullPath(SAR_DEF_MENU_BGIMG_STANDARD_FILE);
 	menu = SARMenuNew(
 	    SAR_MENU_TYPE_STANDARD,
@@ -2665,7 +2632,6 @@ to set button number"
 	    core_ptr, menu, 0.75f, 0.74f, btn_width_std, btn_height_std,
 	    True, "Test...", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_TEST
 	);
-#endif	/* JS_SUPPORT */
 
 	/* Back Button */
 	SARMenuBuildStandardButton(
@@ -2694,7 +2660,6 @@ to set button number"
 
 	/* ****************************************************** */
 	/* Menu: Options->Controller->Test */
-#ifdef JS_SUPPORT
 	img_path = SARMenuBuildGetFullPath(SAR_DEF_MENU_BGIMG_STANDARD_FILE);
 	menu = SARMenuNew(
 	    SAR_MENU_TYPE_STANDARD,
@@ -2744,7 +2709,6 @@ to set button number"
 #endif
 	    , SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER
 	);
-#endif  /* JS_SUPPORT */
 
 
 	/* ****************************************************** */

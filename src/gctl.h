@@ -322,10 +322,9 @@ typedef struct {
 
 	/* Each structure reffers to a joystick */
 	gctl_js_struct	*joystick;
-	int		total_joysticks;
-        /* we add a single SDL joystick here (if available). */
-        SDL_Joystick *sdljoystick;
-        int sdlnumaxes;
+    int		total_joysticks;
+    /* we add a an array for SDL joystick here. */
+    SDL_Joystick **sdljoystick;
 
 } gctl_struct;
 #define GCTL(p)		((gctl_struct *)(p))

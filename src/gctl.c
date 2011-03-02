@@ -93,25 +93,6 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 	/* Set controller(s) and option(s) */
 	gc->controllers = v->controllers;
 	gc->options = v->options;
-
-	/* Begin initializing */
-
-
-        /* Attempt to initialize the joystick subsystem. */
-        if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0)  {
-            fprintf(stderr, "Unable to initialize SDL joystick: %s\n", SDL_GetError());
-            gc->sdljoystick = NULL;
-        } else {
-            if (SDL_NumJoysticks() > 0) {
-                fprintf(stderr, "At least one SDL joystick available.\n");
-                //SDL_JoystickEventState(SDL_ENABLE);
-                gc->sdljoystick = SDL_JoystickOpen(0);
-                gc->sdlnumaxes = SDL_JoystickNumAxes(gc->sdljoystick);
-            } else {
-                fprintf(stderr, "No SDL joysticks available.\n");
-                gc->sdljoystick = NULL;
-            }
-        }
         
 	/* Initialize the joystick? */
 	if(v->controllers & GCTL_CONTROLLER_JOYSTICK)
@@ -124,10 +105,22 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 	    gc->joystick = GCTL_JS(calloc(
 		gc->total_joysticks, sizeof(gctl_js_struct)
 	    ));
+
 	    if(gc->joystick == NULL)
 	    {
 		gc->total_joysticks = 0;
 	    }
+
+            /* Attempt to initialize the joystick subsystem. */
+            if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0)  {
+                fprintf(stderr, "Unable to initialize SDL joysticks: %s\n", SDL_GetError());
+                gc->sdljoystick = NULL;
+                gc->total_joysticks = 0;
+            } else if (gc->total_joysticks > 0){
+                /* Allocate space for SDL_Joystick structure */
+                gc->sdljoystick = calloc(gc->total_joysticks, sizeof(SDL_Joystick*));
+            }
+        
 
 	    /* Iterate through each joystick */
 	    for(i = 0; i < gc->total_joysticks; i++)
@@ -137,10 +130,18 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 		 */
 		joystick = &gc->joystick[i];
 		js_value = &v->joystick[i];
+                
 
 		device = js_value->device;
 		axis_role = js_value->axis_role;
 
+                /* Enable SDL joysticks */
+                if (SDL_NumJoysticks() > i) {
+                    fprintf(stderr, "Found SDL Joystick\n");
+                    //SDL_JoystickEventState(SDL_ENABLE);
+                    gc->sdljoystick[i] = SDL_JoystickOpen(i);
+                }
+            
 
 		/* Begin setting up joystick axis mappings */
 
@@ -309,6 +310,7 @@ void GCtlUpdate(
 	float	*btn_kb_coeff;
 	time_t	*btn_kb_last;
 	float	btn_kb_decell_coeff;
+        SDL_Joystick *sdljoystick;
 
 	if(gc == NULL)
 	    return;
@@ -327,12 +329,12 @@ void GCtlUpdate(
 	   (gc->joystick != NULL)
 	)
 	{
-            
+            SDL_JoystickUpdate();
 	    /* Iterate through each joystick */
 	    for(i = 0; i < gc->total_joysticks; i++)
 	    {
 		joystick = &gc->joystick[i];
-                
+                sdljoystick = gc->sdljoystick[i];
 		/* Update defined joystick operations for this joystick.
 		 * This is to tabulate a list of functions that were
 		 * handled/controlled by any of the joystick(s) so the
@@ -394,37 +396,36 @@ void GCtlUpdate(
                 
                 /* SDL joystick */
                 
-                if (gc->sdljoystick) {
+                if (sdljoystick) {
                     // So we've got an SDL joystick structure.
                     // For now, we treat
                     //  Axis 0: -ve bank left, +ve bank right
                     //  Axis 1: -ve pitch nose down, +ve pitch nose up
                     //  Axis 2: -ve throttle 0%, +ve throttle 100%
-                    SDL_JoystickUpdate();
 
                     /* Heading */
                     if((axis_heading > -1) &&
                        !gc->axis_kb_state)
-                        gc->heading = ((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_heading) / 32768.0);
+                        gc->heading = ((float)SDL_JoystickGetAxis(sdljoystick, axis_heading) / 32768.0);
                     
                     if((axis_bank > -1) &&
                        !gc->axis_kb_state)
-                        gc->bank = ((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_bank) / 32768.0);
+                        gc->bank = ((float)SDL_JoystickGetAxis(sdljoystick, axis_bank) / 32768.0);
                     
                     /* Pitch */
                     if((axis_pitch > -1) &&
                        !gc->axis_kb_state)
-                        gc->pitch = - ((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_pitch) / 32768.0);
+                        gc->pitch = - ((float)SDL_JoystickGetAxis(sdljoystick, axis_pitch) / 32768.0);
 
                     if((axis_throttle > -1) &&
                        !gc->axis_kb_state)
-                        gc->throttle = 1.0 - (((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_throttle) + 32768.0) / 65536.0);
+                        gc->throttle = 1.0 - (((float)SDL_JoystickGetAxis(sdljoystick, axis_throttle) + 32768.0) / 65536.0);
                     
                     /* Hat */
                     
                     if ((axis_hat_x > -1) && (axis_hat_y > -1))
                     {
-                        int pos = SDL_JoystickGetHat(gc->sdljoystick,0);
+                        int pos = SDL_JoystickGetHat(sdljoystick,0);
                         switch (pos) {
                             case SDL_HAT_CENTERED:
                                 gc->hat_y= 0.0f;
@@ -475,29 +476,34 @@ void GCtlUpdate(
                     
                     
                     /* Zoom */
-                  
+                    if (!gc->button_kb_state){
                     gc->zoom_in_state = SDL_JoystickGetButton(
-                        gc->sdljoystick,
+                        sdljoystick,
                         joystick->button_zoom_in) ? True : False;
                     gc->zoom_in_coeff = (float)((gc->zoom_in_state) ? 1.0 : 0.0);
-                    
-                    gc->zoom_out_state = SDL_JoystickGetButton(
-                        gc->sdljoystick,
-                        joystick->button_zoom_out) ? True : False;
-                    gc->zoom_out_coeff = (float)((gc->zoom_out_state) ? 1.0 : 0.0);
-                    
+                    }
+
+                    if (!gc->button_kb_state){
+                        gc->zoom_out_state = SDL_JoystickGetButton(
+                            sdljoystick,
+                            joystick->button_zoom_out) ? True : False;
+                        gc->zoom_out_coeff = (float)((gc->zoom_out_state) ? 1.0 : 0.0);
+                    }
+
                     /*Hoist*/
+                    if (!gc->button_kb_state){                    
+                        gc->hoist_up_state = SDL_JoystickGetButton(
+                            sdljoystick,
+                            joystick->button_hoist_up) ? True : False;
+                        gc->hoist_up_coeff = (float)((gc->hoist_up_state) ? 1.0 : 0.0);
+                    }
                     
-                    gc->hoist_up_state = SDL_JoystickGetButton(
-                        gc->sdljoystick,
-                        joystick->button_hoist_up) ? True : False;
-                    gc->hoist_up_coeff = (float)((gc->hoist_up_state) ? 1.0 : 0.0);
-                    
-                    gc->hoist_down_state = SDL_JoystickGetButton(
-                        gc->sdljoystick,
-                        joystick->button_hoist_down) ? True : False;
-                    gc->hoist_down_coeff = (float)((gc->hoist_down_state) ? 1.0 : 0.0);
-                    
+                    if (!gc->button_kb_state){
+                        gc->hoist_down_state = SDL_JoystickGetButton(
+                            sdljoystick,
+                            joystick->button_hoist_down) ? True : False;
+                        gc->hoist_down_coeff = (float)((gc->hoist_down_state) ? 1.0 : 0.0);
+                    }
                     /* Update ctrl modifier state (for switching
                      * bank axis to act as heading axis), but update
                      * this modifier only if the button mapped to it
@@ -505,36 +511,37 @@ void GCtlUpdate(
                      */
                     if((joystick->button_rotate > -1) &&
                        !gc->button_kb_state)
-                        gc->ctrl_state = (SDL_JoystickGetButton(gc->sdljoystick, joystick->button_rotate)) ? True : False;
+                        gc->ctrl_state = (SDL_JoystickGetButton(sdljoystick, joystick->button_rotate)) ? True : False;
                     
                     /* Air brakes */
-                    
-                    if ( SDL_JoystickGetButton(
-                             gc->sdljoystick,
-                             joystick->button_air_brakes)){
-                        gc->air_brakes_state = gc->air_brakes_state ? False : True;
-                        gc->air_brakes_coeff = gc->air_brakes_state ? 1.0f : 0.0f;
-                    }
-                    
+                    if (!gc->button_kb_state){
+                        if ( SDL_JoystickGetButton(
+                                 sdljoystick,
+                                 joystick->button_air_brakes)){
+                            gc->air_brakes_state = gc->air_brakes_state ? False : True;
+                            gc->air_brakes_coeff = gc->air_brakes_state ? 1.0f : 0.0f;
+                        }
+                    }     
                     /* Wheel brakes */
-                    gc->wheel_brakes_state = SDL_JoystickGetButton(
-                        gc->sdljoystick,
-                        joystick->button_wheel_brakes) ? True : False;
-                    gc->wheel_brakes_coeff = gc->wheel_brakes_state ? 1.0f : 0.0f;
-                    
-                    if (gc->wheel_brakes_state)
-                    {
-                        if (gc->shift_state)
-                            gc->wheel_brakes_state = 2;
+                    if (!gc->button_kb_state){
+                        gc->wheel_brakes_state = SDL_JoystickGetButton(
+                            sdljoystick,
+                            joystick->button_wheel_brakes) ? True : False;
+                        gc->wheel_brakes_coeff = gc->wheel_brakes_state ? 1.0f : 0.0f;
+                        
+                        if (gc->wheel_brakes_state)
+                        {
+                            if (gc->shift_state)
+                                gc->wheel_brakes_state = 2;
+                            else
+                                gc->wheel_brakes_state = 1;
+                        }
                         else
-                            gc->wheel_brakes_state = 1;
+                        {
+                            if (gc->wheel_brakes_state != 2)
+                                gc->wheel_brakes_state = 0;
+                        }
                     }
-                    else
-                    {
-                        if (gc->wheel_brakes_state != 2)
-                            gc->wheel_brakes_state = 0;
-                    }
-                    
                 }
                 
                 

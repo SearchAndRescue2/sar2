@@ -8,9 +8,6 @@
 #else
 # include <unistd.h>
 #endif
-#ifdef JS_SUPPORT
-# include <jsw.h>
-#endif
 #ifdef HAVE_Y2
 # include <Y2/Y.h>
 # include <Y2/Ylib.h>
@@ -46,12 +43,11 @@ static void SARMenuOptionsSaveMessageBox(
 );
 static void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr);
 static void SARMenuOptionsJoystickButtonsRemap(sar_core_struct *core_ptr);
-#ifdef JS_SUPPORT
 static int SARGetJSButtonFromButtonRoleSpin(
 	sar_core_struct *core_ptr,
 	sar_menu_spin_struct *spin, int id
 );
-#endif	/* JS_SUPPORT */
+
 void SARMenuOptionsJoystickTestDrawCB(
 	void *dpy,		/* Display */
 	void *menu,		/* Menu */
@@ -307,7 +303,6 @@ static void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr)
 
 	opt = &core_ptr->option;
 
-#ifdef JS_SUPPORT
 	/* Set up game controllers mask.
 	 *
 	 * Start off game controllers mask with just keyboard and pointer.
@@ -327,24 +322,6 @@ static void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr)
 	GWSetInputBusy(core_ptr->display);
 	SARInitGCTL(core_ptr);		/* Realize changes */
 	GWSetInputReady(core_ptr->display);
-#else   /* JS_SUPPORT */
-	/* Print warning about no joystick support */
-	GWOutputMessage(
-	    core_ptr->display, GWOutputMessageTypeError,
-	    "No Joystick Support Available",
-"There is no joystick support available.",
-"This program was not compiled with joystick support and/or\n\
-joystick support was not enabled on your operating system."
-	);
-
-	/* Reinitialize game controler back to keyboard and pointer since
-	 * joystick support is not compiled.
-	 */
-	opt->gctl_controllers = GCTL_CONTROLLER_KEYBOARD |
-	    GCTL_CONTROLLER_POINTER;
-	SARInitGCTL(core_ptr);
-
-#endif  /* !JS_SUPPORT */
 }
 
 /*
@@ -369,7 +346,6 @@ static void SARMenuOptionsJoystickButtonsRemap(sar_core_struct *core_ptr)
 
 	opt = &core_ptr->option;
 
-#ifdef JS_SUPPORT
 	/* Joystick controller defined as one of the game controllers? */
 	if(gc->controllers & GCTL_CONTROLLER_JOYSTICK)
 	{
@@ -412,11 +388,9 @@ static void SARMenuOptionsJoystickButtonsRemap(sar_core_struct *core_ptr)
 	    }
 
 	}
-#endif  /* !JS_SUPPORT */
 }
 
 
-#ifdef JS_SUPPORT
 /*
  *	Returns the current joystick button mapping for the given
  *	joystick action spin's current value.
@@ -517,7 +491,6 @@ static int SARGetJSButtonFromButtonRoleSpin(
 
 	return(val);
 }
-#endif	/* JS_SUPPORT */
 
 
 /*
@@ -557,12 +530,10 @@ void SARMenuOptionsJoystickTestDrawCB(
 0x7e, 0xfc, 0x7e, 0xfc, 0x7e, 0xfc, 0x3e, 0xf8, 0x1f, 0xf0, 0x03, 0x80
 };
 	/* Button icon bitmap 15x15 */
-#ifdef JSW_H
 	const u_int8_t btn_bm[] = { 0x00, 0x00, 0x1f, 0xf0, 0x30, 0x18,
 0x67, 0xcc, 0x4f, 0xe4, 0x5f, 0xf4, 0x5f, 0xf4, 0x5f, 0xf4, 0x5f, 0xf4,
 0x5f, 0xf4, 0x4f, 0xe4, 0x67, 0xcc, 0x30, 0x18, 0x1f, 0xf0, 0x00, 0x00
 };
-#endif
 
 	if((display == NULL) || (mdpy == NULL) || (core_ptr == NULL))
 	    return;
@@ -769,10 +740,10 @@ void SARMenuOptionsJoystickTestDrawCB(
 	    y = 0;
 
 	    /* Buttons pressed on joystick */
-
-	    if(gc->total_joysticks > 0)
+            js_num = 0;
+	    if(gc->total_joysticks > js_num)
 	    {
-                SDL_Joystick *sdljoystick = gc->sdljoystick;
+                SDL_Joystick *sdljoystick = gc->sdljoystick[js_num];
                 int button = -1;
 
 		glColor3f(0.0f, 1.0f, 0.0f);
@@ -785,8 +756,58 @@ void SARMenuOptionsJoystickTestDrawCB(
 		glColor3f(1.0f, 1.0f, 0.0f);
 
 		/* This joystick initialized? */
-		if (sdljoystick == NULL && SDL_NumJoysticks()){
-                    sdljoystick = SDL_JoystickOpen(0);
+		if (sdljoystick == NULL && SDL_NumJoysticks() > js_num){
+                    sdljoystick = SDL_JoystickOpen(js_num);
+                    gc->sdljoystick[js_num] = sdljoystick;
+                }
+		if (sdljoystick != NULL){
+		    int i;
+                    
+		    /* Look for a currently pressed button */
+		    for(i = 0; i < SDL_JoystickNumButtons(sdljoystick); i++)
+		    {
+			if(SDL_JoystickGetButton(sdljoystick,i))
+			{
+			    button = i;
+			    break;
+			}
+		    }
+		}
+		/* Was a button pressed? */
+		if(button > -1)
+		{
+		    char s[80];
+		    sprintf(s, "%i", button + 1);
+		    DRAW_STRING(
+			x + x_offset,
+			(15 / 2) - (fh / 2) + y + y_offset,
+			s
+		    );
+		    x += fw * (STRLEN(s) + 1);
+		}
+		y += 15 + 5;
+
+	    }
+
+            js_num = 1;
+	    if(gc->total_joysticks > js_num)
+	    {
+                SDL_Joystick *sdljoystick = gc->sdljoystick[js_num];
+                int button = -1;
+
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glRasterPos2i(
+		    x + x_offset + x_min,
+		    height - (15 + y + y_offset + y_min)
+		);
+		glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, btn_bm);
+		x += 15 + 5;
+		glColor3f(1.0f, 1.0f, 0.0f);
+
+		/* This joystick initialized? */
+		if (sdljoystick == NULL && SDL_NumJoysticks() > js_num){
+                    sdljoystick = SDL_JoystickOpen(js_num);
+                    gc->sdljoystick[js_num] = sdljoystick;
                 }
 		if (sdljoystick != NULL){
 		    int i;
@@ -818,27 +839,25 @@ void SARMenuOptionsJoystickTestDrawCB(
 	    }
 
 
-#ifdef JSW_H
 	    /* Joystick names, axises, and buttons */
 	    x = 0;
 	    y += 5;
 	    for(js_num = 0; js_num < gc->total_joysticks; js_num++)
 	    {
-		gctl_js_struct *gc_js = &gc->joystick[js_num];
-		js_data_struct *jsd = (js_data_struct *)gc_js->data;
-		if(jsd != NULL)
+                SDL_Joystick *sdljoystick = gc->sdljoystick[js_num];
+		if(sdljoystick != NULL)
 		{
-		    const char *s;
+		    const char* s;
 		    char ns[40];
 
 		    /* Joystick name */
-		    s = jsd->name;
-		    if(s != NULL)
-		    {
-			glColor3f(1.0f, 1.0f, 0.0f);
-			DRAW_STRING(x + x_offset, y + y_offset, s);
-			y += fh + 2;
-		    }
+	
+                    sprintf(ns, "SDL Joystick #%i", js_num);
+                    s = ns;
+                    glColor3f(1.0f, 1.0f, 0.0f);
+                    DRAW_STRING(x + x_offset, y + y_offset, s);
+                    y += fh + 2;
+	       
 
 		    /* Axises */
 		    s = "Axises: ";
@@ -846,7 +865,7 @@ void SARMenuOptionsJoystickTestDrawCB(
 		    DRAW_STRING(x + x_offset, y + y_offset, s);
 		    x += STRLEN(s) * fw;
 
-		    sprintf(ns, "%i", jsd->total_axises);
+		    sprintf(ns, "%i", SDL_JoystickNumAxes(sdljoystick));
 		    s = ns;
 		    glColor3f(1.0f, 1.0f, 0.0f);
 		    DRAW_STRING(x + x_offset, y + y_offset, s);
@@ -858,7 +877,7 @@ void SARMenuOptionsJoystickTestDrawCB(
 		    DRAW_STRING(x + x_offset, y + y_offset, s);
 		    x += STRLEN(s) * fw;
 
-		    sprintf(ns, "%i", jsd->total_buttons);
+		    sprintf(ns, "%i", SDL_JoystickNumButtons(sdljoystick));
 		    s = ns;
 		    glColor3f(1.0f, 1.0f, 0.0f);
 		    DRAW_STRING(x + x_offset, y + y_offset, s);
@@ -870,7 +889,6 @@ void SARMenuOptionsJoystickTestDrawCB(
 		y += 5;
 	    }
 
-#endif  /* JSW_H */
 
 
 	}
@@ -1739,7 +1757,6 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	    }
 	}
 
-#ifdef JS_SUPPORT
 	/* Menu: Options->Controller */
 	i = SARMatchMenuByName(core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER);
 	m = ((i < 0) ? NULL : core_ptr->menu[i]);
@@ -1898,9 +1915,7 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 		}
 	    }
 	}
-#endif	/* JS_SUPPORT */
 
-#ifdef JS_SUPPORT
 	/* Menu: Options->Controller->Buttons */
 	i = SARMatchMenuByName(
 	    core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_BTN
@@ -1945,7 +1960,6 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 		    spin->cur_value = 0;
 	    }
 	}
-#endif	/* JS_SUPPORT */
 
 	/* Menu: Options->Graphics */
 	i = SARMatchMenuByName(core_ptr, SAR_MENU_NAME_OPTIONS_GRAPHICS);
@@ -2594,7 +2608,7 @@ void SARMenuOptionsSpinCB(
 	    break;
 
 	  case SAR_MENU_ID_OPT_JS0_BUTTON_ACTION:
-#ifdef JS_SUPPORT
+
 	    if(True)
 	    {
 		int on;
@@ -2614,11 +2628,9 @@ void SARMenuOptionsSpinCB(
 		    );
 		}
 	    }
-#endif	/* JS_SUPPORT */
 	    break;
 
 	  case SAR_MENU_ID_OPT_JS0_BUTTON_NUMBER:
-#ifdef JS_SUPPORT
 	    if(True)
 	    {
 		sar_option_struct *opt = &core_ptr->option;
@@ -2663,7 +2675,6 @@ void SARMenuOptionsSpinCB(
 		    }
 		}
 	    }
-#endif  /* JS_SUPPORT */
 	    /* Update joystick button mappings from global options
 	     * values to the gctl structure on the core structure.
 	     * No reinitialization will take place.
@@ -2672,7 +2683,6 @@ void SARMenuOptionsSpinCB(
 	    break;
 
 	  case SAR_MENU_ID_OPT_JS1_BUTTON_ACTION:
-#ifdef JS_SUPPORT
 	    if(True)
 	    {
 		int on;
@@ -2692,11 +2702,9 @@ void SARMenuOptionsSpinCB(
 		    );
 		}
 	    }
-#endif  /* JS_SUPPORT */
 	    break;
 
 	  case SAR_MENU_ID_OPT_JS1_BUTTON_NUMBER:
-#ifdef JS_SUPPORT
 	    if(True)
 	    {
 		sar_option_struct *opt = &core_ptr->option;
@@ -2741,7 +2749,6 @@ void SARMenuOptionsSpinCB(
 		    }
 		}
 	    }
-#endif  /* JS_SUPPORT */
 	    /* Update joystick button mappings from global options
 	     * values to the gctl structure on the core structure.
 	     * No reinitialization will take place.

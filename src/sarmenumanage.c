@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef JS_SUPPORT
-# include <jsw.h>
-#endif
 
 #include "../include/string.h"
 
@@ -20,16 +17,13 @@
 #define SAR_MENU_MANAGE_PROTOTYPE	\
 	sar_core_struct *core_ptr, sar_menu_struct *menu
 
-#ifdef JS_SUPPORT
 static void SARMenuManageOptionsControllerJSButtons(
         SAR_MENU_MANAGE_PROTOTYPE
 );
-#endif
-#ifdef JS_SUPPORT
+
 static void SARMenuManageOptionsControllerTest(
         SAR_MENU_MANAGE_PROTOTYPE
 );
-#endif
 
 void SARMenuManage(
         sar_core_struct *core_ptr, sar_menu_struct *menu
@@ -46,7 +40,6 @@ void SARMenuManage(
 #define CLIP(a,l,h)     (MIN(MAX((a),(l)),(h)))
 
 
-#ifdef JS_SUPPORT
 /*
  *	Manages menu Options->Controller->Buttons
  */
@@ -82,25 +75,26 @@ static void SARMenuManageOptionsControllerJSButtons(
 	jsnum = 0;
 	if((js0_btn_num_spin != NULL) && (gc->total_joysticks > jsnum))
 	{
-#ifdef JSW_H
-            gctl_js_struct *gc_js = &gc->joystick[jsnum];
-	    js_data_struct *jsd = (js_data_struct *)gc_js->data;
-	    int i, button = -1;
+            SDL_Joystick *sdljoystick = gc->sdljoystick[0];
+            int i,button = -1;
 	    sar_menu_spin_struct *spin = js0_btn_num_spin;
 
 	    /* This joystick initialized? */
-	    if((jsd != NULL) ? JSIsInit(jsd) : False)
-	    {
-		/* Look for a currently pressed button. */
-		for(i = 0; i < jsd->total_buttons; i++)
-		{
-		    if(JSGetButtonState(jsd, i) == JSButtonStateOn)
-		    {
-			button = i;
-			break;
-		    }
-		}
-	    }
+            if (sdljoystick == NULL && SDL_NumJoysticks()){
+                sdljoystick = SDL_JoystickOpen(jsnum);
+            }
+            if (sdljoystick != NULL){
+
+                /* Look for a currently pressed button. */
+                for(i = 0; i < SDL_JoystickNumButtons(sdljoystick); i++)
+                {
+                    if(SDL_JoystickGetButton(sdljoystick,i))
+                    {
+                        button = i;
+                        break;
+                    }
+                }
+            }
 	
 	    /* Was a button pressed? */
 	    if(button > -1)
@@ -116,53 +110,50 @@ static void SARMenuManageOptionsControllerJSButtons(
 			i, True
 		    );
             }
-#endif	/* JSW_H */
 	}
 
         /* Joystick #1. */
 	jsnum = 1;
         if((js1_btn_num_spin != NULL) && (gc->total_joysticks > jsnum))
         {
-#ifdef JSW_H
-            gctl_js_struct *gc_js = &gc->joystick[jsnum];
-            js_data_struct *jsd = (js_data_struct *)gc_js->data;
-            int i, button = -1;
-            sar_menu_spin_struct *spin = js1_btn_num_spin;
+            SDL_Joystick *sdljoystick = gc->sdljoystick[1];
+            int i,button = -1;
+	    sar_menu_spin_struct *spin = js0_btn_num_spin;
 
-            /* This joystick initialized? */
-            if((jsd != NULL) ? JSIsInit(jsd) : False)
-            {
-		/* Look for a currently pressed button. */
-                for(i = 0; i < jsd->total_buttons; i++)
+	    /* This joystick initialized? */
+            if (sdljoystick == NULL && SDL_NumJoysticks()){
+                sdljoystick = SDL_JoystickOpen(jsnum);
+            }
+            if (sdljoystick != NULL){
+
+                /* Look for a currently pressed button. */
+                for(i = 0; i < SDL_JoystickNumButtons(sdljoystick); i++)
                 {
-                    if(JSGetButtonState(jsd, i) == JSButtonStateOn)
+                    if(SDL_JoystickGetButton(sdljoystick,i))
                     {
                         button = i;
                         break;
                     }
                 }
             }
-
-            /* Was a button pressed? */
-            if(button > -1)
-            {
-                /* Spin button values start at index 1 so button 0
-                 * is spin value index 1.
-                 */
-                i = button + 1;
-                /* Change in value? */
-                if(spin->cur_value != i)
-                    SARMenuSpinSelectValueIndex(
-                        display, menu, js1_btn_num_spin_num,
-                        i, True
-                    );
+	
+	    /* Was a button pressed? */
+	    if(button > -1)
+	    {
+		/* Spin button values start at index 1 so button 0
+		 * is spin value index 1.
+		 */
+		i = button + 1;
+		/* Change in value? */
+		if(spin->cur_value != i)
+		    SARMenuSpinSelectValueIndex(
+			display, menu, js1_btn_num_spin_num,
+			i, True
+		    );
             }
-#endif	/* JSW_H */
 	}
 }
-#endif	/* JS_SUPPORT */
 
-#ifdef JS_SUPPORT
 /*
  *      Manages menu Options->Controller->Test
  */
@@ -196,7 +187,6 @@ static void SARMenuManageOptionsControllerTest(
 	SARMenuDrawObject(display, menu, i);
 	GWSwapBuffer(display);
 }
-#endif  /* JS_SUPPORT */
 
 
 /*
@@ -217,12 +207,10 @@ void SARMenuManage(
 	if(name != NULL)
 	{
 #define SAR_MENU_MANAGE_INPUT	core_ptr, menu
-#ifdef JS_SUPPORT
 	    if(!strcasecmp(name, SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_BTN))
 		SARMenuManageOptionsControllerJSButtons(SAR_MENU_MANAGE_INPUT);
 	    else if(!strcasecmp(name, SAR_MENU_NAME_OPTIONS_CONTROLLER_TEST))
 		SARMenuManageOptionsControllerTest(SAR_MENU_MANAGE_INPUT);
-#endif	/* JS_SUPPORT */
 #undef SAR_MENU_MANAGE_INPUT
 	}
 
