@@ -2125,12 +2125,7 @@ that was detected is 0 bits in size.\n"
 	    void *window;
             int type = SNDSERV_TYPE_NONE; // use this as default
 
-            #ifdef Y_H
-            type = SNDSERV_TYPE_Y;
-            #endif
-            #ifdef SDL_H
             type = SNDSERV_TYPE_SDL;    // hopefully we use this
-            #endif
 
 	    GWContextGet(
 		dpy, GWContextCurrent(dpy),
@@ -2159,22 +2154,6 @@ if the Sound Server is currently running.\n"
 		opt->voice_sounds = False;
 		opt->music = False;
 	    }
-            #ifdef Y_H
-	    else
-	    {
-		/* Change Y audio mode */
-	        SoundChangeMode(
-		    core_ptr->recorder, core_ptr->audio_mode_name
-		);
-
-		/* Update recorder address */
-		if(sound_server_connect_arg != NULL)
-		{
-		    free(core_ptr->recorder_address);
-		    core_ptr->recorder_address = STRDUP(sound_server_connect_arg);
-		}
-	    }
-            #endif
 	}
 
 

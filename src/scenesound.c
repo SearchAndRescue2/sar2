@@ -81,11 +81,8 @@ void SARSceneSoundUpdate(
 		void *window;
                 int type;
 
-                #ifdef Y_H
-                type = SNDSERV_TYPE_Y;
-                #else
                 type = SNDSERV_TYPE_SDL;
-                #endif
+
 		GWContextGet(
 		    display, GWContextCurrent(display),
 		    &window, NULL,

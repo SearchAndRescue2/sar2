@@ -8,10 +8,6 @@
 #else
 # include <unistd.h>
 #endif
-#ifdef HAVE_Y2
-# include <Y2/Y.h>
-# include <Y2/Ylib.h>
-#endif
 
 #include "../include/string.h"
 #include "../include/fio.h"
@@ -1463,56 +1459,7 @@ void SARMenuOptionsSoundInfoRefresh(sar_core_struct *core_ptr)
 	mesg = strcatalloc(mesg, "Sound Output: <bold>");
 	if(recorder != NULL)
 	{
-#ifdef HAVE_Y2
-	    YEventServerStats stat_buf;
-	    char s[256];
-	    if(!YGetServerStats(
-		(YConnection *)recorder->con, &stat_buf
-	    ))
-	    {
-		sprintf(
-		    s, "Y2 Version %i.%i",
-		    stat_buf.protocol_version_major,
-		    stat_buf.protocol_version_minor
-		);
-		mesg = strcatalloc(mesg, s);
-	    }
-#endif
-#ifdef HAVE_SDL_MIXER
           mesg = strcatalloc(mesg, "SDL Mixer");
-#endif
-#ifdef HAVE_ESD
-	    mesg = strcatalloc(mesg, "ESounD");
-#endif
-	}
-	else
-	{
-	    mesg = strcatalloc(mesg, "*Off*");
-	}
-	mesg = strcatalloc(mesg, "<default>\n");
-
-	/* Music Output */
-	mesg = strcatalloc(mesg, "Music Output: <bold>");
-	if((recorder != NULL) && opt->music)
-	{
-#ifdef HAVE_Y2
-	    YEventServerStats stat_buf;
-	    char s[256];
-	    if(!YGetServerStats(
-		(YConnection *)recorder->con, &stat_buf
-	    ))
-	    {
-		sprintf(
-		    s, "Y2 Version %i.%i",
-		    stat_buf.protocol_version_major,
-		    stat_buf.protocol_version_minor
-		);
-		mesg = strcatalloc(mesg, s);
-	    }
-#endif
-#ifdef HAVE_ESD
-	    mesg = strcatalloc(mesg, "ESounD");
-#endif
 	}
 	else
 	{
@@ -1530,15 +1477,7 @@ void SARMenuOptionsSoundInfoRefresh(sar_core_struct *core_ptr)
 
 	/* Sound Support */
 	mesg = strcatalloc(mesg, "Sound Support:<bold>");
-#ifdef HAVE_Y2
-	mesg = strcatalloc(mesg, " Y2");
-#endif
-#ifdef HAVE_SDL_MIXER
         mesg = strcatalloc(mesg, " SDL");
-#endif
-#ifdef HAVE_ESD
-	mesg = strcatalloc(mesg, " ESounD");
-#endif
 	mesg = strcatalloc(mesg, "<default>\n");
 
 
@@ -2900,18 +2839,6 @@ to connect to it. To start in most cases run `starty'."	\
 		SND_OFF_AS_NEEDED
 		break;
 	    }
-#if defined(HAVE_Y2) || defined(HAVE_SDL_MIXER)
-
-#else
-	    /* Print warning about no sound support */
-	    GWOutputMessage(
-		display, GWOutputMessageTypeWarning,
-		"Sound Support Not Available",
-"There is no sound support available.",
-"This program was not compiled with sound support and/or\n\
-sound support was not enabled on your operating system."
-	    );
-#endif
 	    break;
 
 	  case SAR_MENU_ID_OPT_SOUND_PRIORITY:
