@@ -1,13 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
-//#define SDLJS
-#ifdef SDLJS
 #include <SDL/SDL.h>
-#endif
-#ifdef JS_SUPPORT
-# include <jsw.h>
-#endif
 #include "gw.h"		/* Need to know about GW key codes */
 #include "gctl.h"
 
@@ -75,9 +69,7 @@ char *GCtlGetError(void)
 gctl_struct *GCtlNew(gctl_values_struct *v)
 {
 	int i;
-#if defined(JSW_H)
-        int status = 0;
-#endif
+
 	gctl_js_struct *joystick;
 	gctl_values_js_struct *js_value;
 	gctl_struct *gc = GCTL(calloc(1, sizeof(gctl_struct)));
@@ -104,24 +96,23 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 
 	/* Begin initializing */
 
- #ifdef SDLJS
-   /* Attempt to initialize the joystick subsystem. */
-   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0)  {
-     fprintf(stderr, "Unable to initialize SDL joystick: %s\n", SDL_GetError());
-     gc->sdljoystick = NULL;
-   } else {
-     if (SDL_NumJoysticks() > 0) {
-       fprintf(stderr, "At least one SDL joystick available.\n");
-       //SDL_JoystickEventState(SDL_ENABLE);
-       gc->sdljoystick = SDL_JoystickOpen(0);
-       gc->sdlnumaxes = SDL_JoystickNumAxes(gc->sdljoystick);
-     } else {
-       fprintf(stderr, "No SDL joysticks available.\n");
-       gc->sdljoystick = NULL;
-     }
-   }
- #endif
 
+        /* Attempt to initialize the joystick subsystem. */
+        if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0)  {
+            fprintf(stderr, "Unable to initialize SDL joystick: %s\n", SDL_GetError());
+            gc->sdljoystick = NULL;
+        } else {
+            if (SDL_NumJoysticks() > 0) {
+                fprintf(stderr, "At least one SDL joystick available.\n");
+                //SDL_JoystickEventState(SDL_ENABLE);
+                gc->sdljoystick = SDL_JoystickOpen(0);
+                gc->sdlnumaxes = SDL_JoystickNumAxes(gc->sdljoystick);
+            } else {
+                fprintf(stderr, "No SDL joysticks available.\n");
+                gc->sdljoystick = NULL;
+            }
+        }
+        
 	/* Initialize the joystick? */
 	if(v->controllers & GCTL_CONTROLLER_JOYSTICK)
 	{
@@ -150,95 +141,6 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 		device = js_value->device;
 		axis_role = js_value->axis_role;
 
-#if defined(JSW_H)
-		if(!STRISEMPTY(device))
-		{
-		    js_data_struct *jsd;
-
-		    /* Allocate libjsw joystick data */
-		    joystick->data = jsd = (js_data_struct *)calloc(
-			1, sizeof(js_data_struct)
-		    );
-		    if(jsd != NULL)
-		    {
-			/* Initialize libjsw joystick */
-			int jsstatus = JSInit(
-			    jsd,		/* Joystick Data */
-			    device,		/* Device */
-			    NULL,		/* Alternate calibration file */
-			    JSFlagNonBlocking	/* Options */
-			);
-			if(jsstatus != JSSuccess)
-			{
-			    /* Failed to initialize joystick */
-
-			    /* Try to close and delete the libjsw
-			     * joystick data
-			     */
-			    JSClose(jsd);
-			    free(jsd);
-			    joystick->data = jsd = NULL;
-
-			    /* Set error status and message */
-			    status = -1;
-			    switch(jsstatus)
-			    {
-			      case JSError:
-				last_gctl_error =
-"Error encountered while attempting to initialize joystick";
-				break;
-			      case JSBadValue:
-				last_gctl_error =
-"Bad value encountered while attempting to initialize joystick";
-			        break;
-			      case JSNoAccess:
-				last_gctl_error =
-"Joystick does not exist or insufficient permission to access it";
-				break;
-			      case JSNoBuffers:
-				last_gctl_error =
-"Memory allocation error";
-				break;
-			      default:
-				last_gctl_error =
-"libjsw reported an unknown error while initlaizing joystick";
-				break;
-			    }
-			}
-			else
-			{
-			    /* Initialized joystick successfully */
-#if defined(__MSW__)
-			    /* Windows version of libjsw requires that
-			     * we set the cooperation level with respect
-			     * to the toplevel window
-			     */
-			    switch(js_value->priority)
-			    {
-			      case GCTL_JS_PRIORITY_PREEMPT:
-				JSSetCooperativeLevelWin32(jsd, 2, js_value->window);
-				break;
-			      case GCTL_JS_PRIORITY_FOREGROUND:
-				JSSetCooperativeLevelWin32(jsd, 1, js_value->window);
-				break;
-			      default:	/* GCTL_JS_PRIORITY_BACKGROUND */
-				JSSetCooperativeLevelWin32(jsd, 0, js_value->window);
-				break;
-			    }
-#endif	/* __MSW__ */
-			}
-		    }
-		    else
-		    {
-			last_gctl_error = "Memory allocation error";
-			status = -1;
-		    }
-		}
-#else
-		last_gctl_error =
-"Unable to initialize joystick(s): Joystick support not compiled";
-#endif
-
 
 		/* Begin setting up joystick axis mappings */
 
@@ -250,7 +152,7 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 		joystick->axis_hat_x = -1;
 		joystick->axis_hat_y = -1;
 
-		/* Throttle and rudder unit? */
+                /* Throttle and rudder unit? */
 		if(axis_role & GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER)
 		{
 		    joystick->axis_heading = 0;
@@ -414,53 +316,23 @@ void GCtlUpdate(
 	/* Get game controllers and general options flags */
 	controllers = gc->controllers;
 	options = gc->options;
-
+        
 	/* Get timings */
 	gc_last_updated_ms = gc->last_updated;
 	dms = (time_t)MAX(cur_ms - gc_last_updated_ms, 0);
-
-       /* SDL joystick? */
- #ifdef SDLJS
-       if (gc->sdljoystick) {
-         // So we've got an SDL joystick structure.
-         // For now, we treat
-         //  Axis 0: -ve bank left, +ve bank right
-         //  Axis 1: -ve pitch nose down, +ve pitch nose up
-         //  Axis 2: -ve throttle 0%, +ve throttle 100%
-         SDL_JoystickUpdate();
-         if (gc->sdlnumaxes >= 1) {
-           // Bank.
-           gc->bank = ((float)SDL_JoystickGetAxis(gc->sdljoystick, 0) / 32768.0);
-           js_def_bank = True;
-         }
-         if (gc->sdlnumaxes >= 2) {
-           // Pitch.
-           gc->pitch = - ((float)SDL_JoystickGetAxis(gc->sdljoystick, 1) / 32768.0);
-           js_def_pitch = True;
-         }
-         if (gc->sdlnumaxes >= 3) {
-           // Throttle.
-           gc->throttle = (((float)SDL_JoystickGetAxis(gc->sdljoystick, 2) + 32768.0) / 65536.0);
-         }
-       }
- #endif
-
-
+        
 
 	/* Check if joystick updating is needed and allowed */
 	if((controllers & GCTL_CONTROLLER_JOYSTICK) &&
 	   (gc->joystick != NULL)
 	)
 	{
-#ifdef JSW_H
-	    js_data_struct *jsd;
-#endif  /* JSW_H */
-
+            
 	    /* Iterate through each joystick */
 	    for(i = 0; i < gc->total_joysticks; i++)
 	    {
 		joystick = &gc->joystick[i];
-
+                
 		/* Update defined joystick operations for this joystick.
 		 * This is to tabulate a list of functions that were
 		 * handled/controlled by any of the joystick(s) so the
@@ -496,393 +368,149 @@ void GCtlUpdate(
 		    js_def_air_brakes = True;
 		if(joystick->button_wheel_brakes > -1)
 		    js_def_wheel_brakes = True;
+                
+                /* Begin handling joystick */
 
+                int axis_heading = joystick->axis_heading,
+                    axis_bank = joystick->axis_bank,
+                    axis_pitch = joystick->axis_pitch,
+                    axis_throttle = joystick->axis_throttle,
+                    axis_hat_x = joystick->axis_hat_x,
+                    axis_hat_y = joystick->axis_hat_y;
+                
+                
+                /* Check bank to heading modifier */
+                if((joystick->button_rotate > -1) &&
+                   gc->ctrl_state
+                    )
+                {
+                    /* Bank axis becomes the heading axis */
+                    if(axis_bank > -1)
+                    {
+                        axis_heading = axis_bank;
+                        axis_bank = -1;
+                    }
+                }
+                
+                /* SDL joystick */
+                
+                if (gc->sdljoystick) {
+                    // So we've got an SDL joystick structure.
+                    // For now, we treat
+                    //  Axis 0: -ve bank left, +ve bank right
+                    //  Axis 1: -ve pitch nose down, +ve pitch nose up
+                    //  Axis 2: -ve throttle 0%, +ve throttle 100%
+                    SDL_JoystickUpdate();
 
-		/* Begin handling joystick */
-#if defined(JSW_H)
-		jsd = (js_data_struct *)joystick->data;
-		if(jsd != NULL)
-		{
-		    int status;
-		    int axis_num, button_num;
-		    int	axis_heading = joystick->axis_heading,
-			axis_bank = joystick->axis_bank,
-			axis_pitch = joystick->axis_pitch,
-			axis_throttle = joystick->axis_throttle,
-			axis_hat_x = joystick->axis_hat_x,
-			axis_hat_y = joystick->axis_hat_y;
-		    js_axis_struct *axis_ptr;
-		    js_button_struct *button_ptr;
+                    /* Heading */
+                    if((axis_heading > -1) &&
+                       !gc->axis_kb_state)
+                        gc->heading = ((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_heading) / 32768.0);
+                    
+                    if((axis_bank > -1) &&
+                       !gc->axis_kb_state)
+                        gc->bank = ((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_bank) / 32768.0);
+                    
+                    /* Pitch */
+                    if((axis_pitch > -1) &&
+                       !gc->axis_kb_state)
+                        gc->pitch = - ((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_pitch) / 32768.0);
 
-/* Is hat value x centered at center y (both in raw units)? */
-#define HAT_IS_CEN_RAW(v,c)	((v) == (c))
-/* Is hat center at coefficient 0.0? */
-#define HAT_IS_CEN_COEFF(v)	((v) == 0.0f)
-
-/* Calculates the coefficient of the current time (c) minus the previous (l) time
- * divided by delta time (d). If (d) is not positive then 0.0 is returned.
- */
-#define DELTA_TIME_TO_COEFF(c,l,d)	(((d) > 0) ? \
-	(float)CLIP((float)((c) - (l)) / (float)(d), 0.0, 1.0) : 0.0 \
-)
-
-		    /* Check bank to heading modifier */
-		    if((joystick->button_rotate > -1) &&
-		       gc->ctrl_state
-		    )
-		    {
-			/* Bank axis becomes the heading axis */
-			if(axis_bank > -1)
-			{
-			    axis_heading = axis_bank;
-			    axis_bank = -1;
-			}
-		    }
-
-		    /* Get next event from joystick if any */
-		    status = JSUpdate(jsd);
-		    if(status == JSGotEvent)
-		    {
-			/* Got event, begin fetching values for each axis,
-			 * any axis number that is -1 will be ignored
-			 */
-			/* Heading */
-			if((axis_heading > -1) &&
-			   !gc->axis_kb_state
-			)
-			    gc->heading = (float)((heading_has_nz) ?
-						  (JSGetAxisCoeffNZ(jsd, axis_heading)*2000000/7800) -1 :
-						  (JSGetAxisCoeff(jsd, axis_heading)*2000000/7800) -1
-			    );
-			//printf("Heading: %f\n", gc->heading);
-			/* Bank */
-			if((axis_bank > -1) &&
-			   !gc->axis_kb_state
-			)
-			    gc->bank = (float)((bank_has_nz) ?
-					       (JSGetAxisCoeffNZ(jsd, axis_bank)*2000000/7800) -1 :
-					       (JSGetAxisCoeff(jsd, axis_bank)*2000000/7800) -1
-			    );
-			
-			//printf("Bank: %f\n", gc->bank);
-			/* Pitch */
-			if((axis_pitch > -1) &&
-			   !gc->axis_kb_state
-			)
-			    gc->pitch = (float)((pitch_has_nz) ?
-						(-JSGetAxisCoeffNZ(jsd, axis_pitch)*2000000/7800) + 1 :
-						(-JSGetAxisCoeff(jsd, axis_pitch)*2000000/7800) + 1			    
-			    );
-			//printf("Pitch: %f\n", gc->pitch);
-			
-			/* Throttle */
-			if((axis_throttle > -1) &&
-			   !gc->axis_kb_state
-			)
-			{
-			    gc->throttle = (float)(
-				1 - ((JSGetAxisCoeff(jsd, axis_throttle)*1000000 / 4000) / 2) 
-			    );
-//!!!!!!!!!!!!!!!
-			    //printf("Throttle: %f\n", gc->throttle);
-			    if(gc->throttle > 1.0f)
-				gc->throttle = 1.0f;
-			    else if(gc->throttle < 0.0f)
-				gc->throttle = 0.0f;
-			}
-			/* Hat x */
-			if((axis_hat_x > -1) &&
-			   !gc->axis_kb_state
-			)
-			{
-			    axis_num = axis_hat_x;
-			    if(JSIsAxisAllocated(jsd, axis_num))
-			    {
-			    	axis_ptr = jsd->axis[axis_num];
-				gc->hat_x = (float)JSGetAxisCoeff(jsd, axis_num)*1000000/30.518509;
-				//printf("Hat_x: %f\n", gc->hat_x);
-			    }								
-			    /* if(JSIsAxisAllocated(jsd, axis_num)) */
-			    /* { */
-			    /* 	axis_ptr = jsd->axis[axis_num]; */
-			    /* 	if(HAT_IS_CEN_RAW(axis_ptr->cur, axis_ptr->cen) && */
-			    /* 	   !HAT_IS_CEN_RAW(axis_ptr->prev, axis_ptr->cen) && */
-			    /* 	   HAT_IS_CEN_COEFF(gc->hat_x) */
-			    /* 	) */
-			    /* 	{ */
-			    /* 	    /\* Pressed and released during busy loop *\/ */
-			    /* 	    gc->hat_x = (float)DELTA_TIME_TO_COEFF( */
-			    /* 		axis_ptr->time, axis_ptr->last_time, dms */
-			    /* 	    ) * (float)( */
-			    /* 		(axis_ptr->prev > axis_ptr->cen) ? 1.0 : -1.0 */
-			    /* 	    ); */
-			    /* 	    if(axis_ptr->flags & JSAxisFlagFlipped) */
-			    /* 		gc->hat_x *= -1.0f; */
-			    /* 	} */
-			    /* 	else */
-			    /* 	{ */
-			    /* 	    gc->hat_x = (float)JSGetAxisCoeffNZ(jsd, axis_num); */
-			    /* 	} */
-			    /*} */
-
-			}
-
-			/* Hat y */
-			if((axis_hat_y > -1) &&
-			   !gc->axis_kb_state
-			)
-			{
-			    axis_num = axis_hat_y;
-			    if(JSIsAxisAllocated(jsd, axis_num))
-			    {
-			    	axis_ptr = jsd->axis[axis_num];
-				gc->hat_y=-JSGetAxisCoeff(jsd,axis_num)*1000000/30.518509;
-				//printf("Hat_y: %f\n", gc->hat_y);				
-			    }
-			    /* if(JSIsAxisAllocated(jsd, axis_num)) */
-			    /* { */
-			    /* 	axis_ptr = jsd->axis[axis_num]; */
-
-			    /* 	if(HAT_IS_CEN_RAW(axis_ptr->cur, axis_ptr->cen) && */
-			    /* 	   !HAT_IS_CEN_RAW(axis_ptr->prev, axis_ptr->cen) && */
-			    /* 	   HAT_IS_CEN_COEFF(gc->hat_y) */
-			    /* 	) */
-			    /* 	{ */
-			    /* 	    /\* Pressed and released during busy loop *\/ */
-			    /* 	    gc->hat_y = (float)DELTA_TIME_TO_COEFF( */
-			    /* 		axis_ptr->time, axis_ptr->last_time, dms */
-			    /* 	    ) * (float)( */
-			    /* 		(axis_ptr->prev > axis_ptr->cen) ? 1.0 : -1.0 */
-			    /* 	    ); */
-			    /* 	    if(axis_ptr->flags & JSAxisFlagFlipped) */
-			    /* 		gc->hat_y *= -1.0f; */
-			    /* 	} */
-			    /* 	else */
-			    /* 	{ */
-			    /* 	    gc->hat_y = (float)JSGetAxisCoeffNZ(jsd, axis_num); */
-
-			    /* 	} */
-			    /* } */
-
-			}
-
-			/* Begin handling buttons */
-
-			/* Zoom in button state and coefficient */
-			button_num = joystick->button_zoom_in;
-			if(JSIsButtonAllocated(jsd, button_num) &&
-			   !gc->button_kb_state)
-			{
-			    button_ptr = jsd->button[button_num];
-
-			    if((button_ptr->changed_state == JSButtonChangedStateOnToOff) &&
-			       !gc->zoom_in_state
-			    )
-			    {
-				/* Pressed and released during busy loop */
-				gc->zoom_in_coeff = (float)DELTA_TIME_TO_COEFF(
-				    button_ptr->time, button_ptr->last_time, dms
-				);
-				gc->zoom_in_state = (button_ptr->state) ? True : False;
-			    }
-			    else
-			    {
-				gc->zoom_in_state = (button_ptr->state) ? True : False;
-				gc->zoom_in_coeff = (float)((button_ptr->state) ? 1.0 : 0.0);
-			    }
-			}
-			/* Zoom out button state and coefficient */
-			button_num = joystick->button_zoom_out;
-			if(JSIsButtonAllocated(jsd, button_num) &&
-			   !gc->button_kb_state
-			)
-			{
-			    button_ptr = jsd->button[button_num];
-
-			    if((button_ptr->changed_state == JSButtonChangedStateOnToOff) &&
-			       !gc->zoom_out_state
-			    )
-			    {
-				/* Pressed and released during busy loop */
-				gc->zoom_out_coeff = (float)DELTA_TIME_TO_COEFF(
-				    button_ptr->time, button_ptr->last_time, dms
-				);
-				gc->zoom_out_state = (button_ptr->state) ? True : False;
-			    }
-			    else
-			    {
-				gc->zoom_out_state = (button_ptr->state) ? True : False;
-				gc->zoom_out_coeff = (float)((button_ptr->state) ? 1.0 : 0.0);
-			    }
-			}
-			/* Hoist up button state and coefficient */
-			button_num = joystick->button_hoist_up;
-			if(JSIsButtonAllocated(jsd, button_num) &&
-			   !gc->button_kb_state
-			)
-			{
-			    button_ptr = jsd->button[button_num];
-
-			    if((button_ptr->changed_state == JSButtonChangedStateOnToOff) &&
-			       !gc->hoist_up_state
-			    )
-			    {
-				/* Pressed and released during busy loop */
-				gc->hoist_up_coeff = (float)DELTA_TIME_TO_COEFF(
-				    button_ptr->time, button_ptr->last_time, dms
-				);
-				gc->hoist_up_state = (button_ptr->state) ? True : False;
-			    }
-			    else
-			    {
-				gc->hoist_up_state = (button_ptr->state) ? True : False;
-				gc->hoist_up_coeff = (float)((button_ptr->state) ? 1.0 : 0.0);
-			    }
-			}
-			/* Hoist down button state and coefficient */
-			button_num = joystick->button_hoist_down;
-			if(JSIsButtonAllocated(jsd, button_num) &&
-			   !gc->button_kb_state
-			)
-			{
-			    button_ptr = jsd->button[button_num];
-
-			    if((button_ptr->changed_state == JSButtonChangedStateOnToOff) &&
-			       !gc->hoist_down_state
-			    )
-			    {
-				/* Pressed and released during busy loop */
-				gc->hoist_down_coeff = (float)DELTA_TIME_TO_COEFF(
-				    button_ptr->time, button_ptr->last_time, dms
-				);
-				gc->hoist_down_state = (button_ptr->state) ? True : False;
-			    }
-			    else
-			    {
-				gc->hoist_down_state = (button_ptr->state) ? True : False;
-				gc->hoist_down_coeff = (float)((button_ptr->state) ? 1.0 : 0.0);
-			    }
-			}
-
-			/* Update ctrl modifier state (for switching
-			 * bank axis to act as heading axis), but update
-			 * this modifier only if the button mapped to it
-			 * has been defined
-			 */
-			if((joystick->button_rotate > -1) &&
-			   !gc->button_kb_state
-			)
-			    gc->ctrl_state = (JSGetButtonState(
-				jsd, joystick->button_rotate
-			    )) ? True : False;
-
-			/* Air brakes */
-			button_num = joystick->button_air_brakes;
-			if(JSIsButtonAllocated(jsd, button_num) &&
-			   !gc->button_kb_state
-			)
-			{
-			    button_ptr = jsd->button[button_num];
-
-			    /* Air brakes (unlike wheel brakes) are toggled
-			     * on and off
-			     */
-			    if(button_ptr->changed_state == JSButtonChangedStateOffToOn)
-			    {
-				if(gc->air_brakes_state)
-				{
-				    gc->air_brakes_state = False;
-				    gc->air_brakes_coeff = 0.0f;
-				}
-				else
-				{
-				    gc->air_brakes_state = True;
-				    gc->air_brakes_coeff = 1.0f;
-				}
-			    }
-			}
-
-			/* Wheel brakes */
-			button_num = joystick->button_wheel_brakes;
-			if(JSIsButtonAllocated(jsd, button_num) &&
-			   !gc->button_kb_state
-			)
-			{
-			    button_ptr = jsd->button[button_num];
-
-			    if((button_ptr->changed_state == JSButtonChangedStateOnToOff) &&
-			       !gc->wheel_brakes_state
-			    )
-			    {
-				/* Pressed and released during busy loop */
-				gc->wheel_brakes_coeff = (float)DELTA_TIME_TO_COEFF(
-				    button_ptr->time, button_ptr->last_time, dms
-				);
-				/* Wheel brakes state updated below */
-			    }
-			    else
-			    {
-				/* Wheel brakes state updated below */
-				gc->wheel_brakes_coeff = (float)((button_ptr->state) ? 1.0 : 0.0);
-			    }
-			}
-			if(gc->wheel_brakes_coeff > 0.0f)
-		        {
-		            if(gc->shift_state)
-			        gc->wheel_brakes_state = 2;	/* Parking brakes */
-		            else
-			        gc->wheel_brakes_state = 1;	/* Brakes */
-		        }
-		        else
-		        {
-		            if(gc->wheel_brakes_state != 2)
-			        gc->wheel_brakes_state = 0;	/* Off */
-		        }
-		    }
-		    else
-		    {
-		        /* No events to report, reset some place holding
-			 * variables
-			 */
-
-		        /* Reset hat values (this is needed) */
-			axis_num = axis_hat_x;
-			if(JSIsAxisAllocated(jsd, axis_num) &&
-			   !gc->axis_kb_state
-			)
-			{
-			    axis_ptr = jsd->axis[axis_num];
-
-			    if(HAT_IS_CEN_RAW(axis_ptr->cur, axis_ptr->cen) &&
-			       (gc->hat_x != 0.0f)
-			    )
-				gc->hat_x = 0.0f;
-			}
-			axis_num = axis_hat_y;
-			if(JSIsAxisAllocated(jsd, axis_num) &&
-			   !gc->axis_kb_state
-			)
-			{
-			    axis_ptr = jsd->axis[axis_num];
-
-			    if(HAT_IS_CEN_RAW(axis_ptr->cur, axis_ptr->cen) &&
-			       (gc->hat_y != 0.0f)
-			    )
-				gc->hat_y = 0.0f;
-			}
-		    }
-		}	/* libjsw data structure allocated? */
-
-#undef HAT_IS_CEN_RAW
-#undef HAT_IS_CEN_COEFF
-#undef DELTA_TIME_TO_COEFF
-
-#endif	/* JSW_H */
-
+                    if((axis_throttle > -1) &&
+                       !gc->axis_kb_state)
+                        gc->throttle = 1.0 - (((float)SDL_JoystickGetAxis(gc->sdljoystick, axis_throttle) + 32768.0) / 65536.0);
+                    
+                    /* Hat */
+                    
+                    if (axis_hat_x > -1)
+                    {
+                        gc->hat_x = SDL_JoystickGetAxis(
+                            gc->sdljoystick,joystick->axis_hat_x);
+                        js_def_hat_x = True;
+                    }
+                    
+                    if (axis_hat_y > -1)
+                    {
+                        gc->hat_y = SDL_JoystickGetAxis(
+                            gc->sdljoystick,joystick->axis_hat_y);
+                        js_def_hat_y = True;
+                    }
+                    
+                    
+                    /* Handle buttons */
+                    
+                    
+                    
+                    /* Zoom */
+                  
+                    gc->zoom_in_state = SDL_JoystickGetButton(
+                        gc->sdljoystick,
+                        joystick->button_zoom_in) ? True : False;
+                    gc->zoom_in_coeff = (float)((gc->zoom_in_state) ? 1.0 : 0.0);
+                    
+                    gc->zoom_out_state = SDL_JoystickGetButton(
+                        gc->sdljoystick,
+                        joystick->button_zoom_out) ? True : False;
+                    gc->zoom_out_coeff = (float)((gc->zoom_out_state) ? 1.0 : 0.0);
+                    
+                    /*Hoist*/
+                    
+                    gc->hoist_up_state = SDL_JoystickGetButton(
+                        gc->sdljoystick,
+                        joystick->button_hoist_up) ? True : False;
+                    gc->hoist_up_coeff = (float)((gc->hoist_up_state) ? 1.0 : 0.0);
+                    
+                    gc->hoist_down_state = SDL_JoystickGetButton(
+                        gc->sdljoystick,
+                        joystick->button_hoist_down) ? True : False;
+                    gc->hoist_down_coeff = (float)((gc->hoist_down_state) ? 1.0 : 0.0);
+                    
+                    /* Update ctrl modifier state (for switching
+                     * bank axis to act as heading axis), but update
+                     * this modifier only if the button mapped to it
+                     * has been defined
+                     */
+                    if((joystick->button_rotate > -1) &&
+                       !gc->button_kb_state)
+                        gc->ctrl_state = (SDL_JoystickGetButton(gc->sdljoystick, joystick->button_rotate)) ? True : False;
+                    
+                    /* Air brakes */
+                    
+                    if ( SDL_JoystickGetButton(
+                             gc->sdljoystick,
+                             joystick->button_air_brakes)){
+                        gc->air_brakes_state = gc->air_brakes_state ? False : True;
+                        gc->air_brakes_coeff = gc->air_brakes_state ? 1.0f : 0.0f;
+                    }
+                    
+                    /* Wheel brakes */
+                    gc->wheel_brakes_state = SDL_JoystickGetButton(
+                        gc->sdljoystick,
+                        joystick->button_wheel_brakes) ? True : False;
+                    gc->wheel_brakes_coeff = gc->wheel_brakes_state ? 1.0f : 0.0f;
+                    
+                    if (gc->wheel_brakes_state)
+                    {
+                        if (gc->shift_state)
+                            gc->wheel_brakes_state = 2;
+                        else
+                            gc->wheel_brakes_state = 1;
+                    }
+                    else
+                    {
+                        if (gc->wheel_brakes_state != 2)
+                            gc->wheel_brakes_state = 0;
+                    }
+                    
+                }
+                
+                
+                
+                
 	    }	/* Iterate through each joystick */
 	}	/* Check if joystick updating is needed and allowed */
-
-
+        
+        
 	/* Check if keyboard updating is needed and allowed
 	 *
 	 * Handle keyboard only if pointer or joystick are not present
@@ -1404,9 +1032,6 @@ void GCtlDelete(gctl_struct *gc)
 {
 	int i;
 	gctl_js_struct *joystick;
-#if defined(JSW_H)
-        js_data_struct *jsd;
-#endif  /* JSW_H */
 
 	last_gctl_error = NULL;
 
@@ -1422,28 +1047,7 @@ void GCtlDelete(gctl_struct *gc)
 		joystick = &gc->joystick[i];
 
 		/* Begin shutting down this joystick */
-#if defined(JSW_H)
-		/* Using libjsw, get pointer to libjsw joystick data handle */
-		jsd = (js_data_struct *)joystick->data;
-		if(jsd != NULL)
-		{
-		    /* Close and then delete the jsd */
-		    JSClose(jsd);
-		    free(jsd);
-		    joystick->data = jsd = NULL;
-		}
-#else
-		/* No joystick support compiled
-		 *
-		 * Check if Joystick Data is not NULL, if so then print
-		 * warning
-		 */
-		if(joystick->data != NULL)
-		    fprintf(
-			stderr,
-"GCtlDelete(): Unable to shutdown joystick: Joystick support not compiled"
-		    );
-#endif	/* JSW_H */
+
 	    }
 
 	    /* Delete joysticks */
