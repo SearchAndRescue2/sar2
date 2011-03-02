@@ -768,14 +768,12 @@ void SARMenuOptionsJoystickTestDrawCB(
 	    x = 0;
 	    y = 0;
 
-	    /* Buttons pressed on joystick #1 */
-	    js_num = 0;
-	    if(gc->total_joysticks > js_num)
+	    /* Buttons pressed on joystick */
+
+	    if(gc->total_joysticks > 0)
 	    {
-#ifdef JSW_H
-		gctl_js_struct *gc_js = &gc->joystick[js_num];
-		js_data_struct *jsd = (js_data_struct *)gc_js->data;
-		int button = -1;
+                SDL_Joystick *sdljoystick = gc->sdljoystick;
+                int button = -1;
 
 		glColor3f(0.0f, 1.0f, 0.0f);
 		glRasterPos2i(
@@ -787,14 +785,16 @@ void SARMenuOptionsJoystickTestDrawCB(
 		glColor3f(1.0f, 1.0f, 0.0f);
 
 		/* This joystick initialized? */
-		if((jsd != NULL) ? JSIsInit(jsd) : False)
-		{
+		if (sdljoystick == NULL && SDL_NumJoysticks()){
+                    sdljoystick = SDL_JoystickOpen(0);
+                }
+		if (sdljoystick != NULL){
 		    int i;
-
+                    
 		    /* Look for a currently pressed button */
-		    for(i = 0; i < jsd->total_buttons; i++)
+		    for(i = 0; i < SDL_JoystickNumButtons(sdljoystick); i++)
 		    {
-			if(JSGetButtonState(jsd, i) == JSButtonStateOn)
+			if(SDL_JoystickGetButton(sdljoystick,i))
 			{
 			    button = i;
 			    break;
@@ -814,58 +814,9 @@ void SARMenuOptionsJoystickTestDrawCB(
 		    x += fw * (STRLEN(s) + 1);
 		}
 		y += 15 + 5;
-#endif	/* JSW_H */
+
 	    }
 
-	    /* Buttons pressed on joystick #2 */
-	    x = 0;
-	    js_num = 1;
-	    if(gc->total_joysticks > js_num)
-	    {
-#ifdef JSW_H
-		gctl_js_struct *gc_js = &gc->joystick[js_num];
-		js_data_struct *jsd = (js_data_struct *)gc_js->data;
-		int button = -1;
-
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glRasterPos2i(
-		    x + x_offset + x_min,
-		    height - (15 + y + y_offset + y_min)
-		);
-		glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, btn_bm);
-		x += 15 + 5;
-		glColor3f(1.0f, 1.0f, 0.0f);
-
-		/* This joystick initialized? */
-		if((jsd != NULL) ? JSIsInit(jsd) : False)
-		{
-		    int i;
-
-		    /* Look for a currently pressed button */
-		    for(i = 0; i < jsd->total_buttons; i++)
-		    {
-			if(JSGetButtonState(jsd, i) == JSButtonStateOn)
-			{
-			    button = i;
-			    break;
-			}
-		    }
-		}
-		/* Was a button pressed? */
-		if(button > -1)
-		{
-		    char s[80];
-		    sprintf(s, "%i", button + 1);
-		    DRAW_STRING(
-			x + x_offset,
-			(15 / 2) - (fh / 2) + y + y_offset,
-			s
-		    );
-		    x += fw * (STRLEN(s) + 1);
-		}
-		y += 15 + 5;
-#endif  /* JSW_H */
-	    }
 
 #ifdef JSW_H
 	    /* Joystick names, axises, and buttons */
