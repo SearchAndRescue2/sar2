@@ -357,18 +357,7 @@ int SAROptionsLoadFromFile(
 		double vf[1];
 		FGetValuesF(fp, vf, 1);
 		opt->gctl_controllers = (gctl_controllers)vf[0];
-#ifndef JS_SUPPORT
-		if(opt->gctl_controllers & GCTL_CONTROLLER_JOYSTICK)
-		{
-		    fprintf(
-			stderr,
-"%s: Warning: Joystick support not compiled, GameControllers was set to joystick.\n",
-			filename
-		    );
-		    /* Explicitly disable joystick */
-		    opt->gctl_controllers &= ~GCTL_CONTROLLER_JOYSTICK;
-		}
-#endif	/* !JS_SUPPORT */
+
 	    }
 	    /* JoystickPriority */
 	    else if(!strcasecmp(buf, "JoystickPriority"))
