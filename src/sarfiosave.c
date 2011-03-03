@@ -992,7 +992,20 @@ static int SARParmSaveToFileAnyIterate(
             parms_saved++;
 #undef PARM_TYPE
         }
-
+        /* Welcome message. */
+        else if (type == SAR_PARM_WELCOME_MESSAGE)
+        {
+#define PARM_TYPE      const sar_parm_welcome_message_struct
+            PARM_TYPE *pv = (PARM_TYPE *)p;
+            if (pv->message != NULL)
+            {
+                fprintf(fp, "set_welcome_message %s", pv->message);
+                fputc('\n',fp);
+            }
+            parms_saved++;
+#undef PARM_TYPE
+        }
+            
 
 	return(parms_saved);
 }

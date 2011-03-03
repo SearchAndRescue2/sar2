@@ -231,9 +231,12 @@ void *SARParmNew(int type)
           case SAR_PARM_HUMAN_MESSAGE_ENTER:
             len = sizeof(sar_parm_human_message_enter_struct);
             break;
-          case SAR_PARM_HUMAN_REFERENCE:
-            len = sizeof(sar_parm_human_reference_struct);
-            break;
+            case SAR_PARM_HUMAN_REFERENCE:
+                len = sizeof(sar_parm_human_reference_struct);
+                break;
+            case SAR_PARM_WELCOME_MESSAGE:
+                len = sizeof(sar_parm_welcome_message_struct);
+                break;
 
 /* Add support for other parm structure types here */
 

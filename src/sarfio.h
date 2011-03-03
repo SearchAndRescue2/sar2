@@ -84,6 +84,7 @@
 #define SAR_PARM_RUNWAY_APPROACH_LIGHTING_SOUTH	151
 #define SAR_PARM_HUMAN_MESSAGE_ENTER	180
 #define SAR_PARM_HUMAN_REFERENCE	181
+#define SAR_PARM_WELCOME_MESSAGE        182
 
 
 /*
@@ -652,6 +653,12 @@ typedef struct {
 
 } sar_parm_human_reference_struct;
 
+typedef struct {
+    int type;
+    char *message;
+
+
+} sar_parm_welcome_message_struct;
 
 /* In sarfio.c */
 extern void *SARParmNew(int type);
