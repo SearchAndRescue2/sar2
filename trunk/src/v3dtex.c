@@ -92,12 +92,12 @@ void V3DTextureDestroy(v3d_texture_ref_struct *t);
   glTexParameteri(					\
   GL_TEXTURE_2D,					\
   GL_TEXTURE_MAG_FILTER,				\
-  GL_NEAREST						\
+  GL_LINEAR						\
  );							\
  glTexParameteri(					\
   GL_TEXTURE_2D,					\
   GL_TEXTURE_MIN_FILTER,				\
-  GL_NEAREST						\
+  GL_LINEAR_MIPMAP_LINEAR                               \
  );							\
 }
 
@@ -600,14 +600,12 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2D(
 	    {
 	      case V3D_TEX_FORMAT_RGB:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_RGB,		/* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,                  /* Border */
-		    GL_RGB,		/* Image data format */
+      		    GL_RGB,		/* Image data format */
 		    GL_UNSIGNED_BYTE,   /* Image data type */
 		    /* Pointer to image data */
 		    (GLubyte *)(ptr8 + (cur_width * cur_width * i * 3))
@@ -616,13 +614,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2D(
 
 	      case V3D_TEX_FORMAT_RGBA:
 		ptr32 = (u_int32_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,	/* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,			/* Level */
 		    GL_RGBA,		/* Internal format */
 		    cur_width, 		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,			/* Border */
 		    GL_RGBA,		/* Image data format */
 		    GL_UNSIGNED_BYTE,	/* Image data type */
 		    /* Pointer to image data */
@@ -632,13 +628,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2D(
 
 	      case V3D_TEX_FORMAT_LUMINANCE:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_LUMINANCE8,	/* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,                  /* Border */
 		    GL_LUMINANCE,	/* Image data format */
 		    GL_UNSIGNED_BYTE,	/* Image data type */
 		    /* Pointer to image data */
@@ -648,13 +642,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2D(
 
 	      case V3D_TEX_FORMAT_LUMINANCE_ALPHA:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,	/* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,			/* Level */
 		    GL_LUMINANCE8_ALPHA8,	/* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,			/* Border */
 		    GL_LUMINANCE_ALPHA,	/* Image data format */
 		    GL_UNSIGNED_BYTE,	/* Image data type */
 		    /* Pointer to image data */
@@ -930,13 +922,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2DPreempt(
 	    {
 	      case V3D_TEX_FORMAT_RGB:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_RGB,             /* Internal format */
 		    cur_width,          /* Width */
 		    cur_width,          /* Height (same as width) */
-		    0,                  /* Border */
 		    GL_RGB,             /* Image data format */
 		    GL_UNSIGNED_BYTE,   /* Image data type */
 		    /* Pointer to image data */
@@ -946,13 +936,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2DPreempt(
 
 	      case V3D_TEX_FORMAT_RGBA:
 		ptr32 = (u_int32_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_RGBA,            /* Internal format */
 		    cur_width,          /* Width */
 		    cur_width,          /* Height (same as width) */
-		    0,                  /* Border */
 		    GL_RGBA,            /* Image data format */
 		    GL_UNSIGNED_BYTE,   /* Image data type */
 		    /* Pointer to image data */
@@ -962,13 +950,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2DPreempt(
 
 	      case V3D_TEX_FORMAT_LUMINANCE:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_LUMINANCE8,      /* Internal format */
 		    cur_width,          /* Width */
 		    cur_width,          /* Height (same as width) */
-		    0,                  /* Border */
 		    GL_LUMINANCE,       /* Image data format */
 		    GL_UNSIGNED_BYTE,   /* Image data type */
 		    /* Pointer to image data */
@@ -978,13 +964,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2DPreempt(
 
 	      case V3D_TEX_FORMAT_LUMINANCE_ALPHA:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,	/* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,			/* Level */
 		    GL_LUMINANCE8_ALPHA8,	/* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,			/* Border */
 		    GL_LUMINANCE_ALPHA,	/* Image data format */
 		    GL_UNSIGNED_BYTE,	/* Image data type */
 		    /* Pointer to image data */
@@ -1348,13 +1332,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromData2D(
 	    {
 	      case V3D_TEX_FORMAT_RGB:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_RGB,             /* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,                  /* Border */
 		    GL_RGB,             /* Image data format */
 		    GL_UNSIGNED_BYTE,   /* Image data type */
 		    /* Pointer to image data */
@@ -1364,13 +1346,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromData2D(
 
 	      case V3D_TEX_FORMAT_RGBA:
 		ptr32 = (u_int32_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_RGBA,            /* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,                  /* Border */
 		    GL_RGBA,            /* Image data format */
 		    GL_UNSIGNED_BYTE,   /* Image data type */   
 		    /* Pointer to image data */
@@ -1380,13 +1360,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromData2D(
 
 	      case V3D_TEX_FORMAT_LUMINANCE:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,      /* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,                  /* Level */
 		    GL_LUMINANCE8,      /* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,                  /* Border */
 		    GL_LUMINANCE,       /* Image data format */
 		    GL_UNSIGNED_BYTE,   /* Image data type */
 		    /* Pointer to image data */
@@ -1396,13 +1374,11 @@ v3d_texture_ref_struct *V3DTextureLoadFromData2D(
 
 	      case V3D_TEX_FORMAT_LUMINANCE_ALPHA:
 		ptr8 = (u_int8_t *)cur_data_ptr;
-		glTexImage2D(
+		gluBuild2DMipmaps(
 		    GL_TEXTURE_2D,	/* GL_TEXTURE_2D or GL_PROXY_TEXTURE_2D */
-		    0,			/* Level */
 		    GL_LUMINANCE8_ALPHA8,	/* Internal format */
 		    cur_width,		/* Width */
 		    cur_width,		/* Height (same as width) */
-		    0,			/* Border */
 		    GL_LUMINANCE_ALPHA,	/* Image data format */
 		    GL_UNSIGNED_BYTE,	/* Image data type */
 		    /* Pointer to image data */
