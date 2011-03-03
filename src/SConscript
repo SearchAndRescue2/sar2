@@ -6,10 +6,9 @@ env = Environment()
 # '-DUSE_XSHM', '-DHAVE_LIBXPM'])
 
 # speed up compilation
-env.Append(CPPFLAGS = ['-Wall', '-O0', '-finline-functions', 
+env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
 '-D__USE_BSD', '-Wno-write-strings',
 '-DUSE_XSHM', '-DHAVE_LIBXPM'])
-
 
 
 # env.Append(CPPFLAGS = ['-D__cplusplus', '-Dc_plusplus'])
