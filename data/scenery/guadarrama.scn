@@ -1,6 +1,8 @@
 # SAR Scene: Sierra de Guadarrama (Madrid)
 #
 name Guadarrama
+set_welcome_message Notice: scenery images are property of \
+(C)INSTITUTO GEOGRAFICO NACIONAL OF SPAIN (2009)
 
 # Planet units	dms_x_offset	dms_y_offset	planet_radius_meters
 scene_gps	-3.56		40.51		6371000.0
