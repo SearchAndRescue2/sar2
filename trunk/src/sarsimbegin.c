@@ -280,9 +280,12 @@ int SARSimBeginMission(
 	/* Hide pointer cursor */
 	GWHideCursor(display);
 
+        /* Show welcome message */
+        SARMessageAdd(core_ptr->scene,core_ptr->scene->welcome_message);
+
 	free(cb_data);
 
-	return(0);
+   	return(0);
 }
 
 /*
@@ -446,7 +449,7 @@ int SARSimBeginFreeFlight(
 		}
 	    }
 
-	    /* Update message text color and hud color based on the
+    	    /* Update message text color and hud color based on the
 	     * initial time of day set on the scene
 	     */
 	    SARSetGlobalTextColorBrightness(
@@ -484,6 +487,9 @@ int SARSimBeginFreeFlight(
 
 	/* Hide pointer cursor */
 	GWHideCursor(display);
+
+        /* Show scene welcome message */
+        SARMessageAdd(core_ptr->scene,core_ptr->scene->welcome_message);
 
 	free(cb_data);
 

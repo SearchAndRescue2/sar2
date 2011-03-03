@@ -1819,6 +1819,21 @@ static int SARParmLoadFromFileIterate(
             DO_ADD_PARM
 	}
 
+        else if (!strcasecmp(parm_str, "set_welcome_message") &&
+                 FILTER_CHECK(SAR_PARM_WELCOME_MESSAGE)){
+
+
+            p = SARParmNew(SAR_PARM_WELCOME_MESSAGE);
+            sar_parm_welcome_message_struct *pv =
+                (sar_parm_welcome_message_struct *)p;
+            
+            cstrptr = val_str;
+	    free(pv->message);
+	    pv->message = STRDUP(cstrptr);
+            
+            DO_ADD_PARM
+        }
+
 	/* Unsupported parameter */
 	else
 	{

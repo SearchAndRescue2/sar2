@@ -491,6 +491,7 @@ int SARSceneLoadFromFile(
 	sar_parm_runway_approach_lighting_south_struct *p_runway_applight_s;
 	sar_parm_human_message_enter_struct *p_human_message_enter;
 	sar_parm_human_reference_struct *p_human_reference;
+        sar_parm_welcome_message_struct *p_welcome_message;
 
 
 /* Resets object substructure pointers to NULL */
@@ -1047,8 +1048,7 @@ int SARSceneLoadFromFile(
 
 	      case SAR_PARM_NAME:
 		p_name = (sar_parm_name_struct *)p;
-		free(scene->title);
-		scene->title = STRDUP(p_name->name);
+
 		break;
 
 	      case SAR_PARM_DESCRIPTION:
@@ -1593,6 +1593,12 @@ int SARSceneLoadFromFile(
 		    }
 		}
 		break;
+                
+                case SAR_PARM_WELCOME_MESSAGE:
+                    p_welcome_message = (sar_parm_welcome_message_struct*) p;
+                    free(scene->welcome_message);
+                    scene->welcome_message = STRDUP(p_welcome_message->message);
+                    break;
 
 	    }	/* Handle by parm type */
 	}	/* Iterate through loaded parms */

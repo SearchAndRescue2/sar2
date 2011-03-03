@@ -2004,6 +2004,9 @@ typedef struct {
 	 * dynamics models
 	 */
 	SFMRealmStruct	*realm;
+    
+        /* Welcome message - to be displayed at being of game */
+        char           *welcome_message;
 
 } sar_scene_struct;
 #define SAR_SCENE(p)	((sar_scene_struct *)(p))
