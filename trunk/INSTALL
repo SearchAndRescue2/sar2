@@ -1,4 +1,4 @@
-                   S E A R C H   A N D   R E S C U E  I I
+                 S E A R C H   A N D   R E S C U E  I I
 
            I N S T A L L A T I O N   I N S T R U C T I O N S
 
@@ -55,21 +55,21 @@ STEP 1: Building the source
 STEP 2: Installing
 ------------------------ 
 
-	To install, su to root as needed and type:
+	To install the game system-wide, along with manuals, icon and menu
+        entries, su to root and type:
 
 	# ./install.sh
 
-	The files will be installed to their standard locations:
+	These are some important files that will be installed:
 
 	'/usr/bin/sar2' for the binary executable.
 	'/usr/share/games/sar2/' for the data files.
 	'/usr/man/man6/SearchAndRescue.6.bz2' for the manual.
-	'/usr/share/icons/SearchAndRescue.xpm'
 	'$HOME/.config/sar2' for the game configuration.
 
----------------
-STEP 4: RUNNING
----------------
+------------------------
+STEP 3: Running
+------------------------
 
 	To run this program type:
 
@@ -83,6 +83,19 @@ STEP 4: RUNNING
 
 	# man sar2
 
+-------------
+OTHER OPTIONS
+-------------
+
+        To remove a system-wide installation, please run:
+
+        # ./uninstall
+
+        as root.
+
+        To cleanup the project after building it, run:
+
+        # ./cleanup.sh
 
                                                          -------------------
                                                          SEARCH AND RESCUE II
