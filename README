@@ -1,89 +1,49 @@
-                   S E A R C H   A N D   R E S C U E  I I
-
-                         V E R S I O N   0.1.0
+                 S E A R C H   A N D   R E S C U E  I I
 
 		     http://sar2.sourceforge.net/
 
-              Copyright (C) 1999-2003 WolfPack Entertainment
-                       http://wolfpack.twu.net/
-              Released under the GNU Public License v.2
+                Released under the GNU Public License v.2
 
-         (Read INSTALL for compiling and installation instructions.)
+       (Read INSTALL for compiling and installation instructions.)
 
 --------
 CONTENTS
 
-	* News
-	* Introduction
-	* Requirements
-	* Installation
+	* SaR2 Features
 	* Playing
 	* Contacts
 
 
---------------------
-NEWS & RELEASE NOTES
+-------------
+SAR2 FEATURES
 
-	Changable units (english/metric), press CTRL + U during
-	simulation to change the units.
+     "Search and Rescue II" is a fork of the game Search and Rescue
+     (searchandrescue.sf.net).
+     
+     Among the features of SaR II are smoother graphics, full SDL 
+     Joystick support, playable music, bugfixes and the Guadarrama addon packed in.
+     Unlike SaR, SaR II can be played without having to install it system-wide.
 
-	Vertical acceleration (G's) are now calculated and displayed
-	during simulation.
+     Additionally, libjsw support and Y2 support have been removed 
+     because they are obsolete.
 
-	Thunder and lightening effects.
+     SaR II is now compiled with the help of 'scons', missing some of the
+     original game multi-platform build options.
 
-	New object loader function
-
-	New commands
-
-
-------------
-INTRODUCTION
-
-	Search and Rescue is an aircraft based rescue simulator,
-	challenging the player to save lives by rescuing victims in
-	different (customizeable) situations of distress.
-
-	The game is now stable and data files are under development
-	with a few features still being added.
-
-
-------------
-REQUIREMENTS
-
-	For UNIX/X:
-
-		* An implmentation of OpenGL or hardware acceleration
-		  (note that glut is not required). XFree86 4.x is
-		  recommended.
-
-		* SDL and SDL_Mixer (optional) for sound.
-
-		* Y2 for sound (optional -- obsolete).
-
-		* libjsw for joystick support (optional), needs Linux
-		  2.2.15 or newer.
-
-		* P166 or faster (if not using hardware acceleration).
-
-
-	For Windows:
-
-		* An implmentation of OpenGL or hardware acceleration
-		  (note that glut is not required).
-
-		* P166 or faster (if not using hardware acceleration).
 
 -------
 PLAYING
 
-	To run Search and Rescue, type:
+        Please see instructions on how compiling and installing in the 
+        INSTALL file.
 
-		/usr/games/SearchAndRescue	(for Linux)
-	-or-
-		SearchAndRescue.exe		(for Windows)
+	Once installed to run Search and Rescue, type:
 
-	Or create a shortcut to the program file.
+		sar2
+
+        You can run the game without installing running the script:
+                
+                sar2.sh
 
 	Once it is running, go to `options' and make sure all the values
 	are set properly.
@@ -91,9 +51,9 @@ PLAYING
 	Play an easy training mission first to get an idea of things,
 	press F1 in the game to see the quick help screen.
 
-	The complete manual for Search and Rescue can be found online at:
-
-        http://searchandrescue.sf.net
+	The complete manual for Search And Rescue II can be read by typing:
+                
+                man sar2
 
 
 --------
