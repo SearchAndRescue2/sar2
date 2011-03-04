@@ -2,7 +2,7 @@
 BIN_FILE="bin/sar2"
 PATH_TO_GAME=$(dirname $0) #make it possible to execute this from any location
 
- if [[ ! -f "$PATH_TO_GAME/$BIN_FILE" ]]
+if [[ ! -f "$PATH_TO_GAME/$BIN_FILE" ]]
  then
      echo "Search and Rescue II will be now compiled"
      "$PATH_TO_GAME/scons"
@@ -15,5 +15,5 @@ PATH_TO_GAME=$(dirname $0) #make it possible to execute this from any location
     fi
 fi
 # export full path of the data location
-export SEARCHANDRESCUE2_DATA="$(pwd)/$(dirname $0)/data"
-"$PATH_TO_GAME/bin/sar2"
+export SEARCHANDRESCUE2_DATA="$(pwd)/$PATH_TO_GAME/data"
+"$PATH_TO_GAME/bin/sar2" $@

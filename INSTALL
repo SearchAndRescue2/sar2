@@ -29,7 +29,7 @@ STEP 0: Before you Begin
 -----------------------
 QUICKSTART
 -----------------------
-	You will need 'scons' to build the program. Type:
+	You will need 'scons' (http://www.scons.org) to build the program. Type:
 
 	# ./sar2
 
