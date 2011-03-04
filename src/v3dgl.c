@@ -20,6 +20,7 @@
 #include "v3dhf.h"
 #include "v3dtex.h"
 
+#include "sar.h"
 
 /* GL interpritation structure IO. */
 v3d_glinterprite_struct *V3DGLInterpriteNew(void);
@@ -226,20 +227,28 @@ v3d_glresource_struct *V3DGLResourceNewFromModelData(
 		{
 		    strncpy(tmp_path, h_texture_load->path, PATH_MAX + NAME_MAX);
 		}
-		else if(texture_base_dir != NULL)
-		{
-		    const char *cstrptr = (const char *)PrefixPaths(
-			texture_base_dir, h_texture_load->path
-		    );
-		    if(cstrptr == NULL)
-			continue;
+                else 
+                {
+                    const char *cstrptr = PrefixPaths(dname.local_data,h_texture_load->path);
+                    struct stat stat_buf;
+                    if((cstrptr != NULL) ? stat(cstrptr, &stat_buf) : 1)
+                        cstrptr = PrefixPaths(dname.global_data, h_texture_load->path);
+                    strncpy(tmp_path,cstrptr,PATH_MAX + NAME_MAX);
+                }
+		/* else if(texture_base_dir != NULL) */
+		/* { */
+		/*     const char *cstrptr = (const char *)PrefixPaths( */
+		/* 	texture_base_dir, h_texture_load->path */
+		/*     ); */
+		/*     if(cstrptr == NULL) */
+		/* 	continue; */
 
-		    strncpy(tmp_path, cstrptr, PATH_MAX + NAME_MAX);
-		}
-		else
-		{
-		    strncpy(tmp_path, h_texture_load->path, PATH_MAX + NAME_MAX);
-		}
+		/*     strncpy(tmp_path, cstrptr, PATH_MAX + NAME_MAX); */
+		/* } */
+		/* else */
+		/* { */
+		/*     strncpy(tmp_path, h_texture_load->path, PATH_MAX + NAME_MAX); */
+		/* } */
 		tmp_path[PATH_MAX + NAME_MAX - 1] = '\0';
 
 
