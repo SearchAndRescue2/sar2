@@ -1,20 +1,14 @@
 env = Environment()
 
-# env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
-# '-ffast-math', '-finline-functions', '-fexpensive-optimizations',
-# '-D__USE_BSD', '-Wno-write-strings',
-# '-DUSE_XSHM', '-DHAVE_LIBXPM'])
-
-# speed up compilation
-env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
+env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
+'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
 '-D__USE_BSD', '-Wno-write-strings',
 '-DUSE_XSHM', '-DHAVE_LIBXPM'])
 
-
-# env.Append(CPPFLAGS = ['-D__cplusplus', '-Dc_plusplus'])
-# env.Append(CPPPATH = ['./include'])
-
-env.Append(LIBPATH = ['/usr/X11R6/lib/', '/usr/X11R6/lib/'])
+# speed up compilation and enable debugging
+# env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
+# '-D__USE_BSD', '-Wno-write-strings',
+# '-DUSE_XSHM', '-DHAVE_LIBXPM'])
 
 env.Append(LIBS = ['m', 'SDL', 'SDL_mixer', 'SM', 'ICE',
 'X11','Xext','Xmu', 'Xpm', 'GL', 'GLU', 'pthread'])
