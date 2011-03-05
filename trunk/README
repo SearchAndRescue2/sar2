@@ -28,7 +28,9 @@ SAR2 FEATURES
      because they are obsolete.
 
      SaR II is now compiled with the help of 'scons', missing some of the
-     original game multi-platform build options.
+     original game multi-platform build options. If you need some of these
+     features we recommend you to try the latest version of the original 
+     Search And Rescue game (searchandrescue.sf.net)
 
 
 -------
