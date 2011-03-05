@@ -2,8 +2,8 @@
 BIN_FILE="bin/sar2"
 DATA_FOLDER="data"
 MAN_FOLDER="man"
-ICON_FILE="sar2.xpm"
-DESKTOP_FILE="sar2.desktop"
+ICON_FILE="extra/sar2.xpm"
+DESKTOP_FILE="extra/sar2.desktop"
 
 DATA_PATH="/usr/share/games/sar2"
 GAME_PATH="/usr/bin/sar2"
