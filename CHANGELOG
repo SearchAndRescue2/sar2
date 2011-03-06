@@ -1,0 +1,37 @@
+Version 2.0.0:
+        Hector Sanjuan <hector@convivencial.org>
+               * Removed Y2 sound server support.
+               * Removed libjsw joystick support.
+               * Extended and fixed SDL joystick support to 
+                 handle axis properly, read buttons and work on the 
+                 menu test page.
+               * Enabled linear filtering for texture maximization
+                 (smoother graphics) and mipmaps for texture minimization.
+               * Fixed path handling in model views to build the texture
+                 paths considering the user-defined data location path.
+                 Side effect: texture_absolute_path is now ignored.
+               * Added the 'Guadarrama addon' and associated bugfix patches
+                 in the game data and sources.
+               * Added welcome_message parameter to the scenery
+                 files. Welcome message is displayed at the begginning
+                 of any game (mission,freeflight) in that scenario.
+               * Converted music files to .wav so they can be handled
+                 by the SDL library.
+               * Removed custom autoconf files and older build system.
+               * Added scons-based scripts to build the game for Linux.
+               * Added install.sh, uninstall.sh, makedist.sh scripts.
+               * Added sar2.sh script, which allows the build and run
+                 the game locally, without installation.
+               * Included data files in the data/ folder. Renamed
+                 source folder to src/ and included bin/, build/ folders.
+               * Adapted AUTHORS, README, INSTALL... files to SaR2 
+                 release.
+               * Resized menu-background so they look a bit smoother
+                 with higher resolutions.
+               * Improve smoke effect so it does not move up straight
+                 on the same line.
+               * Added crash detection when touching fires.
+
+Prior 2.0.0 releases:
+      Please see the changelog file from the original Search
+      and Rescue game (searchandrescue.sf.net)

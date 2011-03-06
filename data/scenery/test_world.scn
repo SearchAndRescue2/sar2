@@ -137,8 +137,14 @@ rotate 30 0 0
 create_fire 18.0   90.0
 translation 148.0 -35.0 0.0
 #            offset x y z  r_st r_max r_rate hide@max respawn_int nunits color_code
-create_smoke 0.0 0.0 28.0  15.0 45.0  -1.0   0        4500        6      2
+create_smoke 0.0 0.0 28.0  0.1  10  0.1   0             500        1000      2
 translation 148.0 -35.0 0.0
+create_smoke 0.0 0.0 28.0  0.1  10  0.1   0             500        1000      2
+translation 149.0 -35.0 0.0
+create_smoke 0.0 0.0 28.0  0.1  10  0.1   0             500        1000      2
+translation 150.0 -35.0 0.0
+create_smoke 0.0 0.0 28.0  0.1  10  0.1   0             500        1000      2
+translation 151.0 -35.0 0.0
 
 # Jetski
 create_object 3

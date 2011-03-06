@@ -1,3 +1,19 @@
+/**********************************************************************
+*   This file is part of Search and Rescue II (SaR2).                 *
+*                                                                     *
+*   SaR2 is free software: you can redistribute it and/or modify      *
+*   it under the terms of the GNU General Public License v.2 as       *
+*   published by the Free Software Foundation.                        *
+*                                                                     *
+*   SaR2 is distributed in the hope that it will be useful, but       *
+*   WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See          *
+*   the GNU General Public License for more details.                  *
+*                                                                     *
+*   You should have received a copy of the GNU General Public License *
+*   along with SaR2.  If not, see <http://www.gnu.org/licenses/>.     *
+***********************************************************************/
+
 #include <stdio.h> 
 #include <stdlib.h>
 #include <string.h>
@@ -2243,9 +2259,17 @@ void SARSimSmokeSpawn(
 		/* Set initial velocity to drift upwards */
 /* TODO need to apply wind and other variables to drift velocity */
 		pos = &u->vel;
+                /*
 		pos->x = 0.0f;
 		pos->y = 0.0f;
 		pos->z = 4.0f;
+                */
+
+                /* Smoke moves up at random speed and with a small but random
+                   horizontal speeds */
+                pos->x = 2 * (rand()/(float)(RAND_MAX) - 0.5);
+                pos->y = 2 * (rand()/(float)(RAND_MAX) - 0.5);
+                pos->z = 2 * rand()/(float)(RAND_MAX) + 3;
 
 		/* Apply offset to initial position */
 		pos = &u->pos;

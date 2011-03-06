@@ -1,3 +1,19 @@
+/**********************************************************************
+*   This file is part of Search and Rescue II (SaR2).                 *
+*                                                                     *
+*   SaR2 is free software: you can redistribute it and/or modify      *
+*   it under the terms of the GNU General Public License v.2 as       *
+*   published by the Free Software Foundation.                        *
+*                                                                     *
+*   SaR2 is distributed in the hope that it will be useful, but       *
+*   WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See          *
+*   the GNU General Public License for more details.                  *
+*                                                                     *
+*   You should have received a copy of the GNU General Public License *
+*   along with SaR2.  If not, see <http://www.gnu.org/licenses/>.     *
+***********************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1447,22 +1463,25 @@ void SARSimObjectCollisionCB(
 		*text = '\0';
 		switch((cb != NULL) ? cb->crash_type : SAR_CRASH_TYPE_OBSTRUCTION)
 		{
-		  case SAR_CRASH_TYPE_OBSTRUCTION:
-		    strcpy(text, SAR_MESG_CRASH_OBSTRUCTION);
-		    break;
-		  case SAR_CRASH_TYPE_GROUND:
-		    /* Never should occure for midair collisions */
+                    case SAR_CRASH_TYPE_OBSTRUCTION:
+                        strcpy(text, SAR_MESG_CRASH_OBSTRUCTION);
+                        break;
+                    case SAR_CRASH_TYPE_GROUND:
+                        /* Never should occure for midair collisions */
 		    strcpy(text, SAR_MESG_CRASH_GROUND);
 		    break;
-		  case SAR_CRASH_TYPE_MOUNTAIN:
-		    strcpy(text, SAR_MESG_CRASH_MOUNTAIN);
-		    break;
-		  case SAR_CRASH_TYPE_BUILDING:
-		    strcpy(text, SAR_MESG_CRASH_BOULDING);
-		    break;
-		  case SAR_CRASH_TYPE_AIRCRAFT:
-		    strcpy(text, SAR_MESG_CRASH_AIRCRAFT);
-		    break;
+                    case SAR_CRASH_TYPE_MOUNTAIN:
+                        strcpy(text, SAR_MESG_CRASH_MOUNTAIN);
+                        break;
+                    case SAR_CRASH_TYPE_BUILDING:
+                        strcpy(text, SAR_MESG_CRASH_BOULDING);
+                        break;
+                    case SAR_CRASH_TYPE_AIRCRAFT:
+                        strcpy(text, SAR_MESG_CRASH_AIRCRAFT);
+                        break;
+                    case SAR_CRASH_TYPE_FIRE:
+                        strcpy(text, SAR_MESG_CRASH_FIRE);
+                        break;
 		}
 		if(*text == '\0')
 		    sprintf(
