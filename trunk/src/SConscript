@@ -6,9 +6,9 @@ env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
 '-DUSE_XSHM', '-DHAVE_LIBXPM'])
 
 # speed up compilation and enable debugging
-# env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
-# '-D__USE_BSD', '-Wno-write-strings',
-# '-DUSE_XSHM', '-DHAVE_LIBXPM'])
+#env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
+#'-D__USE_BSD', '-Wno-write-strings',
+#'-DUSE_XSHM', '-DHAVE_LIBXPM'])
 
 env.Append(LIBS = ['m', 'SDL', 'SDL_mixer', 'SM', 'ICE',
 'X11','Xext','Xmu', 'Xpm', 'GL', 'GLU', 'pthread'])

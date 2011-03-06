@@ -11,7 +11,7 @@ then
 fi
 
 echo "Cleaning up build files..."
-./cleanup.sh &>/dev/null
+scons -c &>/dev/null
 echo "Packaging the game..."
 tar -zcf "sar2-$VERSION_STRING.tar.gz" --exclude ".*" --exclude-backups *
 if [[ $? -eq 0 ]]
