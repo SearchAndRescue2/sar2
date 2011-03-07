@@ -36,7 +36,7 @@ mission_objective_new arrive
 mission_objective_time_left 0
 mission_objective_arrive_at helipad_pedriza
 mission_objective_message_success \
-The park says the \
+The park guard says the \
 missing person was last seen hiking on \
 the top of the mountain cirque north of \
 here.
