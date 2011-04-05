@@ -77,6 +77,11 @@ void SoundStopPlay(
 	snd_play_struct *snd_play
 );
 
+void MusicStopPlay(
+	snd_recorder_struct *recorder,
+	snd_play_struct *snd_play
+);
+
 int SoundMusicStartPlay(
 	snd_recorder_struct *recorder,
 	const char *object,     /* Full path to object. */
@@ -159,6 +164,7 @@ snd_recorder_struct *SoundInit(
 	           printf("Unable to initialize audio: %s\n", Mix_GetError());
                    return NULL;
               }
+              Mix_ReserveChannels(1);
             break;
 
 	  default:
@@ -311,7 +317,7 @@ snd_play_struct *SoundStartPlay(
                 snd_play->volume_right = volume_right;
                 snd_play->sample_rate = sample_rate;
                 snd_play->options = options;
-                snd_play->data = (void *)Mix_PlayChannel(-1, sound, repeat);
+                snd_play->data = Mix_PlayChannel(-1, sound, repeat);
                 snd_play->chunk = sound;
 
                 break;
@@ -386,11 +392,12 @@ void SoundChangePlayVolume(
 	    return;
 
 	/* Change in volume? */
+        
 	if((volume_left == snd_play->volume_left) &&
 	   (volume_right == snd_play->volume_right)
 	)
 	    return;
-
+ 
 	switch(recorder->type)   
 	{
             case SNDSERV_TYPE_SDL:
@@ -398,9 +405,12 @@ void SoundChangePlayVolume(
                 snd_play->volume_right = volume_right;
                 if (snd_play->data)
                 {
-                   int my_volume;
-                   my_volume = (int) (volume_left * MIX_MAX_VOLUME);
-                   Mix_Volume((int) snd_play->data, my_volume);
+                    if (snd_play->options & SND_PLAY_OPTION_MUTE)
+                        Mix_Volume(snd_play->data,0);
+                    else {
+                        int my_volume = (int) (((volume_left + volume_right)/2) * MIX_MAX_VOLUME);
+                        Mix_Volume((int) snd_play->data, my_volume);
+                    }
                 }
             break;
 
@@ -439,7 +449,7 @@ void SoundChangePlaySampleRate(
  */
 void SoundStopPlay(
 	snd_recorder_struct *recorder, snd_play_struct *snd_play
-)
+    )
 {
 #define DO_FREE_PLAY_STRUCT	\
 { if(snd_play != NULL) { free(snd_play); snd_play = NULL; } }
@@ -465,6 +475,31 @@ void SoundStopPlay(
 #undef DO_FREE_PLAY_STRUCT
 }
 
+void MusicStopPlay(
+    snd_recorder_struct *recorder, snd_play_struct *snd_play
+    )
+{
+#define DO_FREE_PLAY_STRUCT	\
+{ if(snd_play != NULL) { free(snd_play); snd_play = NULL; } }
+    if(recorder == NULL)
+    {
+        DO_FREE_PLAY_STRUCT
+	    return;
+    }
+    
+    if(snd_play == NULL)
+        return;
+    
+    switch(recorder->type)
+    {       
+        case SNDSERV_TYPE_SDL:
+            Mix_HaltMusic();
+            Mix_FreeMusic(snd_play->music); 
+            break;
+    }
+    DO_FREE_PLAY_STRUCT
+#undef DO_FREE_PLAY_STRUCT
+}
 
 /*
  *	Starts playing the given background music sound object specified
@@ -485,7 +520,7 @@ int SoundMusicStartPlay(
 {
 	snd_play_struct *snd_play = NULL;
 
-        Mix_Chunk *sound;
+        Mix_Music *sound;
 
 	if((recorder == NULL) || (object == NULL))
 	    return(-1);
@@ -504,13 +539,14 @@ int SoundMusicStartPlay(
                 snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
                 if (! snd_play)
                   return -1;
-                sound = Mix_LoadWAV(object);
+                sound = Mix_LoadMUS(object);
                 if (! sound)
                 {
                     free(snd_play);
                     return -1;
                 }
-                snd_play->data = (void *) Mix_PlayChannel(-1, sound, 0);
+                snd_play->data = Mix_PlayMusic(sound, repeats);
+                snd_play->music = sound;
                 recorder->background_music_sndobj = snd_play;
             break;
 
@@ -540,7 +576,7 @@ void SoundMusicStopPlay(snd_recorder_struct *recorder)
 
 	if(recorder->background_music_sndobj != NULL)
 	{
-	    SoundStopPlay(
+	    MusicStopPlay(
 		recorder,
 		recorder->background_music_sndobj
 	    );

@@ -54,7 +54,7 @@
 typedef struct {
 
 	/* Pointer to sound server specific play id. */
-	void *data;
+	int data;
 
 	/* Last set volume (from 0.0 to 1.0). This is used to check
 	 * if sound play values actually need to be adjusted when
@@ -68,6 +68,7 @@ typedef struct {
 	/* Play options. */
 	snd_flags_t options;
         Mix_Chunk *chunk;
+        Mix_Music *music;
 
 } snd_play_struct;
 
@@ -150,6 +151,9 @@ extern void SoundChangePlaySampleRate(
 	int sample_rate		/* Applied sample rate, can be 0. */
 );
 extern void SoundStopPlay(
+	snd_recorder_struct *recorder, snd_play_struct *snd_play
+);
+extern void MusicStopPlay(
 	snd_recorder_struct *recorder, snd_play_struct *snd_play
 );
 
