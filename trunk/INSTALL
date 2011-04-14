@@ -7,83 +7,83 @@
 STEP 0: Before you Begin
 ------------------------
 
-	Before you try to build and install Search and Rescue, you'll
-	need to have some other packages installed first. What follows
-	are a list of libraries and their package names on Debian (and
-	Debian related) distributions.
+        Before you try to build and install Search and Rescue, you'll
+        need to have some other packages installed first. What follows
+        are a list of libraries and their package names on Debian (and
+        Debian related) distributions.
 
-	Name       -- Package name
-	X11        -- libx11-6
-	X11 SM     -- libsm-dev
+        Name       -- Package name
+        X11        -- libx11-6
+        X11 SM     -- libsm-dev
         X11 i      -- libx1-dev
-	X11 XMU    -- libxmu-dev
-	SDL        -- libsdl1.2-dev (optional for sound)
-	SDL Mixer  -- libsdl-mixer1.2-dev (option for sound)
-	SDL Image  -- libsdl-image1.2-dev
+        X11 XMU    -- libxmu-dev
+        SDL        -- libsdl1.2-dev (optional for sound)
+        SDL Mixer  -- libsdl-mixer1.2-dev (option for sound)
+        SDL Image  -- libsdl-image1.2-dev
         OpenAL     -- freealut-dev, openal-soft-dev
-	OpenGL     -- libglu1-mesa-glx libglu1-mesa-dev
-	X11 ICE    -- libice6
-	X11 Pixmap -- libXpm-dev
+        OpenGL     -- libglu1-mesa-glx libglu1-mesa-dev
+        X11 ICE    -- libice6
+        X11 Pixmap -- libXpm-dev
 
-	If you find additional dependencies which are not included in your
-	distribution, please report them so we can add them to the list.
+        If you find additional dependencies which are not included in your
+        distribution, please report them so we can add them to the list.
 
 -----------------------
 QUICKSTART
 -----------------------
-	You will need 'scons' (http://www.scons.org) to build the program. Type:
+        You will need 'scons' (http://www.scons.org) to build the program. Type:
 
-	# ./sar2
+        # ./sar2
 
-	The game will be compiled if it has not been built
-	before and started right after.
+        The game will be compiled if it has not been built
+        before and started right after.
 
 ------------------------
 STEP 1: Building the source
 ------------------------
 
-	You will need 'scons'. To build the program type:
+        You will need 'scons'. To build the program type:
 
-	# scons
+        # scons
 
-	The 'sar2' file will be generated in the 'bin' folder. From this point
-	you can play the game you by running:
+        The 'sar2' file will be generated in the 'bin' folder. From this point
+        you can play the game you by running:
 
-	# sar2.sh
+        # sar2.sh
 
-	(Note: 'sar2.sh' will compile the program if no 'bin/sar2' is found)
+        (Note: 'sar2.sh' will compile the program if no 'bin/sar2' is found)
 
 ------------------------ 
 STEP 2: Installing
 ------------------------ 
 
-	To install the game system-wide, along with manuals, icon and menu
+        To install the game system-wide, along with manuals, icon and menu
         entries, su to root and type:
 
-	# ./install.sh
+        # ./install.sh
 
-	These are some important files that will be installed:
+        These are some important files that will be installed:
 
-	'/usr/bin/sar2' for the binary executable.
-	'/usr/share/games/sar2/' for the data files.
-	'/usr/man/man6/SearchAndRescue.6.bz2' for the manual.
-	'$HOME/.config/sar2' for the game configuration.
+        '/usr/bin/sar2' for the binary executable.
+        '/usr/share/games/sar2/' for the data files.
+        '/usr/man/man6/SearchAndRescue.6.bz2' for the manual.
+        '$HOME/.config/sar2' for the game configuration.
 
 ------------------------
 STEP 3: Running
 ------------------------
 
-	To run this program type:
+        To run this program type:
 
-	# sar2 &
+        # sar2 &
 
         For additional command line options, type:
 
         # sar2 --help
 
-	Or for more detailed help, read the manual page:
+        Or for more detailed help, read the manual page:
 
-	# man sar2
+        # man sar2
 
 -------------
 OTHER OPTIONS
@@ -97,7 +97,7 @@ OTHER OPTIONS
 
         To cleanup the project after building it, run:
 
-        # ./cleanup.sh
+        # scons -c
 
                                                          -------------------
                                                          SEARCH AND RESCUE II
