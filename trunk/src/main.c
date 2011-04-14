@@ -2139,9 +2139,7 @@ that was detected is 0 bits in size.\n"
 	else
 	{
 	    void *window;
-            int type = SNDSERV_TYPE_NONE; // use this as default
-
-            type = SNDSERV_TYPE_SDL;    // hopefully we use this
+            int type = SOUND_DEFAULT; // use this as default
 
 	    GWContextGet(
 		dpy, GWContextCurrent(dpy),

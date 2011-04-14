@@ -34,7 +34,7 @@ extern sar_sound_source_struct *SARSoundSourceNew(
 	const sar_position_struct *pos,
 	float cutoff,			/* In radians */
 	const sar_direction_struct *dir,
-	int sample_rate_limit		/* In Hz */
+	float sample_rate_limit		/* 1.0 is normal speed */
 );
 extern void SARSoundSourceDelete(sar_sound_source_struct *sndsrc);
 extern int SARSoundSourceMatchFromList(

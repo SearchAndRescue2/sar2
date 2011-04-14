@@ -6695,8 +6695,7 @@ void SARDraw(sar_core_struct *core_ptr)
 			   (gc != NULL)
 			)
 			{
-			    /* Update engine sound */
-			    SARSoundEngineUpdate(
+                            SARSoundEngineUpdate(
 				core_ptr->recorder,
 				obj_ptr->sndsrc, obj_ptr->total_sndsrcs,
 				aircraft->engine_inside_sndplay,

@@ -1070,6 +1070,10 @@ static int SARObjLoadSoundSource(
 	    return(-1);
 	}
 
+        
+        float new_sample_rate_limit = (float)(sample_rate_limit) / 11025.0f;
+        //11025 is our wav files Hz. So this should be 1 most times.
+
 	(*list)[i] = sndobj = SARSoundSourceNew(
 	    name,
 	    sndobj_filename,
@@ -1077,7 +1081,7 @@ static int SARObjLoadSoundSource(
 	    range,
 	    range_far,
 	    &pos, cutoff, &dir,
-	    sample_rate_limit
+	    new_sample_rate_limit
 	);
 
 	FREE_ALL

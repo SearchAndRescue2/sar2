@@ -20,6 +20,7 @@ STEP 0: Before you Begin
 	SDL        -- libsdl1.2-dev (optional for sound)
 	SDL Mixer  -- libsdl-mixer1.2-dev (option for sound)
 	SDL Image  -- libsdl-image1.2-dev
+        OpenAL     -- freealut-dev, openal-soft-dev
 	OpenGL     -- libglu1-mesa-glx libglu1-mesa-dev
 	X11 ICE    -- libice6
 	X11 Pixmap -- libXpm-dev
