@@ -357,25 +357,26 @@ void SARSimTouchDownCB(
 
 /* Plays the crash on ground sound */
 #define DO_EFFECTS_CRASH_GROUND				\
-{ if(opt->event_sounds)					\
-  SARSoundSourcePlayFromList(				\
-   core_ptr->recorder,					\
-   scene->sndsrc, scene->total_sndsrcs,			\
-   "crash_ground",					\
-   pos, dir, ear_pos					\
-  );							\
-}
+    { if(opt->event_sounds)                             \
+            SARSoundSourcePlayFromList(                 \
+                core_ptr->recorder,                     \
+                scene->sndsrc, scene->total_sndsrcs,    \
+                "crash_ground",                         \
+                pos, dir, ear_pos                       \
+                );                                      \
+    }
 
 /* Plays the splash on water sound */
 #define DO_EFFECTS_SPLASH_AIRCRAFT			\
-{ if(opt->event_sounds)					\
-  SARSoundSourcePlayFromList(				\
-   core_ptr->recorder,					\
-   scene->sndsrc, scene->total_sndsrcs,			\
-   "splash_aircraft",					\
-   pos, dir, ear_pos					\
-  );							\
-}
+    { if(opt->event_sounds)				\
+            SARSoundSourcePlayFromListRepeating(        \
+                core_ptr->recorder,                     \
+                scene->sndsrc, scene->total_sndsrcs,    \
+                "splash_aircraft",                      \
+                pos, dir, ear_pos                       \
+                );                                      \
+    }
+
 
 	/* Match object from FDM */
 	obj_ptr = SARSimMatchObjectFromFDM(
@@ -859,15 +860,18 @@ printf(
 		}
 	    }
 
-	    /* Play splash or explosion sound */
-	    if(over_water)
-	    {
-		DO_EFFECTS_SPLASH_AIRCRAFT
-	    }
-	    else
-	    {
-		DO_EFFECTS_CRASH_GROUND
-	    }
+	    /* Play splash or explosion sound if the object
+             was not crashed before (cause 5)*/
+            if (crash_cause != 5) {
+                if(over_water)
+                {
+                    DO_EFFECTS_SPLASH_AIRCRAFT
+                        }
+                else
+                {
+                    DO_EFFECTS_CRASH_GROUND
+                        }
+            }
 
 	    /* Call mission destroy notify instead of mission land
 	     * notify, to let mission know this object has crashed
