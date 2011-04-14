@@ -1475,7 +1475,15 @@ void SARMenuOptionsSoundInfoRefresh(sar_core_struct *core_ptr)
     mesg = strcatalloc(mesg, "Sound Output: <bold>");
     if(recorder != NULL)
     {
-        mesg = strcatalloc(mesg, "SDL Mixer");
+        switch (recorder->type){
+            case SNDSERV_TYPE_SDL:
+                mesg = strcatalloc(mesg, "SDL Mixer");
+                break;
+            case SNDSERV_TYPE_OPENAL:
+                mesg = strcatalloc(mesg, "OpenAL");
+                break;
+        }
+
     }
     else
     {
@@ -1492,8 +1500,9 @@ void SARMenuOptionsSoundInfoRefresh(sar_core_struct *core_ptr)
     }
 
     /* Sound Support */
+    /*
     mesg = strcatalloc(mesg, "Sound Support:<bold>");
-    mesg = strcatalloc(mesg, " SDL");
+    mesg = strcatalloc(mesg, " SDL"); */
     mesg = strcatalloc(mesg, "<default>\n");
 
 
