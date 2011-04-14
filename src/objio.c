@@ -861,8 +861,6 @@ int SARObjLoadTranslate(
 		core_ptr->object, core_ptr->total_objects,
 		&new_pos	/* Position of our object */
 	    );
-            if (obj_ptr->type == SAR_OBJ_TYPE_FIRE)
-              printf("Setting up fire at %f\n", ground_elevation);
            
 	    obj_ptr->ground_elevation_msl = ground_elevation;
 	}
