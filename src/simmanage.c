@@ -69,7 +69,7 @@ int SARSimUpdateSceneObjects(
   (p) : PrefixPaths(dname.global_data, (p))                     \
  );                                                             \
  SoundStartPlayVoid(                                            \
-  recorder, full_path, 1.0, 1.0, 0, 0                           \
+  recorder, full_path, 1.0, 1.0, 1.0f, 0                        \
  );                                                             \
  free(full_path);                                               \
 } }

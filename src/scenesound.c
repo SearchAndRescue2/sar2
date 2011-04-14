@@ -97,7 +97,8 @@ void SARSceneSoundUpdate(
 		void *window;
                 int type;
 
-                type = SNDSERV_TYPE_SDL;
+                //
+                type = SOUND_DEFAULT;
 
 		GWContextGet(
 		    display, GWContextCurrent(display),

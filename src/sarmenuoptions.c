@@ -1327,7 +1327,7 @@ is configured properly and currently running.",
 	    recorder,
 	    sndobj,		/* Full path to object */
 	    1.0f, 1.0f,		/* Volume, from 0.0 to 1.0 */
-	    0,			/* Applied sample rate, can be 0 */
+	    1.0f,		/* Applied sample rate, can be 0 */
 	    0			/* Any of SND_PLAY_OPTION_* */
 	);
 

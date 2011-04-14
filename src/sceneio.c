@@ -902,7 +902,7 @@ int SARSceneLoadFromFile(
    name, full_path, full_path_far,				\
    range, range_far,						\
    NULL, 0.0f, NULL,						\
-   0			/* Sample rate limit in Hz */		\
+   1.0f			/* Sample rate limit in Hz */		\
   );								\
 								\
   free(full_path);						\
