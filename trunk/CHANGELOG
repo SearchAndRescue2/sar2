@@ -1,3 +1,17 @@
+Version 2.2.0:
+        Hector Sanjuan <hector@convivencial.org>
+               * Added OpenAL support for sounds and music
+               * Modify engine sound pitch according to throttle
+                 if using OpenAL
+               * Humans don't run towards the helicopter unless
+                 the engines are nearly off
+               * Helicopter engines are now off by default. Manual 
+                 start required.
+               * Do not spam console with "setting up fire" messages
+                 (inspired from SaR)
+               * Fixed crash sounds overflow. Crash sounds are played
+                 once and not in every game loop without control 
+                 (bug #3202204)
 Version 2.1.0:
         Hector Sanjuan <hector@convivencial.org>
                * Use SDL_PlayMusic() for game music
