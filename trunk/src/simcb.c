@@ -369,7 +369,7 @@ void SARSimTouchDownCB(
 /* Plays the splash on water sound */
 #define DO_EFFECTS_SPLASH_AIRCRAFT			\
     { if(opt->event_sounds)				\
-            SARSoundSourcePlayFromListRepeating(        \
+            SARSoundSourcePlayFromList(                 \
                 core_ptr->recorder,                     \
                 scene->sndsrc, scene->total_sndsrcs,    \
                 "splash_aircraft",                      \
