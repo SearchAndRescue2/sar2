@@ -4811,7 +4811,7 @@ int SARObjLoadFromFile(
 		aircraft->z_accel = 0.0f;
 
 		aircraft->air_worthy_state = SAR_AIR_WORTHY_FLYABLE;
-		aircraft->engine_state = SAR_ENGINE_ON;
+		aircraft->engine_state = SAR_ENGINE_OFF;
 		aircraft->next_engine_on = 0;
 
 		aircraft->ground_pitch_offset = (float)(0.0 * PI);

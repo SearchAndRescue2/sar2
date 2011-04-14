@@ -604,10 +604,10 @@ int SARSimRestart(
 			scene, ptr, total, obj_ptr, 0
 		    );
 
-		    /* Turn engine on */
+		    /* Turn engine off (restart) */
 		    SARSimOpEngine(
 			scene, ptr, total,
-			obj_ptr, SAR_ENGINE_ON,
+			obj_ptr, SAR_ENGINE_OFF,
 			NULL, 0, 0
 		    );
 

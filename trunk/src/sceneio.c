@@ -1533,6 +1533,10 @@ int SARSceneLoadFromFile(
 
 	      case SAR_PARM_ENGINE_STATE:
 		p_engine_state = (sar_parm_engine_state_struct *)p;
+                if (obj_aircraft_ptr != NULL)
+                {
+                    obj_aircraft_ptr->engine_state = p_engine_state->state;
+                }
 /* TODO Work on this later */
 		break;
 
