@@ -34,16 +34,16 @@
 /*
  *      Program name:
  */
-#define PROG_NAME		"SearchAndRescue2"
+#define PROG_NAME		"sar2"
 #define PROG_NAME_FULL		"Search and Rescue II"
 
 /*
  *      Program version:
  */
-#define PROG_VERSION            "2.1.0"
+#define PROG_VERSION            "2.2.0"
 
 #define PROG_VERSION_MAJOR      2
-#define PROG_VERSION_MINOR      1
+#define PROG_VERSION_MINOR      2
 #define PROG_VERSION_RELEASE	0
 
 
