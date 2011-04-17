@@ -1,14 +1,14 @@
 env = Environment()
 
-env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
-'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
-'-Wno-write-strings', '-DHAVE_LIBXPM'])
-
-# speed up compilation and enable debugging
-#env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
+#env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
+#'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
 #'-Wno-write-strings', '-DHAVE_LIBXPM'])
 
-env.Append(LIBS = ['m', 'SDL', 'SDL_mixer', 'SM', 'ICE',
+ speed up compilation and enable debugging
+env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
+'-Wno-write-strings', '-DHAVE_LIBXPM'])
+
+env.Append(LIBS = ['m', 'SDL', 'SM', 'ICE',
 'X11','Xext','Xmu', 'Xpm', 'GL', 'GLU', 'pthread', 'alut', 'vorbisfile'])
 
 
