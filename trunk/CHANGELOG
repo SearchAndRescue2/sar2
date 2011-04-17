@@ -4,6 +4,8 @@ Version 2.2.1:
                * Fixed some warnings
                * Replaced the calls to alutLoadWAV() functions 
                  as they are deprecated.
+               * Fixed openAL error messages at exit 
+                 (bug #3288558).
 Version 2.2.0:
         Hector Sanjuan <hector@convivencial.org>
                * Added OpenAL support for sounds and music
