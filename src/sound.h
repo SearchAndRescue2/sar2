@@ -44,8 +44,13 @@
 #define SND_PLAY_OPTION_REPEATING	(1 << 1)
 
 //SDL Support
+#ifdef SDL_MIXER
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+
+#endif
+
 
 //OpenAL support
 #include <AL/al.h>
@@ -79,10 +84,14 @@ typedef struct {
     
     /* Play options. */
     snd_flags_t options;
+
+#ifdef SDL_MIXER
+    /*SDL Mixer*/
     Mix_Chunk *chunk;
     Mix_Music *music;
-    
-    /*OpenAL options*/
+#endif    
+
+    /*OpenAL*/
     ALuint alBuffer;
     ALuint alSource;
 
