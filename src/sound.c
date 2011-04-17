@@ -161,9 +161,8 @@ snd_recorder_struct *SoundInit(
             break;
         case SNDSERV_TYPE_OPENAL:
             if (alutInit(NULL,0) == AL_FALSE){
-                alGetError();
+                printf("Alut error: %s", alutGetErrorString(alutGetError()));
             };
-            alGetError();
             break;
 
         default:
@@ -247,7 +246,10 @@ void SoundShutdown(
             break;
 #endif
         case SNDSERV_TYPE_OPENAL:
-            alutExit();
+            alGetError();
+            if (!alutExit())
+                printf("Error: %s\n", alutGetErrorString(alutGetError()));
+            
             break;
 
     }
@@ -343,10 +345,6 @@ snd_play_struct *SoundStartPlay(
 
             //alGenBuffers(1,&buffer);
             
-            if (alGetError() != AL_NO_ERROR){
-                return NULL;
-            }
-            
             buffer = alutCreateBufferFromFile(object);
             if (buffer == AL_NONE)
                 return NULL;
@@ -354,6 +352,7 @@ snd_play_struct *SoundStartPlay(
             alGenSources(1,&source);
             if (alGetError() != AL_NO_ERROR)
                 return NULL;
+            
             alSourcei(source,AL_BUFFER, buffer);
             alSourcef(source,AL_PITCH, 1.0f);
             alSourcef(source, AL_GAIN, (volume_left + volume_right)/2);
@@ -361,7 +360,7 @@ snd_play_struct *SoundStartPlay(
                 alSourcei(source,AL_LOOPING,AL_TRUE);
             else 
                 alSourcei(source,AL_LOOPING,AL_FALSE);
-            
+
             snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
             if (! snd_play)
                 return NULL;
@@ -415,11 +414,7 @@ void SoundStartPlayVoid(
             break;
 #endif
         case SNDSERV_TYPE_OPENAL:
-            // alGenBuffers(1,&buffer);
 
-            if (alGetError() != AL_NO_ERROR)
-                return;
-            
             buffer = alutCreateBufferFromFile(object);
             if (buffer == AL_NONE)
                 return;
@@ -427,6 +422,7 @@ void SoundStartPlayVoid(
             alGenSources(1,&source);
             if (alGetError() != AL_NO_ERROR)
                 return;
+            
             alSourcei(source,AL_BUFFER, buffer);
             alSourcef(source, AL_GAIN, (volume_left + volume_right)/2);
             alSourcei(source,AL_LOOPING,AL_FALSE);
@@ -438,6 +434,7 @@ void SoundStartPlayVoid(
                 alSourcei(source,AL_LOOPING,AL_FALSE);
 
             alSourcePlay(source);
+            alGetError();
             break;
     }
 }
@@ -509,6 +506,7 @@ void SoundChangePlayVolume(
                     alSourcef(snd_play->alSource,AL_GAIN,0.0f);
                 else
                     alSourcef(snd_play->alSource,AL_GAIN,(volume_left + volume_right)/2);
+                alGetError();
             }
             break;
 
@@ -542,6 +540,7 @@ void SoundChangePlaySampleRate(
         case SNDSERV_TYPE_OPENAL:
             snd_play->sample_rate = sample_rate;
             alSourcef(snd_play->alSource,AL_PITCH,sample_rate);
+            alGetError();
             break;
     }
 }
@@ -579,8 +578,10 @@ void SoundStopPlay(
 #endif
         case SNDSERV_TYPE_OPENAL:
             alSourceStop(snd_play->alSource);
-            alDeleteBuffers(1,&snd_play->alBuffer);
             alDeleteSources(1,&snd_play->alSource);
+            alDeleteBuffers(1,&snd_play->alBuffer);
+            
+            alGetError();
             break;
     }
 
@@ -613,8 +614,9 @@ void MusicStopPlay(
 #endif
         case SNDSERV_TYPE_OPENAL:
             alSourceStop(snd_play->alSource);
-            alDeleteBuffers(1,&snd_play->alBuffer);
             alDeleteSources(1,&snd_play->alSource);
+            alDeleteBuffers(1,&snd_play->alBuffer);
+            alGetError();
             break;
 
 
@@ -744,8 +746,7 @@ int SoundMusicStartPlay(
             
             alBufferData(bufferID,format,buffer,buffer_ptr,freq);
             alSourcei(sourceID, AL_BUFFER, bufferID);
-
-            /*TODO*/
+            
             snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
             if (! snd_play)
                 return -1;
