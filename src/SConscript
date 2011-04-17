@@ -4,7 +4,7 @@ env = Environment()
 #'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
 #'-Wno-write-strings', '-DHAVE_LIBXPM'])
 
- speed up compilation and enable debugging
+# speed up compilation and enable debugging
 env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
 '-Wno-write-strings', '-DHAVE_LIBXPM'])
 
