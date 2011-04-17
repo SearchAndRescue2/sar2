@@ -17,8 +17,7 @@ STEP 0: Before you Begin
         X11 SM     -- libsm-dev
         X11 i      -- libx1-dev
         X11 XMU    -- libxmu-dev
-        SDL        -- libsdl1.2-dev (optional for sound)
-        SDL Mixer  -- libsdl-mixer1.2-dev (option for sound)
+        SDL        -- libsdl1.2-dev
         SDL Image  -- libsdl-image1.2-dev
         OpenAL     -- freealut-dev, openal-soft-dev
         OpenGL     -- libglu1-mesa-glx libglu1-mesa-dev
@@ -99,5 +98,5 @@ OTHER OPTIONS
 
         # scons -c
 
-                                                         -------------------
+                                                         --------------------
                                                          SEARCH AND RESCUE II

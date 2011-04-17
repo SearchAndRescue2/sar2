@@ -40,11 +40,11 @@
 /*
  *      Program version:
  */
-#define PROG_VERSION            "2.2.0"
+#define PROG_VERSION            "2.2.1"
 
 #define PROG_VERSION_MAJOR      2
 #define PROG_VERSION_MINOR      2
-#define PROG_VERSION_RELEASE	0
+#define PROG_VERSION_RELEASE	1
 
 
 /*

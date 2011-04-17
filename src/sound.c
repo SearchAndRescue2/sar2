@@ -120,11 +120,6 @@ snd_recorder_struct *SoundInit(
     snd_recorder_struct *recorder;
     const sar_option_struct *opt;
 
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
-
     sar_core_struct *core_ptr = SAR_CORE(core);
     if(core_ptr == NULL)
         return(NULL);
@@ -141,7 +136,7 @@ snd_recorder_struct *SoundInit(
     recorder->con = NULL;
     recorder->sample_rate = 1;
     recorder->sample_size = 0;
-    recorder->channels = audio_channels;
+    recorder->channels = 2;
     recorder->bytes_per_cycle = 0;
     recorder->background_music_sndobj = NULL;
 
@@ -155,8 +150,7 @@ snd_recorder_struct *SoundInit(
                 return NULL;
             }
                 
-            if ( Mix_OpenAudio(audio_rate, audio_format, 
-                               audio_channels, audio_buffers) != 0) 
+            if ( Mix_OpenAudio(22050, AUDIO_S16SYS,2,4096) != 0) 
             {
                 printf("Unable to initialize audio: %s\n", Mix_GetError());
                 return NULL;
@@ -297,13 +291,8 @@ snd_play_struct *SoundStartPlay(
     snd_play_struct *snd_play = NULL;
     Mix_Chunk *sound = NULL;
 
-    ALuint buffer=-1;
+    ALuint buffer;
     ALuint source;
-    ALenum format;
-    ALsizei size;
-    ALvoid *data;
-    ALsizei freq;
-    ALboolean loop;
 
     if((recorder == NULL) || (object == NULL))
         return(snd_play);
@@ -341,18 +330,16 @@ snd_play_struct *SoundStartPlay(
             break;
         case SNDSERV_TYPE_OPENAL:
 
-            snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
-
-            alGenBuffers(1,&buffer);
+            //alGenBuffers(1,&buffer);
             
-            if ((alGetError()) != AL_NO_ERROR){
+            if (alGetError() != AL_NO_ERROR){
                 return NULL;
             }
             
-            alutLoadWAVFile((ALbyte*)object,&format,&data,&size,&freq,&loop);
-            alBufferData(buffer,format,data,size,freq);
-            alutUnloadWAV(format,data,size,freq);
-
+            buffer = alutCreateBufferFromFile(object);
+            if (buffer == AL_NONE)
+                return NULL;
+            
             alGenSources(1,&source);
             if (alGetError() != AL_NO_ERROR)
                 return NULL;
@@ -364,6 +351,9 @@ snd_play_struct *SoundStartPlay(
             else 
                 alSourcei(source,AL_LOOPING,AL_FALSE);
             
+            snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
+            if (! snd_play)
+                return NULL;
             snd_play->volume_left = volume_left;
             snd_play->volume_right = volume_right;
             snd_play->sample_rate = sample_rate;
@@ -397,11 +387,6 @@ void SoundStartPlayVoid(
 
     ALuint buffer;
     ALuint source;
-    ALenum format;
-    ALsizei size;
-    ALvoid *data;
-    ALsizei freq;
-    ALboolean loop;
 
     if((recorder == NULL) || (object == NULL))
         return;
@@ -418,9 +403,9 @@ void SoundStartPlayVoid(
             if (alGetError() != AL_NO_ERROR)
                 return;
             
-            alutLoadWAVFile((ALbyte*)object,&format,&data,&size,&freq,&loop);
-            alBufferData(buffer,format,data,size,freq);
-            alutUnloadWAV(format,data,size,freq);
+            buffer = alutCreateBufferFromFile(object);
+            if (buffer == AL_NONE)
+                return;
 
             alGenSources(1,&source);
             if (alGetError() != AL_NO_ERROR)
@@ -676,10 +661,6 @@ int SoundMusicStartPlay(
             recorder->background_music_sndobj = snd_play;
             break;
         case SNDSERV_TYPE_OPENAL:
-            /*TODO*/
-            snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
-            if (! snd_play)
-                return -1;
             
             if (ov_fopen(object,&oggFile) != 0)
             {
@@ -733,7 +714,11 @@ int SoundMusicStartPlay(
             
             alBufferData(bufferID,format,buffer,buffer_ptr,freq);
             alSourcei(sourceID, AL_BUFFER, bufferID);
-            
+
+            /*TODO*/
+            snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
+            if (! snd_play)
+                return -1;
             snd_play->volume_left = 1.0f;
             snd_play->volume_right = 1.0f;
             snd_play->sample_rate = 1.0f;

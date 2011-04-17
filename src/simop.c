@@ -1962,7 +1962,7 @@ int SARSimApplyArtificialForce(
 	char ear_in_cockpit, is_player;
 	sar_direction_struct *dir;
 	sar_position_struct *pos, *vel;
-	sar_object_aircraft_struct *aircraft;
+	sar_object_aircraft_struct *aircraft = NULL;
 	sar_object_human_struct *human;
 	sar_obj_rotor_struct *rotor_ptr;
 	sar_obj_part_struct *gear;
