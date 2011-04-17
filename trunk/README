@@ -17,12 +17,14 @@ CONTENTS
 -------------
 SAR2 FEATURES
 
-     "Search and Rescue II" is a fork of the game Search and Rescue
+     Search and Rescue II is an open source helicopter simulator game 
+     for Linux. It is a fork of the game Search and Rescue
      (searchandrescue.sf.net).
      
      Among the features of SaR II are smoother graphics, full SDL 
-     Joystick support, playable music, bugfixes and the Guadarrama addon packed in.
-     Unlike SaR, SaR II can be played without having to install it system-wide.
+     Joystick support, playable music, OpenAL sounds, bugfixes and 
+     the Guadarrama addon packed in. Unlike SaR, SaR II can be played 
+     without having to install it system-wide.
 
      Additionally, libjsw support and Y2 support have been removed 
      because they are obsolete.
@@ -63,5 +65,5 @@ CONTACTS
 
 See:
 	http://sar2.sf.net
-                                                         -----------------
-                                                         SEARCH AND RESCUE
+                                                         --------------------
+                                                         SEARCH AND RESCUE II

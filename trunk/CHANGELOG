@@ -1,3 +1,9 @@
+Version 2.2.1:
+        Hector Sanjuan <hector@convivencial.org>
+               * Removed SDL_Mixer dependency.
+               * Fixed some warnings
+               * Replaced the calls to alutLoadWAV() functions 
+                 as they are deprecated.
 Version 2.2.0:
         Hector Sanjuan <hector@convivencial.org>
                * Added OpenAL support for sounds and music
