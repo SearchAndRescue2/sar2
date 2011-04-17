@@ -415,7 +415,8 @@ void SoundStartPlayVoid(
             break;
 #endif
         case SNDSERV_TYPE_OPENAL:
-            alGenBuffers(1,&buffer);
+            // alGenBuffers(1,&buffer);
+
             if (alGetError() != AL_NO_ERROR)
                 return;
             
