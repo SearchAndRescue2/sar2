@@ -18,7 +18,7 @@ scons -c &>/dev/null
 echo "Packaging the game..."
 mkdir $NAME
 cp -l -r $DISTFILES $NAME/
-tar -zcf $NAME.tar.gz --exclude-backups $NAME
+tar -zcf $NAME.tar.gz --exclude-backups $NAME --exclude ".svn"
 RES=$?
 rm -rf $NAME
 if [[ $RES -eq 0 ]]
