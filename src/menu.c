@@ -3551,7 +3551,9 @@ static void SARMenuDoDrawObject(
 		);
 
 	    /* Calculate len as lines visable + yc */
-	    len = yc + h;
+            /* Substract fh as otherwise one line is 
+               drawn on the bottom margin */
+	    len = yc + h - fh;
 
 	    /* Calculate characters per row */
 	    if(fw > 0)
