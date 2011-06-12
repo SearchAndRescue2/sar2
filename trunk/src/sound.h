@@ -127,6 +127,7 @@ typedef struct {
      * NULL to indicate no background music being played)
      */
     snd_play_struct *background_music_sndobj;
+    snd_play_struct *untracked_sound_obj;
 
 } snd_recorder_struct;
 

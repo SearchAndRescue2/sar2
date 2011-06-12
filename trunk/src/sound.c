@@ -163,6 +163,14 @@ snd_recorder_struct *SoundInit(
             if (alutInit(NULL,0) == AL_FALSE){
                 printf("Alut error: %s", alutGetErrorString(alutGetError()));
             };
+            
+            /*Reserve memory space for this. It will
+             be only freed on server shutdown*/
+            snd_play_struct *snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
+            snd_play->alSource=NULL;
+            snd_play->alBuffer=NULL;
+            
+            recorder->untracked_sound_obj = snd_play;
             break;
 
         default:
@@ -230,6 +238,10 @@ void SoundShutdown(
     snd_recorder_struct *recorder
     )
 {
+
+    ALuint source;
+    ALuint buffer;
+    
     if(recorder == NULL)
         return;
 
@@ -246,12 +258,27 @@ void SoundShutdown(
             break;
 #endif
         case SNDSERV_TYPE_OPENAL:
+            
+            /* If tracking a sound, clean it up */
+            source = recorder->untracked_sound_obj->alSource;
+            buffer = recorder->untracked_sound_obj->alBuffer;
+            if (source) {
+                alSourceStop(source);
+                alDeleteSources(1,&source);
+                alGetError();
+            }
+            if (buffer){
+                alDeleteBuffers(1,&buffer);
+                alGetError();
+            }
+            free(recorder->untracked_sound_obj);
+
+            /* Shutdown OpenAL context */
             alGetError();
             if (!alutExit())
                 printf("Error: %s\n", alutGetErrorString(alutGetError()));
-            
-            break;
 
+            break;
     }
 
     /* Deallocate recorder structure. */
@@ -398,8 +425,8 @@ void SoundStartPlayVoid(
     Mix_Chunk *sound = NULL;
 #endif
 
-    ALuint buffer;
     ALuint source;
+    ALuint buffer;        
 
     if((recorder == NULL) || (object == NULL))
         return;
@@ -415,14 +442,38 @@ void SoundStartPlayVoid(
 #endif
         case SNDSERV_TYPE_OPENAL:
 
+            /* Clean up previous object if any */
+            source = recorder->untracked_sound_obj->alSource;
+            buffer = recorder->untracked_sound_obj->alBuffer;
+            if (source) {
+                alSourceStop(source);
+                alDeleteSources(1,&source);
+                alGetError();
+            }
+            if (buffer){
+                alDeleteBuffers(1,&buffer);
+                alGetError();
+            }
+
+            recorder->untracked_sound_obj->alSource=NULL;
+            recorder->untracked_sound_obj->alBuffer=NULL;
+            /* Done cleaning up previous untracked objs */
+
             buffer = alutCreateBufferFromFile(object);
             if (buffer == AL_NONE)
                 return;
 
             alGenSources(1,&source);
-            if (alGetError() != AL_NO_ERROR)
+            if (alGetError() != AL_NO_ERROR){
+                alDeleteBuffers(1,&buffer);
+                alGetError();
                 return;
-            
+            }
+
+            /* Keep track of this sound in the recorder */
+            recorder->untracked_sound_obj->alBuffer = buffer;
+            recorder->untracked_sound_obj->alSource = source;
+           
             alSourcei(source,AL_BUFFER, buffer);
             alSourcef(source, AL_GAIN, (volume_left + volume_right)/2);
             alSourcei(source,AL_LOOPING,AL_FALSE);
