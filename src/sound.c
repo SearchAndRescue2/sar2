@@ -167,8 +167,8 @@ snd_recorder_struct *SoundInit(
             /*Reserve memory space for this. It will
              be only freed on server shutdown*/
             snd_play_struct *snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
-            snd_play->alSource=NULL;
-            snd_play->alBuffer=NULL;
+            snd_play->alSource=0;
+            snd_play->alBuffer=0;
             
             recorder->untracked_sound_obj = snd_play;
             break;
@@ -455,8 +455,8 @@ void SoundStartPlayVoid(
                 alGetError();
             }
 
-            recorder->untracked_sound_obj->alSource=NULL;
-            recorder->untracked_sound_obj->alBuffer=NULL;
+            recorder->untracked_sound_obj->alSource=0;
+            recorder->untracked_sound_obj->alBuffer=0;
             /* Done cleaning up previous untracked objs */
 
             buffer = alutCreateBufferFromFile(object);
