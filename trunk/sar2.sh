@@ -4,7 +4,7 @@ PATH_TO_GAME=$(dirname $0) #make it possible to execute this from any location
 
 if [[ ! -f "$PATH_TO_GAME/$BIN_FILE" ]]
  then
-     echo "Search and Rescue II will be now compiled"
+     echo "Search and Rescue II will now be compiled"
      cd "$PATH_TO_GAME"
      scons
      if [[ $? -ne 0 ]]
