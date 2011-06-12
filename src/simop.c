@@ -2603,12 +2603,12 @@ int SARSimApplyArtificialForce(
 				}
 			    }
 			}
-			/* Close enough to run towards, there is a
+			/* Close enough to run towards (100m), there is a
 			 * door (implying reference object is landed),
 			 * and room for one more passenger, and 
                          * the aircraft's engine is nearly stopped
 			 */
-			else if((ref_distance2d < 15.0f) &&
+			else if((ref_distance2d < 100.0f) &&
 				(door_ptr != NULL) &&
 				(passengers < passengers_max) &&
                                 (aircraft->throttle < 0.3f)
