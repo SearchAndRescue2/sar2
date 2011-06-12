@@ -24,9 +24,6 @@ the top of this last one.\
 Finally, take a turn right and head south to \
 Barajas Airport (runway 18L). The helipad is by the end \
 of the runway, on the right.
-\n\
-All scenery images are property of <bold>(C)INSTITUTO \
-GEOGRAFICO NACIONAL OF SPAIN (2009) <default>
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.

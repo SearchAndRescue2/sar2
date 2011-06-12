@@ -3,18 +3,18 @@
 #
 
 name Mountain Rescue 2: Injured in Pennialara
-description One person has fallen down and \
-injured himself climbing on the south face \
-of the Pennialara pick, the highest in the region.\
+description Due to an ice layer, on person has \
+fallen down and \
+injured himself climbing on the <underline> north face \
+of the Pennialara<default> pick, \
+the highest in the region.\
 \n\
-Fly north east following the navigator \
-to the Pennialara lakes and locate the victim. \
+Fly north east. The navigator will guide you to the top \
+of the mountain. <bold>Get around the pick and locate \
+the victim.<default> \
 He's in a area of difficult access, accompanied \
 by a friend. Pick him up and evaluate his injuries to \
-decide what to do next.\
-\n\
-All scenery images are property of <bold>(C)INSTITUTO \
-GEOGRAFICO NACIONAL OF SPAIN (2009) <default>
+decide what to do next.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -41,7 +41,7 @@ Found him. He's badly injured. \
 Take him quickly to Madrid!
 mission_objective_message_fail \
 You failed to find the missing \
-person
+person.
 
 mission_objective_new arrive
 mission_objective_time_left 0.0
@@ -66,21 +66,21 @@ You failed to get back to base!
 
 # Human      type_name  flags
 create_human default    need_rescue lying
-translation 6512.0 5429.5 4791.0
+translation 4374 8871 4428
 set_human_mesg_enter Argg!
-rotate 70 0 0
+rotate 250 0 0
 
 create_human default alert aware
-translation 6513 5430 4788
-rotate 180 0 0
+translation 4373 8871 4428
+rotate 0 0 0
 
 
 # Create player object
 player_model_file aircrafts/ka27.3d
 #			ref	x	y	z	radius	urgency
-mission_add_intercept	0	6660	4395	3932	400.0	1.0
-mission_add_intercept	0	28311	-47175  3
-mission_add_intercept	3	40.0	0.2
+mission_add_intercept	0	4515	8470	5100	400.0	1.0
+mission_add_intercept	0	26988	-42700  3
+mission_add_intercept	3	1280	1491 3439
 
 
 #ref=0 standard

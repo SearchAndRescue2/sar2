@@ -1,8 +1,7 @@
 # SAR Scene: Sierra de Guadarrama (Madrid)
 #
 name Guadarrama
-set_welcome_message Notice: scenery images are property of \
-(C)INSTITUTO GEOGRAFICO NACIONAL OF SPAIN (2009)
+set_welcome_message Press 'e' to start the engines
 
 # Planet units	dms_x_offset	dms_y_offset	planet_radius_meters
 scene_gps	-3.56		40.51		6371000.0
@@ -45,12 +44,12 @@ scene_map 166000 166000  textures/guadarrama/guadarrama_map.tex
 #
 
 #                 x y z			h p b	name
-register_location 2862 -930 3690	180 0 0	Puerto de Navacerrada
-register_location 11670 -5571.5 820.96	0 0 0 Canto Cochino - Pedriza
-register_location 28311 -47176	3	20 0 0 Hospital 12 de Octubre
-register_location 39235	-33415	0	90 0 0 Madrid - Barajas (Helipad)
+register_location 1280 1941 3439	180 0 0	Puerto de Navacerrada
+register_location 10361 -2593 899	0 0 0 Canto Cochino - Pedriza
+register_location 26988 -42700	3	20 0 0 Hospital 12 de Octubre
+register_location 37397	-29827	0	90 0 0 Madrid - Barajas (Helipad)
 register_location 38571	-34100	0	0  0 0 Madrid - Barajas 36R Runway
-register_location 47570 -36235  0	340 0 0 Torrejon military airbase
+register_location 45367 -32206  0	340 0 0 Torrejon military airbase
 
 
 
@@ -85,15 +84,15 @@ create_object 6
 model_file objects/guadarrama/guadarrama04.3d
 translation 62250.0 -62250.0 0.0
 
-create_object 6
-polygon_offset
-model_file objects/guadarrama/barajas01.3d
-translation 39490.0 -33962.0 0.0
+#create_object 6
+#polygon_offset
+#model_file objects/guadarrama/barajas01.3d
+#translation 39490.0 -33962.0 0.0
 
-create_object 6
-polygon_offset
-model_file objects/guadarrama/madrid01.3d
-translation 28290 -40272 0
+#create_object 6
+#polygon_offset
+#model_file objects/guadarrama/madrid01.3d
+#translation 28290 -40272 0
 
 
 
@@ -108,16 +107,19 @@ translation 28290 -40272 0
 #Towers Bola del Mundo
 
 create_premodeled control_tower 25000  15     15    80 building05_tex wall01_tex
-translation 4333  -1302 4650
+#translation 4333  -1302 4650
+translation 3233  1949 4675
 
 # Radio tower
 #                 type        range  height hazard_lights
 create_premodeled radio_tower 25000  135    1
-translation 4340.0 -1275.0 4637
+#translation 4340.0 -1275.0 4637
+translation 3240 1976 4650
 rotate 219 0 0
 
 create_premodeled radio_tower 25000  160    1
-translation 4343.0 -1325.0 4630
+#translation 4343.0 -1325.0 4643
+translation 3243 1926 4643
 rotate 30 0 0
 
 
@@ -127,8 +129,17 @@ no_depth_test
 object_name helipad_navacerrada
 object_map_description Helipad - Puerto de Navacerrada
 range 1500
-translation 2862 -930 3690
+#translation 2862 -930 3690
+translation 1280 1941 3439
 rotate 180 0 0
+
+#                 type     range length width height  walls_texture  walls_night_texture  roof_texture
+create_premodeled building 20000  10    10    100      building02_tex building01_night_tex wall01_tex
+translation 1332 1878 3423
+
+#                 type        range  height hazard_lights
+create_premodeled power_transmission_tower 21000  25     2
+translation 1332 1878 3524
 
 #Canto Cochino
 create_helipad ground_bare 30.0 30.0 0.0 Pedriza n n n y y
@@ -136,7 +147,9 @@ no_depth_test
 object_name helipad_pedriza
 object_map_description Helipad - Canto Cochino - Pedriza
 range 900
-translation 11670 -5571.5 820.96
+#translation 11670 -5571.5 820.96
+translation 10361 -2593 899
+
 
 #Refugio Giner de los Rios
 create_helipad ground_bare 25 25 0 Giner n n n y y
@@ -144,38 +157,48 @@ no_depth_test
 object_name helipad_giner
 object_map_description Helipad - Refugio Giner de los Rios - Pedriza
 range 900
-translation 12536 -3457 1338
+#translation 12536 -3457 1338
+translation 11029 0 1563
 
 #Hospital de la Fuenfría
 create_premodeled building 4000	70 35 50 building02_tex building01_night_tex wall01.tex
-translation -3317 -3624 1900
+#translation -3317 -3624 1900
+translation -3585 -575 1910
 rotate 90 0 0
 
 create_helipad building 40 40 14 Fuenfria n n n y y
 object_name helipad_fuenfria
 object_map_description Helipad - Hospital de la Fuenfria
 range 3000
-translation -3200 -3624 1875
+#translation -3200 -3624 1875
+translation -3468 -575 1885
 
 # 12 de octubre
 #                 type     range length width height  walls_texture  walls_night_texture  roof_texture
 #edif sur
 create_premodeled building 20000  90    60    250      building02_tex building01_night_tex wall01_tex
-translation 28311 -47257 0
+#translation 28311 -47257 0
+translation 26988 -42781 0
+
 #edif oeste
 create_premodeled building 20000  60    90    200      building02_tex building01_night_tex wall01_tex
-translation 28231 -47177 0
+#translation 28231 -47177 0
+translation 26908 -42701 0
+
 #edif central
 create_premodeled building 20000  60    60    350      building02_tex building01_night_tex wall01_tex
-translation 28231 -47257 0
+#translation 28231 -47257 0
+translation 26908 -42781 0
 
 create_object 1
 model_file automobiles/ambulance.3d
-translation 28297 -47215
+#translation 28297 -47215
+translation 26974 -42739
 
 create_object 1
 model_file automobiles/ambulance.3d
-translation 28303 -47215
+#translation 28303 -47215
+translation 26980 -42739
 
 # Helipad at 12 de octubre
 create_helipad building 30.0 30.0 3.0 12OCT y y y y y
@@ -183,8 +206,8 @@ create_helipad building 30.0 30.0 3.0 12OCT y y y y y
 object_name helipad_12oct
 object_map_description Helipad - 12 de Octubre hospital
 range 20000
-translation 28311 -47176 3
-
+#translation 28311 -47176 3
+translation 26988 -42700 3
 
 #Torrejón
 create_helipad default 50.0 50.0 0.0 Torrejon y y y y y
@@ -192,13 +215,15 @@ no_depth_test
 object_name helipad_torrejon
 object_map_description Helipad - Torrejon Airbase
 range 6000
-translation 47570 -36235 0
+#translation 47570 -36235 0
+translation 45367 -32206 0
 
 new_runway 17000 3406 40 0 11 100 23 5 10 10 thresholds borders td_markers midway_markers north_gs south_gs
 runway_approach_lighting_north end tracer align
 runway_approach_lighting_south end tracer align
 no_depth_test
-translation 48530 -35075 0
+#translation 48530 -35075 0
+translation 46327 -31046 0
 rotate 43 0 0
 
 
@@ -208,7 +233,8 @@ no_depth_test
 object_name helipad_barajas
 object_map_description Helipad - Madrid Barajas Airport
 range 4000
-translation 39235 -33415 0
+#translation 39235 -33415 0
+translation 37397 -29827 0
 
 #pista	   range lenght width  surface edge light   dashes N   S   North South
 #	   	 	       	       spacing	    	           displaced threshold
@@ -216,28 +242,32 @@ new_runway 17000 4166   69     0       11 	    100    18R 36L 935    0.0 thresho
 runway_approach_lighting_north end tracer align
 runway_approach_lighting_south end tracer align
 no_depth_test
-translation 38571 -32050
+#translation 38571 -32050
+translation 36733 -28462
 rotate 0 0 0
 
 new_runway 17000 3405   69     0       11 	    100    18L 36R 540    0.0 thresholds borders td_markers midway_markers north_gs south_gs
 runway_approach_lighting_north end tracer align
 runway_approach_lighting_south end tracer align
 no_depth_test
-translation 39827 -31525
+#translation 39827 -31525
+translation 37989 -27837
 rotate 0 0 0
 
 new_runway 17000 3924   69     0       11 	    100    15R 33L 0    1000 thresholds borders td_markers midway_markers north_gs south_gs
 runway_approach_lighting_north end tracer align
 runway_approach_lighting_south end tracer align
 no_depth_test
-translation 39639 -36500
+#translation 39639 -36500
+translation 37801 -32912
 rotate 322.60 0 0
 
 new_runway 17000 3393   69     0       11 	    100    15L 33R 0    529 thresholds borders td_markers midway_markers north_gs south_gs
 runway_approach_lighting_north end tracer align
 runway_approach_lighting_south end tracer align
 no_depth_test
-translation 40972 -35244
+#translation 40972 -35244
+translation 39134 -31656
 rotate 322.60 0 0
 
 

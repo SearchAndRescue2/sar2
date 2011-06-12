@@ -17,20 +17,18 @@ Your mission is to fly to mount Abantos, \
 locate and rescue the 10 firemen <bold>\
 before they are reached by fire.<default> \
 When you see them, try to land close to them \
-if its safe enough. Otherwise just hoist them \
+if its safe enough, turn off the engines and let \
+them get on board. Otherwise just hoist them \
 in one by one.\
 \n\
 You will start at the base of \
 Torrejon, as the military are offering \
-their V-22 Ospray for the job. Fly \
-north-west towards El Escorial following \
-the navigator.\
+their V-22 Ospray for the job. The \
+navigator will guide you north-west towards \
+the area.\
 \n\
 The situation is tough over there, with lots of fire \
-and smoke, so be careful.\
-\n\
-All scenery images are property of <bold>(C)INSTITUTO \
-GEOGRAFICO NACIONAL OF SPAIN (2009) <default>
+and smoke, so be careful.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -81,159 +79,194 @@ You failed to get to the hospital.
 
 # Human      type_name  flags
 create_human default    need_rescue alert aware
-translation -9780 -18990 2380.0
-set_human_mesg_enter Thank you!
+translation -9120 -13900 3005
+set_human_mesg_enter Hi! Nice bird!
 human_reference player run_towards
 rotate 90 0 0
 
 create_human default    need_rescue alert aware
-translation -9783 -18993 2380.0
-set_human_mesg_enter Thank you!
+translation -9103 -13884 3005
+set_human_mesg_enter It was getting hot here!
 human_reference player run_towards
 rotate 75 0 0
 
 create_human default    need_rescue alert aware
-translation -9778 -18991 2380.0
-set_human_mesg_enter Thank you!
+translation -9115 -13894 3005
+set_human_mesg_enter Please save the rest!
 human_reference player run_towards
 rotate 30 0 0
 
 create_human default    need_rescue alert aware
-translation -9775 -18983 2380.0
-set_human_mesg_enter Thank you!
+translation -9100 -13900 3005
+set_human_mesg_enter Cough cough!
 human_reference player run_towards
 rotate 176 0 0
 
 create_human default    need_rescue alert aware
-translation -9780 -18987 2380.0
-set_human_mesg_enter Thank you!
+translation -9102 -13880 3005
+set_human_mesg_enter I can't breath!
 human_reference player run_towards
 rotate 204 0 0
 
 create_human default    need_rescue alert aware
-translation -9784 -18989 2380.0
-set_human_mesg_enter Thank you!
+translation -9109 -13889 3005
+set_human_mesg_enter Where will you take us?
 human_reference player run_towards
 rotate 273 0 0
 
 create_human default    need_rescue alert aware
-translation -9786 -18998 2380.0
-set_human_mesg_enter Thank you!
+translation -9105 -13884 3005
+set_human_mesg_enter Can you drop me off at the supermarket?
 human_reference player run_towards
 rotate 340 0 0
 
 create_human default    need_rescue alert aware
-translation -9781 -18992 2380.0
-set_human_mesg_enter Thank you!
+translation -9106 -13887 3005
+set_human_mesg_enter Wait, I think I dropped my phone!
 human_reference player run_towards
 rotate 300 0 0
 
 create_human default    need_rescue alert aware
-translation -9776 -18970 2380.0
-set_human_mesg_enter Thank you!
+#translation -9776 -18970 3005
+translation -9104 -13886 3005
+set_human_mesg_enter The fire got us by surprise!
 human_reference player run_towards
 rotate 232 0 0
 
 create_human default    need_rescue alert aware
-translation -9774 -18975 2380.0
-set_human_mesg_enter Thank you!
+translation -9100 -13875 3005
+set_human_mesg_enter Everyone get in!
 human_reference player run_towards
 rotate 357 0 0		 
 
 create_object 1
 model_file automobiles/firetruck_ap.3d
-translation -9780 -18973 2377
-rotate 155 0 0
+#translation -9780 -18973 2377
+translation -9088 -13913 3009
+#rotate 155 0 0
+rotate 329 0 0
 
 #fire		width height (ft)
 create_fire 18.0 100.0
-translation -9688 -18920 2377
+#translation -9688 -18920 2377
+translation -9622 -13392 2953
 #						radius
 #smoke  	offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
 create_smoke    0.0     0.0     15.0        6.5  47.0 0.19  0         650  120  0
-translation -9688 -18920 2377
+#translation -9688 -18920 2377
+translation -9622 -13392 2943
 
 
 create_fire 20.0 103.0
-translation -9727 -18936 2377
+#translation -9727 -18936 2377
+translation -9073 -13935 3007
 create_smoke    0.0     0.0     20.0        8  109.0 0.48 0         600 120   1 
-translation -9727 -18936 2377
+#translation -9727 -18936 2377
+translation -9073 -13935 3007
 
 create_fire 15 52
-translation -9758 -18945 2377
+#translation -9758 -18945 2377
+translation -9158 -13786 2999
 create_smoke    0.0     0.0     14.0        15  55.0 0.54 0        710 210	1
-translation -9758 -18945 2377
+#translation -9758 -18945 2377
+translation -9158 -13786 2990
 
 create_fire 20.0 73
-translation -9803 -18924 2377
+#translation -9803 -18924 2377
+translation -9065 -13836 3005
 create_smoke    0.0     0.0     20.0        7.5  89.3 0.24 0       580 110 0
-translation -9803 -18924 2377
+#translation -9803 -18924 2377
+translation -9065 -13836 3005
 
 create_fire 10.0 92.0
-translation -9856 -18962 2377
+#translation -9856 -18962 2377
+translation -9227 -13718 2995
 create_smoke    0.0     0.0     5.0        9.0  76.9 0.4 0         545 130 1
-translation -9856 -18962 2377
+#translation -9856 -18962 2377
+translation -9227 -13718 2990
 
 create_fire 23.0 67.0
-translation -9837 -18993 2377
+#translation -9837 -18993 2377
+translation -9391 -13796 2992
 create_smoke    0.0     0.0     13.0        8.0  68.4 0.3 0        602 120  1
-translation -9837 -18993 2377
+#translation -9837 -18993 2377
+translation -9391 -13796 2984
 
 create_fire 10.0 39.0
-translation -9812 -19015 2377
+#translation -9812 -19015 2377
+translation -9317 -14057 2997
 create_smoke    0.0     0.0     8.0        5.5  37.0 0.34 0        587 113 1
-translation -9812 -19015 2377
+#translation -9812 -19015 2377
+translation -9317 -14057 2930
 
 create_fire 25.0 69.0
-translation -9788 -19100 2377
+#translation -9788 -19100 2377
+translation -9226 -14024 3005
 create_smoke    0.0     0.0     21.0        9.0  126.0 0.2 0       655 160 1
-translation -9788 -19100 2377
+#translation -9788 -19100 2377
+translation -9226 -14024 2990
 
 create_fire 23.0 88.0
-translation -9745 -18986 2377
+#translation -9745 -18986 2377
+translation -8948 -13839 3001
 create_smoke    0.0     0.0     9.0        12.5  58.0 0.3 0       600 130 1
-translation -9745 -18986 2377
+#translation -9745 -18986 2377
+translation -8948 -13839 2980
 
 create_fire 21.0 58.0
-translation -9725 -18969 2377
+#translation -9725 -18969 2377
+translation -9154 -13880 3000
 create_smoke    0.0     0.0     10.0        6.3  45.9 0.7 0       537 110 1
-translation -9725 -18969 2377
+#translation -9725 -18969 2377
+translation -9154 -13880 2950
 
 create_fire 25.0 80.0
-translation -9714 -18973 2377
+#translation -9714 -18973 2377
+translation -9117 -14096 3011
 create_smoke    0.0     0.0     21.0        9.7  95.3 0.5 0       660 130 1
-translation -9714 -18973 2377
+#translation -9714 -18973 2377
+translation -9117 -14096 2990
 
 create_fire 18.0 40.0
-translation -9700 -18970 2377
+#translation -9700 -18970 2377
+translation -9525 -14046 2957
 create_smoke    0.0     0.0     7.0        14.9  52.8 0.2 0       500 110 1
-translation -9700 -18970 2377
+#translation -9700 -18970 2377
+translation -9525 -14046 2940
 
 create_fire 30.0 103.0
-translation -9630 -18980 2377
+#translation -9630 -18980 2377
+translation -9079 -13889 3005
 create_smoke    0.0     0.0     20.0        8.5  86.0 0.25 0      609 120 1
-translation -9630 -18980 2377
+#translation -9630 -18980 2377
+translation -9079 -13889 2995
 
 create_fire 55.0 130.0
-translation -9603 -18764 2287
+#translation -9603 -18764 2287
+translation -8821 -13593 2800
 create_smoke    0.0     0.0     20.0	    6.8  70.0 0.3 0       700 145 1
-translation -9603 -18764 2287
+#translation -9603 -18764 2287
+translation -8821 -13593 2750
 
 create_fire 40.0 103.0
-translation -9565 -19673 2737
+#translation -9565 -19673 2737
+translation -8783 -14502 2770
 create_smoke    0.0     0.0     20.0        10.0  131.0 0.15 0    640 130 1
-translation -9565 -19673 2737
+#translation -9565 -19673 2737
+translation -8783 -14502 2750
 
 create_fire 51.0 103.0
-translation -10444 -18835 2753
+#translation -10444 -18835 2753
+translation -9662 -13664 2985
 create_smoke    0.0     0.0     20.0        12.5  78.0 0.23 0     540 183 1
-translation -10444 -18835 2753
+#translation -10444 -18835 2753
+translation -9662 -13664 2985
 
 
 # Create player object
 player_model_file aircrafts/v22.3d
 #			ref	x	y	z	radius	urgency
-mission_add_intercept	0	-9618	-22845	279.37	40.0	1.0
+mission_add_intercept	0	-5060	-17745	348	40.0	1.0
 #mission_add_intercept	0	28311	-47175	3	40.0	0.8
 #			ref	radius	urgency
 mission_add_intercept	3	40.0	0.5

@@ -10,10 +10,7 @@ close area of <underline>La Pedriza<default>.\
 Follow navigation system and fly east to \
 <underline>Canto Cochino<default> to pickup \
 one of the natural park guards. He might provide more \
-info about where to look for the victim.\
-\n\
-All scenery images are property of <bold>(C)INSTITUTO \
-GEOGRAFICO NACIONAL OF SPAIN (2009) <default>
+info about where to look for the victim.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -36,11 +33,13 @@ mission_objective_new arrive
 mission_objective_time_left 0
 mission_objective_arrive_at helipad_pedriza
 mission_objective_message_success \
-The park guard says the \
-missing person was last seen hiking on \
-the top of the mountain cirque north of \
-here.
+Turn off engines and wait for the\
+park guard to get on board.
 
+#pick up guard objective
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 1 1
 
 mission_objective_new pick_up
 mission_objective_time_left 0.0
@@ -75,12 +74,19 @@ You failed to get back to base!
 
 # Human      type_name  flags
 create_human default    need_rescue alert aware
-translation 13730.0 -1177 3520.0
+translation 11186.0     1946        3445
 set_human_mesg_enter I didn't know how to get back!
+
+create_human default aware
+translation 10355 -2587 899
+set_human_mesg_enter Hey! The missing person \
+was last seen north of here, around 6000ft elevation.
+human_reference player run_towards
+rotate 220 0 0
 
 # Create player object
 player_model_file aircrafts/ka27.3d
 #			ref	x	y	z	radius	urgency
-mission_add_intercept	0	11670	-5571.5	820.96	40.0	1.0
+mission_add_intercept	0	10361	-2593   899    40.0	1.0
 #			ref	radius	urgency
 #mission_add_intercept	3	40.0	0.5
