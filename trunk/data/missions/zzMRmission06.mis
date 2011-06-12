@@ -4,23 +4,20 @@
 
 name Mountain Rescue 6: Heart attack in the Machota Baja
 description We have received an emergency call \
-from the guide of a group elder people. \
+from someone guiding a group elder people. \
 They were hiking to the top of one of the hills \
 south-west of <underline>San Lorenzo del Escorial<default>, \
 the <underline> Machota Baja<default>.\
 \n\
 Up on the top one of them has apparently suffered a \
-heart attack. The victim is unconcious and there is \
+stroke. The victim is unconcious and there is \
 no space to land, so using the hoist is required.\
 \n\
 Follow the navigator to <underline>El Escorial<default>, \
-then keep flying straight to reach two little hills. The \
-<underline>Machota Baja<default> is the one on the \
+then you will find the the <underline> \
+Machota Baja<default> right in front of you \
 left. Pick up the victim and fly to the \
-<underline>Hospital de la Fuenfria<default>.\
-\n\
-All scenery images are property of <bold>(C)INSTITUTO \
-GEOGRAFICO NACIONAL OF SPAIN (2009) <default>.
+<underline>Hospital de la Fuenfria<default>.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -71,52 +68,53 @@ You failed to get back to base!
 
 # Human      type_name  flags
 create_human default    need_rescue lying
-translation -10806 -27233 1908
-set_human_mesg_enter Argg!
+#translation -10806 -27233 2061
+translation -9722 -19451 628
+set_human_mesg_enter Uhm!
 rotate 0 0 0
 
 create_human default 
-translation -10808 -27233 1906
+translation -9724 -19451 2061
 rotate 18 0 0
 
 create_human default alert aware
-translation -10805 -27233 1906
+translation -9721 -19451 2061
 rotate 180 0 0
 
 create_human default alert aware
-translation -10808 -27235 1906
+translation -9724 -19453 2061
 rotate 260 0 0
 
 create_human default 
-translation -10808 -27230 1906
+translation -9724 -19448 2061
 rotate 150 0 0
 
 create_human default alert aware
-translation -10805 -27231 1906
+translation -9721 -19449 2601
 rotate 110 0 0
 
 create_human default 
-translation -10805 -27235 1906
+translation -9721 -19442 2601
 rotate 34 0 0
 
 create_human default alert aware
-translation -10806 -27231 1906
+translation -9722 -19449 2601
 rotate 73 0 0
 
 create_human default 
-translation -10806 -27235 1906
+translation -9722 -19453 2601
 rotate 315 0 0
 
 create_human default alert aware
-translation -10803 -27236 1906
+translation -9723 -19454 2061
 rotate 180 0 0
 
 
 # Create player object
 player_model_file aircrafts/ka27.3d
 #			ref	x	y	z	radius	urgency
-mission_add_intercept	0	-9421	-23023	1600	400.0	1.0
-mission_add_intercept	0	-3200	-3624   1875    40	1.0
+mission_add_intercept	0	-7117	-16234	1300	400.0	1.0
+mission_add_intercept	0	-3468	-575   1885    40	1.0
 mission_add_intercept	3	40.0	0.2
 
 

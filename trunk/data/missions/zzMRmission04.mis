@@ -13,12 +13,9 @@ to be transported to Madrid's hospital 12 October.\
 \n\
 Fly west, leaving the <underline>7 Picos<default> \
 on your right, to the Fuenfria hospital. Paramedics \
-are waiting there with the two injured. Wait until \
-they board the helicopter and then, take \
-them quickly to Madrid.\
-\n\
-All scenery images are property of <bold>(C)INSTITUTO \
-GEOGRAFICO NACIONAL OF SPAIN (2009) <default>
+are waiting there with the two injured. Let them \
+board the helicopter (turn off engines) and then, take \
+them quickly to Madrid.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -69,17 +66,26 @@ You failed to arrive in Madrid!
 
 # Human      type_name  flags
 create_human victim_streatcher_assisted  alert need_rescue lying on_streatcher
-translation -3196 -3615 1881
+translation -3464 -566 1891
 set_human_mesg_enter ...
 human_reference player run_towards
 rotate 180 0 0
 
 create_human victim_streatcher_assisted  alert need_rescue lying on_streatcher
-translation -3198 -3615 1881
+translation -3466 -566 1891
 set_human_mesg_enter ...
 human_reference player run_towards
 rotate 180 0 0
 
+create_object 1
+model_file automobiles/cuda.3d
+translation -3181 -2098.5 1498
+rotate 143 180 0
+
+#						radius
+#smoke  	offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
+create_smoke    0.0     0.0     2.0        0.5  5.0 0.19  0            650        60         0
+translation -3181 -2098.5 1498
 
 
 
