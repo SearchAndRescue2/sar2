@@ -18,12 +18,12 @@ scons -c &>/dev/null
 echo "Packaging the game..."
 mkdir $NAME
 cp -l -r $DISTFILES $NAME/
-tar -zcf $NAME.tar.gz --exclude-backups $NAME --exclude ".svn"
+tar -jcf $NAME.tar.bz2 --exclude-backups $NAME --exclude ".svn"
 RES=$?
 rm -rf $NAME
 if [[ $RES -eq 0 ]]
 then
-    echo "Created $NAME.tar.gz successfully."
+    echo "Created $NAME.tar.bz2 successfully."
 else
     echo "Failed to create sar2 archive."
 fi
