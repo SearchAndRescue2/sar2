@@ -1,10 +1,27 @@
+Version 2.3.0:
+        Hector Sanjuan <hector@convivencial.org>
+               * Replaced all Guadarrama scenery textures with
+                 public domain textures. Updated coordinates of
+                 all objects in the scenery and in the
+                 missions (r103).
+               * Increased the minimum distance for humans to
+                 run towards the helicopter (r101).
+               * The makedist script generates a bzipped tarball,
+                 which reaches larger compression rates than gzip.
+                 (r102).
+               * Fix menu lists displaying one more element
+                 than those fitting in the window size
+                 (bug #3315466, r105).
+               * Track sounds played via SoundStartPlayVoid(),
+                 so the buffer and the source can be deleted
+                 correctly (r104).
 Version 2.2.1:
         Hector Sanjuan <hector@convivencial.org>
                * Removed SDL_Mixer dependency.
                * Fixed some warnings
-               * Replaced the calls to alutLoadWAV() functions 
+               * Replaced the calls to alutLoadWAV() functions
                  as they are deprecated.
-               * Fixed openAL error messages at exit 
+               * Fixed openAL error messages at exit
                  (bug #3288558).
 Version 2.2.0:
         Hector Sanjuan <hector@convivencial.org>
@@ -13,12 +30,12 @@ Version 2.2.0:
                  if using OpenAL
                * Humans don't run towards the helicopter unless
                  the engines are nearly off
-               * Helicopter engines are now off by default. Manual 
+               * Helicopter engines are now off by default. Manual
                  start required.
                * Do not spam console with "setting up fire" messages
                  (inspired from SaR)
                * Fixed crash sounds overflow. Crash sounds are played
-                 once and not in every game loop without control 
+                 once and not in every game loop without control
                  (bug #3202204)
 Version 2.1.0:
         Hector Sanjuan <hector@convivencial.org>
@@ -32,8 +49,8 @@ Version 2.0.0:
         Hector Sanjuan <hector@convivencial.org>
                * Removed Y2 sound server support.
                * Removed libjsw joystick support.
-               * Extended and fixed SDL joystick support to 
-                 handle axis properly, read buttons and work on the 
+               * Extended and fixed SDL joystick support to
+                 handle axis properly, read buttons and work on the
                  menu test page.
                * Enabled linear filtering for texture maximization
                  (smoother graphics) and mipmaps for texture minimization.
@@ -54,7 +71,7 @@ Version 2.0.0:
                  the game locally, without installation.
                * Included data files in the data/ folder. Renamed
                  source folder to src/ and included bin/, build/ folders.
-               * Adapted AUTHORS, README, INSTALL... files to SaR2 
+               * Adapted AUTHORS, README, INSTALL... files to SaR2
                  release.
                * Resized menu-background so they look a bit smoother
                  with higher resolutions.
