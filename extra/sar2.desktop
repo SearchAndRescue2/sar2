@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Search And Rescue II
+GenericName=Helicopter simulator
 Exec=sar2
-Terminal=False
+Terminal=false
 Type=Application
-Categories=Game
-Value=1.0
+Categories=Game;Simulation;
 Icon=sar2
