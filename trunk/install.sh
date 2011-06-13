@@ -1,13 +1,14 @@
 #!/bin/bash
+DESTDIR=$1
 BIN_FILE="bin/sar2"
 DATA_FOLDER="data"
 MAN_FOLDER="man"
 ICON_FILE="extra/sar2.xpm"
 DESKTOP_FILE="extra/sar2.desktop"
 
-DATA_PATH="/usr/share/games/sar2"
-GAME_PATH="/usr/bin/sar2"
-MAN_PATH="/usr/share/man/man6"
+DATA_PATH="$DESTDIR/usr/share/sar2"
+GAME_PATH="$DESTDIR/usr/bin/sar2"
+MAN_PATH="$DESTDIR/usr/share/man/man6"
 
 if [[ ! -f $BIN_FILE ]]
 then
@@ -38,8 +39,10 @@ mkdir -p $DATA_PATH
 echo "Copying data..."
 cp -r $DATA_FOLDER/* $DATA_PATH
 echo "Installing manual..."
+mkdir -p $MAN_PATH
 cp $MAN_FOLDER/* $MAN_PATH
 echo "Installing sar2..."
+mkdir -p `dirname $GAME_PATH`
 cp $BIN_FILE $GAME_PATH
 echo "Installing icon..."
 xdg-icon-resource install --novendor --size 48 $ICON_FILE

@@ -1,7 +1,8 @@
 #!/bin/bash
-DATA_PATH="/usr/share/games/sar2"
-GAME_PATH="/usr/bin/sar2"
-MAN_PATH="/usr/share/man/man6/sar2.6.bz2"
+DESTDIR=$1
+DATA_PATH="$DESTDIR/usr/share/sar2"
+GAME_PATH="$DESTDIR/usr/bin/sar2"
+MAN_PATH="$DESTDIR/usr/share/man/man6/sar2.6.bz2"
 ICON_NAME="sar2"
 DESKTOP_MENU_NAME="sar2.desktop"
 

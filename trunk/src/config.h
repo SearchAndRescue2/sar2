@@ -509,7 +509,7 @@ to the fullest extent of the law."
 #define SAR_DEF_LOCAL_DATA_DIR  ".config/sar2"
 
 /* Game data dir */
-#define SAR_DEF_GLOBAL_DATA_DIR "/usr/share/games/sar2"
+#define SAR_DEF_GLOBAL_DATA_DIR "/usr/share/sar2"
 
 /* Subdirs, one of each in the local and global game dirs */
 #define SAR_DEF_AIRCRAFTS_DIR		"aircrafts"
