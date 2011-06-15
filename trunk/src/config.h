@@ -1350,6 +1350,7 @@ to the fullest extent of the law."
  "SHIFT + PERIOD", "Parking brakes", \
  "B", "Deploy/retract air brakes", \
  "R", "Refuel, repair, and drop off passengers", \
+ "CTRL + R", "Drop off passengers", \
  "Z", "Decelerate time (slow-motion)", \
  "SHIFT + Z", "Accelerate time (compress)", \
  "CTRL + Z", "Normalize time rate", \
@@ -1563,6 +1564,9 @@ Transfered %.0f %s of fuel"
 
 #define SAR_MESG_NOT_REFUELABLE			"\
 You must be landed at a helipad to obtain fuel and repairs"
+
+#define SAR_MESG_NOT_DROPOFFABLE                "\
+You cannot drop off passengers in this location"
 
 #define SAR_MESG_REFUELING_REPAIRS_COMPLETE	"\
 Refueling and repairs complete"

@@ -86,6 +86,7 @@ static void SARKeyElevatorTrimDown(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyTiltRotors(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyHoistRopeEndSelect(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyDoor(SAR_KEY_FUNC_PROTOTYPE);
+static void SARKeyDropPassengers(SAR_KEY_FUNC_PROTOTYPE);
 
 static int SARKeyRestart(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyRefuelRepair(SAR_KEY_FUNC_PROTOTYPE);
@@ -1797,6 +1798,154 @@ static void SARKeyDoor(SAR_KEY_FUNC_PROTOTYPE)
 	}
 }
 
+
+/* Drops passenger off an object */
+static void SARKeyDropPassengers(SAR_KEY_FUNC_PROTOTYPE)
+{
+	sar_object_struct *obj_ptr;
+
+ 
+	if((scene == NULL) || !state)
+	    return;
+
+	obj_ptr = scene->player_obj_ptr;
+	if(obj_ptr != NULL)
+	{
+	    Boolean	obj_ok = False,
+			loc_ok = False,
+			can_dropoff = False;
+	    sar_object_aircraft_struct *aircraft;
+
+	    /* Check if object is okay to drop passengers
+	     * by type
+	     */
+	    switch(obj_ptr->type)
+	    {
+	      case SAR_OBJ_TYPE_GARBAGE:
+	      case SAR_OBJ_TYPE_STATIC:
+	      case SAR_OBJ_TYPE_AUTOMOBILE:
+	      case SAR_OBJ_TYPE_WATERCRAFT:
+		break;
+	      case SAR_OBJ_TYPE_AIRCRAFT:
+		aircraft = SAR_OBJ_GET_AIRCRAFT(obj_ptr);
+		if(aircraft != NULL)
+		{
+		    if(aircraft->landed &&
+		       (aircraft->air_worthy_state != SAR_AIR_WORTHY_NOT_FLYABLE)
+		    )
+			obj_ok = True;
+		}
+		break;
+	      case SAR_OBJ_TYPE_GROUND:
+	      case SAR_OBJ_TYPE_RUNWAY:
+	      case SAR_OBJ_TYPE_HELIPAD:
+	      case SAR_OBJ_TYPE_HUMAN:
+	      case SAR_OBJ_TYPE_SMOKE:
+	      case SAR_OBJ_TYPE_FIRE:
+	      case SAR_OBJ_TYPE_EXPLOSION:
+	      case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+	      case SAR_OBJ_TYPE_FUELTANK:
+	      case SAR_OBJ_TYPE_PREMODELED:
+		break;
+	    }
+
+	    /* Is object okay to drop passengers? */
+	    if(obj_ok)
+	    {
+		/* Check if object is at a helipad and it is a 
+		 drop off place */
+		int i, hit_obj_num, list_total, *list;
+		sar_object_struct *hit_obj_ptr;
+		sar_object_helipad_struct *obj_helipad_ptr;
+
+		/* Get list of objects at the object's location */
+		list = SARGetGCCHitList(
+		    core_ptr, scene,
+		    &core_ptr->object, &core_ptr->total_objects,
+		    scene->player_obj_num,
+		    &list_total
+		);
+		/* Iterate through objects at this object's location
+		 * and update the dropoff state
+		 */
+		for(i = 0; i < list_total; i++)
+		{
+		    hit_obj_num = list[i];
+		    hit_obj_ptr = SARObjGetPtr(
+			core_ptr->object, core_ptr->total_objects,
+			hit_obj_num
+		    );
+		    if(hit_obj_ptr == NULL)
+			continue;
+
+		    switch(hit_obj_ptr->type)
+		    {
+		      case SAR_OBJ_TYPE_GARBAGE:
+		      case SAR_OBJ_TYPE_STATIC:
+		      case SAR_OBJ_TYPE_AUTOMOBILE:
+		      case SAR_OBJ_TYPE_WATERCRAFT:
+		      case SAR_OBJ_TYPE_AIRCRAFT:
+		      case SAR_OBJ_TYPE_GROUND:
+		      case SAR_OBJ_TYPE_RUNWAY:
+			break;
+		      case SAR_OBJ_TYPE_HELIPAD:
+			obj_helipad_ptr = SAR_OBJ_GET_HELIPAD(hit_obj_ptr);
+			if(obj_helipad_ptr != NULL)
+			{
+			    const sar_helipad_flags flags = obj_helipad_ptr->flags;
+			    if(flags & SAR_HELIPAD_FLAG_DROPOFF)
+				can_dropoff = True;
+			}
+			loc_ok = True;
+			break;
+		      case SAR_OBJ_TYPE_HUMAN:
+		      case SAR_OBJ_TYPE_SMOKE:
+		      case SAR_OBJ_TYPE_FIRE:
+		      case SAR_OBJ_TYPE_EXPLOSION:
+		      case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+		      case SAR_OBJ_TYPE_FUELTANK:
+		      case SAR_OBJ_TYPE_PREMODELED:
+			break;
+		    }
+		}
+		free(list);
+
+		/* Begin dropoff */
+		if(loc_ok)
+		{
+		    /* Can drop off passengers (and not playing a mission? CHANGED) */
+                    /* Formerly different, but see no reason why you should not be on
+                       a mission */
+		    //if(can_dropoff && (core_ptr->mission == NULL))
+                    if(can_dropoff)
+		    {
+			int passengers_unloaded = SARSimOpPassengersUnloadAll(
+			    scene, obj_ptr
+			);
+			if(passengers_unloaded > 0)
+			{
+			    char s[256];
+			    sprintf(s, "Dropped off %i passengers", passengers_unloaded);
+			    SARMessageAdd(scene, s);
+			}
+		    }
+		}
+		else
+		{
+		    SARMessageAdd(
+			scene, SAR_MESG_NOT_DROPOFFABLE
+		    );
+		}
+	    }
+	    else
+	    {
+		SARMessageAdd(
+		    scene, SAR_MESG_NOT_DROPOFFABLE
+		);
+	    }
+	}
+}
+
 /*
  *      Restart from nearest restarting point or end mission.
  *
@@ -1895,10 +2044,9 @@ static void SARKeyRefuelRepair(SAR_KEY_FUNC_PROTOTYPE)
 	if(obj_ptr != NULL)
 	{
 	    Boolean	obj_ok = False,
-			loc_ok = False,
-			can_refuel = False,
-			can_repair = False,
-			can_dropoff = False;
+                        loc_ok = False,
+                        can_refuel = False,
+                        can_repair = False;
 	    sar_object_aircraft_struct *aircraft;
 
 	    /* Check if object is okay to refuel or repair by its
@@ -1952,7 +2100,7 @@ static void SARKeyRefuelRepair(SAR_KEY_FUNC_PROTOTYPE)
 		    &list_total
 		);
 		/* Iterate through objects at this object's location
-		 * and update the refuel, repair, and dropoff states
+		 * and update the refuel and repair states
 		 */
 		for(i = 0; i < list_total; i++)
 		{
@@ -1983,8 +2131,6 @@ static void SARKeyRefuelRepair(SAR_KEY_FUNC_PROTOTYPE)
 				can_refuel = True;
 			    if(flags & SAR_HELIPAD_FLAG_REPAIR)
 				can_repair = True;
-			    if(flags & SAR_HELIPAD_FLAG_DROPOFF)
-				can_dropoff = True;
 			}
 			loc_ok = True;
 			break;
@@ -2022,19 +2168,6 @@ static void SARKeyRefuelRepair(SAR_KEY_FUNC_PROTOTYPE)
 			s = SAR_MESG_NO_FACILITIES;
 		    SARMessageAdd(scene, s);
 
-		    /* Can drop off passengers and not playing a mission? */
-		    if(can_dropoff && (core_ptr->mission == NULL))
-		    {
-			int passengers_unloaded = SARSimOpPassengersUnloadAll(
-			    scene, obj_ptr
-			);
-			if(passengers_unloaded > 0)
-			{
-			    char s[256];
-			    sprintf(s, "Dropped off %i passengers", passengers_unloaded);
-			    SARMessageAdd(scene, s);
-			}
-		    }
 		}
 		else
 		{
@@ -2573,8 +2706,16 @@ fprintf(stderr, "Debug value set to %.2f\n", debug_value);
 	    break;
 
 	  case 'r': case 'R':
-	    DO_HAS_NO_AUTOREPEAT
-	    SARKeyRefuelRepair(SAR_KEY_FUNC_INPUT);
+	    if(display->ctrl_key_state)
+	    {
+                DO_HAS_NO_AUTOREPEAT
+                SARKeyDropPassengers(SAR_KEY_FUNC_INPUT);
+            }
+            else
+            {
+                DO_HAS_NO_AUTOREPEAT
+                SARKeyRefuelRepair(SAR_KEY_FUNC_INPUT);
+            }
 	    break;
 
 	  case 'f': case 'F':
