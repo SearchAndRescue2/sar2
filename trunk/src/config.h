@@ -569,9 +569,9 @@ to the fullest extent of the law."
 
 /* Program Icon file */
 #ifdef __MSW__
-# define SAR_DEF_SAR_ICON_FILE		"SearchAndRescue.ico"
+# define SAR_DEF_SAR_ICON_FILE		"sar2.ico"
 #else
-# define SAR_DEF_SAR_ICON_FILE		"/usr/share/pixmaps/SearchAndRescue.xpm"
+# define SAR_DEF_SAR_ICON_FILE		"/usr/share/pixmaps/sar2.xpm"
 #endif
 
 /* Standard Texture Reference Names
