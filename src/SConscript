@@ -1,12 +1,16 @@
 env = Environment()
 
-#env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops', '-fomit-frame-pointer',
-#'-ffast-math', '-finline-functions', '-fexpensive-optimizations',
-#'-Wno-write-strings', '-DHAVE_LIBXPM'])
+debug = ARGUMENTS.get('debug', 0)
 
-# speed up compilation and enable debugging
-env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions', 
-'-Wno-write-strings', '-DHAVE_LIBXPM'])
+if int(debug):
+    env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions',
+                           '-Wno-write-strings', '-DHAVE_LIBXPM'])
+else:
+    env.Append(CPPFLAGS = ['-Wall', '-O6', '-funroll-loops',
+                           '-fomit-frame-pointer',
+                           '-ffast-math', '-finline-functions',
+                           '-fexpensive-optimizations',
+                           '-Wno-write-strings', '-DHAVE_LIBXPM'])
 
 env.Append(LIBS = ['m', 'SDL', 'SM', 'ICE',
 'X11','Xext','Xmu', 'Xpm', 'GL', 'GLU', 'pthread', 'alut', 'vorbisfile'])
