@@ -1,0 +1,129 @@
+#
+# Mission Header
+#
+
+name Guadarrama 7: Madrid city view
+description Mr. Sanjuan is a wealthy businessman visiting \
+Madrid city. He wants to have a look around the skycrapers \
+and hired a well experienced pilot (you).\
+\n\
+Pick him up on your Bell B-47 from <underline>Barajas Airport<default>. \
+Fly west to the city, After the sightseeing you can drop him off at \
+<bold>Torre Cristal<default>, one of the highest towers.\
+\n\
+(Of course, things might not go as expected)
+
+#Mission parameters
+
+weather Scattered
+mission_scene_file scenery/guadarrama.scn
+mission_begin_at helipad_barajas
+time_of_day 17:00
+
+
+#Mission objectives
+mission_objective_new pick_up
+mission_objective_time_left 0
+mission_objective_humans_tally 1 1
+mission_objective_message_success \
+Got him! Let's see Madrid!
+mission_objective_message_fail \
+Failed to pick up Mr. Sanjuan!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_torre_cristal
+mission_objective_message_success \
+Did you see that? Picasso Tower is burning! \
+There is people needing help on the top! \
+Go help them!
+mission_objective_message_fail \
+You failed to drop Mr. Sanjuan
+
+mission_objective_new pick_up
+mission_objective_time_left 0
+mission_objective_humans_tally 1 1
+mission_objective_message_success \
+There is only space for one! Fly to any \
+helipad, drop them off safely with 'CTRL+R' and \
+come back to get the others!
+mission_objective_message_fail \
+You failed to save all people!
+
+mission_objective_new pick_up
+mission_objective_time_left 0
+mission_objective_humans_tally 3 3
+mission_objective_message_success \
+Great! Your passenger last passenger \
+needs to be taken to 12 October hospital (south)!
+mission_objective_message_fail \
+You failed to save all people!
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_12oct
+mission_objective_message_success \
+Perfect! Take the helicopter back to Barajas \
+airport and finish the mission.
+mission_objective_message_fail \
+You failed to bring the last person to the \
+12 October hospital.
+
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_barajas
+mission_objective_message_success \
+Well done!
+mission_objective_message_fail \
+You failed to fly back to Barajas airport!
+
+# Mission post data
+
+# Human      type_name  flags
+
+#Mr. Sanjuan
+create_human default
+translation 37397 -29812 0
+set_human_mesg_enter Hello! I hope the \
+ride is worth the price!
+human_reference player run_towards
+rotate 230 0 0
+
+create_human default alert aware
+translation 27420 -34464 515
+set_human_mesg_enter We couldn't go downstairs
+human_reference player run_towards
+rotate 23 0 0
+
+create_human default alert aware
+translation 27413 -34496 515
+set_human_mesg_enter I think many people are trapped
+human_reference player run_towards
+rotate 100 0 0
+
+create_human default alert aware
+translation 27429 -34497 515
+set_human_mesg_enter Thanks! We didn't expect you!
+human_reference player run_towards
+rotate 230 0 0
+
+create_human default alert aware
+translation 27444 -34501 515
+set_human_mesg_enter I was about to jump off the building!
+human_reference player run_towards
+rotate 150 0 0
+
+
+#						radius
+#smoke  	offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
+create_smoke    0.0     0.0     0.0        6.5  47.0 0.20  0         350  300  0
+translation 27431 -34502 465
+
+#						radius
+#smoke  	offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
+create_smoke    0.0     0.0     0.0        3.5  80.0 0.10  0         250  400  1
+translation 27446 -34467 440
+
+
+
+player_model_file aircrafts/b47.3d
