@@ -31,7 +31,7 @@ Cruising Speed: <bold>80 mph<default>\
 Max Endurance: <bold>2.61 hours<default>\
 Max Range: <bold>240 nautical miles<default>\
 Service Ceiling: <bold>17,700 feet msl<default>\
-Number of Pilots: <bold>2<default>
+Number of Pilots: <bold>1<default>
 
 type 4
 
@@ -87,7 +87,7 @@ dry_mass 858.0
 # value (ie 0.8 for most cases).
 #
 #    consumption_rate(kg/sec)  initial_kg  max_kg
-fuel 0.088                     620.4       620.4
+fuel 0.088                     320.4       620.4
 
 # Engine settings
 #      can_pitch? initial_pitched? power   collective_range
@@ -110,7 +110,11 @@ service_ceiling 36093.75
 
 # Crew and capacity
 #    crew  passengers passengers_max
-crew 2     0          0
+crew 1     0          1
+
+# Rescue Door
+#               closed x y z  opened x y z  h   p   b    thres x y z   rate   opened?
+rescue_door_new 0.0 0.0 0.0   0.0 0.0 0.0  0.0 0.0 0.0  1.2 0.6 -2.0  40000  0
 
 # Sounds
 #                name range range_far pos_xyz cutoff dir_hpb sample_rate_limit filename
