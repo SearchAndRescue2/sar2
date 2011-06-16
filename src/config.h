@@ -673,7 +673,7 @@ to the fullest extent of the law."
  *
  *	Specifies how long a game message is displayed.
  */
-#define SAR_MESSAGE_SHOW_INT    5000l
+#define SAR_MESSAGE_SHOW_INT    8000l
 
 
 /*
@@ -699,12 +699,12 @@ to the fullest extent of the law."
 /*
  *	Explosion Frame Increment Interval (in ms):
  */
-#define SAR_DEF_EXPLOSION_FRAME_INT	500l
+#define SAR_DEF_EXPLOSION_FRAME_INT	200l
 
 /*
  *	Splash Frame Increment Interval (in ms):
  */
-#define SAR_DEF_SPLASH_FRAME_INT	600l
+#define SAR_DEF_SPLASH_FRAME_INT	150l
 
 /*
  *	Sticky Crash Fires Life Span (in ms):
