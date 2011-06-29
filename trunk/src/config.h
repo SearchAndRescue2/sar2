@@ -52,7 +52,7 @@
  */
 #if defined(PROG_LANGUAGE_SPANISH)
 #define PROG_USAGE_MESG "\
-El Uso: SearchAndRescue [options] [GUI_options]\n\
+El Uso: sar2 [options] [GUI_options]\n\
 \n\
     [options] puede ser cualquiera del siguiente:\n\
 \n\
@@ -98,7 +98,7 @@ El Uso: SearchAndRescue [options] [GUI_options]\n\
 \n"
 #elif defined(PROG_LANGUAGE_FRENCH)
 #define PROG_USAGE_MESG "\
-L'usage: SearchAndRescue [options] [GUI_options]\n\
+L'usage: sar2 [options] [GUI_options]\n\
 \n\
     [options] peut être n'importe quel du suivre:\n\
 \n\
@@ -144,7 +144,7 @@ L'usage: SearchAndRescue [options] [GUI_options]\n\
 \n"
 #elif defined(PROG_LANGUAGE_GERMAN)
 #define PROG_USAGE_MESG "\
-Brauch: SearchAndRescue [options] [GUI_options]\n\
+Brauch: sar2 [options] [GUI_options]\n\
 \n\
     [options] können irgendein vom Folgenden sein:\n\
 \n\
@@ -188,7 +188,7 @@ Brauch: SearchAndRescue [options] [GUI_options]\n\
 \n"
 #elif defined(PROG_LANGUAGE_ITALIAN)
 #define PROG_USAGE_MESG "\
-L'uso: SearchAndRescue [options] [GUI_options]\n\
+L'uso: sar2 [options] [GUI_options]\n\
 \n\
     [options] può essere qualunque del seguente:\n\
 \n\
@@ -234,7 +234,7 @@ L'uso: SearchAndRescue [options] [GUI_options]\n\
 \n"
 #elif defined(PROG_LANGUAGE_DUTCH)
 #define PROG_USAGE_MESG "\
-Gebruik: SearchAndRescue [options] [GUI_options]\n\
+Gebruik: sar2 [options] [GUI_options]\n\
 \n\
     [options] kunnen enig van de aanhang zijn:\n\
 \n\
@@ -277,7 +277,7 @@ Gebruik: SearchAndRescue [options] [GUI_options]\n\
 \n"
 #elif defined(PROG_LANGUAGE_PORTUGUESE)
 #define PROG_USAGE_MESG "\
-O Uso: SearchAndRescue [options] [GUI_options]\n\
+O Uso: sar2 [options] [GUI_options]\n\
 \n\
     [options] podem ser qualquer do seguinte:\n\
 \n\
@@ -320,7 +320,7 @@ O Uso: SearchAndRescue [options] [GUI_options]\n\
 \n"
 #elif defined(PROG_LANGUAGE_NORWEGIAN)
 #define PROG_USAGE_MESG "\
-Praksis: SearchAndRescue [options] [GUI_options]\n\
+Praksis: sar2 [options] [GUI_options]\n\
 \n\
     [options] er noe av det følgende:\n\
 \n\
@@ -360,7 +360,7 @@ Praksis: SearchAndRescue [options] [GUI_options]\n\
 \n"
 #else
 #define PROG_USAGE_MESG "\
-Usage: SearchAndRescue [options] [GUI_options]\n\
+Usage: sar2 [options] [GUI_options]\n\
 \n\
     [options] can be any of the following:\n\
 \n\
@@ -525,7 +525,7 @@ to the fullest extent of the law."
 /*
  *	Environment Variable Names:
  */
-#define SAR_DEF_ENV_GLOBAL_DIR		"SEARCHANDRESCUE2_DATA"
+#define SAR_DEF_ENV_GLOBAL_DIR		"SAR2_DATA"
 
 
 /*
@@ -533,7 +533,7 @@ to the fullest extent of the law."
  */
 
 /* Configuration file */
-#define SAR_DEF_OPTIONS_FILE		"SearchAndRescue.ini"
+#define SAR_DEF_OPTIONS_FILE		"sar2.ini"
 
 /* Texture reference names and file names list file */
 #define SAR_DEF_TEXTURES_FILE		"textures.ini"

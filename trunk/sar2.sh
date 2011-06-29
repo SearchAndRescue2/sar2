@@ -17,5 +17,5 @@ if [[ ! -f "$PATH_TO_GAME/$BIN_FILE" ]]
      cd -
 fi
 # export full path of the data location
-export SEARCHANDRESCUE2_DATA="$(pwd)/$PATH_TO_GAME/data"
+export SAR2_DATA="$(pwd)/$PATH_TO_GAME/data"
 "$PATH_TO_GAME/bin/sar2" $@
