@@ -784,6 +784,7 @@ void GCtlHandleKey(
         {								\
             /* Released up */						\
             *btn_kb_state = False;					\
+            *btn_kb_coeff = 0.0f;                                       \
             *btn_kb_last = t;						\
         }								\
         else								\
@@ -818,6 +819,7 @@ void GCtlHandleKey(
         {								\
             /* Released up */						\
             *btn_kb_state = False;					\
+            *btn_kb_coeff = 0.0f;                                       \
             *btn_kb_last = t;						\
         }								\
         else								\
