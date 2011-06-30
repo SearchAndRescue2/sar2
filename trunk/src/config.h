@@ -1349,7 +1349,7 @@ to the fullest extent of the law."
  "PERIOD", "Wheel brakes", \
  "SHIFT + PERIOD", "Parking brakes", \
  "B", "Deploy/retract air brakes", \
- "R", "Refuel, repair, and drop off passengers", \
+ "R", "Refuel and repair", \
  "CTRL + R", "Drop off passengers", \
  "Z", "Decelerate time (slow-motion)", \
  "SHIFT + Z", "Accelerate time (compress)", \
