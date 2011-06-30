@@ -14,39 +14,68 @@
 #   along with SaR2.  If not, see <http://www.gnu.org/licenses/>.     #
 #######################################################################
 
-#CITY GENERATOR v0.1
+#CITY GENERATOR FOR SaRII
+#This script generates building objects generated
+#randomly within certain limits defined here.
 
+#Cities should be formed by a "center" area, which is within
+#the bounds of a "city" area, which is within the bounds
+#of an "outskirts" area.
+
+#This way, you would normally generate cities with
+#higher density in the center, with bigger buildings
+#and streets. And reduce this parametres for the other
+#areas. 
+
+CENTER=0
+CITY=1
+OUTSKIRTS=2
+
+#Height at which buildings will be placed
 GROUND_LEVEL=0
+
+#These are the square area bounds: 
+#[[Center_x,Center_y],[City_x,City_y],[Outskirts_x,Outskirts_y]]
+#Buildings won't be placed outside these squares.
 TRANSLATION_BOTTOM_LEFT = [[27160, -36273], [26583, -37545], [24800, -42100]]
 TRANSLATION_TOP_RIGHT =   [[27882, -33900], [28427, -33320], [30450, -31457]]
 
+
+#Probability that a building is placed in the place
+#that corresponds it.
 DENSITY = [0.35, 0.15, 0.02]
 
+#Visibility range
 MIN_RANGE= [4000,3000,3000]
 MAX_RANGE= [15000,9000,5000]
 
+#Textures to be used for the buildings (randomly chosen)
 TEXTURES_DAY=["building01_tex","building02_tex","building03_tex","building04_tex","building05_tex"]
 TEXTURES_DAY_N=TEXTURES_DAY.size
 
 TEXTURES_NIGHT=["building01_night_tex"]
 TEXTURES_NIGHT_N=TEXTURES_NIGHT.size
 
-CENTER=0
-CITY=1
-OUTSKIRTS=2
+#Values in the arrays for [CENTER,CITY,OUTSKIRTS]
 
+#Separation between buildings (randomly chosen between
+#these bounds)
 MIN_STREET_WIDTH = [60, 50, 50]
 MAX_STREET_WIDTH = [80, 100, 100]
 
+#Height of buildings (in ft)
 MIN_HEIGHT = [250, 100, 70]
 MAX_HEIGHT = [515, 400, 150]
 
+#Width and length bounds
 MIN_WIDTH = [30, 30, 20]
 MAX_WIDTH = [90, 60, 50]
 
 MIN_LENGTH = [30, 30, 20]
 MAX_LENGTH = [90, 60, 50]
 
+
+# indicate rotate angle, false or :random
 ROTATE = [false, :random, :random]
 
 
