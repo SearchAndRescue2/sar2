@@ -3,7 +3,7 @@
 #
 
 name Guadarrama 7: Madrid city view
-description Mr. Sanjuan is a wealthy businessman visiting \
+description Mr. XanYoang is a wealthy businessman visiting \
 Madrid city. He wants to have a look around the skycrapers \
 and hired a well experienced pilot (you).\
 \n\
@@ -28,7 +28,7 @@ mission_objective_humans_tally 1 1
 mission_objective_message_success \
 Got him! Let's see Madrid!
 mission_objective_message_fail \
-Failed to pick up Mr. Sanjuan!
+Failed to pick up Mr. XanYoang!
 
 mission_objective_new arrive
 mission_objective_time_left 0.0
@@ -38,7 +38,7 @@ Did you see that? Picasso Tower is burning! \
 There is people needing help on the top! \
 Go help them!
 mission_objective_message_fail \
-You failed to drop Mr. Sanjuan
+You failed to drop Mr. XanYoang
 
 mission_objective_new pick_up
 mission_objective_time_left 0
@@ -81,7 +81,7 @@ You failed to fly back to Barajas airport!
 
 # Human      type_name  flags
 
-#Mr. Sanjuan
+#Mr. XanYoang
 create_human default
 translation 37397 -29812 0
 set_human_mesg_enter Hello! I hope the \
