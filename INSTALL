@@ -7,35 +7,25 @@
 STEP 0: Before you Begin
 ------------------------
 
-        Before you try to build and install Search and Rescue, you'll
-        need to have some other packages installed first. What follows
-        are a list of libraries and their package names on Debian (and
-        Debian related) distributions.
+        Before you try to build and install Search and Rescue II, you'll
+        need to have some packages installed. What follows
+        are a list of libraries and their package names on OpenSuse 
+        distributions.
 
         Name       -- Package name
-        X11        -- libx11-6
-        X11 SM     -- libsm-dev
-        X11 i      -- libx1-dev
-        X11 XMU    -- libxmu-dev
-        SDL        -- libsdl1.2-dev
-        SDL Image  -- libsdl-image1.2-dev
-        OpenAL     -- freealut-dev, openal-soft-dev
-        OpenGL     -- libglu1-mesa-glx libglu1-mesa-dev
-        X11 ICE    -- libice6
-        X11 Pixmap -- libXpm-dev
+        Mesa       -- Mesa-devel
+        FreeALUT   -- freealut-devel
+        OpenAL     -- openal-soft-devel
+        gcc-c++    -- gcc-c++
+        Vorbis     -- libvorbis-devel
+        Scons      -- scons
+        Xorg/X11   -- xorg-x11-libICE-devel, xorg-x11-libSM-devel
+                      xorg-x11-libX11-devel, xorg-x11-libXext-devel
+                      xorg-x11-libXmu-devel, xorg-x11-libXpm-devel
+        SDL        -- libSDL-devel
 
         If you find additional dependencies which are not included in your
         distribution, please report them so we can add them to the list.
-
------------------------
-QUICKSTART
------------------------
-        You will need 'scons' (http://www.scons.org) to build the program. Type:
-
-        # ./sar2
-
-        The game will be compiled if it has not been built
-        before and started right after.
 
 ------------------------
 STEP 1: Building the source
@@ -46,9 +36,9 @@ STEP 1: Building the source
         # scons
 
         The 'sar2' file will be generated in the 'bin' folder. From this point
-        you can play the game you by running:
+        you can play the game you by running (from the base game folder):
 
-        # sar2.sh
+        # ./sar2.sh
 
         (Note: 'sar2.sh' will compile the program if no 'bin/sar2' is found)
 
@@ -64,8 +54,8 @@ STEP 2: Installing
         These are some important files that will be installed:
 
         '/usr/bin/sar2' for the binary executable.
-        '/usr/share/games/sar2/' for the data files.
-        '/usr/man/man6/SearchAndRescue.6.bz2' for the manual.
+        '/usr/share/sar2/' for the data files.
+        '/usr/share/man/man6/SearchAndRescue.6.bz2' for the manual.
         '$HOME/.config/sar2' for the game configuration.
 
 ------------------------
@@ -74,7 +64,7 @@ STEP 3: Running
 
         To run this program type:
 
-        # sar2 &
+        # sar2
 
         For additional command line options, type:
 
