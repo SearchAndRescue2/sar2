@@ -707,7 +707,7 @@ int SoundMusicStartPlay(
     ALenum format;
     ALsizei freq;
     int bitStream;
-    char* buffer;
+    char* buffer, buffer_temp;
     long buffer_ptr;
     long current_size;
     ALuint bufferID;
@@ -784,7 +784,14 @@ int SoundMusicStartPlay(
                     buffer_ptr += bytes;
                     if (buffer_ptr == current_size){
                         current_size += BUFFER_SIZE;
-                        buffer = realloc(buffer,current_size);
+                        buffer_temp = realloc(buffer,current_size);
+                        if (buffer_temp == NULL){
+                            //cannot realloc, return with what 
+                            //we have so far in the original buffer
+                            break;
+                        } else {
+                            buffer = buffer_temp;
+                        }
                     }
                 }
             }

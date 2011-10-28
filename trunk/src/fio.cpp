@@ -702,7 +702,7 @@ int FGetValuesF(FILE *fp, double *value, int nvalues)
 char *FGetString(FILE *fp)
 {
 	int c, i = 0, len = 0;
-	char *s = NULL, *s2;
+	char *s = NULL, *s2, *temp_s;
 
 
 	if(fp == NULL)
@@ -725,12 +725,15 @@ char *FGetString(FILE *fp)
 	    if(i >= len)
 	    {
 		len = MAX(len + 128, i + 1);
-		s = (char *)realloc(s, len * sizeof(char));
-		if(s == NULL)
+		temp_s = (char *)realloc(s, len * sizeof(char));
+		if(temp_s == NULL)
 		{
 		    len = i = 0;
+                    free(s);
 		    break;
-		}
+		} else {
+                    s = temp_s;
+                }
 	    }
 
 	    /* Get pointer to current position in string */
@@ -834,7 +837,7 @@ char *FGetString(FILE *fp)
 char *FGetStringLined(FILE *fp)
 {
 	int c, i = 0, len = 0;
-	char *s = NULL, *s2;
+	char *s = NULL, *s2, *temp_s;
 
 
 	if(fp == NULL)
@@ -854,12 +857,15 @@ char *FGetStringLined(FILE *fp)
 	    if(i >= len)
 	    {
 		len = MAX(len + 128, i + 1);
-		s = (char *)realloc(s, len * sizeof(char));
-		if(s == NULL)
+		temp_s = (char *)realloc(s, len * sizeof(char));
+		if(temp_s == NULL)
 		{
 		    len = i = 0;
+                    free(s);
 		    break;
-		}
+		} else {
+                    s = temp_s;
+                }
 	    }
 
 	    /* Get pointer to current position in string */
@@ -926,7 +932,7 @@ char *FGetStringLined(FILE *fp)
 char *FGetStringLiteral(FILE *fp)  
 {
 	int c, i = 0, len = 0;
-	char *s = NULL, *s2;
+	char *s = NULL, *s2, *temp_s;
 
 
 	if(fp == NULL)
@@ -946,12 +952,16 @@ char *FGetStringLiteral(FILE *fp)
 	    if(i >= len)
 	    {
 		len = MAX(len + 128, i + 1);
-		s = (char *)realloc(s, len * sizeof(char));
-		if(s == NULL)
+		temp_s = (char *)realloc(s, len * sizeof(char));
+		if(temp_s == NULL)
 		{
 		    len = i = 0;
+                    free(s);
 		    break;
-		}
+                }
+                else {
+                    s = temp_s;
+                }
 	    }
 
 	    /* Get pointer to current position in string */
@@ -999,7 +1009,7 @@ char *FReadNextLineAllocCount(
 )
 {
 	int i, m, n;
-	char *strptr;
+	char *strptr, *strptr_temp;
 
 
 	if(fp == NULL)
@@ -1082,9 +1092,14 @@ char *FReadNextLineAllocCount(
 		    /* Allocate FREAD_ALLOC_CHUNK_SIZE more bytes */
 		    m += FREAD_ALLOC_CHUNK_SIZE;
 
-		    strptr = (char *)realloc(strptr, m * sizeof(char));
-		    if(strptr == NULL)
+                    strptr_temp = (char *)realloc(strptr, m * sizeof(char));
+		    if(strptr_temp == NULL){
+                        free(strptr);
 			return(NULL);
+                    }
+                    else {
+                        strptr = strptr_temp;
+                    }
 		}
 
 		strptr[n - 1] = (char)i;
@@ -1096,9 +1111,13 @@ char *FReadNextLineAllocCount(
 
 	    /* Add newline and null terminate */
 	    m += 2;	/* 2 more chars */
-	    strptr = (char *)realloc(strptr, m * sizeof(char));
-	    if(strptr == NULL)
+	    strptr_temp = (char *)realloc(strptr, m * sizeof(char));
+	    if(strptr_temp == NULL){
+                free(strptr);
 		return(NULL);
+            } else {
+                strptr = strptr_temp;
+            }
 	    strptr[n - 1] = '\n';
 	    strptr[n] = '\0';
 
@@ -1147,9 +1166,13 @@ char *FReadNextLineAllocCount(
 		    /* Allocate FREAD_ALLOC_CHUNK_SIZE more bytes */
 		    m += FREAD_ALLOC_CHUNK_SIZE;
 
-		    strptr = (char *)realloc(strptr, m * sizeof(char));
-		    if(strptr == NULL)
+		    strptr_temp = (char *)realloc(strptr, m * sizeof(char));
+		    if(strptr_temp == NULL){
+                        free(strptr);
 			return(NULL);
+                    } else {
+                        strptr = strptr_temp;
+                    }
 		}
 	
 		strptr[n - 1] = (char)i;
