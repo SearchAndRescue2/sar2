@@ -113,7 +113,7 @@ static char *V3DLoadEscapeNewLines(const char *line)
 {
 	int pos_i = 0, pos_o = 0;
 	int line_o_len = 0;
-	char *line_o = NULL;
+	char *line_o = NULL, *line_o_temp;
 
 
 	if(line == NULL)
@@ -125,15 +125,18 @@ static char *V3DLoadEscapeNewLines(const char *line)
 	    if(pos_o >= (line_o_len - 2))
 	    {
 		line_o_len = (pos_o + 82);
-		line_o = (char *)realloc(
+		line_o_temp = (char *)realloc(
 		    line_o,
 		    line_o_len * sizeof(char)
 		);
-		if(line_o == NULL)
+		if(line_o_temp == NULL)
 		{
 		    line_o_len = 0;
+                    free(line_o);
 		    break;
-		}
+		} else {
+                    line_o = line_o_temp;
+                }
 	    }
 
 	    if(line[pos_i] == '\n')
@@ -162,7 +165,7 @@ static char *V3DLoadEscapeNewLines(const char *line)
 	if(pos_o >= line_o_len)
 	{
 	    line_o_len = pos_o + 1;
-	    line_o = (char *)realloc(
+	    line_o_temp = (char *)realloc(
 		line_o,
 		line_o_len * sizeof(char)
 	    );
@@ -170,7 +173,11 @@ static char *V3DLoadEscapeNewLines(const char *line)
 	if(line_o != NULL)
 	{
 	    line_o[pos_o] = '\0';
-	}
+	} else {
+            //if realloc fails we finish it
+            //anyway overwriting last char
+            line_o[line_o_len] = '\0';
+        }
 
 	return(line_o);
 }
