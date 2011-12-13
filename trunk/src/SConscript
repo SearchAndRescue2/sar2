@@ -13,7 +13,9 @@ else:
                            '-Wno-write-strings', '-DHAVE_LIBXPM'])
 
 env.Append(LIBS = ['m', 'SDL', 'SM', 'ICE',
-'X11','Xext','Xmu', 'Xpm', 'GL', 'GLU', 'pthread', 'alut', 'vorbisfile'])
+                   'X11','Xext','Xmu', 'Xpm', 
+                   'GL', 'GLU', 'pthread', 'alut', 
+                   'vorbisfile', 'openal'])
 
 
 sources = Split("""
