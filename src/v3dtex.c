@@ -892,6 +892,7 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2DPreempt(
 	)
 	{
 	    free(data);
+            free(t);
 	    if(cur_data_ptr != loaded_data_ptr)
 		free(cur_data_ptr);
 	    return(NULL);
@@ -908,6 +909,7 @@ v3d_texture_ref_struct *V3DTextureLoadFromFile2DPreempt(
 	if(t->data == NULL)
 	{
 	    free(data);
+            free(t);
 	    if(cur_data_ptr != loaded_data_ptr)
 		free(cur_data_ptr);
 	    return(NULL);
