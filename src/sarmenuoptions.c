@@ -1476,9 +1476,6 @@ void SARMenuOptionsSoundInfoRefresh(sar_core_struct *core_ptr)
     if(recorder != NULL)
     {
         switch (recorder->type){
-            case SNDSERV_TYPE_SDL:
-                mesg = strcatalloc(mesg, "SDL Mixer");
-                break;
             case SNDSERV_TYPE_OPENAL:
                 mesg = strcatalloc(mesg, "OpenAL");
                 break;

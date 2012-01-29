@@ -43,13 +43,11 @@
 #define SND_PLAY_OPTION_MUTE		(1 << 0)
 #define SND_PLAY_OPTION_REPEATING	(1 << 1)
 
-//SDL Support
-#ifdef SDL_MIXER
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_mixer.h>
-
-#endif
+/*
+ *      Maximum concurrent sound effects:
+ */
+#define SND_EFFECTS_OBJS                5
 
 
 //OpenAL support
@@ -85,12 +83,6 @@ typedef struct {
     /* Play options. */
     snd_flags_t options;
 
-#ifdef SDL_MIXER
-    /*SDL Mixer*/
-    Mix_Chunk *chunk;
-    Mix_Music *music;
-#endif    
-
     /*OpenAL*/
     ALuint alBuffer;
     ALuint alSource;
@@ -106,10 +98,8 @@ typedef struct {
 typedef struct {
 
 #define SNDSERV_TYPE_NONE	0
-/*#define SNDSERV_TYPE_Y		1*/
-#define SNDSERV_TYPE_SDL        2
-#define SNDSERV_TYPE_OPENAL     3
-#define SOUND_DEFAULT           3 //set default to OPENAL
+#define SNDSERV_TYPE_OPENAL     1
+#define SOUND_DEFAULT           1 //set default to OPENAL
 
     /* Sound server type, one of SNDSERV_TYPE_*. */
     int type;
@@ -127,7 +117,9 @@ typedef struct {
      * NULL to indicate no background music being played)
      */
     snd_play_struct *background_music_sndobj;
-    snd_play_struct *untracked_sound_obj;
+    
+    snd_play_struct *sound_effects_array[SND_EFFECTS_OBJS];
+    int next_sound_effect;
 
 } snd_recorder_struct;
 
