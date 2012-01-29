@@ -41,6 +41,7 @@ STEP 1: Building the source
         # ./sar2.sh
 
         (Note: 'sar2.sh' will compile the program if no 'bin/sar2' is found)
+        (Note 2: 'scons debug=1' will compile the program in debug mode)
 
 ------------------------ 
 STEP 2: Installing
