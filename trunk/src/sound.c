@@ -143,22 +143,6 @@ snd_recorder_struct *SoundInit(
     /* Initialize by sound server type. */
     switch(type)
     {
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            if (SDL_Init(SDL_INIT_AUDIO) != 0)
-            {
-                printf("Unable to Initialize SDL sound.\n");
-                return NULL;
-            }
-                
-            if ( Mix_OpenAudio(22050, AUDIO_S16SYS,2,4096) != 0) 
-            {
-                printf("Unable to initialize audio: %s\n", Mix_GetError());
-                return NULL;
-            }
-            Mix_ReserveChannels(1);
-#endif
-            break;
         case SNDSERV_TYPE_OPENAL:
             if (alutInit(NULL,0) == AL_FALSE){
                 printf("Alut error: %s", alutGetErrorString(alutGetError()));
@@ -166,11 +150,12 @@ snd_recorder_struct *SoundInit(
             
             /*Reserve memory space for this. It will
              be only freed on server shutdown*/
-            snd_play_struct *snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
-            snd_play->alSource=0;
-            snd_play->alBuffer=0;
-            
-            recorder->untracked_sound_obj = snd_play;
+            int i;
+            for (i=0; i<SND_EFFECTS_OBJS; i++){
+                recorder->sound_effects_array[i] = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
+            };
+            recorder->next_sound_effect = 0;
+
             break;
 
         default:
@@ -208,13 +193,6 @@ int SoundManageEvents(snd_recorder_struct *recorder)
 
     switch(recorder->type)
     {
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            /* not sure if we need something here.... 
-               will simply return with OK value */
-            return 0;
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
             /* same here... */
             return 0;
@@ -241,7 +219,8 @@ void SoundShutdown(
 
     ALuint source;
     ALuint buffer;
-    
+    int i;
+
     if(recorder == NULL)
         return;
 
@@ -251,27 +230,22 @@ void SoundShutdown(
     /* Shut down sound server by type. */
     switch(recorder->type)
     {
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            Mix_CloseAudio();
-            SDL_QuitSubSystem(SDL_INIT_AUDIO);
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
             
             /* If tracking a sound, clean it up */
-            source = recorder->untracked_sound_obj->alSource;
-            buffer = recorder->untracked_sound_obj->alBuffer;
-            if (source) {
-                alSourceStop(source);
-                alDeleteSources(1,&source);
-                alGetError();
+            for (i=0; i<SND_EFFECTS_OBJS; i++){
+                source = recorder->sound_effects_array[i]->alSource;
+                buffer = recorder->sound_effects_array[i]->alBuffer;
+                if (source) {
+                    alSourceStop(source);
+                    alDeleteSources(1,&source);
+                    alGetError();
+                }
+                if (buffer){
+                    alDeleteBuffers(1,&buffer);
+                    alGetError();
+                }
             }
-            if (buffer){
-                alDeleteBuffers(1,&buffer);
-                alGetError();
-            }
-            free(recorder->untracked_sound_obj);
 
             /* Shutdown OpenAL context */
             alGetError();
@@ -323,12 +297,6 @@ snd_play_struct *SoundStartPlay(
 {
     snd_play_struct *snd_play = NULL;
 
-#ifdef SDL_MIXER
-    /*SDL Mixer*/
-    int repeat = 0;
-    Mix_Chunk *sound = NULL;
-#endif
-
     ALuint buffer;
     ALuint source;
 
@@ -337,37 +305,6 @@ snd_play_struct *SoundStartPlay(
 
     switch(recorder->type)
     {
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            sound = Mix_LoadWAV(object);
-            if (! sound)
-                return NULL;
-            snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
-            if (! snd_play)
-                return NULL;
-            if (options & SND_PLAY_OPTION_MUTE)
-            {
-                volume_left = 0.0;
-                volume_right = 0.0;
-            }
-            else
-            {
-                volume_left = 1.0;
-                volume_right = 1.0;
-            }
-            if (options & SND_PLAY_OPTION_REPEATING)
-                repeat = -1;
-            else
-                repeat = 0;
-            snd_play->volume_left = volume_left;
-            snd_play->volume_right = volume_right;
-            snd_play->sample_rate = sample_rate;
-            snd_play->options = options;
-            snd_play->data = Mix_PlayChannel(-1, sound, repeat);
-            snd_play->chunk = sound;
-
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
 
             //alGenBuffers(1,&buffer);
@@ -420,31 +357,25 @@ void SoundStartPlayVoid(
     snd_flags_t options     /* Any of SND_PLAY_OPTION_*. */
     )
 {
-    /*SDL Mixer*/
-#ifdef SDL_MIXER
-    Mix_Chunk *sound = NULL;
-#endif
 
     ALuint source;
-    ALuint buffer;        
+    ALuint buffer;
+    int snd_i;
+    snd_play_struct *snd_play;
 
     if((recorder == NULL) || (object == NULL))
         return;
 
     switch(recorder->type)
     {
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            sound = Mix_LoadWAV(object);
-            if (sound)
-                Mix_PlayChannel(-1, sound, 0);
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
 
+            snd_i = recorder->next_sound_effect;
+            printf("Playing on %d\n",snd_i);
+            snd_play = recorder->sound_effects_array[snd_i];
             /* Clean up previous object if any */
-            source = recorder->untracked_sound_obj->alSource;
-            buffer = recorder->untracked_sound_obj->alBuffer;
+            source = snd_play->alSource;
+            buffer = snd_play->alBuffer;
             if (source) {
                 alSourceStop(source);
                 alDeleteSources(1,&source);
@@ -455,8 +386,8 @@ void SoundStartPlayVoid(
                 alGetError();
             }
 
-            recorder->untracked_sound_obj->alSource=0;
-            recorder->untracked_sound_obj->alBuffer=0;
+            snd_play->alSource=0;
+            snd_play->alBuffer=0;
             /* Done cleaning up previous untracked objs */
 
             buffer = alutCreateBufferFromFile(object);
@@ -471,8 +402,8 @@ void SoundStartPlayVoid(
             }
 
             /* Keep track of this sound in the recorder */
-            recorder->untracked_sound_obj->alBuffer = buffer;
-            recorder->untracked_sound_obj->alSource = source;
+            snd_play->alBuffer = buffer;
+            snd_play->alSource = source;
            
             alSourcei(source,AL_BUFFER, buffer);
             alSourcef(source, AL_GAIN, (volume_left + volume_right)/2);
@@ -486,6 +417,10 @@ void SoundStartPlayVoid(
 
             alSourcePlay(source);
             alGetError();
+
+            //Next time we use next available buffer
+            recorder->next_sound_effect = (snd_i + 1) % SND_EFFECTS_OBJS;
+
             break;
     }
 }
@@ -533,21 +468,6 @@ void SoundChangePlayVolume(
  
     switch(recorder->type)   
     {
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            snd_play->volume_left = volume_left;
-            snd_play->volume_right = volume_right;
-            if (snd_play->data)
-            {
-                if (snd_play->options & SND_PLAY_OPTION_MUTE)
-                    Mix_Volume(snd_play->data,0);
-                else {
-                    int my_volume = (int) (((volume_left + volume_right)/2) * MIX_MAX_VOLUME);
-                    Mix_Volume((int) snd_play->data, my_volume);
-                }
-            }
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
             snd_play->volume_left = volume_left;
             snd_play->volume_right = volume_right;
@@ -582,12 +502,6 @@ void SoundChangePlaySampleRate(
 
     switch(recorder->type)
     {
-#ifdef SDL_MIXER
-        //change depending on sndserv type
-        case SNDSERV_TYPE_SDL:
-            // :( we cannot do this with SDL
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
             snd_play->sample_rate = sample_rate;
             alSourcef(snd_play->alSource,AL_PITCH,sample_rate);
@@ -621,12 +535,6 @@ void SoundStopPlay(
 
     switch(recorder->type)
     {       
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            Mix_HaltChannel((int) snd_play->data);
-            Mix_FreeChunk(snd_play->chunk); 
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
             alSourceStop(snd_play->alSource);
             alDeleteSources(1,&snd_play->alSource);
@@ -657,12 +565,6 @@ void MusicStopPlay(
     
     switch(recorder->type)
     {       
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            Mix_HaltMusic();
-            Mix_FreeMusic(snd_play->music); 
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
             alSourceStop(snd_play->alSource);
             alDeleteSources(1,&snd_play->alSource);
@@ -696,11 +598,6 @@ int SoundMusicStartPlay(
 {
     snd_play_struct *snd_play = NULL;
 
-#ifdef SDL_MIXER
-    /*SDL Mixer*/
-    Mix_Music *sound;
-#endif
-
     //OpenAL ogg management
     vorbis_info *pInfo;
     OggVorbis_File oggFile;
@@ -727,22 +624,6 @@ int SoundMusicStartPlay(
 
     switch(recorder->type)
     {
-#ifdef SDL_MIXER
-        case SNDSERV_TYPE_SDL:
-            snd_play = (snd_play_struct *) calloc(1, sizeof(snd_play_struct));
-            if (! snd_play)
-                return -1;
-            sound = Mix_LoadMUS(object);
-            if (! sound)
-            {
-                free(snd_play);
-                return -1;
-            }
-            snd_play->data = Mix_PlayMusic(sound, repeats);
-            snd_play->music = sound;
-            recorder->background_music_sndobj = snd_play;
-            break;
-#endif
         case SNDSERV_TYPE_OPENAL:
             
             if (ov_fopen((char*)object,&oggFile) != 0)
