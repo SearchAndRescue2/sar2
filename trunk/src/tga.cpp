@@ -244,9 +244,9 @@ int TgaReadHeaderFromFile(const char *filename, tga_data_struct *td)
 	 */
 	if(!fseek(fp, (long)td->file_size - 26, SEEK_SET))
 	{
-	    char buf[16];
-	    int bytes_read = fread(buf, sizeof(char), 16, fp);
-	    if(bytes_read == 16)
+	    char buf[26];
+	    int bytes_read = fread(buf, sizeof(char), 26, fp);
+	    if(bytes_read == 26)
 	    {
 		if(!memcmp(buf + 8, "TRUEVISION-XFILE", 16))
 		    td->version = TgaFormatVersionNew;
