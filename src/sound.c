@@ -604,7 +604,7 @@ int SoundMusicStartPlay(
     ALenum format;
     ALsizei freq;
     int bitStream;
-    char* buffer, buffer_temp;
+    char *buffer, *buffer_temp;
     long buffer_ptr;
     long current_size;
     ALuint bufferID;
