@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>Search and Rescue II - Open source helicopter simulator</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    
+    <meta name="robots" content="index, follow, archive" />
+    <meta name="keywords" content="helicopter, simulator, linux, game, OpenAL,
+    search, rescue, search and rescue, sar, sar2, sarII, SaR, free games, linux games,
+    opensource, open source" />
+    <meta name="description" content="Search and Rescue II is an open source helicopter simulator for Linux with OpenGL graphics and joystick support." />
+    <link rel="shortcut icon" href="favicon.ico" />    
+    <link rel="stylesheet" type="text/css" href="css/sar2.css" />
+    <link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.8.10.custom.css" />
+    <link rel="stylesheet" href="css/lightbox.css" type="text/css" media="screen" />
+    <link rel="alternate" type="application/rss+xml" title="Search and Rescue II" href="http://rsspect.com/rss/sar.xml" />
+    
+    <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.10.custom.min.js"></script>
+    <script type="text/javascript" src="js/sar2.js"></script>
+    <script type="text/javascript" src="js/prototype.js"></script>
+    <script type="text/javascript" src="js/scriptaculous.js?load=effects,builder"></script>
+    <script type="text/javascript" src="js/lightbox.js"></script>
+
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-24161753-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+
+    
+  </head>
+
+
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1>Search and Rescue II</h1>
+        <h2>Open source helicopter simulator for Linux</h2>
+      </div>
+      
+      <div id="content">
+        <div id="tabs">
+          <ul>
+            <li><a href="#about">About SaR II</a></li>
+            <li><a href="#screenshots">Screenshots</a></li>
+            <li><a href="#download">Download &amp; Install</a></li>
+            <li><a href="#develop">Develop</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          
+          
+          <div id="about">
+            <h3>News <a href="http://rsspect.com/rss/sar.xml"><img src="http://www.rsspect.com/orangerss.gif" width="14" height="14" title="Newsfeed" alt="Rss link" /></a></h3> 
+
+            <ul id="head_news">
+              <li>
+                <!-- <span class="rss-title">Summer news</span> -->
+                <!-- <span class="rss-id">060811</span> -->
+                <span class="rss-content">
+                  <b>6 August, 2011</b>: We have been very happy to find that Search and Rescue II has been included in <a href="http://www.cahilig.net/">Cahilig's</a> <a href="http://www.cahilig.net/2011/07/29/100-best-free-and-high-quality-linux-games#search_and_rescue2"><i>100 best free and high quality Linux games</i></a>. It helps our motivation to prepare the next release of SaRII, which will come after the summer break. Happy holidays!
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+              <li>
+                <!-- <span class="rss-title">New precompiled packages and users mailing list</span> -->
+                <!-- <span class="rss-id">140711</span> -->
+                <span class="rss-content">
+                  <b>14 July, 2011</b>: As SaRII gets known, some people has generously prepared packages for some distributions. These have been added to the <i>Download</i> section. Of course, more packages are always welcome. In addition, the SaRII users mailing list has been created for SaRII community to stay in touch. <a href="https://lists.sourceforge.net/lists/listinfo/sar2-users">Users can subscribe here</a>.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+              <li>
+                <!-- <span class="rss-title">Search and Rescue II 2.3.1 released</span> -->
+                <!-- <span class="rss-id">010711</span> -->
+                <span class="rss-content">
+                  <b>1 July, 2011</b>: Search and Rescue II 2.3.1 released. This release comes with an improved Guadarrama scenario (with many Madrid city buildings) and two new missions to explore it, along with bugfixes and small changes for a better playing experience. See the full <a href="CHANGELOG">changelog</a> for details.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+            </ul>
+            <p style="text-align:left;margin-left:80px;font-style:italic;font-size:0.8em"><a href="#" id="show_hide"></a></p>
+            <ul id="hidden_news">
+              <li>
+                <!-- <span class="rss-title">Improvements to website and next game version features</span> -->
+                <!-- <span class="rss-id">260611</span> -->
+                <span class="rss-content">
+                  <b>26 June, 2011</b>: Added some improvements to the website, like the possibility of getting the news and updates via a RSS feed. Also working on next version of SaRII, which will contain many improvements, improved Guadarrama scenario and new missions.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+              <li>
+                <!-- <span class="rss-title">Search and Rescue II 2.3.0 released</span> -->
+                <!-- <span class="rss-id">130611</span> -->
+                <span class="rss-content">
+                  <b>13 June, 2011</b>: Search and Rescue II 2.3.0 released. This release replaces the copyrighted Guadarrama scenery textures with public domain ones in order to avoid licensing problems. The release includes as well small bugixes.  <a href="https://build.opensuse.org/package/show?package=sar2&amp;project=games">OpenSuse packages</a> are available as well in the <a href="http://download.opensuse.org/repositories/games/">Games repository</a>.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+
+              <li>
+                <!-- <span class="rss-title">Opensuse rmp packages available for SaRII</span> -->
+                <!-- <span class="rss-id">250411</span> -->
+                <span class="rss-content">
+                <b>25 April, 2011</b>: Some OpenSuse binary rpm packages are available for 
+                SaR II. Try them out <a href="https://build.opensuse.org/package/show?package=sar2&amp;project=home%3Aarond"> here</a>.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+              <li>
+                <!-- <span class="rss-title">Search and Rescue II 2.2.1 released</span> -->
+                <!-- <span class="rss-id">170411</span> -->
+                <span class="rss-content">
+                <b>17 April, 2011</b>: Search and Rescue II 2.2.1 released. This
+                is a maintenance release. Some OpenAL bugs, compilation warnings and the SDL_Mixer 
+                dependency (unused by default) have been removed.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+              <li>
+                <!-- <span class="rss-title">Search and Rescue II 2.2.0 released</span> -->
+                <!-- <span class="rss-id">150411</span> -->
+                <span class="rss-content">
+                <b>15 April, 2011</b>: Search and Rescue II 2.2.0 released. This
+                release contains many improvements in the sound system. SaR II
+                now uses OpenAL allowing more realistic engine sounds. For a
+                complete list of changes please check the game's changelog.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+              <li>
+                <!-- <span class="rss-title">Search and Rescue II 2.1.0 released</span> -->
+                <!-- <span class="rss-id">120411</span> -->
+                <span class="rss-content">
+                <b>12 April, 2011</b>: Search and Rescue II 2.1.0 released. This
+                version contains sound improvements and bugfixes.
+                </span>
+                <span class="rss-newpost"></span>
+              </li>
+              <li>
+                <!-- <span class="rss-title">Search and Rescue II 2.0.0 released</span> -->
+                <!-- <span class="rss-id">070311</span> -->
+                <span class="rss-content">
+                <b>7 March, 2011</b>: Search and Rescue II 2.0.0 released.
+                </span>
+              </li>
+            </ul>
+            <h3>Features</h3>
+            
+            <p>Search and Rescue II is a rescue helicopter simulator for Linux. It features several missions in which the player pilots a helicopter in order to rescue people in distress. There are several scenarios and helicopter models.</p>
+
+            <p>SaR II has a strong focus on realistic physics and low graphics
+              requirements. It is a fork of the game "Search and Rescue" (http://searchandrescue.sf.net), originally developed by Wolfpack Entertainment.</p>
+            
+            <p>Among the improvements of SaR II are:</p>
+            <ul>
+              <li>Smoother graphics</li>
+              <li>Full SDL Joystick support</li>
+              <li>Full playable music</li>
+              <li>OpenAL sound, with more realistic effects</li>
+              <li>New missions, improved scenarios</li>
+              <li>SaR II can be played without a system-wide install. Data
+              and game files are distributed together.</li>
+            </ul>
+          </div>
+
+          <div id="screenshots">
+            <p>Here are some screenshots of the game.</p>
+            <div style="text-align:center;">
+            <a href="images/screenshots/sar1.jpg" rel="lightbox[SaR II]">
+              <img src="images/screenshots/sar1.jpg" width="400px"
+              alt="screenshot1" />
+            </a>
+
+            <a href="images/screenshots/sar2.jpg" rel="lightbox[SaR II]">
+              <img src="images/screenshots/sar2.jpg" width="400px"
+              alt="screenshot2" />
+            </a>
+
+            <a href="images/screenshots/sar3.jpg" rel="lightbox[SaR II]">
+              <img src="images/screenshots/sar3.jpg" width="400px"
+              alt="screenshot3" />
+            </a>
+
+            <a href="images/screenshots/sar4.jpg" rel="lightbox[SaR II]">
+              <img src="images/screenshots/sar4.jpg" width="400px"
+              alt="screenshot4" />
+            </a>
+
+            <a href="images/screenshots/sar5.jpg" rel="lightbox[SaR II]">
+              <img src="images/screenshots/sar5.jpg" width="400px"
+              alt="screenshot5" />
+            </a>
+
+            <a href="images/screenshots/sar6.jpg" rel="lightbox[SaR II]">
+              <img src="images/screenshots/sar6.jpg" width="400px"
+              alt="screenshot6 "/>
+            </a>
+            </div>
+          </div>
+
+          <div id="download">
+            <h3>Downloading</h3>
+            <h4>Source code</h4>
+            <p>Download the <b>latest version</b> tarball in
+              the <a href="http://sourceforge.net/projects/sar2/files">download
+                page</a>.</p>
+            <h4>Pre-compiled packages</h4>
+            <p>Some people have generously taken the time to package SaRII for some Linux distributions. Note that packages (except OpenSuse) have been created by third parties, so make use of them at your own risk.</p>
+            <table id="packages">
+              <tr>
+                <td class="distrologo"><img class="distro" src="images/opensuse.png" alt="opensuse logo" /> 
+                </td>
+                <td>Opensuse packages are part of the Games repository. There are two packages, one containing the game and another containing the data. They will be installed together. Click on your version to download them:<br />
+                <a href="http://software.opensuse.org/search?q=sar2&amp;baseproject=openSUSE%3A11.3&amp;lang=en&amp;exclude_debug=true">OpenSUSE 11.3</a>, 
+                <a href="http://software.opensuse.org/search?q=sar2&amp;baseproject=openSUSE%3A11.4&amp;lang=en&amp;exclude_debug=true">OpenSUSE 11.4</a>, 
+                <a href="http://software.opensuse.org/search?q=sar2&amp;baseproject=openSUSE%3ATumbleweed&amp;lang=en&amp;exclude_debug=true">OpenSUSE Tumbleweed</a>, 
+                <a href="http://software.opensuse.org/search?q=sar2&amp;baseproject=openSUSE%3AFactory&amp;lang=en&amp;exclude_debug=true">OpenSUSE Factory</a>.
+                </td>
+              </tr>
+              <tr>
+                <td class="distrologo"><img src="images/frugalware.png" alt="frugalware logo"/></td>
+                <td>Frugalware package can be downloaded <a href="http://frugalware.org/packages/119876">here</a>.<br />
+                  Thanks to maintainer Devil505 (devil505linux at gmail.com)</td>
+              </tr>
+              <tr>
+                <td class="distrologo"><img src="images/archlinux.png" alt="archlinux logo"/></td>
+                <td>SaRII is present at the Archlinux User Repository (AUR) <a href="https://aur.archlinux.org/packages.php?ID=47924">here</a>. For information on how to build and install the package read the <a href="https://wiki.archlinux.org/index.php/AUR_User_Guidelines#Installing_packages">AUR User Guidelines</a>.<br />
+                  Thanks to maintainer archtux (antonio.arias99999 at gmail.com)</td>
+              </tr>
+              <tr>
+                <td class="distrologo"><img src="images/pardus.png" alt="pardus linux logo"/></td>
+                <td>SaRII is part of the <a href="http://code.google.com/p/happy-kitty/">Happy Kitty project</a>: a game repository for <a href="http://www.pardus.org.tr/eng/">Pardus users.</a></td>
+              </tr>
+              <tr>
+                <td class="distrologo"><img src="images/fedora.png" alt="fedora logo"/></td>
+                <td>Fedora packages can be grabbed from the <a href="https://admin.fedoraproject.org/pkgdb/acls/name/sar2">Fedora Package Database</a>. Thanks to contributor &quot;Spot&quot;.</td>
+              </tr>
+            </table>
+            
+            <p>If you find packages for other distros or have contributed new ones <a href="mailto:hector1987@users.sourceforge.net">please let us know</a>.</p>
+            
+            <h3>Building</h3>
+            <p>You will need 'scons'
+              (<a href="http://www.scons.org">http://www.scons.org</a>) and some libraries
+              to compile the game. Please read the INSTALL file on the base game
+              diretory for more information.</p>
+            <p>To build the game just type:</p>
+            <code>&gt; scons</code>
+            <p>You can clean up object and binary generated files by
+              typing:</p>
+            <code>&gt; scons -c</code>
+            <p></p>
+            
+            <h3>Installing, Uninstalling</h3>
+            <p>To install a system-wide copy after compiling the game, please
+              run:</p>
+            <code>&gt; ./install.sh</code>
+            <p>To uninstall the game just run:</p>
+            <code>&gt; ./uninstall.sh</code>
+            <p>Extended information can be found on the INSTALL file.</p>
+            
+            <h3>Playing</h3>
+            <p>There are two ways to run the game:</p>
+            <ul>
+              <li>
+                After compiling it, run the local copy of the game by
+                typing:<br /><br />
+                <code>&gt; ./sar2.sh</code>
+                <br /><br />Note this command will try to compile the game if it has
+                not been compiled before.<br />
+              </li>
+              <li>
+                After installing, run the system copy of the game by typing:
+                <br /><br />
+                <code>&gt; sar2</code>
+              </li>
+            </ul>
+            <p>Extended information on the different options of the 'sar2'
+              executable and on the game files can be found on the game
+              manual:</p>
+            <code>&gt; man sar2</code>
+          </div>
+            
+          <div id="develop">
+            <h3>Collaborate</h3>
+            <p>Search and Rescue II is an open source project licensed under
+              the terms of the GLP v2 LICENSE and maintained by volunteers.
+            </p>
+            <p>You can grab the latest versions of the game from
+              the <a href="http://sourceforge.net/scm/?type=svn&amp;group_id=503488Subversionrepository">SaRII Subversion Repository</a>.
+            </p>
+            <p>You can submit bug reports and feature requests on
+              the <a href="http://sourceforge.net/tracker/?atid=2047792&amp;group_id=503488&amp;func=browse">project
+                tracker</a>.
+            </p>
+            <p>Search and Rescue II is mostly written in C. There are many
+            ways to collaborate with the project:
+            </p>
+            <ul>
+              <li>Designing new scenario files (no deep programming knowledge required)</li>
+              <li>Designing some new missions (no deep programming knowledge
+              required)</li>
+              <li>Designing some new graphics and backgrounds for the
+              menus.</li>
+              <li>Finding and fixing bugs</li>
+              <li>Improving documentation</li>
+              <li>Adding new features</li>
+              <li>Porting SaR II to other OSs</li>              
+              <li><a href="http://sourceforge.net/donate/index.php?&amp;group_id=503488">Donating some cash</a></li>
+            </ul>
+            <p>Bundled to the game you will find a HACKING file with some tips
+              on the purpose of each of the source files.</p>
+          </div>
+          
+          <div id="contact">
+            <h3>Contact us...</h3>
+            <h4>...via mailing list</h4>
+            <p>Join the <a href="https://lists.sourceforge.net/lists/listinfo/sar2-users">SaRII user mailing list</a>, a place for SaRII users to discuss about the game.</p>
+            <h4>...via project tracker</h4>
+            <p>You can contact us by <a href="https://sourceforge.net/tracker/?func=add&amp;group_id=503488&amp;atid=2047792">adding a new artifact</a> to the project tracker under the "Help and Comments" group.</p>
+            <h4>...via email</h4>
+            <p>Send us an <a href="mailto:hector1987@users.sourceforge.net">email</a>.</p>
+          </div>
+          
+        </div>
+        
+      </div><!--content -->
+      
+      <div id="footer">
+        <p>
+          
+          <a href="http://sourceforge.net/donate/index.php?&amp;group_id=503488">
+            <img src="http://images.sourceforge.net/images/project-support.jpg" 
+                 width="88" height="32"
+                 alt="Support This Project" />
+          </a>
+          <a href="http://sourceforge.net/projects/sar2">
+            <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=503488&amp;type=12"
+                 width="120" height="30"
+                 alt="Get Search and Rescue
+                      II at
+                      SourceForge.net. Fast,
+                      secure and Free Open
+                      Source software downloads" />
+          </a>
+          <a href="http://validator.w3.org/check?uri=referer">
+            <img
+               src="http://www.w3.org/Icons/valid-xhtml10"
+               alt="Valid XHTML 1.0 Strict" height="31" width="88" />
+          </a>
+          <!--
+          <a href="http://jigsaw.w3.org/css-validator/check/referer">
+            <img style="border:0;width:88px;height:31px"
+                 src="http://jigsaw.w3.org/css-validator/images/vcss"
+                 alt="Valid CSS!" />
+          </a>-->
+        </p>
+      </div>
+      
+    </div><!-- wrapper -->
+    
+  </body>
+</html>

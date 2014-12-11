@@ -1,7 +1,0 @@
-BeginHeader
-    Version 0 1 0
-    Title Training: Short flight from SMO to LAX
-    SceneFile /home/hector/Desktop/Builds/sar2/data/scenery/los_angeles.scn
-EndHeader
-10 43200.000000 -7300.000000 42580.000000 2.730000:player took off at helipad_smo
-11 43209.632812 -7300.009277 42580.000000 2.730000:*** MISSION ABORTED ***

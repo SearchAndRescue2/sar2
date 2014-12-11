@@ -1,0 +1,140 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #DADAFF;
+    font: normal small Helvetica, sans-serif;
+    color: #424242;
+}
+
+#header {
+    width:900px;
+    height:100px;
+    background: url(../images/logo.jpg) no-repeat;
+    text-align:center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#header h1 {
+    padding-top:20px;
+    color:white;
+}
+
+#header h2 {
+    color: white;
+    padding-top:5px;
+}
+
+
+p {
+    margin-left: 30px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right:10px;
+    text-align: justify;
+    color: #424242;
+    font-size:1.0em;
+}
+
+code {
+    margin-left:50px;
+}
+
+h1,h2,h3,h4,h5{
+    color:#1F1F1F;
+}
+
+h4 {
+    margin-left:10px;
+    margin-top: 10px;
+}
+
+li {
+    margin: 5px;
+}
+
+table#packages {
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+}
+
+table#packages td {
+    padding: 5px 5px;
+    border: 1px solid;
+    
+}
+
+table#packages td.distrologo {
+    width:110px;
+    padding-left:10px;
+}
+
+img.distro {
+    margin-right: 10px;
+    float:left;
+    vertical-align: middle;
+}
+
+#tabs div{
+    background-color:#FAFAFA;
+}
+
+#tabs div ul {
+    margin-left:75px;
+    list-style:circle;
+}
+
+#tabs ul li{
+    color: #424242;
+}
+
+#tabs ul li.ui-state-active a {
+/*    background-color:#F1F1F1; */
+}
+
+a:link {
+    text-decoration:underline;
+    color:#5D5D5D;
+}
+
+a:hover {
+    text-decoration:none;
+    color: #1D1D1D;
+}
+
+
+#wrapper {
+    width:900px;
+    margin: auto;
+}
+
+#footer {
+    width:900px;
+    height:50px;
+    border: 0px solid; 
+    border-radius: 6px; 
+    -ms-border-radius: 6px; 
+    -moz-border-radius: 6px; 
+    -webkit-border-radius: 6px;
+
+}
+
+#footer p{
+    margin: 0 auto;
+    text-align:center;
+    font-size:smaller;
+}
+
+#footer img{
+    border:0;
+    margin: 10px 2px;
+}
+
+#content {
+    background-color:#F1F1F1;
+}
