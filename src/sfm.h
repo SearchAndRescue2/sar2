@@ -42,6 +42,18 @@
  */
 #define SFMDefaultGravity	9.80665
 
+
+/*
+ *	Effective transactional lift speed value in m/s.
+ */
+#define SFMETLSpeed 12.35  // 24 knots
+
+/*
+ *	Transverse Flow Effect (TF) values in m/s.
+ */
+#define SFMTFStart 2.57 // 5 knots
+#define SFMTFEnd 12.86  // 25 knots
+
 /*
  *	Core structure:
  */

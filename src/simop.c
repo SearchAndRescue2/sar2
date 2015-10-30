@@ -1054,7 +1054,7 @@ void SARSimSetSFMValues(
 			      SFMFlagCrashContactShape | SFMFlagCrashableSizeRadius |
 			      SFMFlagCrashableSizeZMin | SFMFlagCrashableSizeZMax |
 			      SFMFlagTouchDownCrashResistance | SFMFlagCollisionCrashResistance |
-			      SFMFlagStopped | SFMFlagLength | SFMFlagWingspan
+			      SFMFlagStopped | SFMFlagLength | SFMFlagWingspan | SFMFlagRotorDiameter
 		);
 
 	    /* Update flight model type only if SFM not in slew mode */
@@ -1110,6 +1110,7 @@ void SARSimSetSFMValues(
 	    TAR_PTR->belly_height = SRC_PTR->belly_height;
 	    TAR_PTR->length = SRC_PTR->length;
 	    TAR_PTR->wingspan = SRC_PTR->wingspan;
+	    TAR_PTR->rotor_diameter = SRC_PTR->rotor_diameter;
 	    TAR_PTR->ground_elevation_msl = obj_ptr->ground_elevation_msl;
 	    TAR_PTR->gear_state = (SFMBoolean)((lgear_ptr != NULL) ?
 		(lgear_ptr->flags & SAR_OBJ_PART_FLAG_STATE) : False
@@ -1288,6 +1289,8 @@ void SARSimGetSFMValues(sar_scene_struct *scene, sar_object_struct *obj_ptr)
 
 	    TAR_PTR->center_to_ground_height =
 		(float)SRC_PTR->center_to_ground_height;
+
+	    TAR_PTR->torque_velocity = (float)SRC_PTR->torque_velocity;
 
 	    /* Get z acceleration before updating velocity */
 	    TAR_PTR->z_accel = (float)SRC_PTR->velocity_vector.z -

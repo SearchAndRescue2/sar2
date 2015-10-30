@@ -70,6 +70,9 @@ belly_height 2.8
 # Length in meters
 length 17.47
 
+# Rotor diameter in meters
+rotor_diameter 11.5824
+
 # Wingspan in meters
 wingspan 15.24
 

@@ -579,6 +579,17 @@ void SARCmdSet(SAR_CMD_PROTOTYPE)
 		got_match = True;
 	    }
 	}
+	/* Rotor diameter */
+	else if(!strcasecmp(parm, "rotor_diameter"))
+	{
+	    sar_object_aircraft_struct *obj_aircraft_ptr =
+		SAR_OBJ_GET_AIRCRAFT(obj_ptr);
+	    if(obj_aircraft_ptr != NULL)
+	    {
+		obj_aircraft_ptr->rotor_diameter = (float)ATOF(val);
+		got_match = True;
+	    }
+	}
 	/* Gear height */
 	else if(!strcasecmp(parm, "gear_height"))
 	{

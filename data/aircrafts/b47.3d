@@ -60,6 +60,9 @@ belly_height 0.5
 # Length in meters
 length 9.63
 
+# Rotor diameter in meters
+rotor_diameter 9.4742
+
 # Gear (down position) to belly height in meters
 gear_height 0.0
 
