@@ -3,6 +3,10 @@ SEARCH AND RESCUE II
 CHANGELOG
 ********************
 
+Version 2.3.2:
+        Hector Sanjuan <hector@convivencial.org>
+               * Improve sound system
+               * Some other bug fixes
 Version 2.3.1:
         Hector Sanjuan <hector@convivencial.org>
                * Added buildings to Madrid city (many randomly 
