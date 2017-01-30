@@ -15,7 +15,7 @@ debug = ARGUMENTS.get('debug', 0)
 if int(debug):
     env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions',
                            '-Wno-write-strings', '-DHAVE_LIBXPM'])
-else if optflags:
+elif optflags:
     env.Append( CPPFLAGS = optflags )
 else:
     env.Append(CPPFLAGS = ['-O6', '-funroll-loops',
