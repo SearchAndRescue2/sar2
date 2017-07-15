@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>sar2.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0</project_license>
+  <name>Search and Rescue II</name>
+  <summary>Rescue Helicopter Simulator</summary>
+  <description>
+    <p>
+      Search and Rescue II is a rescue helicopter simulator for Linux.
+      It features several missions where the player pilots a
+      helicopter in order to rescue people in distress. There are
+      several scenarios and helicopter models.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar1.jpg</image>
+    </screenshot>
+    <screenshot>
+      <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar2.jpg</image>
+    </screenshot>
+    <screenshot>
+      <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar3.jpg</image>
+    </screenshot>
+    <screenshot>
+      <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar4.jpg</image>
+    </screenshot>
+    <screenshot>
+      <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar5.jpg</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://searchandrescue2.github.io/sar2/</url>
+</component>
