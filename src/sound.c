@@ -371,7 +371,6 @@ void SoundStartPlayVoid(
         case SNDSERV_TYPE_OPENAL:
 
             snd_i = recorder->next_sound_effect;
-            printf("Playing on %d\n",snd_i);
             snd_play = recorder->sound_effects_array[snd_i];
             /* Clean up previous object if any */
             source = snd_play->alSource;
