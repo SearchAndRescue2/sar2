@@ -228,9 +228,9 @@ typedef struct {
 	 *      *_state members specifies a boolean on/off value
 	 *      *_kb_last members record the last keyboard event for this
 	 *      behavour
-	 *      *_coeff members determines the magnitude [0.0 to 1.0] of     
-	 *      the state regardless if it is on or off. This is for when    
-	 *      the game controller has gone from off to on to off in one 
+	 *      *_coeff members determines the magnitude [0.0 to 1.0] of
+	 *      the state regardless if it is on or off. This is for when
+	 *      the game controller has gone from off to on to off in one
 	 *      call to GCtlUpdate()
 	 */
 	Boolean		zoom_in_state,
@@ -244,9 +244,9 @@ typedef struct {
 	 *      *_state members specifies a boolean on/off value.
 	 *      *_kb_last members record the last keyboard event for this
 	 *      behavour.
-	 *      *_coeff members determines the magnitude [0.0 to 1.0] of     
-	 *      the state regardless if it is on or off. This is for when    
-	 *      the game controller has gone from off to on to off in one 
+	 *      *_coeff members determines the magnitude [0.0 to 1.0] of
+	 *      the state regardless if it is on or off. This is for when
+	 *      the game controller has gone from off to on to off in one
 	 *      call to GCtlUpdate().
 	 */
 	Boolean		hoist_up_state,
@@ -289,7 +289,7 @@ typedef struct {
 			bank_kb_state,
 			throttle_kb_state,
 			hat_x_kb_state,
-			hat_y_kb_state; 
+			hat_y_kb_state;
 
 	/* Keyboard last press time stamps for control positions */
 	time_t		heading_kb_last,	/* In milliseconds */
@@ -299,7 +299,7 @@ typedef struct {
 			hat_x_kb_last,
 			hat_y_kb_last;
 
-	/* Set to True if a key is currently down and that key 
+	/* Set to True if a key is currently down and that key
 	 * would/should override a joystick or pointer controlled
 	 * axis.
 	 */

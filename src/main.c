@@ -163,7 +163,7 @@ void SARHandleSignal(int s)
 #ifdef SIGTERM
 	  case SIGTERM:
 	    exit(0);
-	    break;  
+	    break;
 #endif
 #ifdef SIGQUIT
 	  case SIGQUIT:
@@ -233,7 +233,7 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 	/* Options (none at this time) */
 	v->options = opt->gctl_options;
 
-	/* Set up Game Controller Joystick Values for each joystick   
+	/* Set up Game Controller Joystick Values for each joystick
 	 * that is enabled
 	 */
 	v->total_joysticks = total_joysticks;
@@ -575,16 +575,16 @@ void SARResolutionIncrease(gw_display_struct *display)
 	    new_width = 1024;
 	    new_height = 768;
 	}
-        else if (width < 1280)
-        {
-            new_width = 1280;
-            new_height = 768;
-        }
-        else if (width < 1366)
-        {
-            new_width = 1366;
-            new_height = 768;
-        }
+	else if (width < 1280)
+	{
+	    new_width = 1280;
+	    new_height = 768;
+	}
+	else if (width < 1366)
+	{
+	    new_width = 1366;
+	    new_height = 768;
+	}
 	/* 100x70 */
 	else
 	{
@@ -611,16 +611,16 @@ void SARResolutionDecrease(gw_display_struct *display)
 	    &width, &height
 	);
 
-        if (width > 1366)
-        {
-            new_width = 1280;
-            new_height = 768;
-        }
-        else if (width > 1280)
-        {
-            new_width = 1366;
-            new_height = 768;
-        }
+	if (width > 1366)
+	{
+	    new_width = 1280;
+	    new_height = 768;
+	}
+	else if (width > 1280)
+	{
+	    new_width = 1366;
+	    new_height = 768;
+	}
 	/* 1024x768 */
 	else if(width > 1024)
 	{
@@ -872,7 +872,7 @@ void SARKeyBoardCB(void *ptr, int c, Boolean state, unsigned long t)
 	     * handler.  Note that this function will not post a
 	     * redraw.
 	     */
-	    SARKey(core_ptr, c, state, t); 
+	    SARKey(core_ptr, c, state, t);
 	}
 	else
 	{
@@ -1277,7 +1277,7 @@ sar_core_struct *SARInit(int argc, char **argv)
 	const char	*font_name = NULL;
 	Boolean		cl_direct_rendering = True;
 	int		cl_fullscreen = 0;
-        int             allow_key_repeat = True;
+	int             allow_key_repeat = True;
 	float		aspect_offset = 0.0f;
 	Boolean		startup_no_sound = False;
 	const char	*sound_server_connect_arg = NULL;
@@ -1291,7 +1291,7 @@ sar_core_struct *SARInit(int argc, char **argv)
 
 
 	/* Set signal callbacks */
-	signal(SIGINT, SARHandleSignal); 
+	signal(SIGINT, SARHandleSignal);
 	signal(SIGTERM, SARHandleSignal);
 	signal(SIGSEGV, SARHandleSignal);
 
@@ -1460,7 +1460,7 @@ sar_core_struct *SARInit(int argc, char **argv)
 	opt->gctl_js0_axis_roles = 0;
 	opt->gctl_js1_axis_roles = 0;
 /*
-	opt->gctl_js1_axis_roles = 
+	opt->gctl_js1_axis_roles =
 GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
  */
 
@@ -1614,7 +1614,7 @@ GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 	    /* Help */
 	    else if(!strcasecmp(arg, "--help") ||
 		    !strcasecmp(arg, "-help") ||
-                    !strcasecmp(arg, "-h") ||
+		    !strcasecmp(arg, "-h") ||
 		    !strcasecmp(arg, "-?") ||
 		    !strcasecmp(arg, "/h") ||
 		    !strcasecmp(arg, "/?") ||
@@ -1728,7 +1728,7 @@ GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 	    }
 	    /* Always Full Menu Redraws */
 	    else if(!strcasecmp(arg, "--full_menu_redraw") ||
-		    !strcasecmp(arg, "--full-menu-redraw") ||   
+		    !strcasecmp(arg, "--full-menu-redraw") ||
 		    !strcasecmp(arg, "-full_menu_redraw") ||
 		    !strcasecmp(arg, "-full-menu-redraw")
 	    )
@@ -1766,17 +1766,17 @@ GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 	    {
 		cl_fullscreen = 1;
 	    }
-            else if ( (!strcasecmp(arg, "--window") ) ||
-                      (!strcasecmp(arg, "-window") ) )
-            {
-                cl_fullscreen = 2;
-            }
-            else if ( (!strcasecmp(arg, "--no-keyrepeat") ) ||
-                      (!strcasecmp(arg, "--no-autorepeat") ) )
-            {
-                 allow_key_repeat = False;
-            }
- 
+	    else if ( (!strcasecmp(arg, "--window") ) ||
+		      (!strcasecmp(arg, "-window") ) )
+	    {
+		cl_fullscreen = 2;
+	    }
+	    else if ( (!strcasecmp(arg, "--no-keyrepeat") ) ||
+		      (!strcasecmp(arg, "--no-autorepeat") ) )
+	    {
+		 allow_key_repeat = False;
+	    }
+
 	    /* Font (font name for XFonts, X only) */
 	    else if(!strcasecmp(arg, "--font") ||
 		    !strcasecmp(arg, "-font") ||
@@ -2009,17 +2009,17 @@ PROG_NAME_FULL " was unable to complete the installation of local data files in:
 	strv[8] = STRDUP(PROG_NAME_FULL);
 	if(cl_fullscreen == 1)
 	    strv[9] = STRDUP("--full_screen");
-        else if (cl_fullscreen == 2)
-        {
-            strv[9] = STRDUP("--window");
-            opt->last_fullscreen = False;
-        }
+	else if (cl_fullscreen == 2)
+	{
+	    strv[9] = STRDUP("--window");
+	    opt->last_fullscreen = False;
+	}
 	else
 	    strv[9] = STRDUP(opt->last_fullscreen ?
 		"--fullscreen" : "--windowed"
 	    );
-        if (! allow_key_repeat)
-           strv[10] = STRDUP("--no-keyrepeat");
+	if (! allow_key_repeat)
+	   strv[10] = STRDUP("--no-keyrepeat");
 
 	if(!STRISEMPTY(display_address))
 	{
@@ -2139,7 +2139,7 @@ that was detected is 0 bits in size.\n"
 	else
 	{
 	    void *window;
-            int type = SOUND_DEFAULT; // use this as default
+	    int type = SOUND_DEFAULT; // use this as default
 
 	    GWContextGet(
 		dpy, GWContextCurrent(dpy),
@@ -2149,15 +2149,15 @@ that was detected is 0 bits in size.\n"
 	    );
 	    core_ptr->recorder = SoundInit(
 		core_ptr,
-	        type,
-	        sound_server_connect_arg,	/* Connect argument */
+		type,
+		sound_server_connect_arg,	/* Connect argument */
 		NULL,				/* Start argument */
 		window				/* Toplevel window */
 	    );
 
 	    if(core_ptr->recorder == NULL)
 	    {
-	        fprintf(
+		fprintf(
 		    stderr,
 PROG_NAME_FULL " could not connect to the Sound Server, please check \
 if the Sound Server is currently running.\n"
@@ -2193,7 +2193,7 @@ if the Sound Server is currently running.\n"
 	core_ptr->human_data = SARHumanPresetsInit(core_ptr);
 	if(core_ptr->human_data == NULL)
 	{
-	    fprintf(   
+	    fprintf(
 		stderr,
 		"Error initializing human presets data.\n"
 	    );
@@ -2509,14 +2509,14 @@ void SARShutdown(sar_core_struct *core_ptr)
 		      case SAR_MENU_OBJECT_TYPE_BUTTON:
 		      case SAR_MENU_OBJECT_TYPE_PROGRESS:
 		      case SAR_MENU_OBJECT_TYPE_MESSAGE_BOX:
-		        break;
+			break;
 		      case SAR_MENU_OBJECT_TYPE_LIST:
-		        {
+			{
 			    int j;
 			    sar_menu_list_struct *list = SAR_MENU_LIST(o);
 			    /* Delete list item data */
 			    for(j = 0; j < list->total_items; j++)
-			        SARDeleteListItemData(list->item[j]);
+				SARDeleteListItemData(list->item[j]);
 			}
 			break;
 		      case SAR_MENU_OBJECT_TYPE_MDISPLAY:
@@ -2525,7 +2525,7 @@ void SARShutdown(sar_core_struct *core_ptr)
 		      case SAR_MENU_OBJECT_TYPE_SLIDER:
 		      case SAR_MENU_OBJECT_TYPE_MAP:
 		      case SAR_MENU_OBJECT_TYPE_OBJVIEW:
-		        break;
+			break;
 		    }
 		}
 

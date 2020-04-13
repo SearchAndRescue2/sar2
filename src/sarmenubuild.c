@@ -210,7 +210,7 @@ static int SARMenuBuildStandardButton(
 	/* Calculate label size */
 	w2 = MAX(w - bw, 0);
 	h2 = h;
-	/* Create label */ 
+	/* Create label */
 	n = SARMenuLabelNew(
 	    menu, x, y,
 	    w2, h2,
@@ -389,7 +389,7 @@ static int SARMenuBuildStandardSwitch(
 	/* Create switch */
 	return(
 	    SARMenuSwitchNew(
-		menu, x, y, w, h, 
+		menu, x, y, w, h,
 		&c, opt->menu_font,
 		label,
 		core_ptr->menu_switch_bg_img,
@@ -627,7 +627,7 @@ static void SARBuildMenusAddDirectory(
 #ifdef S_ISDIR
 		    if(S_ISDIR(stat_buf.st_mode))
 		    {
-			free(name);  
+			free(name);
 			continue;
 		    }
 #endif	/* S_ISDIR */
@@ -713,7 +713,7 @@ static void SARBuildMenusAddDirectory(
 		    }
 #ifdef S_ISDIR
 		    if(S_ISDIR(stat_buf.st_mode))
-		    {   
+		    {
 			free(name);
 			continue;
 		    }
@@ -1165,7 +1165,7 @@ int btn_width_map = 32, btn_height_map = 32;
 	    SAR_MENU_NAME_MISSION,
 	    img_path
 	);
-	if(menu == NULL)   
+	if(menu == NULL)
 	    return(-1);
 	else
 	    SARBuildMenusAddToList(core_ptr, menu);
@@ -1296,13 +1296,13 @@ int btn_width_map = 32, btn_height_map = 32;
 	);
 
 	/* Begin Mission Button */
-	SARMenuBuildStandardButton(   
+	SARMenuBuildStandardButton(
 	    core_ptr, menu, 0.75f, 0.92f, btn_width_std, btn_height_std,
 	    True, "Begin", SAR_MENU_ID_GOTO_MISSION_BEGIN
 	);
 
 
-	/* ****************************************************** */   
+	/* ****************************************************** */
 	/* Menu: Mission->Briefing->Map */
 	img_path = SARMenuBuildGetFullPath(SAR_DEF_MENU_BGIMG_STANDARD_FILE);
 	menu = SARMenuNew(
@@ -1340,16 +1340,16 @@ int btn_width_map = 32, btn_height_map = 32;
 	    NULL,
 	    SAR_MENU_ID_MISSION_MAP_DOWN,
 	    core_ptr->menu_button_pan_down_unarmed_img,
-	    core_ptr->menu_button_pan_down_armed_img,  
-	    core_ptr->menu_button_pan_down_unarmed_img 
+	    core_ptr->menu_button_pan_down_armed_img,
+	    core_ptr->menu_button_pan_down_unarmed_img
 	);
 	SARMenuBuildButtonImage(
 	    core_ptr, menu, 0.06f, 0.40f, btn_width_map, btn_height_map,
 	    NULL,
 	    SAR_MENU_ID_MISSION_MAP_LEFT,
 	    core_ptr->menu_button_pan_left_unarmed_img,
-	    core_ptr->menu_button_pan_left_armed_img,  
-	    core_ptr->menu_button_pan_left_unarmed_img 
+	    core_ptr->menu_button_pan_left_armed_img,
+	    core_ptr->menu_button_pan_left_unarmed_img
 	);
 	SARMenuBuildButtonImage(
 	    core_ptr, menu, 0.18f, 0.40f, btn_width_map, btn_height_map,
@@ -1377,7 +1377,7 @@ int btn_width_map = 32, btn_height_map = 32;
 	    core_ptr->menu_button_zoom_in_unarmed_img
 	);
 
-	/* Back Button */ 
+	/* Back Button */
 	SARMenuBuildStandardButton(
 	    core_ptr, menu, 0.25f, 0.92f, btn_width_std, btn_height_std,
 	    True,
@@ -1431,7 +1431,7 @@ int btn_width_map = 32, btn_height_map = 32;
 	    core_ptr, menu, 0.12f, 0.34f, btn_width_map, btn_height_map,
 	    NULL,
 	    SAR_MENU_ID_MISSION_LOG_MAP_UP,
-	    core_ptr->menu_button_pan_up_unarmed_img,  
+	    core_ptr->menu_button_pan_up_unarmed_img,
 	    core_ptr->menu_button_pan_up_armed_img,
 	    core_ptr->menu_button_pan_up_unarmed_img
 	);
@@ -1778,7 +1778,7 @@ int btn_width_map = 32, btn_height_map = 32;
 	    SARMenuListActivateCB
 	);
 	SARBuildMenusAddDirectory(
-	    core_ptr, menu, list_num,   
+	    core_ptr, menu, list_num,
 	    SAR_DEF_AIRCRAFTS_DIR
 	);
 	if(list_num > -1)
@@ -2143,7 +2143,7 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	/* ****************************************************** */
 	/* Menu: Options->Simulation */
 	img_path = SARMenuBuildGetFullPath(SAR_DEF_MENU_BGIMG_STANDARD_FILE);
-	menu = SARMenuNew(  
+	menu = SARMenuNew(
 	    SAR_MENU_TYPE_STANDARD,
 	    SAR_MENU_NAME_OPTIONS_SIMULATION,
 	    img_path
@@ -2246,7 +2246,7 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
 	    SARMenuSpinAddValue(menu, spin_num, "Strong");
-	    SARMenuSpinAddValue(menu, spin_num, "Nominal");  
+	    SARMenuSpinAddValue(menu, spin_num, "Nominal");
 	    SARMenuSpinAddValue(menu, spin_num, "Authentic");
 	}
 
@@ -2528,7 +2528,7 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARMenuSpinAddValue(menu, spin_num, "1");
 	    SARMenuSpinAddValue(menu, spin_num, "2");
 	    SARMenuSpinAddValue(menu, spin_num, "3");
-	    SARMenuSpinAddValue(menu, spin_num, "4");   
+	    SARMenuSpinAddValue(menu, spin_num, "4");
 	    SARMenuSpinAddValue(menu, spin_num, "5");
 	    SARMenuSpinAddValue(menu, spin_num, "6");
 	    SARMenuSpinAddValue(menu, spin_num, "7");
@@ -2748,7 +2748,7 @@ to set button number"
 	    0, 0,
 	    "Ground Texture",
 	    False, SAR_MENU_ID_OPT_GROUND_TEXTURE,
-	    SARMenuOptionsSwitchCB 
+	    SARMenuOptionsSwitchCB
 	);
 	/* Object Texture Switch */
 	SARMenuBuildStandardSwitch(
@@ -3215,7 +3215,7 @@ to set button number"
 	    img_path
 	);
 	if(menu == NULL)
-	    return(-1); 
+	    return(-1);
 	else
 	    SARBuildMenusAddToList(core_ptr, menu);
 	menu->always_full_redraw = opt->menu_always_full_redraw;

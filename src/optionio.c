@@ -101,7 +101,7 @@ int SAROptionsLoadFromFile(
 		SAR_CFG_DELIM_CHAR
 	    );
 	    if(buf == NULL)
-	        break;
+		break;
 
 	    /* Version */
 	    if(!strcasecmp(buf, "Version"))
@@ -431,11 +431,11 @@ int SAROptionsLoadFromFile(
 		FGetValuesF(fp, vf, 7);
 
 		opt->js1_btn_rotate = (int)vf[0];
-		opt->js1_btn_air_brakes = (int)vf[1];  
+		opt->js1_btn_air_brakes = (int)vf[1];
 		opt->js1_btn_wheel_brakes = (int)vf[2];
-		opt->js1_btn_zoom_in = (int)vf[3]; 
-		opt->js1_btn_zoom_out = (int)vf[4];  
-		opt->js1_btn_hoist_up = (int)vf[5];  
+		opt->js1_btn_zoom_in = (int)vf[3];
+		opt->js1_btn_zoom_out = (int)vf[4];
+		opt->js1_btn_hoist_up = (int)vf[5];
 		opt->js1_btn_hoist_down = (int)vf[6];
 	    }
 	    /* Joystick #1 (js0) axis roles */
@@ -540,11 +540,11 @@ int SAROptionsLoadFromFile(
 
 	    else
 	    {
-	        fprintf(
+		fprintf(
 		    stderr,
-	            "%s: Unsupported parameter \"%s\".\n",
-	            filename, buf
-	        );
+		    "%s: Unsupported parameter \"%s\".\n",
+		    filename, buf
+		);
 		FSeekNextLine(fp);
 	    }
 
@@ -693,7 +693,7 @@ int SAROptionsSaveToFile(
 	    fp,
 	    "GLPolygonOffsetFactor = %f",
 	    opt->gl_polygon_offset_factor
-	);   
+	);
 	PUTCR
 	/* VisibilityMax */
 	fprintf(
@@ -709,7 +709,7 @@ int SAROptionsSaveToFile(
 	PUTCR
 	/* RotorBlurStyle */
 	fprintf(
-	    fp, 
+	    fp,
 	    "RotorBlurStyle = %i",
 	    (int)opt->rotor_blur_style
 	);
