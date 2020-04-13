@@ -1353,19 +1353,7 @@ fflush(stdout);
 /*              vel->z = 0.0; */
 		pos->z = ground_to_center_height;
 
-		/* Check if currently marked `landed'? */
-		if(model->landed_state)
-		{
-		    /* Already landed, check if we landed on mission target.
-                       This check is required for flights involving planes
-                       that need to taxi to their destination.
-                       -- Jesse
-                       */
-                    realm->touch_down_cb(realm, model, 
-                           realm->touch_down_cb_client_data,
-                           0);
-		}
-		else
+		if(!model->landed_state)
 		{
 		    /* Was previously not landed */
 		    model->landed_state = True;
@@ -1476,6 +1464,36 @@ fflush(stdout);
 		    }
 
 		    model->speed = SFMHypot2(vel->x, vel->y);
+		}
+	    }
+
+	    /* Check if stopped on land */
+	    if (flags & (SFMFlagStopped | SFMFlagLandedState))
+	    {
+		if(model->landed_state)
+		{
+		    SFMBoolean prev_stopped = model->stopped;
+
+		    /* We stop if below 0.01. But only consider to be moving again
+		     * if above 0.1. This avoids flipping. */
+		    if(model->speed < 0.01)
+			model->stopped = True;
+		    else if (model->speed > 0.05)
+			model->stopped = False;
+
+		    if(model->stopped && !prev_stopped) {
+			/* Some aircrafts may need to taxi to destination and we need
+			   to check if they have arrived. We cannot do this on every
+			   cycle when we are landed as it is way too expensive.
+			   So we just do it when we stop.
+			*/
+
+			realm->touch_down_cb(realm, model,
+                           realm->touch_down_cb_client_data,
+					     0);
+		    }
+		} else {
+		    model->stopped = False;
 		}
 	    }
 	}

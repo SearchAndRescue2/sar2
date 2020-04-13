@@ -520,6 +520,7 @@ int SARSimRestart(
 
 			TAR_PTR->speed = 0.0f;
 			TAR_PTR->landed_state = True;
+			TAR_PTR->stopped = True;
 #undef TAR_PTR
 		    }
 
@@ -1073,28 +1074,29 @@ void SARSimSetSFMValues(
 #define SRC_PTR aircraft
 
 	    TAR_PTR->flags = (SFMFlagFlightModelType |
-		SFMFlagPosition | SFMFlagDirection |
-		SFMFlagVelocityVector | SFMFlagSpeed |
-		SFMFlagSpeedStall | SFMFlagDragMin |
-		SFMFlagSpeedMax | SFMFlagAccelResponsiveness |
-		SFMFlagGroundElevation | SFMFlagServiceCeiling |
-		SFMFlagBellyHeight | SFMFlagGearState |
-		SFMFlagGearType | SFMFlagGearHeight |
-		SFMFlagGearBrakesState | SFMFlagGearTurnVelocityOptimul |
-		SFMFlagGearTurnVelocityMax | SFMFlagGearTurnRate |
-		SFMFlagLandedState | SFMFlagGroundContactType |
-		SFMFlagHeadingControlCoeff | SFMFlagBankControlCoeff |
-		SFMFlagPitchControlCoeff | SFMFlagThrottleCoeff |
-		SFMFlagAfterBurnerState | SFMFlagAfterBurnerPowerCoeff |
-		SFMFlagEnginePower | SFMFlagTotalMass |
-		SFMFlagAttitudeChangeRate | SFMFlagAttitudeLevelingRate |
-		SFMFlagAirBrakesState | SFMFlagAirBrakesRate |
-		SFMFlagCanCrashIntoOther | SFMFlagCanCauseCrash |
-		SFMFlagCrashContactShape | SFMFlagCrashableSizeRadius |
-		SFMFlagCrashableSizeZMin | SFMFlagCrashableSizeZMax |
-		SFMFlagTouchDownCrashResistance | SFMFlagCollisionCrashResistance
-	    );
-		
+			      SFMFlagPosition | SFMFlagDirection |
+			      SFMFlagVelocityVector | SFMFlagSpeed |
+			      SFMFlagSpeedStall | SFMFlagDragMin |
+			      SFMFlagSpeedMax | SFMFlagAccelResponsiveness |
+			      SFMFlagGroundElevation | SFMFlagServiceCeiling |
+			      SFMFlagBellyHeight | SFMFlagGearState |
+			      SFMFlagGearType | SFMFlagGearHeight |
+			      SFMFlagGearBrakesState | SFMFlagGearTurnVelocityOptimul |
+			      SFMFlagGearTurnVelocityMax | SFMFlagGearTurnRate |
+			      SFMFlagLandedState | SFMFlagGroundContactType |
+			      SFMFlagHeadingControlCoeff | SFMFlagBankControlCoeff |
+			      SFMFlagPitchControlCoeff | SFMFlagThrottleCoeff |
+			      SFMFlagAfterBurnerState | SFMFlagAfterBurnerPowerCoeff |
+			      SFMFlagEnginePower | SFMFlagTotalMass |
+			      SFMFlagAttitudeChangeRate | SFMFlagAttitudeLevelingRate |
+			      SFMFlagAirBrakesState | SFMFlagAirBrakesRate |
+			      SFMFlagCanCrashIntoOther | SFMFlagCanCauseCrash |
+			      SFMFlagCrashContactShape | SFMFlagCrashableSizeRadius |
+			      SFMFlagCrashableSizeZMin | SFMFlagCrashableSizeZMax |
+			      SFMFlagTouchDownCrashResistance | SFMFlagCollisionCrashResistance |
+			      SFMFlagStopped
+		);
+
 	    /* Update flight model type only if SFM not in slew mode */
 	    switch(SRC_PTR->flight_model_type)
 	    {

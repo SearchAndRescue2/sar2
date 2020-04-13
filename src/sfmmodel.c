@@ -319,6 +319,10 @@ SFMBoolean SFMModelChangeValues(
 	{
 	    model->landed_state = value->landed_state;
 	}
+	if (flags & SFMFlagStopped)
+	{
+	    model->stopped = value->stopped;
+	}
 	if(flags & SFMFlagGroundContactType)
 	{
 	    model->ground_contact_type = value->ground_contact_type;

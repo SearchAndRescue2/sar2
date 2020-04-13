@@ -5535,6 +5535,7 @@ int SARObjLoadFromFile(
 		if(fdm != NULL)
 		{
 		    fdm->landed_state = True;
+		    fdm->stopped = True;
 
 		    SFMModelAdd(scene->realm, fdm);
 		}

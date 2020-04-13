@@ -75,7 +75,7 @@
 #define SFMFlagCrashableSizeZMax	((SFMFlags)1 << 38)
 #define SFMFlagTouchDownCrashResistance	((SFMFlags)1 << 39)
 #define SFMFlagCollisionCrashResistance ((SFMFlags)1 << 40)
-
+#define SFMFlagStopped   		((SFMFlags)1 << 41)
 
 /*
  *	Flight model types:
@@ -153,6 +153,7 @@ typedef struct {
 	double			gear_turn_velocity_max;	/* Meters/cycle. */
 	double			gear_turn_rate;
 	SFMBoolean		landed_state;	/* True if landed. */
+	SFMBoolean		stopped;	/* True if not moving on land. */
 	int			ground_contact_type;	/* One of SFMGroundType*. */
 	double			center_to_ground_height;	/* Internal, center of
 								 * object to touchable

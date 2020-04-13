@@ -123,6 +123,7 @@ void SARSimInitModelCB(
 
     /* Always assume landed */
     model->landed_state = True;
+    model->stopped = True;
 }
 
 
