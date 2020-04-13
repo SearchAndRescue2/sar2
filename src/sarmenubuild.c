@@ -2351,24 +2351,10 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARBuildMenusAddToList(core_ptr, menu);
 	menu->always_full_redraw = opt->menu_always_full_redraw;
 
-	/* First joystick (js0) connection type */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.50f, 0.14f, 0.9f, 0.0f,
-	    "Joystick #1", SAR_MENU_ID_OPT_JS0_CONNECTION,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "Standard");
-	    SARMenuSpinAddValue(menu, spin_num, "USB");
-	}
-
 	/* First joystick (js0) axis roles */
 	spin_num = SARMenuBuildStandardSpin(
 	    core_ptr, menu, 0.50f, 0.26f, 0.9f, 0.0f,
-	    "Axises", SAR_MENU_ID_OPT_JS0_AXISES,
+	    "Joystick #1 Axises", SAR_MENU_ID_OPT_JS0_AXISES,
 	    SARMenuOptionsSpinCB
 	);
 	if(spin_num > -1)
@@ -2385,26 +2371,12 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARMenuSpinAddValue(menu, spin_num, "3D with hat");
 	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
 	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
-	}
-
-	/* Second joystick (js1) connection type */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.50f, 0.43f, 0.9f, 0.0f,
-	    "Joystick #2", SAR_MENU_ID_OPT_JS1_CONNECTION,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "Standard");
-	    SARMenuSpinAddValue(menu, spin_num, "USB");
 	}
 
 	/* Second joystick (js1) axis roles */
 	spin_num = SARMenuBuildStandardSpin(
 	    core_ptr, menu, 0.50f, 0.55f, 0.9f, 0.0f,
-	    "Axises", SAR_MENU_ID_OPT_JS1_AXISES,
+	    "Joystick #2 Axises", SAR_MENU_ID_OPT_JS1_AXISES,
 	    SARMenuOptionsSpinCB
 	);
 	if(spin_num > -1)
@@ -2422,21 +2394,6 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
 	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
 
-	}
-
-	/* Joystick Priority Spin */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.27f, 0.69f, 0.45f, 0.0f,
-	    "Priority", SAR_MENU_ID_OPT_JS_PRIORITY,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "Background");
-	    SARMenuSpinAddValue(menu, spin_num, "Foreground");
-	    SARMenuSpinAddValue(menu, spin_num, "Preempt");
 	}
 
 	/* Test Joystick Button */

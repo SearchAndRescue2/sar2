@@ -375,29 +375,6 @@ int SAROptionsLoadFromFile(
 		opt->gctl_controllers = (gctl_controllers)vf[0];
 
 	    }
-	    /* JoystickPriority */
-	    else if(!strcasecmp(buf, "JoystickPriority"))
-	    {
-		double vf[1];
-		FGetValuesF(fp, vf, 1);
-		opt->js_priority = (int)vf[0];
-	    }
-	    /* Joystick #1 (js0) connection type */
-	    else if(!strcasecmp(buf, "Joystick0Connection") ||
-		    !strcasecmp(buf, "JoystickConnection")
-	    )
-	    {
-		double vf[1];
-		FGetValuesF(fp, vf, 1);
-		opt->js0_connection = (int)vf[0];
-	    }
-	    /* Joystick #2 (js1) connection type */
-	    else if(!strcasecmp(buf, "Joystick1Connection"))
-	    {
-		double vf[1];
-		FGetValuesF(fp, vf, 1);
-		opt->js1_connection = (int)vf[0];
-	    }
 	    /* Joystick #1 (js0) button mappings */
 	    else if(!strcasecmp(buf, "Joystick0ButtonMappings") ||
 		    !strcasecmp(buf, "JoystickButtonMappings")
@@ -855,36 +832,6 @@ int SAROptionsSaveToFile(
 	    fp,
 	    "GameControllers = %i",
 	    opt->gctl_controllers
-	);
-	PUTCR
-	/* Joystick priority */
-	fprintf(
-	    fp,
-	    "# Joystick priority: 0 = Background, 1 = Foreground, 2 = Preempt"
-	);
-	PUTCR
-	fprintf(
-	    fp,
-	    "JoystickPriority = %i",
-	    opt->js_priority
-	);
-	PUTCR
-	/* Joystick connection type */
-	fprintf(
-	    fp,
-	    "# Joystick connection type: 0 = Standard, 1 = USB"
-	);
-	PUTCR
-	fprintf(
-	    fp,
-	    "Joystick0Connection = %i",
-	    opt->js0_connection
-	);
-	PUTCR
-	fprintf(
-	    fp,
-	    "Joystick1Connection = %i",
-	    opt->js1_connection
 	);
 	PUTCR
 	/* Joystick button mappings (7 values) */

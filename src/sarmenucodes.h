@@ -128,11 +128,9 @@
 #define SAR_MENU_ID_OPT_DAMAGE_RESISTANCE	512	/* Spin */
 #define SAR_MENU_ID_OPT_FLIGHT_PHYSICS		513	/* Spin */
 
-#define SAR_MENU_ID_OPT_JS0_CONNECTION		520	/* Spin */
-#define SAR_MENU_ID_OPT_JS1_CONNECTION		521	/* Spin */
+/* 520, 521 and 524 corresponded to deleted types but could be re-used */
 #define SAR_MENU_ID_OPT_JS0_AXISES		522	/* Spin */
 #define SAR_MENU_ID_OPT_JS1_AXISES		523	/* Spin */
-#define SAR_MENU_ID_OPT_JS_PRIORITY		524	/* Spin */
 #define SAR_MENU_ID_OPT_JS0_BUTTON_ACTION	530	/* Spin */
 #define SAR_MENU_ID_OPT_JS0_BUTTON_NUMBER	531	/* Spin */
 #define SAR_MENU_ID_OPT_JS1_BUTTON_ACTION	532	/* Spin */

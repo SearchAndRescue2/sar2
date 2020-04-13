@@ -1726,26 +1726,7 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	int connection, priority;
 	gctl_js_axis_roles axis_roles;
 
-
-	/* Joystick 1 (js0) connection type and axis roles */
-	/* Connection type */
-	connection = opt->js0_connection;
-	spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS0_CONNECTION, NULL
-	    );
-	if(spin != NULL)
-	{
-	    switch(connection)
-	    {
-		case GCTL_JS_CONNECTION_USB:
-		    spin->cur_value = 1;
-		    break;
-		default:	/* GCTL_JS_CONNECTION_STANDARD */
-		    spin->cur_value = 0;
-		    break;
-	    }
-	}
-	/* Axis roles */
+	/* Joystick #1 Axis roles */
 	axis_roles = opt->gctl_js0_axis_roles;
 	spin = SARMenuOptionsGetSpinByID(
 	    m, SAR_MENU_ID_OPT_JS0_AXISES, NULL
@@ -1791,25 +1772,7 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	    }
 	}
 
-	/* Joystick 2 (js1) connection type and axis roles */
-	/* Connection type */
-	connection = opt->js1_connection;
-	spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS1_CONNECTION, NULL
-	    );
-	if(spin != NULL)
-	{
-	    switch(connection)
-	    {
-		case GCTL_JS_CONNECTION_USB:
-		    spin->cur_value = 1;
-		    break;
-		default:      /* GCTL_JS_CONNECTION_STANDARD */
-		    spin->cur_value = 0;
-		    break;
-	    }
-	}
-	/* Axis roles */
+	/* Joystick #2 Axis roles */
 	axis_roles = opt->gctl_js1_axis_roles;
 	spin = SARMenuOptionsGetSpinByID(
 	    m, SAR_MENU_ID_OPT_JS1_AXISES, NULL
@@ -1852,27 +1815,6 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	    else
 	    {
 		spin->cur_value = 0;
-	    }
-	}
-
-	/* Joystick priority */
-	priority = opt->js_priority;
-	spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS_PRIORITY, NULL
-	    );
-	if(spin != NULL)
-	{
-	    switch(priority)
-	    {
-		case GCTL_JS_PRIORITY_FOREGROUND:
-		    spin->cur_value = 1;
-		    break;
-		case GCTL_JS_PRIORITY_PREEMPT:
-		    spin->cur_value = 2;
-		    break;
-		default:
-		    spin->cur_value = 0;
-		    break;
 	    }
 	}
     }
@@ -2380,49 +2322,6 @@ void SARMenuOptionsSpinCB(
 		    break;
 	    }
 	    break;
-
-	case SAR_MENU_ID_OPT_JS0_CONNECTION:
-	    /* These values should correspond to those used to
-	     * set the values in SARBuildMenus().
-	     */
-#define JS_CONNECTION	opt->js0_connection
-	    switch(spin->cur_value)
-	    {
-		case 1:   /* USB */
-		    JS_CONNECTION = GCTL_JS_CONNECTION_USB;
-		    break;
-		default:	/* Standard */
-		    JS_CONNECTION = GCTL_JS_CONNECTION_STANDARD;
-		    break;
-	    }
-#undef JS_CONNECTION
-	    /* Update options.controllers mask and reinitialize the
-	     * game controller.
-	     */
-	    SARMenuOptionsJoystickReinit(core_ptr);
-	    break;
-
-	case SAR_MENU_ID_OPT_JS1_CONNECTION:
-	    /* These values should correspond to those used to
-	     * set the values in SARBuildMenus().
-	     */
-#define JS_CONNECTION	opt->js1_connection
-	    switch(spin->cur_value)
-	    {
-		case 1:   /* USB */
-		    JS_CONNECTION = GCTL_JS_CONNECTION_USB;
-		    break;
-		default:  /* Standard */
-		    JS_CONNECTION = GCTL_JS_CONNECTION_STANDARD;
-		    break;
-	    }
-#undef JS_CONNECTION
-	    /* Update options.controllers mask and reinitialize the
-	     * game controller.
-	     */
-	    SARMenuOptionsJoystickReinit(core_ptr);
-	    break;
-
 	case SAR_MENU_ID_OPT_JS0_AXISES:
 	    /* These values should correspond to those used to
 	     * set the values in SARBuildMenus().
@@ -2541,27 +2440,10 @@ void SARMenuOptionsSpinCB(
 		case 9:   /* As throttle & rudder */
 		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 		    break;
+
+		    break;
 	    }
 #undef JS_AXIS_ROLES
-	    /* Update options.controllers mask and reinitialize the
-	     * game controller.
-	     */
-	    SARMenuOptionsJoystickReinit(core_ptr);
-	    break;
-
-	case SAR_MENU_ID_OPT_JS_PRIORITY:
-	    switch(spin->cur_value)
-	    {
-		case 1:
-		    opt->js_priority = GCTL_JS_PRIORITY_FOREGROUND;
-		    break;
-		case 2:
-		    opt->js_priority = GCTL_JS_PRIORITY_PREEMPT;
-		    break;
-		default:
-		    opt->js_priority = GCTL_JS_PRIORITY_BACKGROUND;
-		    break;
-	    }
 	    /* Update options.controllers mask and reinitialize the
 	     * game controller.
 	     */

@@ -191,7 +191,6 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 {
 	int i, total_joysticks;
 	void *w, *rc;
-	gctl_js_connection js_connection;
 	gctl_struct *gctl;
 	gctl_values_struct *v;
 	gw_display_struct *display = core_ptr->display;
@@ -245,26 +244,11 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 	    v->joystick = NULL;
 	/* Joystick #1 */
 	i = 0;
-	js_connection = opt->js0_connection;
 	if((total_joysticks > i) && (opt->gctl_js0_axis_roles != 0))
 	{
 	    gctl_values_js_struct *js_v = &v->joystick[i];
-
-	    js_v->priority = opt->js_priority;
-	    switch(js_connection)
-	    {
-	      case GCTL_JS_CONNECTION_USB:
-		js_v->device = STRDUP("/dev/input/js0");
-		break;
-	      case GCTL_JS_CONNECTION_STANDARD:
-		js_v->device = STRDUP("/dev/js0");
-		break;
-	    }
-	    js_v->connection = js_connection;
 	    js_v->window = w;
-
 	    js_v->axis_role = opt->gctl_js0_axis_roles;
-
 	    js_v->button_rotate = opt->js0_btn_rotate;
 	    js_v->button_air_brakes = opt->js0_btn_air_brakes;
 	    js_v->button_wheel_brakes = opt->js0_btn_wheel_brakes;
@@ -275,26 +259,11 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 	}
 	/* Joystick #2 */
 	i = 1;
-	js_connection = opt->js1_connection;
 	if((total_joysticks > i) && (opt->gctl_js1_axis_roles != 0))
 	{
 	    gctl_values_js_struct *js_v = &v->joystick[i];
-
-	    js_v->priority = opt->js_priority;
-	    switch(js_connection)
-	    {
-	      case GCTL_JS_CONNECTION_USB:
-		js_v->device = STRDUP("/dev/input/js1");
-		break;
-	      case GCTL_JS_CONNECTION_STANDARD:
-		js_v->device = STRDUP("/dev/js1");
-		break;
-	    }
-	    js_v->connection = js_connection;
 	    js_v->window = w;
-
 	    js_v->axis_role = opt->gctl_js1_axis_roles;
-
 	    js_v->button_rotate = opt->js1_btn_rotate;
 	    js_v->button_air_brakes = opt->js1_btn_air_brakes;
 	    js_v->button_wheel_brakes = opt->js1_btn_wheel_brakes;
@@ -308,12 +277,6 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 	/* Initialize the Game Controller */
 	core_ptr->gctl = gctl = GCtlNew(v);
 
-	/* Delete Game Controller Values */
-	for(i = 0; i < v->total_joysticks; i++)
-	{
-	    gctl_values_js_struct *js_v = &v->joystick[i];
-	    free(js_v->device);
-	}
 	free(v->joystick);
 	free(v);
 
@@ -1433,10 +1396,6 @@ sar_core_struct *SARInit(int argc, char **argv)
 	opt->gctl_controllers = GCTL_CONTROLLER_KEYBOARD |
 	    GCTL_CONTROLLER_POINTER;
 	opt->gctl_options = 0;
-	opt->js_priority = GCTL_JS_PRIORITY_BACKGROUND;
-
-	opt->js0_connection = GCTL_JS_CONNECTION_STANDARD;
-	opt->js1_connection = GCTL_JS_CONNECTION_STANDARD;
 
 	opt->js0_btn_rotate = 3;
 	opt->js0_btn_air_brakes = 6;

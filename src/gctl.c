@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "gw.h"		/* Need to know about GW key codes */
 #include "gctl.h"
 
@@ -113,7 +113,6 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
     /* Initialize the joystick? */
     if(v->controllers & GCTL_CONTROLLER_JOYSTICK)
     {
-	const char *device;
 	gctl_js_axis_roles axis_role;
 
 	/* Allocate Game Controller Joysticks */
@@ -127,8 +126,9 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 	    gc->total_joysticks = 0;
 	}
 
+	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 	/* Attempt to initialize the joystick subsystem. */
-	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) != 0)  {
+	if (SDL_Init(SDL_INIT_JOYSTICK) != 0)  {
 	    fprintf(stderr, "Unable to initialize SDL joysticks: %s\n", SDL_GetError());
 	    gc->sdljoystick = NULL;
 	    gc->total_joysticks = 0;
@@ -148,12 +148,12 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 	    js_value = &v->joystick[i];
 
 
-	    device = js_value->device;
 	    axis_role = js_value->axis_role;
 
 	    /* Enable SDL joysticks */
-	    if (SDL_NumJoysticks() > i) {
-		fprintf(stderr, "Found SDL Joystick\n");
+	    if (SDL_NumJoysticks() > i)
+	    {
+		fprintf(stderr, "Found SDL Joystick #%d of %d\n", i, SDL_NumJoysticks());
 		//SDL_JoystickEventState(SDL_ENABLE);
 		gc->sdljoystick[i] = SDL_JoystickOpen(i);
 	    }
@@ -228,12 +228,11 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 		    joystick->axis_hat_y =
 			joystick->axis_hat_x + 1;
 		}
-	    }	/* Joystick as a standard composite unit */
+	    }   /* Joystick as a standard composite unit */
 
 
-		/* Begin setting up joystick button mappings */
-
-		/* Copy joystick button mappings from js_value structure */
+	    /* Begin setting up joystick button mappings */
+	    /* Copy joystick button mappings from js_value structure */
 	    joystick->button_rotate = js_value->button_rotate;
 	    joystick->button_air_brakes = js_value->button_air_brakes;
 	    joystick->button_wheel_brakes = js_value->button_wheel_brakes;
@@ -243,8 +242,8 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 	    joystick->button_hoist_down = js_value->button_hoist_down;
 
 
-	}	/* Iterate through each joystick */
-    }	/* Initialize joystick? */
+	}       /* Iterate through each joystick */
+    }   /* Initialize joystick? */
 
 
 	/* Initialize keyboard? */
@@ -269,7 +268,7 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 
 	gc->axis_kb_state = False;
 	gc->button_kb_state = False;
-    }	/* Initialize keyboard? */
+    }   /* Initialize keyboard? */
 
 	/* Initialize pointer? */
     if(v->controllers & GCTL_CONTROLLER_POINTER)
@@ -285,25 +284,25 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 	/* Reset pointer coordinates */
 	gc->pointer_x = (gc->pointer_box_width / 2);
 	gc->pointer_y = (gc->pointer_box_height / 2);
-    }	/* Initialize pointer? */
+    }   /* Initialize pointer? */
 
 
     return(gc);
 }
 
 /*
- *	Updates the game controller structure with new (current)
- *	controller values.
+ *      Updates the game controller structure with new (current)
+ *      controller values.
  *
- *	Keyboard handling is performed in GCtlHandleKey().
+ *      Keyboard handling is performed in GCtlHandleKey().
  *
- *	Pointer handling is performed in GCtlHandlePointer().
+ *      Pointer handling is performed in GCtlHandlePointer().
  */
 void GCtlUpdate(
     gctl_struct *gc,
-    Boolean heading_has_nz,	/* Include heading pitch nullzone */
-    Boolean pitch_has_nz,	/* Include pitch nullzone */
-    Boolean bank_has_nz,	/* Include bank nullzone */
+    Boolean heading_has_nz,     /* Include heading pitch nullzone */
+    Boolean pitch_has_nz,       /* Include pitch nullzone */
+    Boolean bank_has_nz,        /* Include bank nullzone */
     time_t cur_ms, time_t lapsed_ms,
     float time_compensation
     )
@@ -322,10 +321,10 @@ void GCtlUpdate(
 	js_def_zoom_out = False,
 	js_def_air_brakes = False,
 	js_def_wheel_brakes = False;
-    Boolean	*btn_kb_state;
-    float	*btn_kb_coeff;
-    time_t	*btn_kb_last;
-    float	btn_kb_decell_coeff;
+    Boolean     *btn_kb_state;
+    float       *btn_kb_coeff;
+    time_t      *btn_kb_last;
+    float       btn_kb_decell_coeff;
     SDL_Joystick *sdljoystick;
 
     if(gc == NULL)
@@ -1088,9 +1087,6 @@ void GCtlResetTimmers(gctl_struct *gc)
  */
 void GCtlDelete(gctl_struct *gc)
 {
-    int i;
-    gctl_js_struct *joystick;
-
     last_gctl_error = NULL;
 
     if(gc == NULL)
@@ -1099,15 +1095,6 @@ void GCtlDelete(gctl_struct *gc)
     /* Joystick(s) initialized? */
     if(gc->joystick != NULL)
     {
-	/* Iterate through each joystick */
-	for(i = 0; i < gc->total_joysticks; i++)
-	{
-	    joystick = &gc->joystick[i];
-
-	    /* Begin shutting down this joystick */
-
-	}
-
 	/* Delete joysticks */
 	free(gc->joystick);
 	gc->joystick = NULL;
@@ -1115,4 +1102,5 @@ void GCtlDelete(gctl_struct *gc)
     }
 
     free(gc);
+    SDL_Quit();
 }

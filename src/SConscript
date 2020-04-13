@@ -24,7 +24,7 @@ else:
                            '-fexpensive-optimizations',
                            '-DHAVE_LIBXPM'])
 
-env.Append(LIBS = ['m', 'SDL', 'SM', 'ICE',
+env.Append(LIBS = ['m', 'SDL2', 'SM', 'ICE',
                    'X11','Xext','Xmu', 'Xpm', 
                    'GL', 'GLU', 'pthread', 'alut', 
                    'vorbisfile', 'openal'])

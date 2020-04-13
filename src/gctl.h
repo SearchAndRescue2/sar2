@@ -21,7 +21,7 @@
 #ifndef GCTL_H
 #define GCTL_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include <sys/types.h>
 #include "gw.h"
 
@@ -45,23 +45,6 @@ typedef enum {
 	GCTL_OPTION_NONE			= (1 << 0)
 } gctl_options;
 
-
-/*
- *	Joystick Priorities:
- */
-typedef enum {
-	GCTL_JS_PRIORITY_BACKGROUND,
-	GCTL_JS_PRIORITY_FOREGROUND,
-	GCTL_JS_PRIORITY_PREEMPT
-} gctl_js_priority;
-
-/*
- *	Joystick Connections:
- */
-typedef enum {
-	GCTL_JS_CONNECTION_STANDARD		= 0,
-	GCTL_JS_CONNECTION_USB			= 1
-} gctl_js_connection;
 
 /*
  *	Joystick Axis Roles:
@@ -93,20 +76,6 @@ typedef enum {
  *	Game Controller Joystick Values:
  */
 typedef struct {
-
-	/* Abstract string idenifying the device.
-	 *
-	 * When using libjsw this would be "/dev/js#" (where # is a
-	 * number) or "/dev/input/js#" for libjsw USB devices
-	 */
-	char		*device;
-
-	/* Priority, one of GCTL_JS_PRIORITY_* */
-	gctl_js_priority	priority;
-
-	/* Standard or USB connection, one of GCTL_JS_CONNECTION_* */
-	gctl_js_connection	connection;
-
 	/* Pointer to the toplevel window handle (for Win32) */
 	void		*window;
 
@@ -158,13 +127,6 @@ typedef struct {
  *	Used in gctl_struct
  */
 typedef struct {
-
-	/* Joystick device specific data handle
-	 *
-	 * For example, when using libjsw the void *joystick would be
-	 * pointing to a js_data_struct structure
-	 */
-	void		*data;
 
 	/* Axis role mappings, reffers an axis by number to a specific
 	 * role
@@ -338,9 +300,9 @@ typedef struct {
 
 	/* Each structure reffers to a joystick */
 	gctl_js_struct	*joystick;
-    int		total_joysticks;
-    /* we add a an array for SDL joystick here. */
-    SDL_Joystick **sdljoystick;
+	int		total_joysticks;
+	/* we add a an array for SDL joystick here. */
+	SDL_Joystick **sdljoystick;
 
 } gctl_struct;
 #define GCTL(p)		((gctl_struct *)(p))

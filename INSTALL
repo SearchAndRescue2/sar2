@@ -22,7 +22,7 @@ STEP 0: Before you Begin
         Xorg/X11   -- xorg-x11-libICE-devel, xorg-x11-libSM-devel
                       xorg-x11-libX11-devel, xorg-x11-libXext-devel
                       xorg-x11-libXmu-devel, xorg-x11-libXpm-devel
-        SDL        -- libSDL-devel
+        SDL2       -- libSDL2-devel
 
         If you find additional dependencies which are not included in your
         distribution, please report them so we can add them to the list.

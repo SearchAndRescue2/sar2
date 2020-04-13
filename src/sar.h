@@ -167,13 +167,6 @@ typedef struct {
 	/* Game controller options mask */
 	gctl_options		gctl_options;
 
-	/* Joystick priority, one of GCTL_JS_PRIORITY_* */
-	gctl_js_priority	js_priority;
-
-	/* Joystick connection type, one of GCTL_JS_CONNECTION_* */
-	int		js0_connection,
-			js1_connection;
-
 	/* Joystick button mappings */
 	int		js0_btn_rotate,		/* Treat bank to heading axis */
 			js0_btn_air_brakes,
