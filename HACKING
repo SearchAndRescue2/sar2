@@ -14,7 +14,25 @@
 --------
 CONTENTS
 
+	* Code style rules
 	* Source Layout
+
+CODE STYLE RULES
+----------------
+
+	The style for this project corresponds to the C "linux" style (i.e.
+	non-indented brackets), using TABS (width 8) and an indentation level
+	of 4.  Translated to Emacs configuration:
+
+	   '(indent-tabs-mode t)
+	   '(c-default-style
+	      (quote
+	          ((c-mode . "linux")
+		   (java-mode . "java")
+		   (awk-mode . "awk")
+		   (other . "gnu"))))
+	   '(c-basic-offset 4)
+	   '(tab-width 8)
 
 -------------
 SOURCE LAYOUT
