@@ -58,7 +58,9 @@ typedef enum {
 	/* Throttle and rudder unit joystick */
 	GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER	= (1 << 6),
 	/* Joystick unit with no axises (only buttons) */
-	GCTL_JS_AXIS_ROLE_NONE			= (1 << 7)
+	GCTL_JS_AXIS_ROLE_NONE			= (1 << 7),
+	/* Triggers brakes */
+	GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES	= (1 << 8)
 } gctl_js_axis_roles;
 
 
@@ -138,7 +140,9 @@ typedef struct {
 			axis_pitch,
 			axis_throttle,
 			axis_hat_x,
-			axis_hat_y;
+			axis_hat_y,
+			axis_brake_left,
+			axis_brake_right;
 
 	/* Joystick button role mappings, reffers a button by number to
 	 * a specific role (-1 for none)

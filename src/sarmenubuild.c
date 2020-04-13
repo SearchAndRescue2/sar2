@@ -2371,6 +2371,7 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARMenuSpinAddValue(menu, spin_num, "3D with hat");
 	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
 	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
+	    SARMenuSpinAddValue(menu, spin_num, "As rudder & wheel brakes");
 	}
 
 	/* Second joystick (js1) axis roles */
@@ -2393,6 +2394,7 @@ elif defined(PROG_LANGUAGE_FRENCH)
 	    SARMenuSpinAddValue(menu, spin_num, "3D with hat");
 	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
 	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
+	    SARMenuSpinAddValue(menu, spin_num, "As rudder & wheel brakes");
 
 	}
 

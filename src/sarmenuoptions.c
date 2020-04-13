@@ -1738,7 +1738,9 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	     */
 	    if(axis_roles)
 	    {
-		if(axis_roles & GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER)
+		if (axis_roles & GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES)
+		    spin->cur_value = 10;
+		else if(axis_roles & GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER)
 		    spin->cur_value = 9;
 		else if((axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE) &&
 			(axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
@@ -1784,7 +1786,9 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	     */
 	    if(axis_roles)
 	    {
-		if(axis_roles & GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER)
+		if (axis_roles & GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES)
+		    spin->cur_value = 10;
+		else if(axis_roles & GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER)
 		    spin->cur_value = 9;
 		else if((axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE) &&
 			(axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
@@ -2377,6 +2381,9 @@ void SARMenuOptionsSpinCB(
 		case 9:   /* As throttle & rudder */
 		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 		    break;
+		case 10:  /* As rudder & brakes */
+		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES;
+		    break;
 	    }
 #undef JS_AXIS_ROLES
 	    /* Update options.controllers mask and reinitialize the
@@ -2440,6 +2447,8 @@ void SARMenuOptionsSpinCB(
 		case 9:   /* As throttle & rudder */
 		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 		    break;
+		case 10:  /* As rudder & brakes */
+		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES;
 
 		    break;
 	    }

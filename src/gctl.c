@@ -163,6 +163,8 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 
 	    /* Reset all axis mappings first */
 	    joystick->axis_heading = -1;
+	    joystick->axis_brake_left = -1;
+	    joystick->axis_brake_right = -1;
 	    joystick->axis_bank = -1;
 	    joystick->axis_pitch = -1;
 	    joystick->axis_throttle = -1;
@@ -174,6 +176,25 @@ gctl_struct *GCtlNew(gctl_values_struct *v)
 	    {
 		joystick->axis_heading = 0;
 		joystick->axis_throttle = 1;
+	    }
+	    else if(axis_role & GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES)
+	    {
+		int num_axes = SDL_JoystickNumAxes(gc->sdljoystick[i]);
+		switch (num_axes) {
+		    case 1:
+			joystick->axis_heading = 0;
+			break;
+		    case 2:
+			joystick->axis_brake_left = 0;
+			joystick->axis_brake_right = 0;
+			joystick->axis_heading = 1;
+			break;
+		    case 3:
+			joystick->axis_brake_left = 0;
+			joystick->axis_brake_right = 1;
+			joystick->axis_heading = 2;
+			break;
+		}
 	    }
 	    /* Joystick with no axises (only buttons) */
 	    else if(axis_role & GCTL_JS_AXIS_ROLE_NONE)
@@ -383,8 +404,11 @@ void GCtlUpdate(
 		js_def_zoom_out = True;
 	    if(joystick->button_air_brakes > -1)
 		js_def_air_brakes = True;
-	    if(joystick->button_wheel_brakes > -1)
+	    if(joystick->button_wheel_brakes > -1 ||
+	       joystick->axis_brake_left > -1 ||
+	       joystick->axis_brake_right > -1)
 		js_def_wheel_brakes = True;
+
 
 	    /* Begin handling joystick */
 
@@ -393,7 +417,10 @@ void GCtlUpdate(
 		axis_pitch = joystick->axis_pitch,
 		axis_throttle = joystick->axis_throttle,
 		axis_hat_x = joystick->axis_hat_x,
-		axis_hat_y = joystick->axis_hat_y;
+		axis_hat_y = joystick->axis_hat_y,
+		axis_brake_left = joystick->axis_brake_left,
+		axis_brake_right = joystick->axis_brake_right;
+
 
 
 	    /* Check bank to heading modifier */
@@ -435,6 +462,35 @@ void GCtlUpdate(
 		if((axis_throttle > -1) &&
 		   !gc->axis_kb_state)
 		    gc->throttle = 1.0 - (((float)SDL_JoystickGetAxis(sdljoystick, axis_throttle) + 32768.0) / 65536.0);
+
+
+		/* Wheel brakes: we do not make a distinction between left and right and handle both */
+		float brake_coeff_left = 0;
+		float brake_coeff_right = 0;
+		if((axis_brake_left > -1) && !gc->axis_kb_state)
+		{
+		    int axis_brake_left_val = SDL_JoystickGetAxis(sdljoystick, axis_brake_left);
+		    brake_coeff_left = ((float)axis_brake_left_val + 32768.0) / 65536.0;
+		}
+
+		if((axis_brake_right > -1) && !gc->axis_kb_state)
+		{
+		    int axis_brake_right_val = SDL_JoystickGetAxis(sdljoystick, axis_brake_right);
+		    brake_coeff_right = ((float)axis_brake_right_val + 32768.0) / 65536.0;
+		}
+
+		float brake_coeff = MAX(brake_coeff_left, brake_coeff_right);
+		if (axis_brake_left > -1 || axis_brake_right > -1)
+		{
+		    if(brake_coeff > 0)
+		    {
+			gc->wheel_brakes_state = 1;
+			gc->wheel_brakes_coeff = brake_coeff;
+		    } else {
+			gc->wheel_brakes_state = 0;
+			gc->wheel_brakes_coeff = 0;
+		    }
+		}
 
 		/* Hat */
 
@@ -537,8 +593,9 @@ void GCtlUpdate(
 			gc->air_brakes_coeff = gc->air_brakes_state ? 1.0f : 0.0f;
 		    }
 		}
-		/* Wheel brakes */
-		if (!gc->button_kb_state){
+		/* Wheel brakes - only if not controlled by axis and enabled already*/
+		if (!gc->button_kb_state && !gc->wheel_brakes_state)
+		{
 		    gc->wheel_brakes_state = SDL_JoystickGetButton(
 			sdljoystick,
 			joystick->button_wheel_brakes) ? True : False;
