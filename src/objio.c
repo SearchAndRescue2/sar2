@@ -4830,6 +4830,7 @@ int SARObjLoadFromFile(
 		aircraft->landing_gear_state = -1;
 		aircraft->air_brakes_state = -1;
 		aircraft->wheel_brakes_state = -1;
+		aircraft->wheel_brakes_coeff = 0.0;
 
 		obj_ptr->temperature = SAR_DEF_TEMPERATURE_AIRCRAFT;
 	    }

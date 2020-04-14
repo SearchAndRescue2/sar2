@@ -1437,7 +1437,6 @@ fflush(stdout);
 
 	    /* Air brakes are applied in SFMForceApplyNatural() */
 
-
 	    /* Apply wheel brakes if landed */
 	    if(flags & (SFMFlagGearState | SFMFlagGearType |
 			SFMFlagGearBrakesState)
@@ -1448,7 +1447,9 @@ fflush(stdout);
 		   model->gear_brakes_state
 		)
 		{
-		    double wheel_brakes_power = (5.0 * tc_min);	/* Meters per second */
+		    double wheel_brakes_power = (10.0 *
+						 model->gear_brakes_coeff *
+						 tc_min);    /* Meters per second */
 
 		    if(vel->y < 0)
 		    {

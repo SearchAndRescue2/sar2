@@ -985,6 +985,9 @@ typedef struct {
 	int		air_brakes_state,
 			wheel_brakes_state;
 
+	/* This affects how much reduction speed suffers when brakes are active */
+	float		wheel_brakes_coeff;
+
 	/* Air brake affect on speed, in units of meters per cycle
 	 * Can be 0.0 if this aircraft has no air brakes
 	 * The affect of the air brakes will be at its maximum

@@ -149,6 +149,7 @@ typedef struct {
 	int			gear_type;	/* One of SFMGearType*. */
 	double			gear_height;	/* Meters. */
 	SFMBoolean		gear_brakes_state;
+	double			gear_brakes_coeff;
 	double			gear_turn_velocity_optimul;	/* Meters/cycle. */
 	double			gear_turn_velocity_max;	/* Meters/cycle. */
 	double			gear_turn_rate;

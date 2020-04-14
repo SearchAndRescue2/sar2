@@ -1168,6 +1168,7 @@ void SARSimSetSFMValues(
 	    TAR_PTR->gear_brakes_state = ((SRC_PTR->wheel_brakes_state > 0) ?
 		True : False
 	    );
+	    TAR_PTR->gear_brakes_coeff = SRC_PTR->wheel_brakes_coeff;
 	    TAR_PTR->gear_turn_velocity_optimul = SRC_PTR->gturn_vel_opt;
 	    TAR_PTR->gear_turn_velocity_max = SRC_PTR->gturn_vel_max;
 /*            TAR_PTR->gear_turn_rate = SRC_PTR->; */
@@ -3283,12 +3284,8 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 	    /* Wheel brakes on/off */
 	    if(aircraft->wheel_brakes_state > -1)
 	    {
-		if(gc->wheel_brakes_state == 2)
-		    aircraft->wheel_brakes_state = 2;
-		else if(gc->wheel_brakes_coeff > 0.0f)
-		    aircraft->wheel_brakes_state = 1;
-		else
-		    aircraft->wheel_brakes_state = 0; 
+		aircraft->wheel_brakes_state = gc->wheel_brakes_state;
+		aircraft->wheel_brakes_coeff = gc->wheel_brakes_coeff;
 	    }
 
 	    /* Update SAR FDM control positions */
@@ -3306,6 +3303,7 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 		);
 		fdm->gear_brakes_state = (aircraft->wheel_brakes_state > 0) ?
 		    True : False;
+		fdm->gear_brakes_coeff = aircraft->wheel_brakes_coeff;
 		fdm->air_brakes_state = (aircraft->air_brakes_state > 0) ?
 		    True : False;
 	    }

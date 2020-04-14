@@ -302,6 +302,7 @@ SFMBoolean SFMModelChangeValues(
 	if(flags & SFMFlagGearBrakesState)
 	{
 	    model->gear_brakes_state = value->gear_brakes_state;
+	    model->gear_brakes_coeff = value->gear_brakes_coeff;
 	}
 	if(flags & SFMFlagGearTurnVelocityOptimul)
 	{
