@@ -2,7 +2,13 @@
 SEARCH AND RESCUE II
 CHANGELOG
 ********************
-
+Version 2.4.0:
+	Hector Sanjuan <code@hector.link>
+		* Improvements to the Joystick system, adding new
+	          Rudder+Brakes mode, moving to libSDL2 and cleaning
+	          up unused menu settings.
+	        * Fix lagging when aircraft is landed.
+	        * Honor wheel brake coefficient.
 Version 2.3.3:
 	Hector Sanjuan <code@hector.link>
 		* Custom optflags (@zezinho42)
