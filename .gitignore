@@ -2,3 +2,5 @@ src/*.o
 bin
 .sconsign.dblite
 *.tga
+*.bz2
+*.gz
