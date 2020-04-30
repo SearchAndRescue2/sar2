@@ -1,4 +1,7 @@
-env = Environment()
+import os.path
+
+
+
 
 AddOption( "--optflags",
            dest="optflags",
@@ -9,8 +12,17 @@ AddOption( "--optflags",
 
 optflags = GetOption("optflags")
 
+AddOption( "--prefix",
+           dest="prefix",
+           type="string",
+           nargs=1,
+           action="store",
+           help="custom install prefix")
+
+env = Environment(PREFIX = GetOption('prefix'))
 
 debug = ARGUMENTS.get('debug', 0)
+
 
 if int(debug):
     env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions',
@@ -138,4 +150,11 @@ tgadither.cpp
 fio.cpp
 """)
 object_list = env.Object(source = sources)
-env.Program(target='#bin/sar2', source=[object_list])
+sar2 = env.Program(target='#bin/sar2', source=[object_list])
+data='../data'
+man='../man/sar2.6.bz2'
+pixmap='../extra/sar2.xpm'
+env.Alias("install", env.InstallAs('$PREFIX/usr/share/sar2', data))
+env.Alias("install", env.Install('$PREFIX/usr/share/man/man6', man))
+env.Alias("install", env.Install('$PREFIX/usr/share/pixmaps', pixmap))
+env.Alias("install", env.Install('$PREFIX/usr/bin', sar2))
