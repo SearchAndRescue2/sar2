@@ -63,6 +63,10 @@ table#packages {
     border-collapse: collapse;
 }
 
+p#snaplink {
+    text-align: center;
+}
+
 table#packages td {
     padding: 5px 5px;
     border: 1px solid;
