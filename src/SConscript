@@ -1,8 +1,6 @@
 import os.path
 
 
-
-
 AddOption( "--optflags",
            dest="optflags",
            type="string",
@@ -10,25 +8,27 @@ AddOption( "--optflags",
            action="store",
            help="set custom optflags")
 
-optflags = GetOption("optflags")
-
 AddOption( "--prefix",
            dest="prefix",
            type="string",
            nargs=1,
            action="store",
-           help="custom install prefix")
+           help="custom install prefix (/usr/local)")
 
-env = Environment(PREFIX = GetOption('prefix'))
+optflags = GetOption("optflags")
+destdir = os.environ.get("DESTDIR")
+prefix = GetOption('prefix')
+if prefix is None:
+    prefix='/usr/local'
 
+env = Environment(PREFIX = prefix, DESTDIR = destdir)
 debug = ARGUMENTS.get('debug', 0)
-
 
 if int(debug):
     env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions',
                            '-Wno-write-strings', '-DHAVE_LIBXPM'])
 elif optflags:
-    env.Append( CPPFLAGS = optflags )
+    env.Append(CPPFLAGS = optflags)
 else:
     env.Append(CPPFLAGS = ['-O6', '-funroll-loops',
                            '-fomit-frame-pointer',
@@ -149,12 +149,13 @@ disk.cpp
 tgadither.cpp
 fio.cpp
 """)
+
 object_list = env.Object(source = sources)
 sar2 = env.Program(target='#bin/sar2', source=[object_list])
-data='../data'
-man='../man/sar2.6.bz2'
-pixmap='../extra/sar2.xpm'
-env.Alias("install", env.InstallAs('$PREFIX/usr/share/sar2', data))
-env.Alias("install", env.Install('$PREFIX/usr/share/man/man6', man))
-env.Alias("install", env.Install('$PREFIX/usr/share/pixmaps', pixmap))
-env.Alias("install", env.Install('$PREFIX/usr/bin', sar2))
+data='#data'
+man='#man/sar2.6.bz2'
+pixmap='#extra/sar2.xpm'
+env.Alias("install", env.InstallAs('$DESTDIR/$PREFIX/share/sar2', data))
+env.Alias("install", env.Install('$DESTDIR/$PREFIX/share/man/man6', man))
+env.Alias("install", env.Install('$DESTDIR/$PREFIX/share/pixmaps', pixmap))
+env.Alias("install", env.Install('$DESTDIR/$PREFIX/bin', sar2))

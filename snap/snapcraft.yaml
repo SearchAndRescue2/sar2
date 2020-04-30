@@ -51,7 +51,7 @@ parts:
   sar2:
     after: [alsa-mixin]
     plugin: scons
-    scons-options: ["--prefix=/root/parts/sar2/install"]
+    scons-options: ["--prefix=/usr"]
     source: .
     build-packages:
       - mesa-common-dev
