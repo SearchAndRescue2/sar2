@@ -1,6 +1,6 @@
 src/*.o
 bin
-.sconsign.dblite
+*.sconsign.dblite
 *.tga
 *.bz2
 *.gz
