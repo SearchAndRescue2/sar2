@@ -6,7 +6,7 @@ AddOption( "--optflags",
            type="string",
            nargs=1,
            action="store",
-           help="set custom optflags")
+           help="set custom CPPFLAGS")
 
 AddOption( "--prefix",
            dest="prefix",
@@ -24,20 +24,28 @@ if prefix is None:
 env = Environment(PREFIX = prefix, DESTDIR = destdir)
 debug = ARGUMENTS.get('debug', 0)
 
+
+# Build flags in normal or debug mode
 if int(debug):
-    env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions',
-                           '-Wno-write-strings', '-DHAVE_LIBXPM'])
-elif optflags:
-    env.Append(CPPFLAGS = optflags)
+    env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions'])
 else:
     env.Append(CPPFLAGS = ['-O6', '-funroll-loops',
                            '-fomit-frame-pointer',
                            '-ffast-math', '-finline-functions',
-                           '-fexpensive-optimizations',
-                           '-DHAVE_LIBXPM'])
+                           '-fexpensive-optimizations'])
 
+# Default defines and optional flags
+if optflags:
+    env.Append(CPPFLAGS = optflags)
+else:
+    env.Append(CPPFLAGS = ['-DHAVE_LIBXPM', '-DHAVE_XF86_VIDMODE'])
+
+
+# List of libraries that will be linked with any executable
+# programs created by this environment.
 env.Append(LIBS = ['m', 'SDL2', 'SM', 'ICE',
-                   'X11','Xext','Xmu', 'Xpm', 
+                   'X11','Xext','Xmu', 'Xpm',
+                   'Xxf86vm',
                    'GL', 'GLU', 'pthread', 'alut', 
                    'vorbisfile', 'openal'])
 
