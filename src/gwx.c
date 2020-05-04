@@ -4696,6 +4696,8 @@ gw_vidmode_struct *GWVidModesGet(
 
 	scr = DefaultScreen(dpy);
 
+
+
 	if(XF86VidModeGetAllModeLines(
 	    dpy, scr, &t, &mode_line_info
 	))
@@ -4710,10 +4712,13 @@ gw_vidmode_struct *GWVidModesGet(
 		for(is_dup = False, k = 0; k < j; k++)
 		{
 		    vm_ptr = &vm[k];
+
 		    if((vm_ptr->width == m->hdisplay) &&
-		       (vm_ptr->height == m->vdisplay) &&
-		       (vm_ptr->vwidth == m->htotal) &&
-		       (vm_ptr->vheight == m->vtotal)
+		       (vm_ptr->height == m->vdisplay)
+		       // Same same, different virtual screen size.
+		       // Consider duplicate. Virtual screen size is not used anyways.
+		       //(vm_ptr->vwidth == m->htotal) &&
+		       //(vm_ptr->vheight == m->vtotal)
 		    )
 		    {
 			is_dup = True;
@@ -4754,7 +4759,7 @@ gw_vidmode_struct *GWVidModesGet(
 	    XFree(mode_line_info);
 	}
 	if(n != NULL)
-	    *n = t;
+	    *n = j;
 	return(vm);
 #else
 	if(n != NULL)

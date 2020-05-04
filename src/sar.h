@@ -71,6 +71,27 @@ typedef enum {
 	FLIGHT_PHYSICS_REALISTIC
 } sar_flight_physics_level;
 
+typedef struct {
+    int width, height;
+} resolution;
+
+#define RESOLUTIONS {				\
+	640, 480,				\
+	    800, 600,				\
+	    1024, 768,				\
+	    1280, 720,				\
+	    1280, 960,				\
+	    1440, 1080,				\
+	    1600, 900,				\
+	    1600, 1200,				\
+	    1920, 1080,				\
+	    2560, 1440,				\
+	    3200, 1800,				\
+	    3840, 1080,				\
+	    3840, 2160,				\
+	    }
+
+
 /*
  *	Options:
  */
@@ -521,6 +542,7 @@ extern int SARInitGCTL(sar_core_struct *core_ptr);
 
 extern void SARFullScreen(sar_core_struct *core_ptr);
 extern void SARResolution(gw_display_struct *display, int width, int height);
+
 extern void SARResolutionIncrease(gw_display_struct *display);
 extern void SARResolutionDecrease(gw_display_struct *display);
 

@@ -1986,23 +1986,18 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	if(spin != NULL)
 	{
 	    int	v = opt->last_width,
-		sv;
-	    if(v <= 100)
+		h = opt->last_height,
 		sv = 0;
-	    else if(v <= 320)
-		sv = 1;
-	    else if(v <= 640)
-		sv = 2;
-	    else if(v <= 800)
-		sv = 3;
-	    else if(v <= 1024)
-		sv = 4;
-	    else if (v <= 1280)
-		sv = 5;
-	    else if (v <- 1366)
-		sv = 6;
-	    else
-		sv = 0;
+
+	    int i;
+	    const int resols[] = RESOLUTIONS;
+	    int total = sizeof(resols) / sizeof(int);
+	    for (i = 0; i<total; i+=2) {
+		if (v == resols[i] && h == resols[i+1]) {
+		    sv = i/2;
+		    break;
+		}
+	    }
 	    spin->cur_value = CLIP(sv, 0, spin->total_values - 1);;
 	}
 
@@ -2618,38 +2613,10 @@ void SARMenuOptionsSpinCB(
 	case SAR_MENU_ID_OPT_RESOLUTION:
 	    if(display != NULL)
 	    {
+		const int resols[] = RESOLUTIONS;
 		int width, height;
-		switch(spin->cur_value)
-		{
-		    case 6:
-			width = 1366;
-			height = 768;
-			break;
-		    case 5:
-			width = 1280;
-			height = 768;
-			break;
-		    case 4:
-			width = 1024;
-			height = 768;
-			break;
-		    case 3:
-			width = 800;
-			height = 600;
-			break;
-		    case 2:
-			width = 640;
-			height = 480;
-			break;
-		    case 1:
-			width = 320;
-			height = 240;
-			break;
-		    default:	/* 0 */
-			width = 100;
-			height = 70;
-			break;
-		}
+		width = resols[spin->cur_value * 2];
+		height = resols[spin->cur_value * 2 + 1];
 		SARResolution(display, width, height);
 	    }
 	    break;

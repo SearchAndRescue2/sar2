@@ -143,8 +143,6 @@ float	time_compensation,
 static int is_visible = 0;
 
 
-
-
 /*
  *	Signal handler.
  */
@@ -370,12 +368,12 @@ void SARFullScreen(sar_core_struct *core_ptr)
 		GWVidModesFree(vm, n);
 
 		/* If still unable to find useable video mode then
-		 * use most conservitive resolution 320x240.
+		 * use most conservitive resolution 640x480.
 		 */
 		if((nwidth == 0) || (nheight == 0))
 		{
-		    nwidth = 320;
-		    nheight = 240;
+		    nwidth = 640;
+		    nheight = 480;
 		}
 		/* Adjust context to new size that is hopefully suitable
 		 * for full screen mode.
@@ -505,7 +503,7 @@ void SARResolution(gw_display_struct *display, int width, int height)
  */
 void SARResolutionIncrease(gw_display_struct *display)
 {
-	int width, height, new_width, new_height;
+	int width, height, new_width = 0, new_height = 0;
 
 	GWContextGet(
 	    display, GWContextCurrent(display),
@@ -514,46 +512,16 @@ void SARResolutionIncrease(gw_display_struct *display)
 	    &width, &height
 	);
 
-	/* 320x240 */
-	if(width < 320)
-	{
-	    new_width = 320;
-	    new_height = 240;
+	int i;
+	const int resols[] = RESOLUTIONS;
+	int total = sizeof(resols) / sizeof(int);
+	for (i = 0; i<total-2; i+=2) {
+	    if (width == resols[i] && height == resols[i+1])
+		break;
 	}
-	/* 640x480 */
-	else if(width < 640)
-	{
-	    new_width = 640;
-	    new_height = 480;
-	}
-	/* 800x600 */
-	else if(width < 800)
-	{
-	    new_width = 800;
-	    new_height = 600;
-	}
-	/* 1024x768 */
-	else if(width < 1024)
-	{
-	    new_width = 1024;
-	    new_height = 768;
-	}
-	else if (width < 1280)
-	{
-	    new_width = 1280;
-	    new_height = 768;
-	}
-	else if (width < 1366)
-	{
-	    new_width = 1366;
-	    new_height = 768;
-	}
-	/* 100x70 */
-	else
-	{
-	    new_width = 100;
-	    new_height = 70;
-	}
+
+	new_width = resols[i+2];
+	new_height = resols[i+3];
 
 	/* Set new resolution */
 	SARResolution(display, new_width, new_height);
@@ -574,46 +542,16 @@ void SARResolutionDecrease(gw_display_struct *display)
 	    &width, &height
 	);
 
-	if (width > 1366)
-	{
-	    new_width = 1280;
-	    new_height = 768;
+	int i;
+	const int resols[] = RESOLUTIONS;
+	int total = sizeof(resols) / sizeof(int);
+	for (i = total - 2; i>2; i-=2) {
+	    if (width == resols[i] && height == resols[i+1])
+		break;
 	}
-	else if (width > 1280)
-	{
-	    new_width = 1366;
-	    new_height = 768;
-	}
-	/* 1024x768 */
-	else if(width > 1024)
-	{
-	    new_width = 1024;
-	    new_height = 768;
-	}
-	/* 800x600 */
-	else if(width > 800)
-	{
-	    new_width = 800;
-	    new_height = 600;
-	}
-	/* 640x480 */
-	else if(width > 640)
-	{
-	    new_width = 640;
-	    new_height = 480;
-	}
-	/* 320x240 */
-	else if(width > 320)
-	{
-	    new_width = 320;
-	    new_height = 240;
-	}
-	/* 100x70 */
-	else
-	{
-	    new_width = 100;
-	    new_height = 70;
-	}
+
+	new_width = resols[i-2];
+	new_height = resols[i-1];
 
 	/* Set new resolution */
 	SARResolution(display, new_width, new_height);

@@ -2817,13 +2817,16 @@ to set button number"
 	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
 	    spin->allow_warp = False;
 	}
-	SARMenuSpinAddValue(menu, spin_num, "100x70");
-	SARMenuSpinAddValue(menu, spin_num, "320x240");
-	SARMenuSpinAddValue(menu, spin_num, "640x480");
-	SARMenuSpinAddValue(menu, spin_num, "800x600");
-	SARMenuSpinAddValue(menu, spin_num, "1024x768");
-	SARMenuSpinAddValue(menu, spin_num, "1280x768");
-	SARMenuSpinAddValue(menu, spin_num, "1366x768");
+
+	int i;
+	const int resols[] = RESOLUTIONS;
+	char res_str[12];
+	int total = sizeof(resols) / sizeof(int);
+	for (i = 0; i<total; i+=2)
+	{
+	    snprintf(res_str, 12, "%dx%d", resols[i], resols[i+1]);
+	    SARMenuSpinAddValue(menu, spin_num, res_str);
+	}
 
 	/* Fullscreen Switch */
 	SARMenuBuildStandardSwitch(
