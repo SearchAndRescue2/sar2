@@ -2831,7 +2831,6 @@ to set button number"
 	    {
 		vm_ptr = &vm[i];
 		snprintf(res_str, 12, "%dx%d", vm_ptr->width, vm_ptr->height);
-		printf("%s\n",res_str);
 		SARMenuSpinAddValue(menu, spin_num, res_str);
 	    }
 	    GWVidModesFree(vm,n);

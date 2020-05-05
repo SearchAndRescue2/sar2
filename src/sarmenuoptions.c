@@ -1147,6 +1147,7 @@ void SARMenuOptionsGraphicsInfoRefresh(sar_core_struct *core_ptr)
 	    gw_vidmode_struct *m_ptr, *m = GWVidModesGet(display, &n);
 	    if(m != NULL)
 	    {
+		GWVidModesSort(m,n);
 		strcpy(s, "Video Modes: ");
 		mesg = strcatalloc(mesg, s);
 
