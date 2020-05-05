@@ -919,7 +919,12 @@ void SARReshapeCB(int ctx_num, void *ptr, int x, int y, int width, int height)
 
 	/* Set new view port dimensions */
 	if((width > 0) && (height > 0))
+	{
 	    glViewport(0, 0, width, height);
+	    sar_menu_struct *menu = SARGetCurrentMenuPtr(core_ptr);
+	    if (menu != NULL)
+		SARMenuDrawAll(display, menu);
+	}
 }
 
 
