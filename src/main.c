@@ -512,19 +512,30 @@ void SARResolutionIncrease(gw_display_struct *display)
 	    &width, &height
 	);
 
-	int i;
-	const int resols[] = RESOLUTIONS;
-	int total = sizeof(resols) / sizeof(int);
-	for (i = 0; i<total-2; i+=2) {
-	    if (width == resols[i] && height == resols[i+1])
+	int i, n;
+	gw_vidmode_struct
+	    *vm = GWVidModesGet(display, &n),
+	    *vm_ptr;
+
+	GWVidModesSort(vm,n);
+	for (i = 0; i < n-1; i++)
+	{
+	    vm_ptr = &vm[i];
+	    if (width == vm_ptr->width && height == vm_ptr->height)
+	    {
+		new_width = vm[i+1].width;
+		new_height = vm[i+1].height;
 		break;
+	    }
 	}
+	GWVidModesFree(vm,n);
 
-	new_width = resols[i+2];
-	new_height = resols[i+3];
-
-	/* Set new resolution */
-	SARResolution(display, new_width, new_height);
+	// Otherwise current resolution not found or highest.
+	if (new_width > 0 && new_height > 0)
+	{
+	    /* Set new resolution */
+	    SARResolution(display, new_width, new_height);
+	}
 }
 
 /*
@@ -533,7 +544,7 @@ void SARResolutionIncrease(gw_display_struct *display)
  */
 void SARResolutionDecrease(gw_display_struct *display)
 {
-	int width, height, new_width, new_height;
+	int width, height, new_width = 0, new_height = 0;
 
 	GWContextGet(
 	    display, GWContextCurrent(display),
@@ -542,19 +553,30 @@ void SARResolutionDecrease(gw_display_struct *display)
 	    &width, &height
 	);
 
-	int i;
-	const int resols[] = RESOLUTIONS;
-	int total = sizeof(resols) / sizeof(int);
-	for (i = total - 2; i>2; i-=2) {
-	    if (width == resols[i] && height == resols[i+1])
+	int i, n;
+	gw_vidmode_struct
+	    *vm = GWVidModesGet(display, &n),
+	    *vm_ptr;
+
+	GWVidModesSort(vm,n);
+	for (i = n; i > 0; i--)
+	{
+	    vm_ptr = &vm[i];
+	    if (width == vm_ptr->width && height == vm_ptr->height)
+	    {
+		new_width = vm[i-1].width;
+		new_height = vm[i-1].height;
 		break;
+	    }
 	}
+	GWVidModesFree(vm,n);
 
-	new_width = resols[i-2];
-	new_height = resols[i-1];
-
-	/* Set new resolution */
-	SARResolution(display, new_width, new_height);
+	// Otherwise current resolution not found or lowest.
+	if (new_width > 0 && new_height > 0)
+	{
+	    /* Set new resolution */
+	    SARResolution(display, new_width, new_height);
+	}
 }
 
 

@@ -1987,18 +1987,25 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	{
 	    int	v = opt->last_width,
 		h = opt->last_height,
-		sv = 0;
+		sv = 0,
+		i,n;
 
-	    int i;
-	    const int resols[] = RESOLUTIONS;
-	    int total = sizeof(resols) / sizeof(int);
-	    for (i = 0; i<total; i+=2) {
-		if (v == resols[i] && h == resols[i+1]) {
-		    sv = i/2;
+	    gw_vidmode_struct
+		*vm = GWVidModesGet(display, &n),
+		*vm_ptr;
+
+	    GWVidModesSort(vm,n);
+	    for (i = 0; i < n; i++)
+	    {
+		vm_ptr = &vm[i];
+		if (v == vm_ptr->width && h == vm_ptr->height)
+		{
+		    sv = i;
 		    break;
 		}
 	    }
-	    spin->cur_value = CLIP(sv, 0, spin->total_values - 1);;
+	    GWVidModesFree(vm,n);
+	    spin->cur_value = CLIP(sv, 0, spin->total_values - 1);
 	}
 
 	/* Full screen switch */
@@ -2613,11 +2620,12 @@ void SARMenuOptionsSpinCB(
 	case SAR_MENU_ID_OPT_RESOLUTION:
 	    if(display != NULL)
 	    {
-		const int resols[] = RESOLUTIONS;
-		int width, height;
-		width = resols[spin->cur_value * 2];
-		height = resols[spin->cur_value * 2 + 1];
-		SARResolution(display, width, height);
+		int n;
+		gw_vidmode_struct *vm = GWVidModesGet(display, &n);
+		GWVidModesSort(vm,n);
+		if (vm != NULL)
+		    SARResolution(display, vm[spin->cur_value].width, vm[spin->cur_value].height);
+		GWVidModesFree(vm,n);
 	    }
 	    break;
 

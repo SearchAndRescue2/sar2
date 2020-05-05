@@ -4780,6 +4780,30 @@ void GWVidModesFree(gw_vidmode_struct *vidmode, int n)
 	free(vidmode);
 }
 
+int gwVidModeCompare(const void *a, const void *b) {
+    gw_vidmode_struct *vm1, *vm2;
+
+    vm1 = (gw_vidmode_struct *)a;
+    vm2 = (gw_vidmode_struct *)b;
+    if (vm1->width < vm2->width)
+	return -1;
+    else if (vm1->width > vm2->width)
+	return 1;
+    else
+	return vm1->height - vm2->height;
+}
+
+/*
+ *	Sorts video modes from lowest to highest resolution
+ */
+void GWVidModesSort(gw_vidmode_struct *vm, int n)
+{
+    if (vm == NULL)
+	return;
+
+    qsort(vm,n, sizeof(gw_vidmode_struct), gwVidModeCompare);
+}
+
 /*
  *	Creates a new accelerator structure, can return NULL on error.
  */

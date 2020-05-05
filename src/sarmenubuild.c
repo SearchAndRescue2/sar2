@@ -2806,26 +2806,35 @@ to set button number"
 	    );
 	}
 
-	/* Resolution Spin */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.73f, 0.5f, 0.44f, 0.0f,
-	    "Resolution", SAR_MENU_ID_OPT_RESOLUTION,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	}
+	int i, n;
+	gw_vidmode_struct
+	    *vm = GWVidModesGet(display, &n),
+	    *vm_ptr;
 
-	int i;
-	const int resols[] = RESOLUTIONS;
-	char res_str[12];
-	int total = sizeof(resols) / sizeof(int);
-	for (i = 0; i<total; i+=2)
+	if (vm != NULL)
 	{
-	    snprintf(res_str, 12, "%dx%d", resols[i], resols[i+1]);
-	    SARMenuSpinAddValue(menu, spin_num, res_str);
+	    GWVidModesSort(vm,n);
+	    /* Resolution Spin */
+	    spin_num = SARMenuBuildStandardSpin(
+		core_ptr, menu, 0.73f, 0.5f, 0.44f, 0.0f,
+		"Resolution", SAR_MENU_ID_OPT_RESOLUTION,
+		SARMenuOptionsSpinCB
+		);
+	    if(spin_num > -1)
+	    {
+		spin = SAR_MENU_SPIN(menu->object[spin_num]);
+		spin->allow_warp = False;
+	    }
+
+	    char res_str[12];
+	    for (i = 0; i < n; i++)
+	    {
+		vm_ptr = &vm[i];
+		snprintf(res_str, 12, "%dx%d", vm_ptr->width, vm_ptr->height);
+		printf("%s\n",res_str);
+		SARMenuSpinAddValue(menu, spin_num, res_str);
+	    }
+	    GWVidModesFree(vm,n);
 	}
 
 	/* Fullscreen Switch */

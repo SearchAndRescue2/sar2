@@ -781,6 +781,7 @@ extern gw_vidmode_struct *GWVidModesGet(
 	gw_display_struct *display, int *n
 );
 extern void GWVidModesFree(gw_vidmode_struct *vidmode, int n);
+extern void GWVidModesSort(gw_vidmode_struct *vidmode, int n);
 
 /* Accelerator keys */
 extern gw_accelerator_struct *GWAcceleratorNew(
