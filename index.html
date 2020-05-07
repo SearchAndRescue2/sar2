@@ -1,259 +1,262 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>Search and Rescue II - Open source helicopter simulator</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
+
     <meta name="robots" content="index, follow, archive" />
     <meta name="keywords" content="helicopter, simulator, linux, game, OpenAL,
-                                   search, rescue, search and rescue, sar, sar2, sarII, SaR, free games, linux games,
-                                   opensource, open source" />
+				   search, rescue, search and rescue, sar, sar2, sarII, SaR, free games, linux games,
+				   opensource, open source" />
     <meta name="description" content="Search and Rescue II is an open source helicopter simulator for Linux with OpenGL graphics and joystick support." />
-    <link rel="shortcut icon" href="favicon.ico" />    
+    <link rel="shortcut icon" href="favicon.ico" />
     <link rel="stylesheet" type="text/css" href="css/sar2.css" />
     <link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.8.10.custom.css" />
     <link rel="stylesheet" href="css/lightbox.css" type="text/css" media="screen" />
-    
+
     <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.8.10.custom.min.js"></script>
     <script type="text/javascript" src="js/sar2.js"></script>
     <script type="text/javascript" src="js/prototype.js"></script>
     <script type="text/javascript" src="js/scriptaculous.js?load=effects,builder"></script>
     <script type="text/javascript" src="js/lightbox.js"></script>
-    
+
   </head>
 
 
   <body>
     <div id="wrapper">
       <div id="header">
-        <h1>Search and Rescue II</h1>
-        <h2>Open source helicopter simulator</h2>
+	<h1>Search and Rescue II</h1>
+	<h2>Open source helicopter simulator</h2>
       </div>
-      
-      <div id="content">
-        <div id="tabs">
-          <ul>
-            <li><a href="#about">About SaR II</a></li>
-            <li><a href="#screenshots">Screenshots</a></li>
-            <li><a href="#download">Download &amp; Install</a></li>
-            <li><a href="#develop">Develop</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-          
-          
-          <div id="about">
-            <h3>News</h3> 
 
-            <ul id="head_news">
+      <div id="content">
+	<div id="tabs">
+	  <ul>
+	    <li><a href="#about">About SaR II</a></li>
+	    <li><a href="#screenshots">Screenshots</a></li>
+	    <li><a href="#download">Download &amp; Install</a></li>
+	    <li><a href="#develop">Develop</a></li>
+	    <li><a href="#contact">Contact</a></li>
+	  </ul>
+
+
+	  <div id="about">
+	    <h3>News</h3>
+
+	    <ul id="head_news">
+	      <li>
+		<b>May 8, 2020</b>: Search and Rescue II 2.4.2 released. This release provides better display support by fixing a number of issues with menus and resolution selection. For more information, see the <a href="https://github.com/SearchAndRescue2/sar2/blob/master/CHANGELOG.md">changelog</a>.
+	      </li>
 	      <li>
 		<b>April 30, 2020</b>: Search and Rescue II is now available for download via the <a href="https://snapcraft.io/sar2">Snap store</a> as a convenient method to install and run it in most Linux distributions.
-              </li>
+	      </li>
 	      <li>
-                <b>April 26, 2020</b>: Search and Rescue II 2.4.0 released. This release provides better joystick support (possibility of using a joystick device for rudder and wheel brakes control). Additionally, a bug that caused the game to lag heavily while the aircraft was landed was fixed.
-              </li>
-            </ul>
-            <p style="text-align:left;margin-left:80px;font-style:italic;font-size:0.8em"><a href="#" id="show_hide"></a></p>
-            <ul id="hidden_news">
+		<b>April 26, 2020</b>: Search and Rescue II 2.4.0 released. This release provides better joystick support (possibility of using a joystick device for rudder and wheel brakes control). Additionally, a bug that caused the game to lag heavily while the aircraft was landed was fixed.
+	      </li>
+	    </ul>
+	    <p style="text-align:left;margin-left:80px;font-style:italic;font-size:0.8em"><a href="#" id="show_hide"></a></p>
+	    <ul id="hidden_news">
 	      <li>
-                <b>July 15, 2017</b>: The project has its own Github organization now, to be able to more easily accept contributions. Search And Rescue II repository can be found at <a href="https://github.com/SearchAndRescue2/sar2">github.com/SearchAndRescue2/sar2</a>.
-              </li>
-              <li>
-                <b>December 11, 2014</b>: The project has <a href="http://searchandrescue2.github.io/sar2/">moved to Github</a>!
-              </li>
-              <li>
-                <b>August 6, 2011</b>: We have been very happy to find that Search and Rescue II has been included in <a href="http://www.cahilig.net/">Cahilig's</a> <a href="http://www.cahilig.net/2011/07/29/100-best-free-and-high-quality-linux-games#search_and_rescue2"><i>100 best free and high quality Linux games</i></a>. It helps our motivation to prepare the next release of SaRII, which will come after the summer break. Happy holidays!
-              </li>
-              <li>
-                <b>July 14, 2011</b>: As SaRII gets known, some people has generously prepared packages for some distributions. These have been added to the <i>Download</i> section. Of course, more packages are always welcome. In addition, the SaRII users mailing list has been created for SaRII community to stay in touch. <a href="https://github.com/SearchAndRescue2/sar2/issues">Users can subscribe here</a>.
-              </li>
-              <li>
-                <b>July 1, 2011</b>: Search and Rescue II 2.3.1 released. This release comes with an improved Guadarrama scenario (with many Madrid city buildings) and two new missions to explore it, along with bugfixes and small changes for a better playing experience. See the full <a href="https://github.com/SearchAndRescue2/sar2/blob/master/CHANGELOG.md">changelog</a> for details.
-              </li>
-              <li>
-                <b>June 26, 2011</b>: Added some improvements to the website, like the possibility of getting the news and updates via a RSS feed. Also working on next version of SaRII, which will contain many improvements, improved Guadarrama scenario and new missions.
-              </li>
-              <li>
-                <b>June 13, 2011</b>: Search and Rescue II 2.3.0 released. This release replaces the copyrighted Guadarrama scenery textures with public domain ones in order to avoid licensing problems. The release includes as well small bugixes.  <a href="https://build.opensuse.org/package/show?package=sar2&amp;project=games">OpenSuse packages</a> are available as well in the <a href="http://download.opensuse.org/repositories/games/">Games repository</a>.
-              </li>
+		<b>July 15, 2017</b>: The project has its own Github organization now, to be able to more easily accept contributions. Search And Rescue II repository can be found at <a href="https://github.com/SearchAndRescue2/sar2">github.com/SearchAndRescue2/sar2</a>.
+	      </li>
+	      <li>
+		<b>December 11, 2014</b>: The project has <a href="http://searchandrescue2.github.io/sar2/">moved to Github</a>!
+	      </li>
+	      <li>
+		<b>August 6, 2011</b>: We have been very happy to find that Search and Rescue II has been included in <a href="http://www.cahilig.net/">Cahilig's</a> <a href="http://www.cahilig.net/2011/07/29/100-best-free-and-high-quality-linux-games#search_and_rescue2"><i>100 best free and high quality Linux games</i></a>. It helps our motivation to prepare the next release of SaRII, which will come after the summer break. Happy holidays!
+	      </li>
+	      <li>
+		<b>July 14, 2011</b>: As SaRII gets known, some people has generously prepared packages for some distributions. These have been added to the <i>Download</i> section. Of course, more packages are always welcome. In addition, the SaRII users mailing list has been created for SaRII community to stay in touch. <a href="https://github.com/SearchAndRescue2/sar2/issues">Users can subscribe here</a>.
+	      </li>
+	      <li>
+		<b>July 1, 2011</b>: Search and Rescue II 2.3.1 released. This release comes with an improved Guadarrama scenario (with many Madrid city buildings) and two new missions to explore it, along with bugfixes and small changes for a better playing experience. See the full <a href="https://github.com/SearchAndRescue2/sar2/blob/master/CHANGELOG.md">changelog</a> for details.
+	      </li>
+	      <li>
+		<b>June 26, 2011</b>: Added some improvements to the website, like the possibility of getting the news and updates via a RSS feed. Also working on next version of SaRII, which will contain many improvements, improved Guadarrama scenario and new missions.
+	      </li>
+	      <li>
+		<b>June 13, 2011</b>: Search and Rescue II 2.3.0 released. This release replaces the copyrighted Guadarrama scenery textures with public domain ones in order to avoid licensing problems. The release includes as well small bugixes.  <a href="https://build.opensuse.org/package/show?package=sar2&amp;project=games">OpenSuse packages</a> are available as well in the <a href="http://download.opensuse.org/repositories/games/">Games repository</a>.
+	      </li>
 
-              <li>
-                <b>April 25, 2011</b>: Some OpenSuse binary rpm packages are available for 
-                SaR II. Try them out <a href="https://build.opensuse.org/package/show?package=sar2&amp;project=home%3Aarond"> here</a>.
-              </li>
-              <li>
-                <b>April 17, 2011</b>: Search and Rescue II 2.2.1 released. This
-                is a maintenance release. Some OpenAL bugs, compilation warnings and the SDL_Mixer 
-                dependency (unused by default) have been removed.
-              </li>
-              <li>
-                <b>April 15, 2011</b>: Search and Rescue II 2.2.0 released. This
-                release contains many improvements in the sound system. SaR II
-                now uses OpenAL allowing more realistic engine sounds. For a
-                complete list of changes please check the game's changelog.
-              </li>
-              <li>
-                <b>April 12, 2011</b>: Search and Rescue II 2.1.0 released. This
-                version contains sound improvements and bugfixes.
-              </li>
-              <li>
-                <b>March 7, 2011</b>: Search and Rescue II 2.0.0 released.
-              </li>
-            </ul>
-            <h3>Features</h3>
-            
-            <p>Search and Rescue II is a rescue helicopter simulator for Linux. It features several missions in which the player pilots a helicopter in order to rescue people in distress. There are several scenarios and helicopter models.</p>
+	      <li>
+		<b>April 25, 2011</b>: Some OpenSuse binary rpm packages are available for
+		SaR II. Try them out <a href="https://build.opensuse.org/package/show?package=sar2&amp;project=home%3Aarond"> here</a>.
+	      </li>
+	      <li>
+		<b>April 17, 2011</b>: Search and Rescue II 2.2.1 released. This
+		is a maintenance release. Some OpenAL bugs, compilation warnings and the SDL_Mixer
+		dependency (unused by default) have been removed.
+	      </li>
+	      <li>
+		<b>April 15, 2011</b>: Search and Rescue II 2.2.0 released. This
+		release contains many improvements in the sound system. SaR II
+		now uses OpenAL allowing more realistic engine sounds. For a
+		complete list of changes please check the game's changelog.
+	      </li>
+	      <li>
+		<b>April 12, 2011</b>: Search and Rescue II 2.1.0 released. This
+		version contains sound improvements and bugfixes.
+	      </li>
+	      <li>
+		<b>March 7, 2011</b>: Search and Rescue II 2.0.0 released.
+	      </li>
+	    </ul>
+	    <h3>Features</h3>
 
-            <p>SaR II has a strong focus on realistic physics and low graphics
-              requirements. It is a fork of the game "Search and Rescue" (http://searchandrescue.sf.net), originally developed by Wolfpack Entertainment.</p>
-            
-            <p>Among the improvements of SaR II are:</p>
-            <ul>
-              <li>Smoother graphics</li>
-              <li>Full SDL2 Joystick support</li>
-              <li>Full playable music</li>
-              <li>OpenAL sound, with more realistic effects</li>
-              <li>New missions, improved scenarios</li>
-              <li>SaR II can be played without a system-wide install. Data
-                and game files are distributed together.</li>
-            </ul>
-          </div> <!-- about -->
+	    <p>Search and Rescue II is a rescue helicopter simulator for Linux. It features several missions in which the player pilots a helicopter in order to rescue people in distress. There are several scenarios and helicopter models.</p>
 
-          <div id="screenshots">
-            <p>Here are some screenshots of the game.</p>
-            <div style="text-align:center;">
-              <a href="images/screenshots/sar1.jpg" rel="lightbox[SaR II]">
-                <img src="images/screenshots/sar1.jpg" width="400px"
-                     alt="screenshot1" />
-              </a>
+	    <p>SaR II has a strong focus on realistic physics and low graphics
+	      requirements. It is a fork of the game "Search and Rescue" (http://searchandrescue.sf.net), originally developed by Wolfpack Entertainment.</p>
 
-              <a href="images/screenshots/sar2.jpg" rel="lightbox[SaR II]">
-                <img src="images/screenshots/sar2.jpg" width="400px"
-                     alt="screenshot2" />
-              </a>
+	    <p>Among the improvements of SaR II are:</p>
+	    <ul>
+	      <li>Smoother graphics</li>
+	      <li>Full SDL2 Joystick support</li>
+	      <li>Full playable music</li>
+	      <li>OpenAL sound, with more realistic effects</li>
+	      <li>New missions, improved scenarios</li>
+	      <li>SaR II can be played without a system-wide install. Data
+		and game files are distributed together.</li>
+	    </ul>
+	  </div> <!-- about -->
 
-              <a href="images/screenshots/sar3.jpg" rel="lightbox[SaR II]">
-                <img src="images/screenshots/sar3.jpg" width="400px"
-                     alt="screenshot3" />
-              </a>
+	  <div id="screenshots">
+	    <p>Here are some screenshots of the game.</p>
+	    <div style="text-align:center;">
+	      <a href="images/screenshots/sar1.jpg" rel="lightbox[SaR II]">
+		<img src="images/screenshots/sar1.jpg" width="400px"
+		     alt="screenshot1" />
+	      </a>
 
-              <a href="images/screenshots/sar4.jpg" rel="lightbox[SaR II]">
-                <img src="images/screenshots/sar4.jpg" width="400px"
-                     alt="screenshot4" />
-              </a>
+	      <a href="images/screenshots/sar2.jpg" rel="lightbox[SaR II]">
+		<img src="images/screenshots/sar2.jpg" width="400px"
+		     alt="screenshot2" />
+	      </a>
 
-              <a href="images/screenshots/sar5.jpg" rel="lightbox[SaR II]">
-                <img src="images/screenshots/sar5.jpg" width="400px"
-                     alt="screenshot5" />
-              </a>
+	      <a href="images/screenshots/sar3.jpg" rel="lightbox[SaR II]">
+		<img src="images/screenshots/sar3.jpg" width="400px"
+		     alt="screenshot3" />
+	      </a>
 
-              <a href="images/screenshots/sar6.jpg" rel="lightbox[SaR II]">
-                <img src="images/screenshots/sar6.jpg" width="400px"
-                     alt="screenshot6 "/>
-              </a>
-            </div>
-          </div>
+	      <a href="images/screenshots/sar4.jpg" rel="lightbox[SaR II]">
+		<img src="images/screenshots/sar4.jpg" width="400px"
+		     alt="screenshot4" />
+	      </a>
 
-          <div id="download">
-            <h3>Downloading</h3>
+	      <a href="images/screenshots/sar5.jpg" rel="lightbox[SaR II]">
+		<img src="images/screenshots/sar5.jpg" width="400px"
+		     alt="screenshot5" />
+	      </a>
+
+	      <a href="images/screenshots/sar6.jpg" rel="lightbox[SaR II]">
+		<img src="images/screenshots/sar6.jpg" width="400px"
+		     alt="screenshot6 "/>
+	      </a>
+	    </div>
+	  </div>
+
+	  <div id="download">
+	    <h3>Downloading</h3>
 
 	    <h4>Snap release</h4>
 	    <p>The snap install should work with most Linux distributions:</p>
 	    <p id="snaplink"><a href="https://snapcraft.io/sar2">
 	      <img alt="Get it from the Snap Store" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" />
 	    </a></p>
-            <h4>Pre-compiled packages</h4>
-            <p>Some people have generously taken the time to package SaRII for some Linux distributions. Note that packages (except OpenSuse) have been created by third parties, so make use of them at your own risk.</p>
-            <table id="packages">
-              <tr>
-                <td class="distrologo"><img class="distro" src="images/opensuse.png" alt="opensuse logo" /> 
-                </td>
-                <td>Opensuse packages are part of the official repositories: <a href="https://software.opensuse.org/package/sar2">sar2</a>
-                </td>
-              </tr>
-              <!-- <tr> -->
-              <!--   <td class="distrologo"><img src="images/frugalware.png" alt="frugalware logo"/></td> -->
-              <!--   <td>Frugalware package can be downloaded <a href="http://frugalware.org/packages/119876">here</a>.<br /> -->
-              <!--     Thanks to maintainer Devil505 (devil505linux at gmail.com)</td> -->
-              <!-- </tr> -->
-              <!-- <tr> -->
-              <!--   <td class="distrologo"><img src="images/archlinux.png" alt="archlinux logo"/></td> -->
-              <!--   <td>SaRII is present at the Archlinux User Repository (AUR) <a href="https://aur.archlinux.org/packages.php?ID=47924">here</a>. For information on how to build and install the package read the <a href="https://wiki.archlinux.org/index.php/AUR_User_Guidelines#Installing_packages">AUR User Guidelines</a>.<br /> -->
-              <!--     Thanks to maintainer archtux (antonio.arias99999 at gmail.com)</td> -->
-              <!-- </tr> -->
-              <!-- <tr> -->
-              <!--   <td class="distrologo"><img src="images/pardus.png" alt="pardus linux logo"/></td> -->
-              <!--   <td>SaRII is part of the <a href="http://code.google.com/p/happy-kitty/">Happy Kitty project</a>: a game repository for <a href="http://www.pardus.org.tr/eng/">Pardus users.</a></td> -->
-              <!-- </tr> -->
-              <!-- <tr> -->
-              <!--   <td class="distrologo"><img src="images/fedora.png" alt="fedora logo"/></td> -->
-              <!--   <td>Fedora packages can be grabbed from the <a href="https://admin.fedoraproject.org/pkgdb/package/rpms/sar2/">Fedora Package Database</a>. Thanks to contributor &quot;Spot&quot;.</td> -->
-              <!-- </tr> -->
-            </table>
-            
-            <p>If you find packages for other distros or have contributed new ones <a href="https://github.com/SearchAndRescue2/sar2/issues">please let us know</a>.</p>
-           
-	    
-            <h4>Source code</h4>
-            <p>Download the <b>latest version</b> tarball in the <a href="https://github.com/SearchAndRescue2/sar2/releases">Github releases page</a>.</p>
+	    <h4>Pre-compiled packages</h4>
+	    <p>Some people have generously taken the time to package SaRII for some Linux distributions. Note that packages (except OpenSuse) have been created by third parties, so make use of them at your own risk.</p>
+	    <table id="packages">
+	      <tr>
+		<td class="distrologo"><img class="distro" src="images/opensuse.png" alt="opensuse logo" />
+		</td>
+		<td>Opensuse packages are part of the official repositories: <a href="https://software.opensuse.org/package/sar2">sar2</a>
+		</td>
+	      </tr>
+	      <!-- <tr> -->
+	      <!--   <td class="distrologo"><img src="images/frugalware.png" alt="frugalware logo"/></td> -->
+	      <!--   <td>Frugalware package can be downloaded <a href="http://frugalware.org/packages/119876">here</a>.<br /> -->
+	      <!--     Thanks to maintainer Devil505 (devil505linux at gmail.com)</td> -->
+	      <!-- </tr> -->
+	      <!-- <tr> -->
+	      <!--   <td class="distrologo"><img src="images/archlinux.png" alt="archlinux logo"/></td> -->
+	      <!--   <td>SaRII is present at the Archlinux User Repository (AUR) <a href="https://aur.archlinux.org/packages.php?ID=47924">here</a>. For information on how to build and install the package read the <a href="https://wiki.archlinux.org/index.php/AUR_User_Guidelines#Installing_packages">AUR User Guidelines</a>.<br /> -->
+	      <!--     Thanks to maintainer archtux (antonio.arias99999 at gmail.com)</td> -->
+	      <!-- </tr> -->
+	      <!-- <tr> -->
+	      <!--   <td class="distrologo"><img src="images/pardus.png" alt="pardus linux logo"/></td> -->
+	      <!--   <td>SaRII is part of the <a href="http://code.google.com/p/happy-kitty/">Happy Kitty project</a>: a game repository for <a href="http://www.pardus.org.tr/eng/">Pardus users.</a></td> -->
+	      <!-- </tr> -->
+	      <!-- <tr> -->
+	      <!--   <td class="distrologo"><img src="images/fedora.png" alt="fedora logo"/></td> -->
+	      <!--   <td>Fedora packages can be grabbed from the <a href="https://admin.fedoraproject.org/pkgdb/package/rpms/sar2/">Fedora Package Database</a>. Thanks to contributor &quot;Spot&quot;.</td> -->
+	      <!-- </tr> -->
+	    </table>
+
+	    <p>If you find packages for other distros or have contributed new ones <a href="https://github.com/SearchAndRescue2/sar2/issues">please let us know</a>.</p>
+
+
+	    <h4>Source code</h4>
+	    <p>Download the <b>latest version</b> tarball in the <a href="https://github.com/SearchAndRescue2/sar2/releases">Github releases page</a>.</p>
 	    <p>Instructions on how to build from source can be found in the main <a href="https://github.com/SearchAndRescue2/sar2">README</a>.</p>
-          </div>
-	  
-          <div id="develop">
-            <h3>Collaborate</h3>
-            <p>Search and Rescue II is an open source project licensed under
-              the terms of the GLP v2 LICENSE and maintained by volunteers.
-            </p>
-            <p>You can grab the latest versions of the game from
-              the <a href="https://github.com/SearchAndRescue2/sar2">SaRII Github repository</a>.
-            </p>
-            <p>You can submit bug reports and feature requests on
-              the <a href="https://github.com/SearchAndRescue2/sar2/issues">issues section</a>.
-            </p>
-            <p>Search and Rescue II is mostly written in C. There are many
-              ways to collaborate with the project:
-            </p>
-            <ul>
-              <li>Designing new scenario files (no deep programming knowledge required)</li>
-              <li>Designing some new missions (no deep programming knowledge
-                required)</li>
-              <li>Designing some new graphics and backgrounds for the
-                menus.</li>
-              <li>Finding and fixing bugs</li>
-              <li>Improving documentation</li>
-              <li>Adding new features</li>
-              <li>Porting SaR II to other OSs</li>              
-            </ul>
-            <p>Bundled to the game you will find a HACKING file with some tips
-              on the purpose of each of the source files.</p>
-          </div>
-          
-          <div id="contact">
-            <h3>Contact us...</h3>
-            <h4>...via Github</h4>
-            <p>Please open an <a href="https://github.com/SearchAndRescue2/sar2/issues">issue in Github</a>.</p>
-          </div>
-            
-        </div>
-          
+	  </div>
+
+	  <div id="develop">
+	    <h3>Collaborate</h3>
+	    <p>Search and Rescue II is an open source project licensed under
+	      the terms of the GLP v2 LICENSE and maintained by volunteers.
+	    </p>
+	    <p>You can grab the latest versions of the game from
+	      the <a href="https://github.com/SearchAndRescue2/sar2">SaRII Github repository</a>.
+	    </p>
+	    <p>You can submit bug reports and feature requests on
+	      the <a href="https://github.com/SearchAndRescue2/sar2/issues">issues section</a>.
+	    </p>
+	    <p>Search and Rescue II is mostly written in C. There are many
+	      ways to collaborate with the project:
+	    </p>
+	    <ul>
+	      <li>Designing new scenario files (no deep programming knowledge required)</li>
+	      <li>Designing some new missions (no deep programming knowledge
+		required)</li>
+	      <li>Designing some new graphics and backgrounds for the
+		menus.</li>
+	      <li>Finding and fixing bugs</li>
+	      <li>Improving documentation</li>
+	      <li>Adding new features</li>
+	      <li>Porting SaR II to other OSs</li>
+	    </ul>
+	    <p>Bundled to the game you will find a HACKING file with some tips
+	      on the purpose of each of the source files.</p>
+	  </div>
+
+	  <div id="contact">
+	    <h3>Contact us...</h3>
+	    <h4>...via Github</h4>
+	    <p>Please open an <a href="https://github.com/SearchAndRescue2/sar2/issues">issue in Github</a>.</p>
+	  </div>
+
+	</div>
+
       </div><!--content -->
-        
+
       <div id="footer">
-        <p>
-          <a href="http://validator.w3.org/check?uri=referer">
-            <img
-              src="https://www.w3.org/Icons/valid-xhtml10"
-              alt="Valid XHTML 1.0 Strict" height="31" width="88" />
-          </a>
-          <!--
-              <a href="http://jigsaw.w3.org/css-validator/check/referer">
-                <img style="border:0;width:88px;height:31px"
-                     src="http://jigsaw.w3.org/css-validator/images/vcss"
-                     alt="Valid CSS!" />
-              </a>-->
-        </p>
+	<p>
+	  <a href="http://validator.w3.org/check?uri=referer">
+	    <img
+	      src="https://www.w3.org/Icons/valid-xhtml10"
+	      alt="Valid XHTML 1.0 Strict" height="31" width="88" />
+	  </a>
+	  <!--
+	      <a href="http://jigsaw.w3.org/css-validator/check/referer">
+		<img style="border:0;width:88px;height:31px"
+		     src="http://jigsaw.w3.org/css-validator/images/vcss"
+		     alt="Valid CSS!" />
+	      </a>-->
+	</p>
       </div>
     </div><!-- wrapper -->
   </body>
