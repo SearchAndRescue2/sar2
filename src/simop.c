@@ -2621,11 +2621,11 @@ int SARSimApplyArtificialForce(
 			    human->flags |= SAR_HUMAN_FLAG_RUN;
 
 			    pos->x += (float)(
-				sin(dir->heading) * 1.0 *
+				sin(dir->heading) * 2.5 *
 				time_compensation * time_compression
 			    );
 			    pos->y += (float)(
-				cos(dir->heading) * 1.0 *
+				cos(dir->heading) * 2.5 *
 				time_compensation * time_compression
 			    );
 			}
