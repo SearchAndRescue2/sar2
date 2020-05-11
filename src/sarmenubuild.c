@@ -2013,7 +2013,7 @@ int btn_width_map = 32, btn_height_map = 32;
 	    True,
 #if defined(PROG_LANGUAGE_SPANISH)
 "Simulación..."
-elif defined(PROG_LANGUAGE_FRENCH)
+#elif defined(PROG_LANGUAGE_FRENCH)
 "Simulation..."
 #elif defined(PROG_LANGUAGE_GERMAN)
 "Simulation..."
