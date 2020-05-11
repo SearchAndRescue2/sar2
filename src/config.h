@@ -52,115 +52,108 @@
  */
 #if defined(PROG_LANGUAGE_SPANISH)
 #define PROG_USAGE_MESG "\
-El Uso: sar2 [options] [GUI_options]\n\
+Uso: sar2 [opciones] [opciones_de_la_interfaz]\n\
 \n\
-    [options] puede ser cualquiera del siguiente:\n\
+    Las [opciones] pueden ser cualquiera de las siguientes:\n\
 \n\
-        --config <file>         Cargue configuración de <file>.\n\
-        --rcfile                Mismo que --config.\n\
-        -f                      Mismo que --config.\n\
-        --control <type>        El uso le especificó a director <type> en\n\
-                                inicio. Donde <type> puede ser uno del\n\
-                                siguiente:\n\
+        --config <fichero>      Cargar configuraciÃ³n desde <fichero>.\n\
+        --rcfile                Alias de --config.\n\
+        -f                      Alias de --config.\n\
+        --control <tipo>        Especificar controles al iniciar,\n\
+                                a elegir entre:\n\
                                     keyboard\n\
                                     joystick\n\
-        -c                      Mismo que --control.\n\
-        --hardware_rendering    El uso dirijo hardware la interpretación\n\
-                                (rebeldía).\n\
-        --software_rendering    Utilice la interpretación de software en\n\
-                                vez de la interpretación directa de\n\
-                                hardware.\n\
-        --full_menu_redraw	Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
-                                accelerated video cards).\n\
-        --fullscreen            Utilice el modo repleto de pantalla en\n\
-                                inicio.\n\
-        --window                Start game in windowed mode.\n\
-        --no-keyrepeat          Prevent keys from sticking.\n\
-        --recorder <address>    Especifica recorder la dirección.\n\
-        --nosound               No conecte para sonar camarero en inicio.\n\
-        --nomenubg              No demuestre menú las imágenes del fondo.\n\
-        --console_quiet         No imprima los mensajes rutinarios al\n\
-                                stdout.\n\
-        --runtime_debug         Imprima los mensajes del descubrimiento\n\
-                                de runtime al stdout.\n\
-        --internal_debug        Imprima los mensajes internos (breves)\n\
-                                al stdout.\n\
-        --help                  La pantalla de la ayuda de impresiones\n\
-                                (esto) y salidas.\n\
-        --version               La información de la versión de\n\
-                                impresiones y salidas.\n\
+        -c                      Alias de --control.\n\
+        --hardware_rendering    Usar aceleraciÃ³n por hardware.\n\
+        --software_rendering    Usar aceleraciÃ³n por software\n\
+        --full_menu_redraw      Re-dibujar siempre los menÃºs.\n\
+                                mÃ¡s lento, pero necesario para algunas\n\
+                                tarjetas de video).\n\
+        --fullscreen            Lanzar en modo pantalla completa.\n\
+        --window                Lanzar en modo ventana.\n\
+        --no-keyrepeat          Desactivar repeticiÃ³n de eventos al\n\
+                                dejar las teclas apretadas.\n\
+        --recorder <direcciÃ³n>  Grabar en la direcciÃ³n proporcionada.\n\
+        --nosound               Desactivar sonido al inicio.\n\
+        --nomenubg              Desactivar el fondo de los menus.\n\
+        --console_quiet         No imprimir mensajes en la salida estÃ¡ndar.\n\
+        --runtime_debug         Activar mensajes de debug en la salida\n\
+                                estÃ¡ndar.\n\
+        --internal_debug        Activar mensajes de debug internos en \n\
+                                la salida estÃ¡ndar.\n\
+        --help                  Mostrar esta ayuda y salir.\n\
+        --version               Mostrar informaciÃ³n de la version actual.\n\
 \n\
-    [GUI_options] puede ser cualquiera del siguiente:\n\
+    Las [opciones de la interfaz] pueden ser cualquiera de las siguientes:\n\
 \n\
-        --display <address>     Especifica la dirección del despliegue.\n\
-        --geometry <WxH+X+Y>    Especifica la geometría de la ventana.\n\
+        --display <pantalla>    Usar la pantalla proporcionada.\n\
+        --geometry <WxH+X+Y>    Usar la geometrÃ­a de ventana proporcionada.\n\
 \n"
 #elif defined(PROG_LANGUAGE_FRENCH)
 #define PROG_USAGE_MESG "\
 L'usage: sar2 [options] [GUI_options]\n\
 \n\
-    [options] peut être n'importe quel du suivre:\n\
+    [options] peut Ãªtre n'importe quel du suivre:\n\
 \n\
         --config <file>         Charger la configuration de <file>.\n\
-        --rcfile                Même comme --config.\n\
-        -f                      Même comme --config.\n\
-        --control <type>        Utiliser a spécifié <type> de contrôleur\n\
-                                au démarrage. Où <type> peut être un des\n\
+        --rcfile                MÃªme comme --config.\n\
+        -f                      MÃªme comme --config.\n\
+        --control <type>        Utiliser a spÃ©cifiÃ© <type> de contrÃ´leur\n\
+                                au dÃ©marrage. OÃ¹ <type> peut Ãªtre un des\n\
                                 suivre:\n\
                                     keyboard\n\
                                     joystick\n\
-        -c                      Même comme --control.\n\
-        --hardware_rendering    Utiliser le matériel direct rend (défaut).\n\
+        -c                      MÃªme comme --control.\n\
+        --hardware_rendering    Utiliser le matÃ©riel direct rend (dÃ©faut).\n\
         --software_rendering    Utiliser rendre de logiciel au lieu de\n\
-                                rendre de matériel direct.\n\
+                                rendre de matÃ©riel direct.\n\
         --full_menu_redraw      Always perform full (not partial) menu\n\
                                 redraws (slow but required for certain\n\
                                 accelerated video cards).\n\
-        --fullscreen            Utiliser le mode écran complet au\n\
-                                démarrage.\n\
+        --fullscreen            Utiliser le mode Ã©cran complet au\n\
+                                dÃ©marrage.\n\
         --window                Start game in windowed mode.\n\
         --no-keyrepeat          Prevent keys from sticking.\n\
-        --recorder <address>    Spécifie l'adresse de recorder.\n\
+        --recorder <address>    SpÃ©cifie l'adresse de recorder.\n\
         --nosound               Ne pas connecter pour sembler le serveur\n\
-                                au démarrage.\n\
-        --nomenubg              Pas les images d'arrière-plan de menu\n\
+                                au dÃ©marrage.\n\
+        --nomenubg              Pas les images d'arriÃ¨re-plan de menu\n\
                                 d'exposition.\n\
-        --console_quiet         Pas les messages de routine de caractères\n\
-                                à stdout.\n\
-        --runtime_debug         Imprimer les messages de détection de\n\
-                                runtime à stdout.\n\
-        --internal_debug        Imprimer interne (terse) les messages à\n\
+        --console_quiet         Pas les messages de routine de caractÃ¨res\n\
+                                Ã  stdout.\n\
+        --runtime_debug         Imprimer les messages de dÃ©tection de\n\
+                                runtime Ã  stdout.\n\
+        --internal_debug        Imprimer interne (terse) les messages Ã \n\
                                 stdout.\n\
-        --help                  Les caractères (ceci) l'écran d'aide et\n\
+        --help                  Les caractÃ¨res (ceci) l'Ã©cran d'aide et\n\
                                 les sorties.\n\
-        --version               L'information de version de caractères\n\
+        --version               L'information de version de caractÃ¨res\n\
                                 et les sorties.\n\
 \n\
-    [GUI_options] peut être n'importe quel du suivre:\n\
+    [GUI_options] peut Ãªtre n'importe quel du suivre:\n\
 \n\
-        --display <address>     Spécifie l'adresse d'exposition.\n\
-        --geometry <WxH+X+Y>    Spécifie la géométrie de la fenêtre.\n\
+        --display <address>     SpÃ©cifie l'adresse d'exposition.\n\
+        --geometry <WxH+X+Y>    SpÃ©cifie la gÃ©omÃ©trie de la fenÃªtre.\n\
 \n"
 #elif defined(PROG_LANGUAGE_GERMAN)
 #define PROG_USAGE_MESG "\
 Brauch: sar2 [options] [GUI_options]\n\
 \n\
-    [options] können irgendein vom Folgenden sein:\n\
+    [options] kÃ¶nnen irgendein vom Folgenden sein:\n\
 \n\
         --config <file>         Beladen Sie Konfiguration von <file>.\n\
         --rcfile                Gleich als --config.\n\
         -f                      Gleich als --config.\n\
-        --control <type>        Gebrauch hat Steuergerät <type> an Start\n\
+        --control <type>        Gebrauch hat SteuergerÃ¤t <type> an Start\n\
                                 angegeben. Wo <type> eines der Folgenden\n\
                                 sein kann:\n\
                                     keyboard\n\
                                     joystick\n\
         -c                      Gleich als --control.\n\
-        --hardware_rendering    Gebrauch leitet Hardware Übergabe\n\
+        --hardware_rendering    Gebrauch leitet Hardware Ãœbergabe\n\
                                 (Standardwert).\n\
-        --software_rendering    Benutzen Sie Software Übergabe statt\n\
-                                direkter Hardware Übergabe.\n\
+        --software_rendering    Benutzen Sie Software Ãœbergabe statt\n\
+                                direkter Hardware Ãœbergabe.\n\
         --full_menu_redraw      Always perform full (not partial) menu\n\
                                 redraws (slow but required for certain\n\
                                 accelerated video cards).\n\
@@ -169,19 +162,19 @@ Brauch: sar2 [options] [GUI_options]\n\
         --no-keyrepeat          Prevent keys from sticking.\n\
         --recorder <address>    Gibt recorder Anschrift an.\n\
         --nosound               Verbinden Sie nicht, Diener an Start zu\n\
-                                ertönen.\n\
-        --nomenubg              Stellen Sie Menü Hintergrundbildnisse nicht\n\
+                                ertÃ¶nen.\n\
+        --nomenubg              Stellen Sie MenÃ¼ Hintergrundbildnisse nicht\n\
                                 dar.\n\
-        --console_quiet         Drucken Sie alltägliche Nachrichten zu\n\
+        --console_quiet         Drucken Sie alltÃ¤gliche Nachrichten zu\n\
                                 stdout nicht.\n\
         --runtime_debug         Druckbetriebszeit Entdeckung Nachrichten\n\
                                 zu stdout.\n\
         --internal_debug        Druck inner (knapp) Nachrichten zu stdout.\n\
-        --help                  Drucke (dies) Hilfe Schirm und Ausgänge.\n\
-        --version               Drucke Ausführung Informationen und\n\
-                                Ausgänge.\n\
+        --help                  Drucke (dies) Hilfe Schirm und AusgÃ¤nge.\n\
+        --version               Drucke AusfÃ¼hrung Informationen und\n\
+                                AusgÃ¤nge.\n\
 \n\
-    [GUI_options] können irgendein vom Folgenden sein:\n\
+    [GUI_options] kÃ¶nnen irgendein vom Folgenden sein:\n\
 \n\
         --display <address>     Gibt die Ausstellung Anschrift an.\n\
         --geometry <WxH+X+Y>    Gibt die Geometrie des Fensters an.\n\
@@ -190,13 +183,13 @@ Brauch: sar2 [options] [GUI_options]\n\
 #define PROG_USAGE_MESG "\
 L'uso: sar2 [options] [GUI_options]\n\
 \n\
-    [options] può essere qualunque del seguente:\n\
+    [options] puÃ² essere qualunque del seguente:\n\
 \n\
         --config <file>         Caricare la configurazione da <file>.\n\
         --rcfile                Stesso come --config.\n\
         -f                      Stesso come --config.\n\
         --control <type>        L'uso ha specificato <type> di controllore\n\
-                                all'avvio. Dove <type> può essere uno del\n\
+                                all'avvio. Dove <type> puÃ² essere uno del\n\
                                 seguente:\n\
                                     keyboard\n\
                                     joystick\n\
@@ -227,7 +220,7 @@ L'uso: sar2 [options] [GUI_options]\n\
         --version               Le informazioni di versione di stampe e\n\
                                 le uscite.\n\
 \n\
-    [GUI_options] può essere qualunque del seguente:\n\
+    [GUI_options] puÃ² essere qualunque del seguente:\n\
 \n\
         --display <address>     Specifica l'indirizzo di mostra.\n\
         --geometry <WxH+X+Y>    Specifica la geometria della finestra.\n\
@@ -281,7 +274,7 @@ O Uso: sar2 [options] [GUI_options]\n\
 \n\
     [options] podem ser qualquer do seguinte:\n\
 \n\
-        --config <file>         Carregue configuração de <file>.\n\
+        --config <file>         Carregue configuraÃ§Ã£o de <file>.\n\
         --rcfile                Mesmo como --config.\n\
         -f                      Mesmo como --config.\n\
         --control <type>        O uso especificou <type> de censor em\n\
@@ -290,7 +283,7 @@ O Uso: sar2 [options] [GUI_options]\n\
                                     keyboard\n\
                                     joystick\n\
         -c                      Mesmo como --control.\n\
-        --hardware_rendering    O uso dirige ferragem deixar (omissão).\n\
+        --hardware_rendering    O uso dirige ferragem deixar (omissÃ£o).\n\
         --software_rendering    Use software deixar em vez de ferragem\n\
                                 deixar direto.\n\
         --full_menu_redraw      Always perform full (not partial) menu\n\
@@ -299,37 +292,37 @@ O Uso: sar2 [options] [GUI_options]\n\
         --fullscreen            Use pleno modo de tela em startup.\n\
         --window                Start game in windowed mode.\n\
         --no-keyrepeat          Prevent keys from sticking.\n\
-        --recorder <address>    Especifica endereço de recorder.\n\
+        --recorder <address>    Especifica endereÃ§o de recorder.\n\
         --nosound               Nao ligue para soar servidor em startup.\n\
-        --nomenubg              Nao exiba imagens de experiência de\n\
-                                cardápio.\n\
+        --nomenubg              Nao exiba imagens de experiÃªncia de\n\
+                                cardÃ¡pio.\n\
         --console_quiet         Nao imprima mensagens de rotina a stdout.\n\
         --runtime_debug         Imprima mensagens de descoberta de\n\
                                 runtime a stdout.\n\
         --internal_debug        Imprima interno (terse) mensagens a\n\
                                 stdout.\n\
-        --help                  As impressões (isto) tela de ajuda e\n\
-                                saídas.\n\
-        --version               A informação de versão de impressões e\n\
-                                saídas.\n\
+        --help                  As impressÃµes (isto) tela de ajuda e\n\
+                                saÃ­das.\n\
+        --version               A informaÃ§Ã£o de versÃ£o de impressÃµes e\n\
+                                saÃ­das.\n\
 \n\
     [GUI_options] podem ser qualquer do seguinte:\n\
 \n\
-        --display <address>     Especifica o endereço de exposição.\n\
+        --display <address>     Especifica o endereÃ§o de exposiÃ§Ã£o.\n\
         --geometry <WxH+X+Y>    Especifica a geometria da janela.\n\
 \n"
 #elif defined(PROG_LANGUAGE_NORWEGIAN)
 #define PROG_USAGE_MESG "\
 Praksis: sar2 [options] [GUI_options]\n\
 \n\
-    [options] er noe av det følgende:\n\
+    [options] er noe av det fÃ¸lgende:\n\
 \n\
         --config <file>         Last konfigurasjon fra <file>.\n\
         --rcfile                Samme som --config.\n\
         -f                      Samme som --config.\n\
-        --control <type>        Bruk spesifisert regulator <type> på\n\
+        --control <type>        Bruk spesifisert regulator <type> pÃ¥\n\
                                 oppstarting. Hvor er <type> en av det\n\
-                                følgende:\n\
+                                fÃ¸lgende:\n\
                                     keyboard\n\
                                     joystick\n\
         -c                      Samme som --control.\n\
@@ -340,20 +333,20 @@ Praksis: sar2 [options] [GUI_options]\n\
         --full_menu_redraw      Always perform full (not partial) menu\n\
                                 redraws (slow but required for certain\n\
                                 accelerated video cards).\n\
-        --fullscreen            Bruk full skjermmodus på oppstarting.\n\
+        --fullscreen            Bruk full skjermmodus pÃ¥ oppstarting.\n\
         --window                Start game in windowed mode.\n\
         --no-keyrepeat          Prevent keys from sticking.\n\
         --recorder <address>    Spesifiserer recorder adresse.\n\
-        --nosound               Forbind ikke lyde tjener på oppstarting.\n\
+        --nosound               Forbind ikke lyde tjener pÃ¥ oppstarting.\n\
         --nomenubg              Vis ikke menybakgrunnavbilder.\n\
         --console_quiet         Trykk ikke rutinemessige budskap til\n\
                                 stdout.\n\
-        --runtime_debug         Trykk runtime påvisningsbudskap til stdout.\n\
+        --runtime_debug         Trykk runtime pÃ¥visningsbudskap til stdout.\n\
         --internal_debug        Trykk innvendig (knapp) budskap til stdout.\n\
         --help                  Trykk (dette) hjelpeskjerm og utganger.\n\
         --version               Trykkversjonsinformasjon og utganger.\n\
 \n\
-    [GUI_options] er noe av det følgende:\n\
+    [GUI_options] er noe av det fÃ¸lgende:\n\
 \n\
         --display <address>     Spesifiserer utstillingsadressen.\n\
         --geometry <WxH+X+Y>    Spesifiserer geometrien av vinduet.\n\
@@ -404,34 +397,34 @@ Usage: sar2 [options] [GUI_options]\n\
 #define PROG_COPYRIGHT	"\
 El derecho de autor (C) 1999-2003 WolfPack Entertainment.\n\
 Este programa es protegido por leyes internacionales de derecho de\n\
-autor y tratados, la distribución y/o la modificación de este software\n\
-en la infracción de la Licencia del Público de ÑU se prohiben\n\
-estrictamente. Violators será procesado a la extensión más repleta de\n\
+autor y tratados, la distribuciÃ³n y/o la modificaciÃ³n de este software\n\
+en la infracciÃ³n de la Licencia del PÃºblico de Ã‘U se prohiben\n\
+estrictamente. Violators serÃ¡ procesado a la extensiÃ³n mÃ¡s repleta de\n\
 la ley."
 
 #elif defined(PROG_LANGUAGE_FRENCH)
 #define PROG_COPYRIGHT	"\
-Déposer (C) 1999-2003 WolfPack Entertainment.\n\
-Ce programme est protégé par international dépose des lois et des\n\
-traités, la modification de et ou de distribution de ce logiciel\n\
+DÃ©poser (C) 1999-2003 WolfPack Entertainment.\n\
+Ce programme est protÃ©gÃ© par international dÃ©pose des lois et des\n\
+traitÃ©s, la modification de et ou de distribution de ce logiciel\n\
 dans la violation du GNU le Permis Public est strictement interdit.\n\
-Violators sera poursuivi à l'étendue la plus pleine de la loi."
+Violators sera poursuivi Ã  l'Ã©tendue la plus pleine de la loi."
 
 #elif defined(PROG_LANGUAGE_GERMAN)
 #define PROG_COPYRIGHT	"\
 Urheberrecht (C) 1999-2003 WolfPack Entertainment.\n\
 Dieses Programm wird von internationalem Urheberrecht Gesetzen und\n\
-Verträgen, Austeilung bzw. Änderung dieser Software in Übertretung der\n\
-GNU Öffentlichkeit Erlaubnis streng verboten wird geschützt. Verletzer\n\
+VertrÃ¤gen, Austeilung bzw. Ã„nderung dieser Software in Ãœbertretung der\n\
+GNU Ã–ffentlichkeit Erlaubnis streng verboten wird geschÃ¼tzt. Verletzer\n\
 werden zum vollsten Umfang des Gesetzes strafrechtlich verfolgt werden."
 
 #elif defined(PROG_LANGUAGE_ITALIAN)
 #define PROG_COPYRIGHT  "\
 Copyright (C) 1999-2003 WolfPack Entertainment.\n\
-Questo programma è protetto dalle leggi di copyright internazionali e\n\
+Questo programma Ã¨ protetto dalle leggi di copyright internazionali e\n\
 dai trattati, la distribuzione e/o la modifica di questo software\n\
-nella violazione dello GNU la Licenza Pubblica è strettamente proibita.\n\
-Il Violators sarà perseguito all'estensione la più piena della legge."
+nella violazione dello GNU la Licenza Pubblica Ã¨ strettamente proibita.\n\
+Il Violators sarÃ  perseguito all'estensione la piÃ¹ piena della legge."
 
 #elif defined(PROG_LANGUAGE_DUTCH)
 #define PROG_COPYRIGHT  "\
@@ -444,10 +437,10 @@ Overtreders zullen te de volste omvang van de wet geprocedeerd worden."
 #elif defined(PROG_LANGUAGE_PORTUGUESE)
 #define PROG_COPYRIGHT  "\
 Os Direitos Autorais (C) 1999-2003 WolfPack Entertainment.\n\
-Este programa é protegido por direitos internacionais leis autorais e\n\
-tratados, modificação de e ou de distribuição deste software em\n\
-infração do GNU Licença Pública precisamente é proibida. O Violators\n\
-será processado à plena extensão da lei."
+Este programa Ã© protegido por direitos internacionais leis autorais e\n\
+tratados, modificaÃ§Ã£o de e ou de distribuiÃ§Ã£o deste software em\n\
+infraÃ§Ã£o do GNU LicenÃ§a PÃºblica precisamente Ã© proibida. O Violators\n\
+serÃ¡ processado Ã  plena extensÃ£o da lei."
 
 #elif defined(PROG_LANGUAGE_NORWEGIAN)
 #define PROG_COPYRIGHT  "\
@@ -832,12 +825,12 @@ to the fullest extent of the law."
  "F4", "Vuele por la vista de torre", \
  "F5", "Rescate la vista de cesta", \
  "CURSORS", "El control de la actitud", \
- "SHIFT + CURSORS", "Mueva/la vista de la órbita", \
+ "SHIFT + CURSORS", "Mueva/la vista de la Ã³rbita", \
  "BKSP", "Normalice la vista", \
- "PGUP/PGDN", "La válvula de admisión/colectivo", \
+ "PGUP/PGDN", "La vÃ¡lvula de admisiÃ³n/colectivo", \
  "1, 2, 3 ... 0", "Throttle pre-sets", \
- "SHIFT + PGUP/PGDN", "La válvula de admisión/colectivo rapidamente", \
- "CTRL + CURSORS", "El timón/la conducción", \
+ "SHIFT + PGUP/PGDN", "La vÃ¡lvula de admisiÃ³n/colectivo rapidamente", \
+ "CTRL + CURSORS", "El timÃ³n/la conducciÃ³n", \
  "HOME", "El elevador recorta hacia abajo o tuerce arriba", \
  "END", "El elevador recorta arriba o el pantano hacia abajo", \
  "CTRL + HOME", "El elevador recorta el centro", \
@@ -846,10 +839,10 @@ to the fullest extent of the law."
  "E", "Los motores de la arranque", \
  "SHIFT + E", "Apague motores", \
  "Y", "Incline rotores/motores de tono", \
- "G", "El aumento/engranajes más bajos que aterrizan", \
+ "G", "El aumento/engranajes mÃ¡s bajos que aterrizan", \
  "P", "El torno selecto de tipo despliegue", \
  "D", "Abierto/cierra puerta", \
- "O", "Luces estroboscópicas en/lejos", \
+ "O", "Luces estroboscÃ³picas en/lejos", \
  "L", "Las luces en/lejos", \
  "SHIFT + L", "Marque la luz en/lejos", \
  "CTRL + L", "La luz central del lugar", \
@@ -858,32 +851,32 @@ to the fullest extent of the law."
  "A", "Autopilot/autohover en/lejos", \
  "M", "El mapa", \
  "W", "Waypoint selecto", \
- "I", "FLIR (visión nocturna)", \
- "F", "Abastezca de combustible la posición", \
+ "I", "FLIR (visiÃ³n nocturna)", \
+ "F", "Abastezca de combustible la posiciÃ³n", \
  "SHIFT + F", "Transfiera los tanques externos del combustible", \
  "CTRL + F", "Jettison los tanques externos del combustible", \
- "S", "Las cuentas/la posición de la misión", \
+ "S", "Las cuentas/la posiciÃ³n de la misiÃ³n", \
  "PERIOD", "La rueda frena", \
  "SHIFT + PERIOD", "Los frenos de mano", \
- "B", "Despliegue/retracta los frenos aéreos", \
- "R", "Ponga combustible a/la reparación", \
- "Z", "Ralentícese tiempo", \
+ "B", "Despliegue/retracta los frenos aÃ©reos", \
+ "R", "Ponga combustible a/la reparaciÃ³n", \
+ "Z", "RalentÃ­cese tiempo", \
  "SHIFT + Z", "Acelere tiempo", \
  "CTRL + Z", "Normalice la tasa de tiempo", \
  "CTRL + W", "Cambie tiempo", \
  "/", "La orden literal", \
  "CTRL + A", "Basculador de pantano", \
- "T", "Aumente tiempo de día", \
- "SHIFT + T", "Disminuya tiempo de día", \
- "CTRL + D", "La física del vuelo", \
+ "T", "Aumente tiempo de dÃ­a", \
+ "SHIFT + T", "Disminuya tiempo de dÃ­a", \
+ "CTRL + D", "La fÃ­sica del vuelo", \
  "CTRL + S", "El nivel sano", \
- "CTRL + M", "Bascule la música", \
+ "CTRL + M", "Bascule la mÃºsica", \
  "CTRL + F11", "Bascule el modo repleto de pantalla", \
- "CTRL + [", "Disminuya la resolución", \
- "CTRL + ]", "Aumente la resolución", \
+ "CTRL + [", "Disminuya la resoluciÃ³n", \
+ "CTRL + ]", "Aumente la resoluciÃ³n", \
  "CTRL + U", "Cambie las unidades", \
  "F9", "Bascule la textura del suelo", \
- "F10", "Bascule de atmósfera", \
+ "F10", "Bascule de atmÃ³sfera", \
  "F11", "Bascule la textura objetiva", \
  "F12", "Basculador anubla", \
  "SHIFT + F9", "Bascule la profundidad doble del paso", \
@@ -900,71 +893,71 @@ to the fullest extent of the law."
  "F3", "Apercevoir la vue", \
  "F4", "Voler par la vue de tour", \
  "F5", "Secourir la vue de panier", \
- "CURSORS", "Contrôle d'attitude", \
- "SHIFT + CURSORS", "Vue de déplace orbite", \
+ "CURSORS", "ContrÃ´le d'attitude", \
+ "SHIFT + CURSORS", "Vue de dÃ©place orbite", \
  "BKSP", "Normaliser la vue", \
  "PGUP/PGDN", "Etrangle entreprise collective", \
  "1, 2, 3 ... 0", "Throttle pre-sets", \
- "SHIFT + PGUP/PGDN", "L'étrangle entreprise collective rapidement", \
+ "SHIFT + PGUP/PGDN", "L'Ã©trangle entreprise collective rapidement", \
  "CTRL + CURSORS", "Rudder direction", \
  "HOME", "L'ascenseur taille en bas ou le saut de papier en haut", \
  "END", "L'ascenseur taille en haut ou le saut de papier en bas", \
  "CTRL + HOME", "L'ascenseur taille le centre", \
  "-/+", "Fait un zoom vers hors", \
  "CTRL + -/+", "Hisser dans hors", \
- "E", "Moteurs de démarrage", \
+ "E", "Moteurs de dÃ©marrage", \
  "SHIFT + E", "Eteint moteurs", \
  "Y", "Pencher les moteurs de rotors hauteur", \
- "G", "Les engrenages élève plus bas de terre", \
- "P", "Choisir le type de déploiement de grue", \
+ "G", "Les engrenages Ã©lÃ¨ve plus bas de terre", \
+ "P", "Choisir le type de dÃ©ploiement de grue", \
  "D", "Porte ouvert proche", \
  "O", "Sur de d'impulsions utilitaires", \
- "L", "Sur de de lumières", \
- "SHIFT + L", "Apercevoir sur de de lumière", \
- "CTRL + L", "Centrer la lumière d'endroit", \
- "H", "HUD et le texte s'éclaircissent", \
+ "L", "Sur de de lumiÃ¨res", \
+ "SHIFT + L", "Apercevoir sur de de lumiÃ¨re", \
+ "CTRL + L", "Centrer la lumiÃ¨re d'endroit", \
+ "H", "HUD et le texte s'Ã©claircissent", \
  "SHIFT + H", "HUD et le texte assombrissent", \
  "A", "Sur de de pilote automatique autohover", \
  "M", "Carte", \
  "W", "Choisir waypoint", \
  "I", "FLIR (la vision nocturne)", \
  "F", "Statut de carburant", \
- "SHIFT + F", "Transférer les réservoirs externes de carburant", \
- "CTRL + F", "Jettison les réservoirs de carburant externes", \
+ "SHIFT + F", "TransfÃ©rer les rÃ©servoirs externes de carburant", \
+ "CTRL + F", "Jettison les rÃ©servoirs de carburant externes", \
  "S", "Statut de scores mission", \
  "PERIOD", "La roue freine", \
- "SHIFT + PERIOD", "Freins à main", \
- "B", "Déploie/rétracte freins à air comprimé", \
- "R", "La Refuel réparation", \
+ "SHIFT + PERIOD", "Freins Ã  main", \
+ "B", "DÃ©ploie/rÃ©tracte freins Ã  air comprimÃ©", \
+ "R", "La Refuel rÃ©paration", \
  "Z", "Ralentir le temps", \
- "SHIFT + Z", "Accélérer le temps", \
+ "SHIFT + Z", "AccÃ©lÃ©rer le temps", \
  "CTRL + Z", "Normaliser le taux de temps", \
  "CTRL + W", "Changer le temps", \
- "/", "Littéral (le tricheur) l'ordre", \
+ "/", "LittÃ©ral (le tricheur) l'ordre", \
  "CTRL + A", "Le saut de papier (le tricheur) bascule", \
  "T", "Augmenter la l'heure actuelle", \
  "SHIFT + T", "L'heure actuelle de diminution", \
  "CTRL + D", "Physique de vol", \
  "CTRL + S", "Niveau solide", \
  "CTRL + M", "Basculer la musique", \
- "CTRL + F11", "Basculer le mode écran complet", \
- "CTRL + [", "Résolution de diminution", \
- "CTRL + ]", "Augmenter la résolution", \
- "CTRL + U", "Changer des unités", \
+ "CTRL + F11", "Basculer le mode Ã©cran complet", \
+ "CTRL + [", "RÃ©solution de diminution", \
+ "CTRL + ]", "Augmenter la rÃ©solution", \
+ "CTRL + U", "Changer des unitÃ©s", \
  "F9", "Basculer le texture de sol", \
- "F10", "Basculer l'atmosphère", \
+ "F10", "Basculer l'atmosphÃ¨re", \
  "F11", "Bascule le texture d'objet", \
  "F12", "Basculer des nuages", \
  "SHIFT + F9", "Basculer la profondeur double de passe", \
- "SHIFT + F10", "Basculer des objets célestes", \
- "SHIFT + F11", "Basculer les pistes de fumée", \
+ "SHIFT + F10", "Basculer des objets cÃ©lestes", \
+ "SHIFT + F11", "Basculer les pistes de fumÃ©e", \
  "SHIFT + F12", "Basculer l'accessoire se lave", \
  "CTRL + C", "Trier le coup" \
 }
 
 #elif defined(PROG_LANGUAGE_GERMAN)
 #define SAR_KEYS_HELP_MESSAGES  { \
- "F1", "Stellen Sie Schlüsselfunktionen dar", \
+ "F1", "Stellen Sie SchlÃ¼sselfunktionen dar", \
  "F2", "Cockpit Blick", \
  "F3", "Beflecken Sie Blick", \
  "F4", "Fliegen Sie durch Turm Blick", \
@@ -984,9 +977,9 @@ to the fullest extent of the law."
  "E", "Starten Sie Maschinen", \
  "SHIFT + E", "Schalten Sie Maschinen aus", \
  "Y", "Kippen Sie Rotoren Wurf Maschinen", \
- "G", "Erhöhung herunterlassen Landungsgänge", \
+ "G", "ErhÃ¶hung herunterlassen LandungsgÃ¤nge", \
  "P", "Erlesener Lastenaufzug Aufstellung Typ", \
- "D", "Offen schließen Tür", \
+ "D", "Offen schlieÃŸen TÃ¼r", \
  "O", "Abtaster auf ab", \
  "L", "Lichter auf ab", \
  "SHIFT + L", "Beflecken Sie Licht auf ab", \
@@ -998,37 +991,37 @@ to the fullest extent of the law."
  "W", "Erlesen waypoint", \
  "I", "FLIR (Nacht Sicht)", \
  "F", "Tanken Sie Status", \
- "SHIFT + F", "Übertragen Sie äußerlichen Kraftstoff Tanks", \
- "CTRL + F", "Jettison äußerlicher Kraftstoff Tanks", \
+ "SHIFT + F", "Ãœbertragen Sie Ã¤uÃŸerlichen Kraftstoff Tanks", \
+ "CTRL + F", "Jettison Ã¤uÃŸerlicher Kraftstoff Tanks", \
  "S", "Spielergebnisse Mission Status", \
  "PERIOD", "Rad bremst", \
  "SHIFT + PERIOD", "Parkende Bremsen", \
- "B", "Aufstellen zurückziehen druckluftbremsen", \
+ "B", "Aufstellen zurÃ¼ckziehen druckluftbremsen", \
  "R", "Tanken Reparatur", \
  "Z", "Verlangsamen Sie Zeit", \
  "SHIFT + Z", "Beschleunigen Zeit", \
  "CTRL + Z", "Normalisieren Sie Zeit Rate", \
- "CTRL + W", "Ändern Sie Wetter", \
- "/", "Wörtlich (Betrüger) Befehl", \
- "CTRL + A", "Betrüger umschaltet hat verlangsamt", \
+ "CTRL + W", "Ã„ndern Sie Wetter", \
+ "/", "WÃ¶rtlich (BetrÃ¼ger) Befehl", \
+ "CTRL + A", "BetrÃ¼ger umschaltet hat verlangsamt", \
  "T", "Vermehren Sie Tageszeit", \
  "SHIFT + T", "Nehmen Sie Tageszeit", \
  "CTRL + D", "Flug Physik", \
- "CTRL + S", "Gesunde Höhe", \
+ "CTRL + S", "Gesunde HÃ¶he", \
  "CTRL + M", "Umschaltmusik", \
  "CTRL + F11", "Umschalt voller Schirm Modus", \
- "CTRL + [", "Nehmen sie beschlußfassung", \
- "CTRL + ]", "Vermehren sie beschlußfassung", \
- "CTRL + U", "Ändern sie einheiten", \
+ "CTRL + [", "Nehmen sie beschluÃŸfassung", \
+ "CTRL + ]", "Vermehren sie beschluÃŸfassung", \
+ "CTRL + U", "Ã„ndern sie einheiten", \
  "F9", "Umschalterdgewebe", \
- "F10", "Umschaltatmosphäre", \
+ "F10", "UmschaltatmosphÃ¤re", \
  "F11", "Kippschalter Objekt Gewebe", \
- "F12", "Kippschalter umwölkt", \
+ "F12", "Kippschalter umwÃ¶lkt", \
  "SHIFT + F9", "Umschalt doppelte Ausweis Tiefe", \
  "SHIFT + F10", "Umschalt himmlische Objekte", \
  "SHIFT + F11", "Umschaltrauch verfolgt", \
- "SHIFT + F12", "Umschaltstütze Wäsche", \
- "CTRL + C", "Schirmen Sie Schuß ab" \
+ "SHIFT + F12", "UmschaltstÃ¼tze WÃ¤sche", \
+ "CTRL + C", "Schirmen Sie SchuÃŸ ab" \
 }
 
 #elif defined(PROG_LANGUAGE_ITALIAN)
@@ -1045,7 +1038,7 @@ to the fullest extent of the law."
  "1, 2, 3 ... 0", "Throttle pre-sets", \
  "SHIFT + PGUP/PGDN", "Il digiuno strangola collettivo", \
  "CTRL + CURSORS", "La Rudder direzione", \
- "HOME", "L'ascensore taglia giù o ha rallentato su", \
+ "HOME", "L'ascensore taglia giÃ¹ o ha rallentato su", \
  "END", "L'ascensore taglia su o ha rallentato", \
  "CTRL + HOME", "L'ascensore taglia il centro", \
  "-/+", "Zumarsi l'in fuori", \
@@ -1088,12 +1081,12 @@ to the fullest extent of the law."
  "CTRL + F11", "Commutare il modo di schermo pieno", \
  "CTRL + [", "Diminuire la risoluzione", \
  "CTRL + ]", "Aumentare la risoluzione", \
- "CTRL + U", "Cambiare le unitì", \
+ "CTRL + U", "Cambiare le unitÃ¬", \
  "F9", "Commutare il tessuto di suolo", \
  "F10", "Commutare il tessuto di atmosfera", \
  "F11", "Commutare il tessuto di oggetto", \
  "F12", "Commutare il tessuto si annuvola", \
- "SHIFT + F9", "Commutare la profondità di passo doppia", \
+ "SHIFT + F9", "Commutare la profonditÃ  di passo doppia", \
  "SHIFT + F10", "Commutare gli oggetti celesti", \
  "SHIFT + F11", "Commutare le piste di fumo", \
  "SHIFT + F12", "Commutare il bucato di accessorio", \
@@ -1171,17 +1164,17 @@ to the fullest extent of the law."
 
 #elif defined(PROG_LANGUAGE_PORTUGUESE)
 #define SAR_KEYS_HELP_MESSAGES  { \
- "F1", "Exiba funções chave", \
+ "F1", "Exiba funÃ§Ãµes chave", \
  "F2", "A vista de cabine", \
  "F3", "A vista de mancha", \
  "F4", "Voe por vista de torre", \
  "F5", "Salve vista de cesta", \
  "CURSORS", "O controle de atitude", \
- "SHIFT + CURSORS", "A vista de move órbita", \
+ "SHIFT + CURSORS", "A vista de move Ã³rbita", \
  "BKSP", "A vista de Normalize", \
  "PGUP/PGDN", "Estrangula coletivo", \
  "1, 2, 3 ... 0", "Throttle pre-sets", \
- "SHIFT + PGUP/PGDN", "Estrangula coletivo rápido", \
+ "SHIFT + PGUP/PGDN", "Estrangula coletivo rÃ¡pido", \
  "CTRL + CURSORS", "Rudder guiar", \
  "HOME", "O elevador apara para slew baixo para cima", \
  "END", "O elevador apara para cima ou slew para baixo", \
@@ -1192,8 +1185,8 @@ to the fullest extent of the law."
  "SHIFT + E", "Desligue motores", \
  "Y", "Incline motores de rotores arremesso", \
  "G", "Levanta abaixamento aterrissar as engrenagens", \
- "P", "Selecione ergue tipo de instalação", \
- "D", "Porta abre próximo", \
+ "P", "Selecione ergue tipo de instalaÃ§Ã£o", \
+ "D", "Porta abre prÃ³ximo", \
  "O", "O em fora de Strobes", \
  "L", "O em fora de luzes", \
  "SHIFT + L", "O em fora de luz de mancha", \
@@ -1203,47 +1196,47 @@ to the fullest extent of the law."
  "A", "O em fora de Autopilot autohover", \
  "M", "O mapa", \
  "W", "Selecione waypoint", \
- "I", "FLIR (visão de noite)", \
- "F", "O estado de combustível", \
- "SHIFT + F", "Transfira tanques externos de combustível", \
- "CTRL + F", "O Jettison tanques externos de combustível", \
- "S", "O estado de contagens missão", \
+ "I", "FLIR (visÃ£o de noite)", \
+ "F", "O estado de combustÃ­vel", \
+ "SHIFT + F", "Transfira tanques externos de combustÃ­vel", \
+ "CTRL + F", "O Jettison tanques externos de combustÃ­vel", \
+ "S", "O estado de contagens missÃ£o", \
  "PERIOD", "A roda freia", \
  "SHIFT + PERIOD", "Que estacionando freios", \
  "B", "Os freios de ar de instala retrai", \
  "R", "O Refuel repara", \
  "Z", "O tempo de Decelerate", \
  "SHIFT + Z", "Acelere tempo", \
- "CTRL + Z", "O índice de tempo de normalize", \
+ "CTRL + Z", "O Ã­ndice de tempo de normalize", \
  "CTRL + W", "Mude tempo", \
  "/", "Literal (fraudulento) comando", \
  "CTRL + A", "O Slew (fraudulento) toggle", \
  "T", "Aumente tempo de dia", \
  "SHIFT + T", "Diminua tempo de dia", \
- "CTRL + D", "A física de vôo", \
- "CTRL + S", "Soe nível", \
- "CTRL + M", "A música de Toggle", \
+ "CTRL + D", "A fÃ­sica de vÃ´o", \
+ "CTRL + S", "Soe nÃ­vel", \
+ "CTRL + M", "A mÃºsica de Toggle", \
  "CTRL + F11", "O Toggle pleno modo de tela", \
- "CTRL + [", "Diminua resolução", \
- "CTRL + ]", "Aumente resolução", \
+ "CTRL + [", "Diminua resoluÃ§Ã£o", \
+ "CTRL + ]", "Aumente resoluÃ§Ã£o", \
  "CTRL + U", "Mude unidades", \
- "F9", "O Toggle textura moída", \
+ "F9", "O Toggle textura moÃ­da", \
  "F10", "O Toggle atmosfera", \
  "F11", "O Toggle textura de objeto", \
  "F12", "O Toggle as nuvens", \
  "SHIFT + F9", "O Toggle profundidade dual de passagem", \
  "SHIFT + F10", "O Toggle objetos celestiais", \
- "SHIFT + F11", "As trilhas de fumaça de Toggle", \
+ "SHIFT + F11", "As trilhas de fumaÃ§a de Toggle", \
  "SHIFT + F12", "A estaca de Toggle lava", \
  "CTRL + C", "O tiro de tela" \
 }
 
 #elif defined(PROG_LANGUAGE_NORWEGIAN)
 #define SAR_KEYS_HELP_MESSAGES  { \
- "F1", "Vis nøkkelfunksjoner", \
+ "F1", "Vis nÃ¸kkelfunksjoner", \
  "F2", "Cockpitsikt", \
  "F3", "Identifiser sikt", \
- "F4", "Fly ved tårnsikt", \
+ "F4", "Fly ved tÃ¥rnsikt", \
  "F5", "Redd kurvsikt", \
  "CURSORS", "Holdningsstyring", \
  "SHIFT + CURSORS", "Flytter bane sikt", \
@@ -1259,22 +1252,22 @@ to the fullest extent of the law."
  "CTRL + -/+", "Heise i ut", \
  "E", "Start opp maskiner", \
  "SHIFT + E", "Skru maskin av", \
- "Y", "Skråstill rotorer kast maskiner", \
- "G", "Forhøyelse senker landee utvekslinger", \
+ "Y", "SkrÃ¥still rotorer kast maskiner", \
+ "G", "ForhÃ¸yelse senker landee utvekslinger", \
  "P", "Velg ut heiser deployment type", \
- "D", "Åpner nær dør", \
- "O", "Stroboskoper på av", \
- "L", "Lys på av", \
- "SHIFT + L", "Identifiser lys på av", \
+ "D", "Ã…pner nÃ¦r dÃ¸r", \
+ "O", "Stroboskoper pÃ¥ av", \
+ "L", "Lys pÃ¥ av", \
+ "SHIFT + L", "Identifiser lys pÃ¥ av", \
  "CTRL + L", "Sentrer flekklys", \
  "H", "HUD og tekst klarner", \
- "SHIFT + H", "HUD og tekst mørklegger", \
- "A", "Autopilot autohover på av", \
+ "SHIFT + H", "HUD og tekst mÃ¸rklegger", \
+ "A", "Autopilot autohover pÃ¥ av", \
  "M", "Kart", \
  "W", "Utvalgt waypoint", \
  "I", "FLIR (natt syn)", \
  "F", "Drivstoffstatus", \
- "SHIFT + F", "Overfør ytre drivstofftanker", \
+ "SHIFT + F", "OverfÃ¸r ytre drivstofftanker", \
  "CTRL + F", "Jettison ytre drivstofftanker", \
  "S", "Stillinger misjon status", \
  "PERIOD", "Hjul bremser", \
@@ -1284,26 +1277,26 @@ to the fullest extent of the law."
  "Z", "Decelerate tid", \
  "SHIFT + Z", "Akselerer tid", \
  "CTRL + Z", "Normaliser tidsrate", \
- "CTRL + W", "Forandr vær", \
+ "CTRL + W", "Forandr vÃ¦r", \
  "/", "Ordrett (snyter) kommando", \
  "CTRL + A", "Slew (snyter) omkopler", \
- "T", "Øk tid på dagen", \
- "SHIFT + T", "Mink tid på dagen", \
+ "T", "Ã˜k tid pÃ¥ dagen", \
+ "SHIFT + T", "Mink tid pÃ¥ dagen", \
  "CTRL + D", "Flyktfysikk", \
  "CTRL + S", "Sunt niv", \
  "CTRL + M", "Omkoplingsmusikk", \
  "CTRL + F11", "Omkoplings full skjermmodus", \
  "CTRL + [", "Mink resolusjon", \
- "CTRL + ]", "Øk resolusjon", \
+ "CTRL + ]", "Ã˜k resolusjon", \
  "CTRL + U", "Forandr enheter", \
  "F9", "Omkoplings malt tekstur", \
- "F10", "Omkoplingsatmosfære", \
+ "F10", "OmkoplingsatmosfÃ¦re", \
  "F11", "Toggle objekttekstur", \
- "F12", "Omkopler formørker", \
+ "F12", "Omkopler formÃ¸rker", \
  "SHIFT + F9", "Omkoplings dobbelt passdybde", \
  "SHIFT + F10", "Omkoplings himmelsk objekt", \
- "SHIFT + F11", "Omkoplingsrøyk forfølger", \
- "SHIFT + F12", "Omkoplingsstøttevask", \
+ "SHIFT + F11", "OmkoplingsrÃ¸yk forfÃ¸lger", \
+ "SHIFT + F12", "OmkoplingsstÃ¸ttevask", \
  "CTRL + C", "Avskjerm skudd" \
 }
 
