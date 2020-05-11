@@ -1306,7 +1306,7 @@ sar_core_struct *SARInit(int argc, char **argv)
 	/* Reset options to defaults */
 	opt->menu_backgrounds = True;
 	opt->menu_change_affects = True;
-	opt->menu_always_full_redraw = False;
+	opt->menu_always_full_redraw = True;
 	opt->console_quiet = False;
 	opt->internal_debug = False;
 	opt->runtime_debug = False;
@@ -1651,13 +1651,13 @@ GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 		cl_direct_rendering = False;
 	    }
 	    /* Always Full Menu Redraws */
-	    else if(!strcasecmp(arg, "--full_menu_redraw") ||
-		    !strcasecmp(arg, "--full-menu-redraw") ||
-		    !strcasecmp(arg, "-full_menu_redraw") ||
-		    !strcasecmp(arg, "-full-menu-redraw")
+	    else if(!strcasecmp(arg, "--no_full_menu_redraw") ||
+		    !strcasecmp(arg, "--no-full-menu-redraw") ||
+		    !strcasecmp(arg, "-no_full_menu_redraw") ||
+		    !strcasecmp(arg, "-no-full-menu-redraw")
 	    )
 	    {
-		opt->menu_always_full_redraw = True;
+		opt->menu_always_full_redraw = False;
 	    }
 	    /* Display (connection to X server) */
 	    else if(!strcasecmp(arg, "--display") ||

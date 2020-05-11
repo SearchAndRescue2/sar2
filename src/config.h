@@ -66,9 +66,9 @@ Uso: sar2 [opciones] [opciones_de_la_interfaz]\n\
         -c                      Alias de --control.\n\
         --hardware_rendering    Usar aceleración por hardware.\n\
         --software_rendering    Usar aceleración por software\n\
-        --full_menu_redraw      Re-dibujar siempre los menús.\n\
-                                más lento, pero necesario para algunas\n\
-                                tarjetas de video).\n\
+        --no_full_menu_redraw   Re-dibujar sólo partes de los menús.\n\
+                                Más rápido, pero causa problemas con algunas\n\
+                                tarjetas de video.\n\
         --fullscreen            Lanzar en modo pantalla completa.\n\
         --window                Lanzar en modo ventana.\n\
         --no-keyrepeat          Desactivar repetición de eventos al\n\
@@ -107,8 +107,8 @@ L'usage: sar2 [options] [GUI_options]\n\
         --hardware_rendering    Utiliser le matériel direct rend (défaut).\n\
         --software_rendering    Utiliser rendre de logiciel au lieu de\n\
                                 rendre de matériel direct.\n\
-        --full_menu_redraw      Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
+        --no_full_menu_redraw   Do not perform full (not partial) menu\n\
+                                redraws (faster but has issues with some\n\
                                 accelerated video cards).\n\
         --fullscreen            Utiliser le mode écran complet au\n\
                                 démarrage.\n\
@@ -154,8 +154,8 @@ Brauch: sar2 [options] [GUI_options]\n\
                                 (Standardwert).\n\
         --software_rendering    Benutzen Sie Software Übergabe statt\n\
                                 direkter Hardware Übergabe.\n\
-        --full_menu_redraw      Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
+        --no_full_menu_redraw   Do not perform full (not partial) menu\n\
+                                redraws (faster but has issues with some\n\
                                 accelerated video cards).\n\
         --fullscreen            Benutzen Sie vollen Schirm Modus an Start.\n\
         --window                Start game in windowed mode.\n\
@@ -198,8 +198,8 @@ L'uso: sar2 [options] [GUI_options]\n\
                                 (predefinito).\n\
         --software_rendering    Usare rendere di software invece di\n\
                                 rendere di hardware diretto.\n\
-        --full_menu_redraw      Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
+        --no_full_menu_redraw   Do not perform full (not partial) menu\n\
+                                redraws (faster but has issues with some\n\
                                 accelerated video cards).\n\
         --fullscreen            Usare il modo di schermo pieno all'avvio.\n\
         --window                Start game in windowed mode.\n\
@@ -244,8 +244,8 @@ Gebruik: sar2 [options] [GUI_options]\n\
                                 (standaardwaarde).\n\
         --software_rendering    Gebruik software vertolking in plaats van\n\
                                 rechtstreekze hardware vertolking.\n\
-        --full_menu_redraw      Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
+        --no_full_menu_redraw   Do not perform full (not partial) menu\n\
+                                redraws (faster but has issues with some\n\
                                 accelerated video cards).\n\
         --fullscreen            Gebruik vole scherm modus aan start.\n\
         --window                Start game in windowed mode.\n\
@@ -286,8 +286,8 @@ O Uso: sar2 [options] [GUI_options]\n\
         --hardware_rendering    O uso dirige ferragem deixar (omissão).\n\
         --software_rendering    Use software deixar em vez de ferragem\n\
                                 deixar direto.\n\
-        --full_menu_redraw      Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
+        --no_full_menu_redraw   Do not perform full (not partial) menu\n\
+                                redraws (faster but has issues with some\n\
                                 accelerated video cards).\n\
         --fullscreen            Use pleno modo de tela em startup.\n\
         --window                Start game in windowed mode.\n\
@@ -330,8 +330,8 @@ Praksis: sar2 [options] [GUI_options]\n\
                                 (standardverdi).\n\
         --software_rendering    Bruk programvareytelse i stedet for\n\
                                 direkte jernvareytelse.\n\
-        --full_menu_redraw      Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
+        --no_full_menu_redraw   Do not perform full (not partial) menu\n\
+                                redraws (faster but has issues with some\n\
                                 accelerated video cards).\n\
         --fullscreen            Bruk full skjermmodus på oppstarting.\n\
         --window                Start game in windowed mode.\n\
@@ -368,8 +368,8 @@ Usage: sar2 [options] [GUI_options]\n\
         --hardware_rendering    Use direct hardware rendering (default).\n\
         --software_rendering    Use software rendering instead of direct\n\
                                 hardware rendering.\n\
-        --full_menu_redraw      Always perform full (not partial) menu\n\
-                                redraws (slow but required for certain\n\
+        --no_full_menu_redraw   Do not perform full (not partial) menu\n\
+                                redraws (faster but has issues with some\n\
                                 accelerated video cards).\n\
         --fullscreen            Use full screen mode at startup.\n\
         --window                Start game in windowed mode.\n\
