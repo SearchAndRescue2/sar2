@@ -634,7 +634,7 @@ int SARLoadProgressCB(void *ptr, long pos, long size)
 			cb_data->coeff_offset +
 			    ((float)pos / (float)size *
 			    cb_data->coeff_range),
-			True		/* Redraw */
+			False		/* Redraw */
 		    );
 		    break;
 		}
