@@ -1,6 +1,13 @@
 import os.path
 
 
+AddOption( "--ldflags",
+           dest="ldflags",
+           type="string",
+           nargs=1,
+           action="store",
+           help="set custom ldflags")
+
 AddOption( "--optflags",
            dest="optflags",
            type="string",
@@ -15,6 +22,7 @@ AddOption( "--prefix",
            action="store",
            help="custom install prefix (/usr/local)")
 
+ldflags = GetOption("ldflags")
 optflags = GetOption("optflags")
 destdir = os.environ.get("DESTDIR")
 prefix = GetOption('prefix')
@@ -39,6 +47,9 @@ if optflags:
     env.Append(CPPFLAGS = optflags)
 else:
     env.Append(CPPFLAGS = ['-DHAVE_LIBXPM', '-DHAVE_XF86_VIDMODE'])
+
+if ldflags:
+    env.Append(LINKFLAGS = ldflags)
 
 
 # List of libraries that will be linked with any executable
