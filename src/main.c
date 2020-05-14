@@ -597,6 +597,12 @@ int SARLoadProgressCB(void *ptr, long pos, long size)
 	void *o;
 	gw_display_struct *display;
 	sar_progress_cb_struct *cb_data = SAR_PROGRESS_CB(ptr);
+
+	// Update progress in 10% increments. Otherwise the progress bar
+	// is updated so much that it makes loading itself 10x longer.
+	if ((pos % (size / 10)) != 0)
+	    return(0);
+
 	if(cb_data == NULL)
 	    return(0);
 
