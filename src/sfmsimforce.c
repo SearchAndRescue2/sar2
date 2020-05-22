@@ -1393,8 +1393,10 @@ fflush(stdout);
 	    {
 		/* Is currently above ground */
 
-		/* Check if above ground plus tolorance (0.05 meters) */
-		if((pos->z - 0.05) > ground_to_center_height)
+		/* Check if above ground plus tolorance (0.25 meters) */
+		/* A previous version also set landed_state = False when */
+		/* the vel->z was > 0.0. This caused landed state flippin */
+		if((pos->z - 0.25) > ground_to_center_height) // || vel->z > 0.0)
 		{
 		    /* Very much above ground, so mark as not landed */
 		    if(model->landed_state)
@@ -1413,24 +1415,6 @@ fflush(stdout);
 			if(SFMModelInRealm(realm, model) < 0)
 			    return(1);
 		    }
-		}
-
-		/* Currently marked landed but velocity going up? */
-		if(model->landed_state && (vel->z > 0.0))
-		{
-		    /* Mark as not landed */
-		    model->landed_state = False;
-
-		    /* Call airborne callback */
-		    if(realm->airborne_cb != NULL)
-			realm->airborne_cb(
-			    realm,
-			    model,
-			    realm->airborne_cb_client_data
-			);
-		    /* Check if model is still valid after callback */
-		    if(SFMModelInRealm(realm, model) < 0)
-			return(1);
 		}
 	    }
 
