@@ -1,5 +1,13 @@
 # SEARCH AND RESCUE II - CHANGELOG
 
+## Version 2.4.3
+
+* Fix lagging when landing due to airbone/landed flipping
+* Speed up progress bar
+* Add ldflags option to Scons
+* Enable menu redraws by default (fixes black/blinking menus).
+* Fix encoding and command help Spanish Translation
+
 ## Version 2.4.2
 
 * Fix video mode selection (out of bounds error)
