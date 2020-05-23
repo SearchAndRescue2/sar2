@@ -54,6 +54,10 @@ void SARSimTouchDownCB(
     void *realm_ptr, SFMModelStruct *model,
     void *client_data, double impact_coeff
     );
+void SARSimParkedCB(
+    SFMModelStruct *model,
+    void *client_data
+    );
 void SARSimOverspeedCB(
     void *realm_ptr, SFMModelStruct *model,
     void *client_data, double cur_speed,
@@ -221,7 +225,7 @@ void SARSimTouchDownCB(
     void *client_data, double impact_coeff
     )
 {
-    int obj_num, *gcc_list, gcc_list_total, crash_cause = 0;
+    int obj_num, crash_cause = 0;
     Boolean	over_water = False,
         have_floats = False,
         camera_in_cockpit = False;
@@ -391,14 +395,6 @@ void SARSimTouchDownCB(
     if(SARSimIsSlew(obj_ptr))
         return;
 
-    /* Get list of objects at this object's position */
-    gcc_list = SARGetGCCHitList(
-        core_ptr, scene,
-        &core_ptr->object, &core_ptr->total_objects,
-        obj_num,
-        &gcc_list_total
-	);
-
     /* Check if this object landed over water */
     SARGetGHCOverWater(
         core_ptr, scene,
@@ -406,7 +402,6 @@ void SARSimTouchDownCB(
         obj_num,
         NULL, &over_water
 	);
-
 
     /* Get up to date object position from the FDM */
     pos = &obj_ptr->pos;
@@ -962,15 +957,7 @@ void SARSimTouchDownCB(
 /* Add support for safe landing of other object types here */
 
         }
-
-        /* Call mission land notify */
-        SARMissionLandNotify(core_ptr, obj_ptr, gcc_list, gcc_list_total);
     }
-
-    /* Delete list of ground contact objects */
-    free(gcc_list);
-    gcc_list = NULL;
-    gcc_list_total = 0;
 
 #undef DO_EFFECTS_LAND_BELLY
 #undef DO_EFFECTS_LAND_SKIS
@@ -980,6 +967,59 @@ void SARSimTouchDownCB(
 #undef DO_EFFECTS_SPLASH_AIRCRAFT
 }
 
+/*
+ *	FDM Park callback.
+ *
+ *	Called whenever the FDM is parked (landed and speed reaches 0).
+ *
+ *	This notifies the mission to verify if we have reached
+ *	an objective. Figuring out where we landed is an operation
+ *      quite expensive to run.
+ */
+void SARSimParkedCB(
+    SFMModelStruct *model,
+    void *client_data
+    )
+{
+    int obj_num, *gcc_list, gcc_list_total = 0;
+    sar_object_struct *obj_ptr;
+    sar_scene_struct *scene;
+    sar_core_struct *core_ptr = SAR_CORE(client_data);
+
+    scene = core_ptr->scene;
+    if(scene == NULL)
+        return;
+
+    // No mission success.
+    if(scene->player_has_crashed)
+	return;
+
+    /* Match object from FDM */
+    obj_ptr = SARSimMatchObjectFromFDM(
+        core_ptr->object, core_ptr->total_objects,
+        model, &obj_num
+	);
+    if(obj_ptr == NULL)
+        return;
+
+    /* Get list of objects at this object's position */
+    /* EXPENSIVE */
+    gcc_list = SARGetGCCHitList(
+        core_ptr, scene,
+        &core_ptr->object, &core_ptr->total_objects,
+        obj_num,
+        &gcc_list_total
+	);
+    if(gcc_list == NULL)
+	return;
+
+    printf("Land notify\n");
+     /* Call mission land notify */
+    SARMissionLandNotify(core_ptr, obj_ptr, gcc_list, gcc_list_total);
+    free(gcc_list);
+    gcc_list = NULL;
+    gcc_list_total = 0;
+}
 
 /*
  *	FDM Overspeed callback.

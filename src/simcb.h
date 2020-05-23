@@ -40,6 +40,11 @@ extern void SARSimTouchDownCB(
 	void *realm_ptr, SFMModelStruct *model,
 	void *client_data, double impact_coeff
 );
+extern void SARSimParkedCB(
+	SFMModelStruct *model,
+	void *client_data
+);
+
 extern void SARSimOverspeedCB(
 	void *realm_ptr, SFMModelStruct *model,
 	void *client_data, double cur_speed,

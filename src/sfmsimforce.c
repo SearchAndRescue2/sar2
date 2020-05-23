@@ -1393,10 +1393,10 @@ fflush(stdout);
 	    {
 		/* Is currently above ground */
 
-		/* Check if above ground plus tolorance (0.25 meters) */
+		/* Check if above ground plus tolerance (0.5 meters) */
 		/* A previous version also set landed_state = False when */
 		/* the vel->z was > 0.0. This caused landed state flippin */
-		if((pos->z - 0.25) > ground_to_center_height) // || vel->z > 0.0)
+		if((pos->z - 0.5) > ground_to_center_height) // || vel->z > 0.0)
 		{
 		    /* Very much above ground, so mark as not landed */
 		    if(model->landed_state)
@@ -1473,9 +1473,8 @@ fflush(stdout);
 			   So we just do it when we stop.
 			*/
 
-			realm->touch_down_cb(realm, model,
-                           realm->touch_down_cb_client_data,
-					     0);
+			if(realm->parked_cb != NULL)
+			    realm->parked_cb(model, realm->parked_cb_client_data);
 		    }
 		} else {
 		    model->stopped = False;

@@ -53,6 +53,9 @@ SFMRealmStruct *SFMInit(int argc, char **argv)
 	realm->touch_down_cb_client_data = NULL;
 	realm->touch_down_cb = NULL;
 
+	realm->parked_cb_client_data = NULL;
+	realm->parked_cb = NULL;
+
 	realm->collision_cb_client_data = NULL;
 	realm->collision_cb = NULL;
 

@@ -79,6 +79,10 @@ typedef struct {
 	void		*touch_down_cb_client_data;
 	void		(*touch_down_cb)(void *, SFMModelStruct *, void *, double);
 
+	/* Model has parked (it is landed and stopped) */
+	void		*parked_cb_client_data;
+	void		(*parked_cb)(SFMModelStruct *, void *);
+
 	/* Model has exceeded its maximum expected speed. arg4 is the
 	 * current speed and arg5 is maximum expected speed (all units in
 	 * meters per cycle)

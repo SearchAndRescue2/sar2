@@ -745,6 +745,8 @@ int SARSceneLoadFromFile(
 	    realm->airborne_cb = SARSimAirborneCB;
 	    realm->touch_down_cb_client_data = core_ptr;
 	    realm->touch_down_cb = SARSimTouchDownCB;
+	    realm->parked_cb_client_data = core_ptr;
+	    realm->parked_cb = SARSimParkedCB;
 	    realm->overspeed_cb_client_data = core_ptr;
 	    realm->overspeed_cb = SARSimOverspeedCB;
 	    realm->collision_cb_client_data = core_ptr;
