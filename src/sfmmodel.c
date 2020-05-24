@@ -252,9 +252,11 @@ SFMBoolean SFMModelChangeValues(
 		sizeof(SFMPositionStruct)
 	    );
 	}
-	if(flags & SFMFlagSpeed)
+	if(flags & SFMFlagAirspeedVector)
 	{
-	    model->speed = value->speed;
+	    memcpy(
+		&model->airspeed_vector, &value->airspeed_vector,
+		sizeof(SFMPositionStruct));
 	}
 	if(flags & SFMFlagSpeedStall)
 	{
@@ -286,6 +288,14 @@ SFMBoolean SFMModelChangeValues(
 	if(flags & SFMFlagBellyHeight)
 	{
 	    model->belly_height = value->belly_height;
+	}
+	if(flags & SFMFlagLength)
+	{
+	    model->length = value->length;
+	}
+	if(flags & SFMFlagWingspan)
+	{
+	    model->wingspan = value->wingspan;
 	}
 	if(flags & SFMFlagGearState)
 	{
@@ -392,9 +402,9 @@ SFMBoolean SFMModelChangeValues(
 	{
 	    model->air_brakes_state = value->air_brakes_state;
 	}
-	if(flags & SFMFlagAirBrakesRate)
+	if(flags & SFMFlagAirBrakesArea)
 	{
-	    model->air_brakes_rate = value->air_brakes_rate;
+	    model->air_brakes_area = value->air_brakes_area;
 	}
 	if(flags & SFMFlagCanCrashIntoOther)
 	{

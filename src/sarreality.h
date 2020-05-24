@@ -53,9 +53,14 @@
 #define SAR_SHADOW_VISIBILITY_HEIGHT	100
 
 /*
- *	Gravity (in meters per cycle^2):
+ *	Troposphere constants
  */
-#define SAR_GRAVITY	(9.8 * SAR_SEC_TO_CYCLE_COEFF * SAR_SEC_TO_CYCLE_COEFF)
+#define SAR_GRAVITY		(9.80665 * SAR_SEC_TO_CYCLE_COEFF * SAR_SEC_TO_CYCLE_COEFF)	// m/cycle^2
+#define SAR_SEA_LEVEL_PRESSURE	101325.0	// Pa
+#define SAR_SEA_LEVEL_TEMP	288.15	// K
+#define SAR_TEMP_LAPSE_RATE	0.0065	// K/M
+#define SAR_IDEAL_GAS_CONSTANT	8.31447	// J/(mol·K)
+#define SAR_DRY_AIR_MOLAR_MASS	0.0289654	// kg/mol
 
 /*
  *	Maximum visibility (in meters), this value is used for generation

@@ -67,6 +67,12 @@ temperature 0.7 0.7       0.7
 # Belly to center height in meters
 belly_height 0.65
 
+# Length in meters
+length 19.59
+
+# Wingspan in meters
+wingspan 13.11
+
 # Gear (down position) to belly height in meters
 gear_height 0.7
 
@@ -74,9 +80,10 @@ gear_height 0.7
 #              wheel_base_dist_m turn_vel_opt_mph turn_vel_max_mph
 ground_turning 6.4               8.0             200.0
 
-# Air brakes
-#          drag in (miles per hour)
-air_brakes 80.0
+# Air brakes exposed area when deployed (square meters)
+# This is oversized as effectively they probably disable
+# thrust.
+air_brakes 20
 
 # Attitude change rate (in degrees per second), specifies the
 # control sensitivity.
@@ -98,17 +105,17 @@ fuel 2.42                      13500       13500
 
 # Engine settings
 #      can_pitch? initial_pitched? power  collective_range
-engine 0          1                8000.0 1.0
+engine 0          1                10000 1.0
 
 # Speed bounds (all in mph)
 #     stall  speed_max  min_drag  overspeed_expected  overspeed
-speed 190.0  58000.0    3.7       1600.0              1700.0
+speed 140.0  58000.0    3       1600.0              1700.0
 
 # Attitude leveling in degrees per second
 attitude_leveling 0.0 0.8 0.8
 
-# Service ceiling in feet (about 5 times the actual value)
-service_ceiling 150000
+# Service ceiling in feet
+service_ceiling 65000
 
 # Crew and capacity
 #    crew  passengers passengers_max

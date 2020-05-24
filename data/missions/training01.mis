@@ -25,6 +25,9 @@ weather Cloudy
 # Scenery file
 mission_scene_file scenery/los_angeles.scn
 
+# Wind
+wind 0 25 gusts
+
 # Begin at object (name of object from scene file)
 mission_begin_at helipad_smo
 

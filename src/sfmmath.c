@@ -20,7 +20,6 @@
 #include <math.h>
 #include "sfm.h"
 
-
 double SFMHypot2(double dx, double dy);
 double SFMHypot3(double dx, double dy, double dz);
 
@@ -37,6 +36,7 @@ double SFMFeetToMeters(double feet);
 double SFMMetersToMiles(double m);
 double SFMMilesToMeters(double miles);
 double SFMMPHToMPC(double mph);
+double SFMKTSToMPC(double kts);
 double SFMMPHToKTS(double mph);
 double SFMKTSToMPH(double kts);
 double SFMMPCToMPH(double mpc);
@@ -55,9 +55,10 @@ char *SFMLongitudeToString(double dms_x);
 char *SFMLatitudeToString(double dms_y);
 
 double SFMStallCoeff(
-	double current_speed, double stall_speed, double speed_max
+    double current_speed, double stall_speed, double speed_max
 );
-
+double SFMCurrentSpeedForStall(
+    double vel_y, double vel_z, double pitch);
 
 #define POW(x,y)        (((x) > 0.0f) ? pow(x,y) : 0.0f)
 #define SQRT(x)		(((x) > 0.0f) ? sqrt(x) : 0.0f)
@@ -65,6 +66,7 @@ double SFMStallCoeff(
 #define MAX(a,b)        (((a) > (b)) ? (a) : (b))
 #define MIN(a,b)        (((a) < (b)) ? (a) : (b))
 #define CLIP(a,l,h)     (MIN(MAX((a),(l)),(h)))
+#define ABS(x)		(((x) < 0.0) ? ((x) * -1.0) : (x))
 
 #define RADTODEG(r)     ((r) * 180 / PI)
 #define DEGTORAD(d)     ((d) * PI / 180)
@@ -204,6 +206,13 @@ double SFMMPHToMPC(double mph)
 	);
 }
 
+/*
+ *      Convert nautical miles per hour to meters per cycle:
+ */
+double SFMKTSToMPC(double kts)
+{
+    return SFMMPHToMPC(SFMKTSToMPH(kts));
+}
 /*
  *	Convert miles (US Statute) per hour to nautical miles per hour:
  */
@@ -412,7 +421,6 @@ char *SFMLatitudeToString(double dms_y)
 	return(str);
 }       
 
-
 /*
  *      Calculates a stall coefficient based on the given stall
  *      speed (all units in meters per cycle), current speed, and
@@ -420,18 +428,44 @@ char *SFMLatitudeToString(double dms_y)
  *      is the highest stall coefficient (when current speed is 0).
  */
 double SFMStallCoeff(
-	double current_speed, double stall_speed, double speed_max
+    double current_speed, double stall_speed, double speed_max
 )
 {
-	if(current_speed > stall_speed)
-	    return(0.0);
-	else if(stall_speed <= 0.0)
-	    return(0.0);
-	else if(current_speed <= 0.0)
-	    return(1.0);
-	else
-#if 0
-	    return(1.0 - POW(current_speed / stall_speed, 1.5));
-#endif
-	    return(1.0 - (current_speed / stall_speed));
+    //printf("SFMstall: cur: %.3f, stall: %.3f\n", current_speed, stall_speed);
+    if(current_speed > stall_speed)
+	return(0.0);
+    else if(stall_speed <= 0.0)
+	return(0.0);
+    else if(current_speed <= 0.0)
+	return(1.0);
+    else
+	return(1.0 - (current_speed / stall_speed));
+}
+
+/*
+ * SFMCurrentSpeedForStall returns the actual speed that should be used to
+ * calculate the stall coefficient given the current Y and Z speeds and pitch.
+ * This ensures that falling fast while level on the horizon does not count as
+ * when calculating the speed that gives the stall coefficient.
+ */
+
+double SFMCurrentSpeedForStall(
+    double vel_y, double vel_z, double pitch)
+{
+    double sin_pitch = sin(pitch);
+    double meaningful_z = 0.0;
+
+    // Does z matter to knowing if we are stalling?
+    // Yes when pitched up heavily and positive
+    if(sin_pitch < -0.2 && vel_z > 0)
+	meaningful_z += vel_z;
+
+    // Or when pitched down heavily and negative
+    else if(sin_pitch > -0.2 && vel_z < 0)
+	meaningful_z += vel_z;
+
+    // Otherwise falling down with z speed should not get us out of stall.
+    // This does not mean much in practice anyways.
+
+    return SFMHypot2(vel_y, meaningful_z);
 }

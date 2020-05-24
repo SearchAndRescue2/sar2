@@ -31,7 +31,7 @@ Range: <bold>200 nm (370 km)<default>\
 Powerplant: <bold>Two Pratt & Whitney JFTD 12-4A turboshafts<default>\
 Power: <bold>9,600 shp (7,158 kW)<default>\
 Payload: <bold>20,000 lbs (9,072 kg)<default>\
-Service Ceiling: <bold>N/A<default>\
+Service Ceiling: <bold>9000 ft<default>\
 Fuel: <bold>5286 lbs (2397 kg)<default>
 
 type 4
@@ -57,6 +57,9 @@ temperature 0.7 0.7       0.7
 # Belly to center height in meters
 belly_height 3.55
 
+# Length in meters
+length 21.41
+
 # Gear (down position) to belly height in meters
 gear_height 0.45
 
@@ -64,8 +67,7 @@ gear_height 0.45
 #              wheel_base_dist_m turn_vel_opt_mph turn_vel_max_mph
 ground_turning 5.6               10.0             130.0
 
-# Air brakes
-#          drag in (miles per hour)
+# Air brakes exposed area when deployed (square meters)
 air_brakes 0.0
 
 # Attitude change rate (in degrees per second), specifies the
@@ -76,7 +78,7 @@ attitude_change_rate  22.0 6.0 15.0
 # Acceleration responsiveness, higher values produce less
 # responsiveness.
 #                      i        j       k
-helicopter_accelresp   8000.0   3500.0  4800.0
+helicopter_accelresp   8000.0   3500.0  3500.0
 airplane_accelresp    15000.0  12000.0     3.0
 
 # Dry mass in kg
@@ -96,14 +98,14 @@ engine 0          0                        145000.0 0.98
 
 # Speed bounds (all in mph)
 #     stall speed_max  min_drag  overspeed_expected overspeed
-speed 90.0  35000.0    1.8       128.0              155.0
+speed 90.0  35000.0    0.8       128.0              155.0
 
 # Attitude leveling in degrees per second
 #                 h   p   b
 attitude_leveling 0.0 1.3 1.5
 
 # Service ceiling in feet (about 4 times the actual value).
-service_ceiling 16500.0
+service_ceiling 9000.0
 
 # Hoist
 #     x   y    z     rope_max_m rope_rate_m/c  capacity_kg  contact_r zmin zmax  b? d? h?

@@ -25,6 +25,7 @@
 #define SARFIO_H
 
 #include <sys/types.h>
+#include "obj.h"
 
 
 /*
@@ -101,7 +102,7 @@
 #define SAR_PARM_HUMAN_MESSAGE_ENTER	180
 #define SAR_PARM_HUMAN_REFERENCE	181
 #define SAR_PARM_WELCOME_MESSAGE        182
-
+#define SAR_PARM_WIND                   183
 
 /*
  *	File format parameter and value structures:
@@ -147,6 +148,17 @@ typedef struct {
 	char *weather_preset_name;
 
 } sar_parm_weather_struct;
+
+/* SAR_PARM_WIND */
+typedef struct {
+
+    int type;
+    float heading; /* Radians */
+    float speed;   /* In meters per cycle */
+    sar_obj_flags_t flags;	/* Any of SAR_WIND_FLAG_* */
+
+} sar_parm_wind_struct;
+
 
 /* SAR_PARM_TIME_OF_DAY */
 typedef struct {

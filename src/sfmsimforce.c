@@ -21,6 +21,7 @@
 #include <math.h>
 #include "matrixmath.h"
 #include "sfm.h"
+#include "sarreality.h"
 
 
 static SFMBoolean SFMForceTouchDownCheck(
@@ -38,6 +39,14 @@ static int SFMForceApplySlew(
 int SFMForceApplyNatural(
 	SFMRealmStruct *realm, SFMModelStruct *model
 );
+
+static int SFMForceApplyAirDrag(
+	SFMRealmStruct *realm, SFMModelStruct *model
+);
+
+void SFMSetAirspeed(
+    SFMRealmStruct *realm, SFMModelStruct *model);
+
 int SFMForceApplyArtificial(
 	SFMRealmStruct *realm, SFMModelStruct *model
 );
@@ -54,10 +63,16 @@ int SFMForceApplyControl(
 #define MAX(a,b)        (((a) > (b)) ? (a) : (b))
 #define MIN(a,b)        (((a) < (b)) ? (a) : (b))
 #define CLIP(a,l,h)     (MIN(MAX((a),(l)),(h)))
-
+#define ABS(x)		(((x) < 0.0) ? ((x) * -1.0) : (x))
+#define SQRT(x)              (((x) > 0.0f) ? sqrt(x) : 0.0f)
 #define RADTODEG(r)     ((r) * 180 / PI)
 #define DEGTORAD(d)     ((d) * PI / 180)
 
+#define GM_DIV_RL (SAR_GRAVITY * SAR_DRY_AIR_MOLAR_MASS) /\
+    (SAR_IDEAL_GAS_CONSTANT * SAR_TEMP_LAPSE_RATE)
+#define P0M_DIV_RT0 (SAR_SEA_LEVEL_PRESSURE * SAR_DRY_AIR_MOLAR_MASS) /\
+    (SAR_IDEAL_GAS_CONSTANT * SAR_SEA_LEVEL_TEMP)
+#define L_DIV_T0 SAR_TEMP_LAPSE_RATE / SAR_SEA_LEVEL_TEMP
 
 /*
  *	Checks if the object has come down and impacted the ground
@@ -396,6 +411,8 @@ static int SFMForceApplySlew(
  *
  *	* Air/ground drag & attitude leveling
  *
+ *	* Wind force
+ *
  *	* Recalculate ground to center height
  *
  *	* Callbacks will be called when needed.
@@ -408,17 +425,17 @@ int SFMForceApplyNatural(
 	SFMRealmStruct *realm, SFMModelStruct *model
 )
 {
-	double drag_net = 0.0;
-	double tc_min = MIN(realm->time_compensation, 1.0);
-	double time_compensation = realm->time_compensation;
-	double time_compression = realm->time_compression;
-	SFMFlags		flags = model->flags;
-	SFMDirectionStruct	*dir = &model->direction;
-	SFMPositionStruct	*pos = &model->position,
-				*vel = &model->velocity_vector;
-	SFMBoolean		gear_state = model->gear_state;
-	int			gear_type = model->gear_type;
-	double			ground_elevation_msl = model->ground_elevation_msl;
+	double			 tc_min		      = MIN(realm->time_compensation, 1.0);
+	double			 time_compensation    = realm->time_compensation;
+	double			 time_compression     = realm->time_compression;
+	SFMFlags		 flags		      = model->flags;
+	SFMDirectionStruct	*dir		      = &model->direction;
+	SFMPositionStruct	*pos		      = &model->position;
+	SFMPositionStruct	*vel		      = &model->velocity_vector;
+	SFMPositionStruct	*airspeed	      = &model->airspeed_vector;
+	SFMBoolean		 gear_state	      = model->gear_state;
+	int			 gear_type	      = model->gear_type;
+	double			 ground_elevation_msl = model->ground_elevation_msl;
 
 
 	/* Flight model type must be defined */
@@ -440,25 +457,42 @@ int SFMForceApplyNatural(
 	    model->center_to_ground_height = 0.0;
 	}
 
+	/* Apply air drag and wind. */
+	if(SFMForceApplyAirDrag(realm,model))
+	    return(1);
 
 	/* Handle air friction caused drag by flight model type */
 	switch(model->type)
 	{
 	  case SFMFlightModelAirplane:
+
 	    if(flags & (SFMFlagPosition | SFMFlagDirection |
-			SFMFlagVelocityVector | SFMFlagSpeed |
+			SFMFlagVelocityVector | SFMFlagAirspeedVector |
 			SFMFlagSpeedMax | SFMFlagDragMin |
 			SFMFlagLandedState | SFMFlagEnginePower)
 	    )
 	    {
 		/* Airplane flight model */
-		double prev_speed = model->speed;
-		double speed_change_coeff;
 
-		double pitch_drop_coeff, pitch_raise_coeff;
+		double sin_pitch = sin(dir->pitch),
+		    cos_pitch = cos(dir->pitch),
+		    sin_bank = sin(dir->bank),
+		    cos_bank = cos(dir->bank);
+
+		/* Effective speed used to calculate if we are stalling */
+		double stall_speed = SFMCurrentSpeedForStall(airspeed->y, airspeed->z, dir->pitch);
+		/* Ground speed */
+		double prev_abs_speed = SFMHypot2(vel->y, vel->z);
+
 		/* Pitch change rates in radians per cycle */
 		double pitch_drop_rate = (0.25 * PI);
 		double pitch_raise_rate = (0.075 * PI);
+		double pitch_drop_coeff, pitch_raise_coeff;
+
+		/* Speed with a gravity modifier */
+		double gravity_speed_zy;
+		/* Change coeff of speed with gravity vs current speed */
+		double speed_change_coeff;
 
 
 		/* Calculate pitch drop coeff, independant of stall coeff
@@ -467,11 +501,11 @@ int SFMForceApplyNatural(
 		 * it reaches 0.0 at overspeed_expected instead of the
 		 * speed_stall.
 		 */
-		if(model->speed > model->speed_stall)
+		if(stall_speed >  model->speed_stall)
 		{
-		    double sdc = 0.10;	/* Drop coeff at stall thres */
+		    double sdc = 0.10;	/* Drop coeff over stall thres */
 		    double sm = model->overspeed_expected - model->speed_stall;
-		    double sc = model->speed - model->speed_stall;
+		    double sc = stall_speed - model->speed_stall;
 
 		    /* Calculate pitch drop */
 		    if(sm > 0.0)
@@ -485,15 +519,15 @@ int SFMForceApplyNatural(
 		     */
 		    if(sm > 0.0)
 			pitch_raise_coeff = MIN(sc / sm, 1.0) * 
-			    cos(dir->bank);
+			    cos_bank;
 		    else
 			pitch_raise_coeff = 0.0;
 		}
 		else
 		{
-		    double sdc = 0.10;	/* Drop coeff at stall thres */
+		    double sdc = 0.10;	/* Drop coeff under stall thres */
 		    double sm = model->speed_stall;
-		    double sc = model->speed;
+		    double sc = stall_speed;
 
 		    /* Calculate pitch drop */
 		    if(sm > 0.0)
@@ -506,60 +540,40 @@ int SFMForceApplyNatural(
 		    pitch_raise_coeff = 0.0;
 		}
 
-
-		/* Calculate net drag (air frame drag) based on the engine
-		 * power and the current speed relative to its maximum
-		 * speed.  As current speed approaches the maximum speed,
-		 * the net drag (airframe drag) approaches the engine power
-		 * (which should counteract all engine appied speed).
-		 * Note that the net drag must always remain at or above
-		 * the minimum drag.
+		/* Increase speed if pitched down due to gravity or decrease
+		 * speed if pitched up due to gravity. In either gravity has
+		 * its greatest affect with pitched directly up or down but
+		 * gravity has minimal affect when pitched level.
+		 *
+		 * This compensates not having a real airdrag model that
+		 * accounts for lift produced by the winds.
+		 *
+		 * Also, if we are banking, that part of the gravity speed is
+		 * transferred to X axis.
 		 */
-		if(model->speed_max > 0.0f)
-		    drag_net = MAX(
-			model->engine_power *
-			POW(model->speed / model->speed_max, 1.7f),
-			model->drag_min
-		    ) * tc_min;
-
-		/* Add air brakes to net drag if deployed */
-		if(flags & (SFMFlagAirBrakesState | SFMFlagAirBrakesRate))
-		{
-		    if(model->air_brakes_state)
-			drag_net += model->air_brakes_rate * tc_min;
-		}
-
-
-		/* Reduce speed due to net drag (airframe drag) */
-		model->speed -= drag_net;
-
-		/* Increase speed if pitched down due to gravity or
-		 * decrease speed if pitched up due to gravity. In either
-		 * gravity has its greatest affect with pitched directly
-		 * up or down but gravity has minimal affect when pitched
-		 * level.
-		 */
-		model->speed += sin(dir->pitch) * realm->gravity * tc_min;
+		gravity_speed_zy = prev_abs_speed +
+		    realm->gravity * tc_min * (sin_pitch - ABS(sin_bank * cos_pitch));
 
 		/* Keep speed zero or positive */
-		if(model->speed < 0.0)
-		    model->speed = 0.0;
-
+		if(gravity_speed_zy < 0.0)
+		    gravity_speed_zy = 0.0;
 
 		/* Calculate the amount of speed changed from the above
-		 * drag and gravity calculations, this will be applied
-		 * to the velocity vector.
+		 * gravity calculation, and apply to the to the velocity
+		 * vector.
 		 */
-		if(prev_speed > 0.0)
-		    speed_change_coeff = (model->speed / prev_speed);
+		if(prev_abs_speed > 0.0)
+		    speed_change_coeff = (gravity_speed_zy / prev_abs_speed);
 		else
 		    speed_change_coeff = 1.0;
 
 		/* Add speed change to velocity vector */
-		vel->x *= speed_change_coeff;	/* Always 0.0 */
 		vel->y *= speed_change_coeff;
 		vel->z *= speed_change_coeff;
 
+		/* An airplane flying sideways should get some X-speed.
+		 */
+		vel->x += realm->gravity * tc_min * sin_bank * cos_pitch;
 
 		/* Apply pitch drop? */
 		if((pitch_drop_coeff > 0.0) &&
@@ -655,63 +669,13 @@ int SFMForceApplyNatural(
 	  /* ***************************************************** */
 	  case SFMFlightModelHelicopter:
 	    if(flags & (SFMFlagPosition | SFMFlagDirection |
-			SFMFlagVelocityVector | SFMFlagSpeed |
+			SFMFlagVelocityVector | SFMFlagAirspeedVector |
 			SFMFlagSpeedMax | SFMFlagDragMin |
 			SFMFlagLandedState | SFMFlagEnginePower)
 	    )
 	    {
 		/* Helicopter flight model */
 		double prev_angle;
-
-
-		/* Calculate net drag */
-		if(model->speed_max > 0.0f)
-		    drag_net = MAX(
-			model->engine_power *
-			POW(model->speed / model->speed_max, 1.7f),
-			model->drag_min
-		    ) * tc_min;
-
-		/* Add air brakes to net drag if deployed */
-		if(flags & (SFMFlagAirBrakesState | SFMFlagAirBrakesRate))
-		{
-		    if(model->air_brakes_state)
-			drag_net += model->air_brakes_rate * tc_min;
-		}
-
-
-		/* Apply sideways drag */
-		if(vel->x < 0.0)
-		{
-		    vel->x += drag_net;
-		    if(vel->x > 0.0)
-		        vel->x = 0.0;
-		}
-		else
-		{
-		    vel->x -= drag_net;
-		    if(vel->x < 0.0)
-			vel->x = 0.0;
-		}
-
-		/* Apply forwards/backwards drag */
-		if(vel->y < 0.0)
-		{
-		    vel->y += drag_net;
-		    if(vel->y > 0.0)
-			vel->y = 0.0;
-		}   
-		else
-		{
-		    vel->y -= drag_net;
-		    if(vel->y < 0.0)
-			vel->y = 0.0;
-		}
-
-		/* Set new current speed based on drag applied IJ plane
-		 * velocities
-		 */
-		model->speed = SFMHypot2(vel->x, vel->y);
 
 		/* Helicopter flight model landed? */
 		if((model->landed_state) &&
@@ -819,7 +783,7 @@ int SFMForceApplyNatural(
 	 * model type.
 	 */
 	if(flags & (SFMFlagPosition | SFMFlagDirection |
-		    SFMFlagVelocityVector | SFMFlagSpeed |
+		    SFMFlagVelocityVector | SFMFlagAirspeedVector |
 		    SFMFlagSpeedMax | SFMFlagDragMin |
 		    SFMFlagLandedState | SFMFlagEnginePower)
 	)
@@ -831,8 +795,13 @@ int SFMForceApplyNatural(
 		 * pitch and bank ground leveling
 		 */
 		double prev_angle;
-		double x_vel_ground_drag = (5.0 * tc_min);	/* Meters per cycle */
+		/* Drag so that wheels do not skid to the sides.
+		 * Value rather arbitrary.
+		 */
+		double x_vel_ground_drag = (10.0 * tc_min);	/* Meters per cycle */
 
+		/* Small drag for wheels when rolling forward or backwards */
+		double y_vel_ground_drag = (0.1 * tc_min);	/* Meters per cycle */
 
 		/* Applying strong ground drag if landing gear is not
 		 * down or gear type is not wheels.
@@ -870,16 +839,11 @@ int SFMForceApplyNatural(
 			if(vel->y < 0.0)
 			    vel->y = 0.0;
 		    }
-
-		    /* Do not modify z velocity */
-
-		    /* Update speed */
-		    model->speed = SFMHypot2(vel->x, vel->y);
 		}
 		else
 		{
-		    /* Landed and on wheels, apply drag to just the
-		     * I compoent direction.
+		    /* Landed and on wheels, apply drags to the X and Y
+		     * components.
 		     */
 
 		    if(vel->x < 0.0)
@@ -895,10 +859,21 @@ int SFMForceApplyNatural(
 			    vel->x = 0.0;
 		    }
 
-		    /* Do not modify z velocity */
-
-		    /* Update speed */
-		    model->speed = SFMHypot2(vel->x, vel->y);
+		    /* While little, wheels also drag when going
+		     * forward/backwards.
+		     */
+		    if(vel->y < 0.0)
+		    {
+			vel->y += y_vel_ground_drag;
+			if(vel->y > 0.0)
+			    vel->y = 0.0;
+		    }
+		    else
+		    {
+			vel->y -= y_vel_ground_drag;
+			if(vel->y < 0.0)
+			    vel->y = 0.0;
+		    }
 		}
 
 		/* Apply ground bank leveling? */
@@ -966,8 +941,198 @@ int SFMForceApplyNatural(
 	    }	/* In flight */
 	}
 
-
 	return(0);
+}
+
+
+/*
+ * Apply air drag to the aircrafts. The drag will be different depending on
+ * the reaml's wind, so calculations are made depending on the relative speed between
+ * the aircraft and the wind.
+ *
+ * This follows the aerodynamic drag formulas by calculating first the surface
+ * area exposed to each velocity component, given the aircraft orientation,
+ * followed by the air density at the current height and putting all that
+ * together to produce acceleration components that depend on the aircraft's
+ * total mass. The effect of the wind can be tuned by adjusting the aircraft's
+ * drag parameter.
+ *
+ * This is called from SFMForceApplyNatural.
+ */
+static int SFMForceApplyAirDrag(
+	SFMRealmStruct *realm, SFMModelStruct *model
+)
+{
+    double tc_min = MIN(realm->time_compensation, 1.0);
+
+    SFMFlags		 flags	    = model->flags;
+    SFMDirectionStruct	*dir	    = &model->direction;
+    SFMPositionStruct	*pos	    = &model->position;
+    SFMPositionStruct	*vel	    = &model->velocity_vector;
+    SFMPositionStruct	*wind	    = &realm->wind_vector;
+    double		 cur_height = pos->z;
+    double		 mass	    = model->total_mass;
+    double		 air_density, pc, lift_compensation;
+
+    SFMPositionStruct rel_wind, area, surfaces, drag, accel;
+
+    //SFMBoolean		gear_state	     = model->gear_state;
+    //int			gear_type	     = model->gear_type;
+    //double			ground_elevation_msl = model->ground_elevation_msl;
+    rel_wind.x = wind->x;
+    rel_wind.y = wind->y;
+    rel_wind.z = wind->z;
+
+    if(flags & (SFMFlagTotalMass | SFMFlagLandedState |
+		SFMFlagPosition | SFMFlagDirection |
+		SFMFlagVelocityVector | SFMFlagAirspeedVector |
+		SFMFlagBellyHeight)
+	)
+    {
+	/* Rotate wind coordinates so that they match the velocity ones (which
+	 * are relative to the heading of the aircraft.
+	 */
+	SFMOrthoRotate2D(-dir->heading, &rel_wind.x, &rel_wind.y);
+
+	/* Calculate relative wind speeds to the aircraft */
+	rel_wind.x -= vel->x;
+	rel_wind.y -= vel->y;
+	rel_wind.z -= -vel->z;
+
+	/* Calculate the surface area of the aircraft on every component:
+	 *   X is seen from the sides
+	 *   Y is seen from the back/front
+	 *   Z is seen from the top
+	 *
+	 * These are rough approximations based on known dimensions.
+	 */
+	switch(model->type)
+	{
+	    case SFMFlightModelAirplane:
+		// An 1.5x rectangle length/diameter
+		surfaces.x = 1.5 * 2 * model->belly_height * model->length;
+		// 2x Circle of belly_height radius
+		surfaces.y = 2 * PI * model->belly_height * model->belly_height;
+		// 1/3rd of the rectangle
+		surfaces.z = model->wingspan * model->length / 3;
+		break;
+	    case SFMFlightModelHelicopter:
+		// Asume a rectangle
+		surfaces.x = 2 * model->belly_height * model->length;
+		// A circle of belly_height radius
+		surfaces.y = PI * model->belly_height * model->belly_height;
+		// Half a rectangle
+		surfaces.z = 0.5 * 2 * model->belly_height * model->length;
+		break;
+	}
+
+	/* Air brakes deployed? That increases the Y surface. */
+	if(flags & (SFMFlagAirBrakesState | SFMFlagAirBrakesArea))
+	{
+	    if(model->air_brakes_state)
+		surfaces.y += model->air_brakes_area;
+	}
+
+	//printf("sx: %f.2; sy: %f.2; sz: %f.2;\n", surfaces.x, surfaces.y, surfaces.z);
+
+	/* Calculate the actual areas exposed to each wind component. They depend on the
+	 * current values of bank/pitch.
+	 */
+
+	// Area exposed to X wind
+	area.x = ABS(cos(dir->bank)) * surfaces.x + ABS(sin(dir->bank)) * surfaces.z;
+	// Area exposed to Y wind
+	area.y = ABS(cos(dir->pitch)) * surfaces.y + ABS(sin(dir->pitch)) * surfaces.z;
+	// Area exposed to Z wind
+	area.z = ABS(sin(dir->pitch)) * surfaces.y +
+	    ABS(cos(dir->pitch) * cos(dir->bank)) * surfaces.z +
+	    ABS(cos(dir->pitch) * sin(dir->bank)) * surfaces.x;
+	//printf("ax: %f.2; ay: %f.2; az: %f.2;\n", area.x, area.y, area.z);
+
+	/* Obtain air density at current height.
+	 * https://en.wikipedia.org/wiki/Density_of_air#Variation_with_altitude
+	 */
+	air_density = P0M_DIV_RT0 * POW(1 - (L_DIV_T0 * cur_height), GM_DIV_RL - 1);
+
+	// pc = 1/2 * density * drag coeff. We will add speed and area for
+	// every component separately.
+	pc = 0.5 * air_density * model->drag_min;
+
+	/* Obtain aerodynamic drag force for each component.
+	 * https://en.wikipedia.org/wiki/Drag_%28physics%29#Types_of_drag
+	 * https://physics.info/drag/
+	 *
+	 * Since v^2 would lose the magnitude sign we just keep it with ABS(v) * v.
+	 */
+	drag.x = pc * area.x * ABS(rel_wind.x) * rel_wind.x;
+	drag.y = pc * area.y * ABS(rel_wind.y) * rel_wind.y;
+	drag.z = pc * area.z * ABS(rel_wind.z) * rel_wind.z;
+
+	/* On airplanes there is in practice excessive Y drag when pitching up
+	 * or down. Since we do not have a lift force model, this does not
+	 * translate on increased/decreased Z speed. When going up there is
+	 * additionally more gravity. This results in a penalty when climbing.
+	 *
+	 * We adjust by adding "lift compensation".  (sin_pitch*cos_pitch)
+	 * maximum is 0.5 at 45 degrees and -0.5 a -45 degrees. It is 0 at 0 deg.
+	 * This reduces y-drag by 0.5 when pitched at 45 degrees. By then,
+	 * the gravity and thrust calculations transfer enough y-velocity to
+	 * the Z axis so that we do not notice the Y-drag so much anymore.
+	 */
+
+	if(model->type == SFMFlightModelAirplane && model->stall_coeff == 0)
+	{
+	    // Note it cannot be > 1.
+	    lift_compensation = ABS(sin(dir->pitch)*cos(dir->pitch));
+	    drag.y*= (1 - lift_compensation);
+	    // reduce z drag only when going up
+	    if(vel->z > 0)
+		drag.z*= (1 - 2*lift_compensation);
+	}
+
+	// Acceleration (F=ma). The units are m/cycles^2
+	accel.x = drag.x / mass;
+	accel.y = drag.y / mass;
+	accel.z = -drag.z / mass;
+
+	// printf("t: %d, wind: (%.2f,%.2f); wind_rel: (%.2f, %.2f); drag: (%.2f,%.2f,%.2f); accel: (%.2f,%.2f, %.2f)\n", model->type, wind->x, wind->y, rel_wind.x, rel_wind.y,drag.x, drag.y, drag.z, accel.x, accel.y, accel.z);
+
+	// Adjust velocity components. When aircraft is landed the wheels drag
+	// should compensate small winds (particularly side winds).
+	vel->x += accel.x * tc_min;
+	vel->y += accel.y * tc_min;
+	vel->z += accel.z * tc_min;
+    }
+    return (0);
+}
+
+/*
+ * Set the model's airspeed vector from the velocity vector using the current
+ * wind.
+ *
+ * This is called once from simmanage.c.
+ */
+void SFMSetAirspeed(
+    SFMRealmStruct *realm, SFMModelStruct *model)
+{
+
+    SFMFlags		 flags		= model->flags;
+    SFMDirectionStruct	*dir		= &model->direction;
+    SFMPositionStruct	*vel		= &model->velocity_vector;
+    SFMPositionStruct	*airspeed	= &model->airspeed_vector;
+    SFMPositionStruct	*wind		= &realm->wind_vector;
+    double		 rotated_wind_x = wind->x, rotated_wind_y = wind->y;
+
+    if(flags & (SFMFlagVelocityVector | SFMFlagAirspeedVector))
+    {
+	// Rotate wind to match velocity vector (relative to aircraft).
+	SFMOrthoRotate2D(-dir->heading, &rotated_wind_x, &rotated_wind_y);
+
+	airspeed->x = vel->x - rotated_wind_x;
+	airspeed->y = vel->y - rotated_wind_y;
+	airspeed->z = vel->z;
+	//printf("vel_x: %.2f,  vel_y: %.2f, vel_z: %.2f, rel_x: %.2f, rel_y: %.2f\n", vel->x, vel->y, vel->z, airspeed->x, airspeed->y);
+    }
 }
 
 /*
@@ -985,24 +1150,26 @@ int SFMForceApplyArtificial(
 	SFMRealmStruct *realm, SFMModelStruct *model
 )
 {
-	double theta, r;
-	double di = 0.0, dj = 0.0, dk = 0.0;
-	double dic = 0.0, djc = 0.0, dkc = 0.0;
-	double thrust_output = 0;
-	double net_mass = 0.0;		/* In kg */
-	double net_weight;		/* net_mass * SAR_GRAVITY */
-	double	ground_elevation_msl = model->ground_elevation_msl,
+	double	di		      = 0.0, dj = 0.0, dk = 0.0;
+	double	dic		      = 0.0, djc = 0.0, dkc = 0.0;
+	double	thrust_output	      = 0;
+	double	net_weight	      = 0.0;	/* net_mass * SAR_GRAVITY */
+	double	ground_elevation_msl  = model->ground_elevation_msl,
 		center_to_gear_height = 0.0;
-	double tc_min = MIN(realm->time_compensation, 1.0);
-	double time_compensation = realm->time_compensation;
-	double time_compression = realm->time_compression;
-	SFMFlags                flags = model->flags;
-	SFMDirectionStruct      *dir = &model->direction;
-	SFMPositionStruct       *pos = &model->position,
-				*vel = &model->velocity_vector,
-				*ar = &model->accel_responsiveness;
-	SFMBoolean              gear_state = model->gear_state;
-	int                     gear_type = model->gear_type;
+	double  airspeed_3d;
+
+	double	tc_min		  = MIN(realm->time_compensation, 1.0);
+	double	time_compensation = realm->time_compensation;
+	double	time_compression  = realm->time_compression;
+
+	SFMFlags		 flags		   = model->flags;
+	SFMDirectionStruct      *dir		   = &model->direction;
+	SFMPositionStruct       *pos		   = &model->position;
+	SFMPositionStruct	*vel		   = &model->velocity_vector;
+	SFMPositionStruct	*airspeed	   = &model->airspeed_vector;
+	SFMPositionStruct	*ar		   = &model->accel_responsiveness;
+	SFMBoolean		 gear_state	   = model->gear_state;
+	int			 gear_type	   = model->gear_type;
 
 
 	/* Flight model type must be defined */
@@ -1023,14 +1190,12 @@ int SFMForceApplyArtificial(
 	    );
 	}
 
-	/* Calculate net mass of object in kg */
-	if(flags & SFMFlagTotalMass)
-	    net_mass = model->total_mass;
-	if(net_mass < 0.0) 
-	    net_mass = 0.0;
-
 	/* Calculate net weight of object (gravity in cycles) */
-	net_weight = net_mass * realm->gravity;
+	if(flags & SFMFlagTotalMass)
+	    net_weight = model->total_mass * realm->gravity;
+
+	if(net_weight < 0.0)
+	    net_weight = 0.0;
 
 
 	/* Calculate thrust output based on altitude and throttle */
@@ -1041,7 +1206,8 @@ int SFMForceApplyArtificial(
 	    double height_coeff;
 
 	    if(model->service_ceiling > 0.0)
-		height_coeff = (pos->z / model->service_ceiling);
+		/* If we go above the service ceiling the coeff should stay at 1. */
+		height_coeff = MIN(1, (pos->z / model->service_ceiling));
 	    else
 		height_coeff = 0.0;
 
@@ -1068,17 +1234,19 @@ int SFMForceApplyArtificial(
 	/* Check if current speed is exceeding its maximum expected
 	 * speed (overspeed).
 	 */
-	if(flags & (SFMFlagSpeedMax | SFMFlagSpeed))
+	if(flags & (SFMFlagSpeedMax | SFMFlagAirspeedVector))
 	{
+	    /* Use all airspeeds. */
+	    airspeed_3d = SFMHypot3(airspeed->x, airspeed->y, airspeed->z);
 	    /* Current speed greater than expected overspeed? */
-	    if(model->speed > model->overspeed_expected)
+	    if(airspeed_3d > model->overspeed_expected)
 	    {
 		if(realm->overspeed_cb != NULL)
 		    realm->overspeed_cb(
 			realm,
 			model,
 			realm->overspeed_cb_client_data,
-			model->speed,
+			airspeed_3d,
 			model->overspeed_expected,
 			model->overspeed
 		    );
@@ -1090,67 +1258,86 @@ int SFMForceApplyArtificial(
 	}
 
 
-	/* Handle air friction caused drag by flight model type */
 	switch(model->type)
 	{
 	  case SFMFlightModelAirplane:
 	    /* Airplane flight model */
 	    if(flags & (SFMFlagPosition | SFMFlagDirection |
-			SFMFlagVelocityVector | SFMFlagSpeed |
+			SFMFlagVelocityVector | SFMFlagAirspeedVector |
 			SFMFlagSpeedStall | SFMFlagSpeedMax |
 			SFMFlagAccelResponsiveness | SFMFlagLandedState)
 	    )
 	    {
-	        double	speed_coeff,	/* Inverse speed coeff, where 1.0
-					 * is at standing still and 0.0
-					 * is at maximum speed.
+	        double	speed_coeff;	/* Inverse speed coeff, where 1.0 is
+					 * at standing still and 0.0 is at
+					 * maximum speed.
 					 */
-			stall_coeff;	/* The stall coeff, 1.0 is max
+		double	stall_coeff;	/* The stall coeff, 1.0 is max
 					 * stall and 0.0 is no stall.
 					 */
-	        double	prev_speed;
-		/* Velocity sin and cos of pitch and bank, they come
-		 * from attitude but are later adjusted for velocity
-		 * direction.
-		 */
-		double sin_pitch, cos_pitch, sin_bank, cos_bank;
+		double	safe_stall_coeff; /* Similar to above, but at higher
+					  * speeds
+					  */
+
+		double	sin_pitch = sin(dir->pitch);
+		double	cos_pitch = cos(dir->pitch);
+		double	sin_bank  = sin(dir->bank);
+
+		//printf("sin_bank: %.3f; cos_bank: %.3f; sin_pitch: %.3f; cos_pitch: %.3f\n", sin_bank, cos_bank, sin_pitch, cos_pitch);
+
+	        double	prev_ground_speed, prev_airspeed, vel_adjustment;
+
 		/* New velocity applied by aircraft attitude and thrust
 		 * to be added to current velocity.
 		 */
 		double vel_thrust_mag;
 		SFMPositionStruct vel_thrust;
 
+		double current_speed_for_stall = SFMCurrentSpeedForStall(airspeed->y, airspeed->z, dir->pitch);
 
-		/* Record previous speed */
-		prev_speed = model->speed;
+		// Speeds in YZ axis. Used for stalling calculations, thrust etc.
+		if(model->landed_state)
+		{
+		    prev_airspeed = ABS(airspeed->y);
+		    prev_ground_speed = ABS(vel->y);
+		}
+		else
+		{
+		    prev_airspeed= SFMHypot2(airspeed->y, airspeed->z);
+		    prev_ground_speed = SFMHypot2(vel->y, vel->z);
+		}
 
 		/* Calculate speed coeff, where 1.0 is standing still
 		 * and 0.0 is at maximum.
 		 */
 		if(model->speed_max > 0.0)
 		    speed_coeff = MAX(
-			1.0 - (model->speed / model->speed_max),
+			1.0 - (prev_airspeed / model->speed_max),
 			0.0
 		    );
 		else
 		    speed_coeff = 0.0;
 
-		/* Update current stall coefficent. 1.0 is highest
+		/* Calculate stall coefficient. 1.0 is highest
 		 * stall and 0.0 is no stall.
 		 */
-		model->stall_coeff = SFMStallCoeff(
-		    model->speed,
+		stall_coeff = SFMStallCoeff(
+		    current_speed_for_stall,
 		    model->speed_stall,
 		    model->speed_max
 		);
-		stall_coeff = model->stall_coeff;
 
+		/* Calculate safe stall. Unlike the previous, this one
+		 * triggers at a higher speed and represents velocity in which
+		 * the airplane can lose height without being in full stall.
+		 */
+		safe_stall_coeff = SFMStallCoeff(
+		    current_speed_for_stall,
+		    model->speed_stall * 1.75,
+		    model->speed_max
+		    );
 
-		/* Calculate new pitch and bank trig values */
-		sin_pitch = sin(dir->pitch);
-		cos_pitch = cos(dir->pitch);
-		sin_bank = sin(dir->bank);
-		cos_bank = cos(dir->bank);
+		//printf("cur speed stall: %.3f, speed stall: %.3f; stall coeff: %.3f\n", current_speed_for_stall, model->speed_stall, stall_coeff);
 
 		/* Calculate heading change caused by bank, the
 		 * heading change becomes minimal when the speed reaches
@@ -1164,47 +1351,66 @@ int SFMForceApplyArtificial(
 		        time_compression)
 		    );
 
-		/* Calculate new thrust vector in meters per cycle,
-		 * include tc_min. Use acceleration responsiveness'
-		 * j compoent.
+		/* Calculate new thrust vector in meters per cycle, include
+		 * tc_min. Use acceleration responsiveness' y compoent.
+		 *
+		 * The key here is that Y velocity needs to be converted to Z
+		 * velocity when pitching up/down. X and Y are only relative to the
+		 * aircraft heading but remain in the 2D XY plane.
+		 *
+		 * Therefore, thrust is assigned to Y or Z based on pitch.
 		 */
+
 		vel_thrust_mag = thrust_output * tc_min / MAX(ar->y, 1.0);
-		vel_thrust.x = 0.0 * vel_thrust_mag;
-		vel_thrust.y = cos_pitch * vel_thrust_mag;
-		vel_thrust.z = -sin_pitch * vel_thrust_mag;
+		vel_thrust.x = 0.0 * vel_thrust_mag; // thrust does not affect X directly
+		vel_thrust.y = cos_pitch * vel_thrust_mag; // flying forward, Y increases
+		vel_thrust.z = -sin_pitch * vel_thrust_mag; // flying up, Z increases
+		//printf("thrust y: %.3f, pitch: %.3f\n", vel_thrust.y, dir->pitch);
 
-		/* Add thrust velocity to current velocity */
-		vel->x = (0.0 * prev_speed) + vel_thrust.x;
-		vel->y = (cos_pitch * prev_speed) + vel_thrust.y;
-		vel->z = (-sin_pitch * prev_speed) + vel_thrust.z;
-
-
-		/* Calculate stalling velocity */
-		vel->z -= model->speed_stall *
-		    MIN(stall_coeff, 0.25) / MAX(ar->z, 1.0);
-
-
-		/* Re-update speed based on velocity vector compoents
-		 * (ignore x velocity vector compoent for airplane models).
+		/* This applies when we are recovering from stall (current stall smaller than
+		 * the aircraft's). We do not let the stall factor recover too quickly.
+		 * The problem was that the stall factor would sink and this would add speed,
+		 * which would make the stall factor sink again, resulting in a quadratic
+		 * speed gain. This makes it more realistic to get out of a stall by having
+		 * to wait regardless of the speed gained.
 		 */
+		if(!model->landed_state && stall_coeff < model->stall_coeff) {
+		    stall_coeff = MAX(0, model->stall_coeff - 0.1 * tc_min);
+		}
+
+		vel_adjustment = stall_coeff;
 		if(model->landed_state)
-		    model->speed = vel->y;
-		else
-		    model->speed = SFMHypot2(vel->y, vel->z);
+		    vel_adjustment = 0.0;
 
-/*
-printf(" Y:%f Z:%f  new Y:%f Z%f  S:%f  %f\r",
- vel->y, vel->z, vel_thrust.y, vel_thrust.z, obj_helicopter_ptr->speed,
- ar->z
-);
-fflush(stdout);
- */
+		/* Adjust Y/Z velocities by adding thrust, but also by taking into account the current
+		 * stall factor. If we are stalling, velocity is greatly impacted.
+		 */
+		vel->y = (cos_pitch * prev_ground_speed * (1- vel_adjustment)) + vel_thrust.y;
+		vel->z = (-sin_pitch * prev_ground_speed * (1- vel_adjustment)) + vel_thrust.z;
+		model->stall_coeff = stall_coeff;
 
-		/* Calculate new x y position */
-		r = vel->y * time_compensation * time_compression;
-		theta = dir->heading;
-		pos->x += r * sin(theta);
-		pos->y += r * cos(theta);
+		/* Now, additionally increase Z speed when stalling.  We use
+		 * two stall values:
+		 *
+		 * The "normal" one given by stall_coeff represents the loss
+		 *     of aerodynamic lift and triggers alarms.
+		 *
+		 * The "safe" one given by safe_stall_coeff represents gliding
+		 * at low speeds, which allows an airplane pitched up to lose some
+		 * height (usually right before landing).
+		 */
+
+		vel->z -= (model->speed_stall / MAX(ar->z, 1.0) *
+			   (MIN(stall_coeff, 1) + (1.75 * MIN(safe_stall_coeff, 1))));
+
+		/* Calculate new x y position: rotate speed to match scene
+		 * heading.
+		 */
+		dic = vel->x * time_compensation * time_compression;
+		djc = vel->y * time_compensation * time_compression;
+		SFMOrthoRotate2D(dir->heading, &dic, &djc);
+		pos->x += dic;
+		pos->y += djc;
 
 		/* Calculate new z position (but it will actually be
 		 * set farther below).
@@ -1217,7 +1423,7 @@ fflush(stdout);
 	  case SFMFlightModelHelicopter:
 	    /* Helicopter flight model */
 	    if(flags & (SFMFlagPosition | SFMFlagDirection |
-			SFMFlagVelocityVector | SFMFlagSpeed |
+			SFMFlagVelocityVector | SFMFlagAirspeedVector |
 			SFMFlagSpeedStall | SFMFlagSpeedMax |
 			SFMFlagAccelResponsiveness | SFMFlagLandedState)
 	    )
@@ -1266,17 +1472,12 @@ fflush(stdout);
 		djc = dj * time_compensation * time_compression;
 		vel->y = dj;
 
-		/* Rotate direction with object's scene heading */
-		theta = SFMSanitizeRadians((PI / 2) -
-		    atan2(dj, di) + dir->heading
-		);
-		/* Calculate speed on the x y velocity vector plane */
-		model->speed = SFMHypot2(di, dj);
-
-		/* Calculate new position */
-		r = model->speed * time_compensation * time_compression;
-		pos->x += r * sin(theta);
-		pos->y += r * cos(theta);
+		/* Set new positions after rotating the speeds to match
+		 * the scene's heading.
+		 */
+		SFMOrthoRotate2D(dir->heading, &dic, &djc);
+		pos->x += dic;
+		pos->y += djc;
 
 
 		/* Vertical velocity */
@@ -1330,7 +1531,7 @@ fflush(stdout);
 	 * dkc was calculated above).
 	 */
 	if(flags & (SFMFlagPosition | SFMFlagDirection |
-		    SFMFlagVelocityVector | SFMFlagSpeed |
+		    SFMFlagVelocityVector | SFMFlagAirspeedVector |
 		    SFMFlagGroundElevation | SFMFlagServiceCeiling |
 		    SFMFlagBellyHeight | SFMFlagLandedState)
 	)
@@ -1447,8 +1648,6 @@ fflush(stdout);
 			if(vel->y < 0)
 			    vel->y = 0;
 		    }
-
-		    model->speed = SFMHypot2(vel->x, vel->y);
 		}
 	    }
 
@@ -1458,12 +1657,12 @@ fflush(stdout);
 		if(model->landed_state)
 		{
 		    SFMBoolean prev_stopped = model->stopped;
-
+		    double ground_speed = SFMHypot2(vel->x, vel->y);
 		    /* We stop if below 0.01. But only consider to be moving again
-		     * if above 0.1. This avoids flipping. */
-		    if(model->speed < 0.01)
+		     * if above 0.05. This avoids flipping. */
+		    if(ground_speed < 0.01)
 			model->stopped = True;
-		    else if (model->speed > 0.05)
+		    else if(ground_speed > 0.05)
 			model->stopped = False;
 
 		    if(model->stopped && !prev_stopped) {
@@ -1530,12 +1729,13 @@ int SFMForceApplyControl(
 				model->bank_control_coeff, -1.0, 1.0
 	);
 
-	SFMDirectionStruct prev_dir;
+	SFMDirectionStruct	prev_dir;
+	double			theta;
 
 
 	/* Direction and all control positions must be defined */
 	if(!(flags & (SFMFlagFlightModelType | SFMFlagDirection |
-		      SFMFlagVelocityVector | SFMFlagSpeed |
+		      SFMFlagVelocityVector | SFMFlagAirspeedVector |
 		      SFMFlagHeadingControlCoeff | SFMFlagBankControlCoeff |
 		      SFMFlagPitchControlCoeff)
 	))
@@ -1570,8 +1770,6 @@ int SFMForceApplyControl(
 	    if(model->landed_state)
 	    {
 		/* Landed */
-		double theta;
-
 
 		/* Bank by bank (helicopter only) */
 		if(model->type == SFMFlightModelHelicopter)
@@ -1678,23 +1876,6 @@ int SFMForceApplyControl(
 			);
 		    }	/* Heading by heading (turning) */
 		}	/* Ground landing gear turning defined? */
-
-		/* Adjust velocity direction due to heading change */
-		theta = SFMDeltaRadians(
-		    prev_dir.heading, dir->heading
-		);
-		if(theta != 0.0)
-		{
-		    double a[3], r[3];
-
-		    a[0] = vel->x;
-		    a[1] = vel->y;
-		    a[2] = vel->z;
-		    MatrixRotateHeading3(a, -theta, r);
-		    vel->x = r[0];
-		    vel->y = r[1];
-		    vel->z = r[2];
-		}
 	    }
 	    else
 	    {
@@ -1755,41 +1936,70 @@ int SFMForceApplyControl(
 		    );
 		}
 
-	        /* Drag caused by change of heading */
-		if(1)
-		{
-		    double heading_delta = SFMDeltaRadians(
-			prev_dir.heading, dir->heading
-		    );
+		/* We avoid adding additional drags here. Consider them handled by the
+		 * aerodynamic drag model.
+		 */
 
-		    /* Heading delta must always be positive since only the
-		     * net change is important to heading drag regardless
-		     * of direction.
-		     */
-		    if(heading_delta < 0.0)
-			heading_delta *= -1.0;
+	        /* /\* Drag caused by change of heading *\/ */
+		/* if(0) */
+		/* { */
+		/*     /\* Heading delta must always be positive since only the */
+		/*      * net change is important to heading drag regardless */
+		/*      * of direction. */
+		/*      *\/ */
+		/*     double heading_delta = ABS( */
+		/* 	SFMDeltaRadians(prev_dir.heading, dir->heading)); */
 
-		    vel->y *= MAX(1.0 - (heading_delta / (0.5 * PI)), 0.0);
 
-		    /* Update speed depending on flight model */
-		    switch(model->type)
-		    {
-		      case SFMFlightModelAirplane:
-			model->speed = SFMHypot2(vel->z, vel->y);
-			break;
+		/*     printf("heading ch drag: %f\n", MAX(1.0 - (heading_delta / (0.9 * PI)), 0.0)); */
+		/*     vel->y *= MAX(1.0 - (heading_delta / (0.5 * PI)), 0.0); */
+		/* } */
 
-		      case SFMFlightModelHelicopter:
-			model->speed = SFMHypot2(vel->x, vel->y);
-			break;
-		    }
-		}
-#if 0
-printf("\r Speed %.2f  Z Vel: %.2f ",
- SFMMPCToMPH(obj_helicopter_ptr->speed),
- SFMMPCToMPH(vel->z)
-); fflush(stdout);
-#endif
+		/* /\* Drag caused by change of pitch *\/ */
+		/* if(0) */
+		/* { */
+		/*     /\* Heading delta must always be positive since only the */
+		/*      * net change is important to pitch drag regardless */
+		/*      * of direction. */
+		/*      *\/ */
+		/*     double pitch_delta = ABS(SFMDeltaRadians( */
+		/* 	prev_dir.pitch, dir->pitch)); */
+
+		/*     vel->y *= MAX(1.0 - (pitch_delta / (0.9 * PI)), 0.0); */
+		/* } */
+
+		/* /\* Drag caused on X axis by change of bank *\/ */
+		/* if(0) */
+		/* { */
+		/*     /\* Heading delta must always be positive since only the */
+		/*      * net change is important to pitch drag regardless */
+		/*      * of direction. */
+		/*      *\/ */
+		/*     double pitch_delta = ABS(SFMDeltaRadians( */
+		/* 	prev_dir.pitch, dir->pitch)); */
+
+		/*     vel->x *= MAX(1.0 - (pitch_delta / (0.9 * PI)), 0.0); */
+		/* } */
+
 	    }	/* Not landed */
+
+
+	    /* Adjust velocity direction due to heading change.
+	     * This needs to happen any time we turn.
+	     */
+	    theta = SFMDeltaRadians(prev_dir.heading, dir->heading);
+	    if(theta != 0.0)
+	    {
+		double a[3], r[3];
+
+		a[0] = vel->x;
+		a[1] = vel->y;
+		a[2] = vel->z;
+		MatrixRotateHeading3(a, -theta, r);
+		vel->x = r[0];
+		vel->y = r[1];
+		vel->z = r[2];
+	    }
 	}
 
 	return(0);

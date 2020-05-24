@@ -55,7 +55,6 @@
 # define PI     3.14159265
 #endif
 
-
 /*
  *	Position structure (also the vector structure):
  */

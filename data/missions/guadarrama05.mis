@@ -3,7 +3,7 @@
 #
 
 name Guadarrama 5: Sunset flight over the region
-description Take the F22 and fly over Madrid. \
+description Take the YF22 and fly over Madrid. \
 Take off from <underline>Torrejon<default> \
 base and fly around. \
 Finish landing in <underline>Barajas Airport<default> \
@@ -31,6 +31,8 @@ weather Clear
 
 # Scenery file
 mission_scene_file scenery/guadarrama.scn
+
+wind 90 60
 
 # Begin at object (name of object from scene file)
 mission_begin_at helipad_torrejon

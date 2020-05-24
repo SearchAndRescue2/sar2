@@ -430,14 +430,14 @@ void SARCmdSet(SAR_CMD_PROTOTYPE)
 	    }
 	}
 
-	/* Speed (from meters per cycle) */
+	/* Horizontal speed (Y axis) (meters per cycle) */
 	else if(!strcasecmp(parm, "speed"))
 	{
 	    sar_object_aircraft_struct *obj_aircraft_ptr =
 		SAR_OBJ_GET_AIRCRAFT(obj_ptr);
 	    if(obj_aircraft_ptr != NULL)
 	    {
-		obj_aircraft_ptr->speed = (float)MAX(ATOF(val), 0.0);
+		obj_aircraft_ptr->vel.y = (float)MAX(ATOF(val), 0.0);
 		got_match = True;
 	    }
 	}
@@ -554,6 +554,28 @@ void SARCmdSet(SAR_CMD_PROTOTYPE)
 	    if(obj_aircraft_ptr != NULL)
 	    {
 		obj_aircraft_ptr->belly_height = (float)ATOF(val);
+		got_match = True;
+	    }
+	}
+	/* Length */
+	else if(!strcasecmp(parm, "length"))
+	{
+	    sar_object_aircraft_struct *obj_aircraft_ptr =
+		SAR_OBJ_GET_AIRCRAFT(obj_ptr);
+	    if(obj_aircraft_ptr != NULL)
+	    {
+		obj_aircraft_ptr->length = (float)ATOF(val);
+		got_match = True;
+	    }
+	}
+	/* Wingspan */
+	else if(!strcasecmp(parm, "wingspan"))
+	{
+	    sar_object_aircraft_struct *obj_aircraft_ptr =
+		SAR_OBJ_GET_AIRCRAFT(obj_ptr);
+	    if(obj_aircraft_ptr != NULL)
+	    {
+		obj_aircraft_ptr->wingspan = (float)ATOF(val);
 		got_match = True;
 	    }
 	}

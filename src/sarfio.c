@@ -80,6 +80,9 @@ void *SARParmNew(int type)
 	  case SAR_PARM_WEATHER:
 	    len = sizeof(sar_parm_weather_struct);
 	    break;
+	  case SAR_PARM_WIND:
+	    len = sizeof(sar_parm_wind_struct);
+	    break;
 	  case SAR_PARM_TIME_OF_DAY:
 	    len = sizeof(sar_parm_time_of_day_struct);
             break;
@@ -315,6 +318,7 @@ void SARParmDelete(void *p)
 	sar_parm_description_struct *p_description;
 	sar_parm_player_model_file_struct *p_player_model_file;
 	sar_parm_weather_struct *p_weather;
+	sar_parm_wind_struct *p_wind;
 	sar_parm_register_location_struct *p_register_location;
 	sar_parm_scene_map_struct *p_scene_map;
 	sar_parm_scene_ground_tile_struct *p_scene_ground_tile;
@@ -372,6 +376,9 @@ void SARParmDelete(void *p)
 	  case SAR_PARM_WEATHER:
 	    p_weather = (sar_parm_weather_struct *)p;
 	    free(p_weather->weather_preset_name);
+	    break;
+	  case SAR_PARM_WIND:
+	    p_wind = (sar_parm_wind_struct *)p;
 	    break;
 	  case SAR_PARM_REGISTER_LOCATION:
 	    p_register_location = (sar_parm_register_location_struct *)p;

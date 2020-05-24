@@ -40,9 +40,7 @@
 /*
  *	Default gravity in (meters per cycle^2).
  */
-#define SFMDefaultGravity	9.8
-
-
+#define SFMDefaultGravity	9.80665
 
 /*
  *	Core structure:
@@ -58,7 +56,9 @@ typedef struct {
 	/* Simulation constants */
 	double		gravity;		/* Gravity (in meters per cycle^2) */
 
-
+	/* Wind params */
+	SFMPositionStruct       wind_vector;	/* In meters per Cycle */
+	unsigned long		wind_flags;
 	/* Callbacks, typical inputs are; realm pointer,
 	 * model pointer, client data
 	 */
@@ -146,6 +146,7 @@ extern double SFMFeetToMeters(double feet);
 extern double SFMMetersToMiles(double m);
 extern double SFMMilesToMeters(double miles);
 extern double SFMMPHToMPC(double mph);
+extern double SFMKTSToMPC(double kts);
 extern double SFMMPHToKTS(double mph);
 extern double SFMKTSToMPH(double kts);
 extern double SFMMPCToMPH(double mpc);
@@ -163,8 +164,10 @@ extern char *SFMLongitudeToString(double dms_x);
 extern char *SFMLatitudeToString(double dms_y);
 
 extern double SFMStallCoeff(
-	double current_speed, double stall_speed, double speed_max
+    double current_speed, double stall_speed, double speed_max
 );
+extern double SFMCurrentSpeedForStall(
+    double vel_y, double vel_z, double pitch);
 
 
 
@@ -192,8 +195,8 @@ extern int SFMForceApplyArtificial(
 extern int SFMForceApplyControl(
 	SFMRealmStruct *realm, SFMModelStruct *model
 );
-
-
-
+extern void SFMSetAirspeed(
+	SFMRealmStruct *realm, SFMModelStruct *model
+);
 
 #endif	/* SFM_H */

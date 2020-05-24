@@ -568,7 +568,9 @@ int SARSoundStallUpdate(
     /* Calculate the speed at which the sound should be turned on
      * if the speed is lower than this value
      */
-    speed_threshold = speed_stall * 0.78f;
+    // Now that we have 2 stall thresholds we can use the real stall
+    // as limit.
+    speed_threshold = speed_stall; // * 0.78f;
 
     /* Stall warning sound should be turned on? */
     if(!is_landed && (flight_model_type == SAR_FLIGHT_MODEL_AIRPLANE))

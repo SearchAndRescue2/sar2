@@ -38,7 +38,7 @@
 #define SFMFlagPosition			((SFMFlags)1 << 1)
 #define SFMFlagDirection		((SFMFlags)1 << 2)
 #define SFMFlagVelocityVector		((SFMFlags)1 << 3)
-#define SFMFlagSpeed			((SFMFlags)1 << 4)
+#define SFMFlagAirspeedVector		((SFMFlags)1 << 4)
 #define SFMFlagSpeedStall		((SFMFlags)1 << 5)
 #define SFMFlagDragMin			((SFMFlags)1 << 6)
 #define SFMFlagSpeedMax			((SFMFlags)1 << 7)	/* And overspeed_expected and overspeed. */
@@ -66,16 +66,18 @@
 #define SFMFlagAttitudeChangeRate	((SFMFlags)1 << 29)
 #define SFMFlagAttitudeLevelingRate	((SFMFlags)1 << 30)
 #define SFMFlagAirBrakesState		((SFMFlags)1 << 31)
-#define SFMFlagAirBrakesRate		((SFMFlags)1 << 32)
+#define SFMFlagAirBrakesArea		((SFMFlags)1 << 32)
 #define SFMFlagCanCrashIntoOther	((SFMFlags)1 << 33)
 #define SFMFlagCanCauseCrash		((SFMFlags)1 << 34)
 #define SFMFlagCrashContactShape	((SFMFlags)1 << 35)
 #define SFMFlagCrashableSizeRadius	((SFMFlags)1 << 36)
 #define SFMFlagCrashableSizeZMin	((SFMFlags)1 << 37)
 #define SFMFlagCrashableSizeZMax	((SFMFlags)1 << 38)
-#define SFMFlagTouchDownCrashResistance	((SFMFlags)1 << 39)
+#define SFMFlagTouchDownCrashResistance ((SFMFlags)1 << 39)
 #define SFMFlagCollisionCrashResistance ((SFMFlags)1 << 40)
-#define SFMFlagStopped   		((SFMFlags)1 << 41)
+#define SFMFlagStopped			((SFMFlags)1 << 41)
+#define SFMFlagLength			((SFMFlags)1 << 42)
+#define SFMFlagWingspan			((SFMFlags)1 << 43)
 
 /*
  *	Flight model types:
@@ -134,7 +136,7 @@ typedef struct {
 							 * when type is set to
 							 * SFMFlightModelSlew.
 							 */
-	double			speed;		/* Meters/cycle. */
+	SFMPositionStruct       airspeed_vector;	/* Meters/cycle. */
 	double			speed_stall,	/* Meters/cycle. */
 				stall_coeff;	/* Internal. */
 	double			drag_min;	/* Meters/cycle. */
@@ -144,6 +146,8 @@ typedef struct {
 	SFMPositionStruct	accel_responsiveness;
 	double			ground_elevation_msl;	/* Meters. */
 	double			service_ceiling;	/* Meters. */
+	double			length;		/* Meters */
+	double			wingspan;	/* Meters */
 	double			belly_height;	/* Undercarrage to center, meters. */
 	SFMBoolean		gear_state;	/* True when down. */
 	int			gear_type;	/* One of SFMGearType*. */
@@ -168,12 +172,12 @@ typedef struct {
 	double			throttle_coeff;		/* 0.0 to 1.0. */
 	SFMBoolean		after_burner_state;
 	double			after_burner_power_coeff;	/* Times engine power. */
-	double			engine_power;		/* In kg * m / cycle^2. */
-	double			total_mass;		/* In kg. */
+	double			engine_power;	/* In kg * m / cycle^2. */
+	double			total_mass;	/* In kg. */
 	SFMDirectionStruct	attitude_change_rate;	/* Radians/cycle, */
 	SFMDirectionStruct	attitude_leveling_rate;	/* Radians/cycle. */
 	SFMBoolean		air_brakes_state;
-	double			air_brakes_rate;	/* In meters per cycle. */
+	double			air_brakes_area;	/* In square meters */
 	SFMBoolean		can_crash_into_other;
 	SFMBoolean		can_cause_crash;
 	int			crash_contact_shape;	/* One of SFMCrashContactShape*. */

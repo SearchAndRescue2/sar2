@@ -885,6 +885,8 @@ void SARSimTouchDownCB(
         /* Aircraft? */
         if(obj_aircraft_ptr != NULL)
         {
+	    double land_speed = SFMHypot2(obj_aircraft_ptr->vel.x, obj_aircraft_ptr->vel.y);
+
             /* Mark as on water? */
             if(over_water)
                 obj_aircraft_ptr->on_water = 1;
@@ -906,7 +908,7 @@ void SARSimTouchDownCB(
                     /* Landing gear is a ski, check if landed
                      * at velocity great enough to cause scrape
                      */
-                    if(obj_aircraft_ptr->speed > SFMMPHToMPC(5))
+                    if(land_speed > SFMMPHToMPC(5))
                     {
                         DO_EFFECTS_LAND_SKIS_SKID
                             } 
@@ -922,14 +924,14 @@ void SARSimTouchDownCB(
                     /* landed with brakes on? */
                     if(obj_aircraft_ptr->wheel_brakes_state > 0)
                     {
-                        if(obj_aircraft_ptr->speed > SFMMPHToMPC(10))
+                        if(land_speed > SFMMPHToMPC(10))
                         {
                             DO_EFFECTS_LAND_WHEEL_SKID
                                 }
                     }
                     else
                     {
-                        if(obj_aircraft_ptr->speed > SFMMPHToMPC(25))
+                        if(land_speed > SFMMPHToMPC(25))
                         {
                             DO_EFFECTS_LAND_WHEEL_SKID
                                 }
@@ -941,7 +943,7 @@ void SARSimTouchDownCB(
                 /* Landed on belly, check if landed at velocity
                  * great enough to cause scrape.
                  */
-                if(obj_aircraft_ptr->speed > SFMMPHToMPC(5))
+                if(land_speed > SFMMPHToMPC(5))
                 {
                     DO_EFFECTS_LAND_BELLY
                         }
@@ -1013,7 +1015,6 @@ void SARSimParkedCB(
     if(gcc_list == NULL)
 	return;
 
-    printf("Land notify\n");
      /* Call mission land notify */
     SARMissionLandNotify(core_ptr, obj_ptr, gcc_list, gcc_list_total);
     free(gcc_list);
@@ -1337,7 +1338,7 @@ void SARSimObjectCollisionCB(
 			TAR_PTR->velocity_vector.x = r[0] * 0.1;
 			TAR_PTR->velocity_vector.y = r[1] * 0.1;
 			TAR_PTR->velocity_vector.z = r[2] * 0.1;
-			TAR_PTR->speed *= 0.1;
+			SFMSetAirspeed(scene->realm, TAR_PTR);
 #undef TAR_PTR
 		    }
 		}

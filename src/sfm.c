@@ -19,7 +19,7 @@
 #include <sys/types.h>
 
 #include "sfm.h"
-
+#include "sarreality.h"
 
 SFMRealmStruct *SFMInit(int argc, char **argv);
 void SFMShutdown(SFMRealmStruct *realm);
@@ -45,7 +45,7 @@ SFMRealmStruct *SFMInit(int argc, char **argv)
 	realm->time_compensation = 1.0;
 	realm->time_compression = 1.0;
 
-	realm->gravity = SFMDefaultGravity;
+	realm->gravity = SAR_GRAVITY;
 
 	realm->airborne_cb_client_data = NULL;
 	realm->airborne_cb = NULL;

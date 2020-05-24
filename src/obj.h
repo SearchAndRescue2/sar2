@@ -208,6 +208,11 @@ typedef struct {
 } sar_intercept_struct;
 #define SAR_INTERCEPT(p)	((sar_intercept_struct *)(p))
 
+/*
+ *	Wind:
+ */
+# define SAR_WIND_FLAG_GUSTS (1 << 0)
+
 
 /*
  *	Light:
@@ -776,8 +781,8 @@ typedef struct {
 	/* Air Worthy State */
 	sar_air_worthy_state air_worthy_state;
 
-	/* Current speed, in meters per cycle */
-	float		speed;
+	/* Current relative speed, in meters per cycle */
+	sar_position_struct airspeed;
 
 	/* Stall speed, the speed at which a controllable stall begins.
 	 * Loss of lift can still occure twice beyond this value, in
@@ -849,6 +854,12 @@ typedef struct {
 	/* Belly to center of object in meters */
 	float		belly_height;
 
+	/* Length of aircraft in meters */
+	float		length;
+
+	/* Wingspan of aircraft in meters */
+	float		wingspan;
+
 	/* Height of landing gear in meters */
 	float		gear_height;
 
@@ -896,8 +907,12 @@ typedef struct {
 	float		collective,
 			collective_range;
 
-	/* Engine data */
-	float		engine_power;		/* In kg * m / cycle^2 */
+	/* Engine data. Given the simulation model, the power assigned to
+	 * different aircrafts engines is not realistic, but rather adjusted
+	 * so that they fly correctly along with other options (drag
+	 * coefficients etc.).
+	 */
+	float		engine_power;		/* In kg * m / cycle^2 (Newtons) */
 	char		engine_can_pitch;	/* 1 for tilt rotors */
 
 	/* Engine sounds */
@@ -988,16 +1003,11 @@ typedef struct {
 	/* This affects how much reduction speed suffers when brakes are active */
 	float		wheel_brakes_coeff;
 
-	/* Air brake affect on speed, in units of meters per cycle
-	 * Can be 0.0 if this aircraft has no air brakes
-	 * The affect of the air brakes will be at its maximum
-	 * (the exact value of air_brakes_rate) when the speed
-	 * approaches speed_max_expected.  As the speed reduces to
-	 * speed_stall the affect of air_brakes_rate will be reduced
-	 * to 10% and as the speed reduces to 0 the affect of
-	 * air_brakes_rate will be 0%
+	/* Air brakes area indicates how much additional surface is exposed
+	 * when deployed. This causes extra aerodynamic drag. To disable
+	 * brakes, it can be set to 0.
 	 */
-	float		air_brakes_rate;
+	float		air_brakes_area;
 
 	/* Spot light direction */
 	sar_direction_struct	spotlight_dir;

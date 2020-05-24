@@ -741,6 +741,7 @@ int SARSimUpdateSceneObjects(
 		    if(SFMForceApplyControl(scene->realm, fdm))
 			break;
 
+		    SFMSetAirspeed(scene->realm, fdm);
 		    /* Get new object values from the updated SFM */
 		    SARSimGetSFMValues(scene, obj_ptr);
 		    break;

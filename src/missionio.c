@@ -1445,6 +1445,7 @@ sar_mission_struct *SARMissionLoadFromFile(
 	sar_parm_player_model_file_struct *p_player_model_file;
 	sar_parm_weather_struct *p_weather;
 	sar_parm_time_of_day_struct *p_time_of_day;
+	sar_parm_wind_struct *p_wind;
 	sar_parm_texture_base_directory_struct *p_texture_base_directory;
 	sar_parm_texture_load_struct *p_texture_load;
 	sar_parm_mission_new_objective_struct *p_mission_new_objective;
@@ -1725,7 +1726,24 @@ sar_mission_struct *SARMissionLoadFromFile(
 		    );
 		}
 		break;
-
+	      case SAR_PARM_WIND:
+		p_wind = (sar_parm_wind_struct *)p;
+		if(loaded_scene)
+		{
+		    scene->realm->wind_vector.x = sin(p_wind->heading) * p_wind->speed;
+		    scene->realm->wind_vector.y = cos(p_wind->heading) * p_wind->speed;
+		    scene->realm->wind_vector.z = 0.0;
+		    scene->realm->wind_flags = p_wind->flags;
+		}
+		else
+		{
+		    fprintf(
+			stderr,
+ "%s: \"wind\" may not be specified before \"mission_scene_file\".\n",
+			filename
+		    );
+		}
+		break;
 	      case SAR_PARM_TEXTURE_BASE_DIRECTORY:
 		p_texture_base_directory = (sar_parm_texture_base_directory_struct *)p;
 		break;

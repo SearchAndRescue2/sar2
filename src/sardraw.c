@@ -3116,15 +3116,17 @@ static void SARDrawHUD(sar_dc_struct *dc, sar_object_struct *obj_ptr)
 	int i;
 	float	fovz = scene->camera_fovz,
 		fovx = fovz * aspect;
-	const sar_direction_struct	*dir = &obj_ptr->dir,
-					*cam_dir = &scene->camera_cockpit_dir;
-	const sar_position_struct	*pos = &obj_ptr->pos,
-					*vel = NULL;
+
+	const sar_direction_struct	*dir	  = &obj_ptr->dir;
+	const sar_direction_struct	*cam_dir  = &scene->camera_cockpit_dir;
+	const sar_position_struct	*pos	  = &obj_ptr->pos;
+	const sar_position_struct	*vel	  = NULL;
+	const sar_position_struct	*airspeed = NULL;
+
 	const sar_intercept_struct *intercept = NULL;
 	sar_engine_state engine_state = SAR_ENGINE_OFF;
 	int gear_state = 0;
 	float	cockpit_offset_z = 0.0f,
-		speed = 0.0f,		/* In meters per cycle */
 		throttle = 0.0f,
 		fuel = 0.0f,		/* In kg */
 		elevator_trim = 0.0f;
@@ -3138,7 +3140,7 @@ static void SARDrawHUD(sar_dc_struct *dc, sar_object_struct *obj_ptr)
 	{
 	    cockpit_offset_z = aircraft->cockpit_offset_pos.z;
 	    vel = &aircraft->vel;
-	    speed = aircraft->speed;
+	    airspeed = &aircraft->airspeed;
 	    engine_state = aircraft->engine_state;
 	    throttle = SARSimThrottleOutputCoeff(
 		(aircraft->flight_model_type != SAR_FLIGHT_MODEL_SLEW) ?
@@ -3170,7 +3172,12 @@ static void SARDrawHUD(sar_dc_struct *dc, sar_object_struct *obj_ptr)
 	{
 	    float v1, r, heading, pitch;
 	    int x, y;			/* Center of hud in pixels */
+	    float speed = aircraft->landed ? airspeed->y : SFMHypot2(airspeed->y, airspeed->z);
 
+	    // Airplanes should not display negative airspeeds.
+	    if(aircraft->flight_model_type == SAR_FLIGHT_MODEL_AIRPLANE &&
+	       speed < 0)
+		speed = 0;
 
 	    heading = cam_dir->heading;
 	    if(heading > (float)(1.0 * PI))
@@ -3195,40 +3202,21 @@ static void SARDrawHUD(sar_dc_struct *dc, sar_object_struct *obj_ptr)
 	    y = (int)((height / 2) - (r * pitch));
 
 	    /* Draw speed in KTS */
-	    if((vel != NULL) ? (vel->y < 0.0f) : False)
+	    switch(opt->units)
 	    {
-		switch(opt->units)
-		{
-		  case SAR_UNITS_METRIC:
-		  case SAR_UNITS_METRIC_ALT_FEET:
+		case SAR_UNITS_METRIC:
+		case SAR_UNITS_METRIC_ALT_FEET:
 		    v1 = (float)SFMMPCToKPH(speed);
 		    break;
-		  default:	/* SAR_UNITS_ENGLISH */
+		default:      /* SAR_UNITS_ENGLISH */
 		    v1 = (float)SFMMPHToKTS(SFMMPCToMPH(speed));
 		    break;
-		}
-		if(v1 < 100.0f)
-		    sprintf(text, "-%.1f", v1);
-		else
-		    sprintf(text, "-%.0f", v1);
 	    }
+	    if(v1 < 100.0f)
+		sprintf(text, "%.1f", v1);
 	    else
-	    {
-		switch(opt->units)
-		{
-		  case SAR_UNITS_METRIC:
-		  case SAR_UNITS_METRIC_ALT_FEET:
-		    v1 = (float)SFMMPCToKPH(speed);
-		    break;
-		  default:      /* SAR_UNITS_ENGLISH */
-		    v1 = (float)SFMMPHToKTS(SFMMPCToMPH(speed));
-		    break;
-		}
-		if(v1 < 100.0f)
-		    sprintf(text, "%.1f", v1);
-		else
-		    sprintf(text, "%.0f", v1);
-	    }
+		sprintf(text, "%.0f", v1);
+
 	    GWDrawString(
 		display,
 		(int)(x - (width * 0.20) - 25),
@@ -3597,7 +3585,7 @@ static void SARDrawOutsideAttitude(
 			intercept_sin_theta,
 			intercept_cos_theta,
 			intercept_dist = 0.0f,
-			vel_speed;
+			abs_speed;
 	    char s[256];
 
 
@@ -3626,7 +3614,7 @@ static void SARDrawOutsideAttitude(
 	    intercept_cos_theta = (float)cos(intercept_dtheta);
 
 	    /* Calculate 2d velocity */
-	    vel_speed = (float)SFMHypot2(
+	    abs_speed = (float)SFMHypot2(
 		aircraft->vel.x,
 		aircraft->vel.y
 	    );
@@ -3641,13 +3629,13 @@ static void SARDrawOutsideAttitude(
 		{
 		  case SAR_UNITS_METRIC:
 		  case SAR_UNITS_METRIC_ALT_FEET:
-		    v1 = (float)SFMMPCToKPH(aircraft->speed);
+		    v1 = (float)SFMMPCToKPH(aircraft->vel.y);
 		    v2 = intercept_dist / 1000.0f;
 		    units_str1 = "KPH";
 		    units_str2 = "KM";
 		    break;
 		  default:	/* SAR_UNITS_ENGLISH */
-		    v1 = (float)SFMMPCToMPH(aircraft->speed);
+		    v1 = (float)SFMMPCToMPH(aircraft->vel.y);
 		    v2 = (float)SFMMetersToMiles(intercept_dist);
 		    units_str1 = "MPH";
 		    units_str2 = "MI";
@@ -3688,11 +3676,11 @@ static void SARDrawOutsideAttitude(
 		{
 		  case SAR_UNITS_METRIC:
 		  case SAR_UNITS_METRIC_ALT_FEET:
-		    v1 = (float)SFMMPCToKPH(aircraft->speed);
+		    v1 = (float)SFMMPCToKPH(aircraft->vel.y);
 		    units_str1 = "KPH";
 		    break;
 		  default:      /* SAR_UNITS_ENGLISH */
-		    v1 = (float)SFMMPCToMPH(aircraft->speed);
+		    v1 = (float)SFMMPCToMPH(aircraft->vel.y);
 		    units_str1 = "MPH";
 		    break;
 		}
@@ -3709,16 +3697,16 @@ static void SARDrawOutsideAttitude(
 	    /* Draw velocity direction (object relative) */
 	    x = offset_x + half_width - (width / 4);
 	    y = offset_y + half_height + 12;
-	    if(vel_speed > 0.0f)
+	    if(abs_speed > 0.0f)
 	    {
 		glBegin(GL_LINES);
 		{
 		    glVertex2f(
 			(GLfloat)(
-		x + ((aircraft->vel.x / vel_speed) * 12.0f)
+		x + ((aircraft->vel.x / abs_speed) * 12.0f)
 			),
 			(GLfloat)(
-		y + ((aircraft->vel.y / vel_speed) * 12.0f)
+		y + ((aircraft->vel.y / abs_speed) * 12.0f)
 			)
 		    );
 		    glVertex2i(x, y);
@@ -6507,10 +6495,17 @@ void SARDraw(sar_core_struct *core_ptr)
 		    /* Auto pilot */
 		    dc->player_autopilot = (aircraft->autopilot_state == SAR_AUTOPILOT_ON) ? True : False;
 
-		    /* Overspeed */
+		    /* Get direction */
+		    dir = &obj_ptr->dir;
+
+		    /* Overspeed and stall warnings */
+		    double rel_speed   = aircraft->landed ?
+			aircraft->airspeed.y : SFMHypot2(aircraft->airspeed.y, aircraft->airspeed.z);
+		    double stall_speed = SFMCurrentSpeedForStall(
+			aircraft->airspeed.y, aircraft->airspeed.z, dir->pitch);
+
 		    if((aircraft->overspeed_expected > 0.0f) &&
-		       (aircraft->speed > aircraft->overspeed_expected)
-		    )
+		       (rel_speed > aircraft->overspeed_expected))
 			dc->player_overspeed = True;
 
 		    /* Update sounds */
@@ -6525,7 +6520,7 @@ void SARDraw(sar_core_struct *core_ptr)
 			    dc->ear_in_cockpit,
 			    aircraft->flight_model_type,
 			    aircraft->landed,
-			    aircraft->speed,
+			    stall_speed,
 			    SARSimStallSpeed(aircraft)
 			);
 
@@ -6572,9 +6567,6 @@ void SARDraw(sar_core_struct *core_ptr)
 		 */
 		far_model_range = (obj_ptr->visual_model_far != NULL) ?
 		    obj_ptr->range_far : obj_ptr->range;
-
-		/* Get direction */
-		dir = &obj_ptr->dir;
 
 		/* Calculate 3D distance */
 		distance3d = (float)SFMHypot2(
@@ -8148,8 +8140,9 @@ void SARDrawMap(
 		    dc->player_autopilot = (aircraft->autopilot_state == SAR_AUTOPILOT_ON) ? True : False;
 
 		    /* Overspeed */
+		    double rel_speed = SFMHypot2(aircraft->airspeed.y, aircraft->airspeed.z);
 		    if((aircraft->overspeed_expected > 0.0f) &&
-		       (aircraft->speed > aircraft->overspeed_expected)
+		       (rel_speed > aircraft->overspeed_expected)
 		    )
 			dc->player_overspeed = True;
 
@@ -8165,7 +8158,7 @@ void SARDrawMap(
 			    dc->ear_in_cockpit,
 			    aircraft->flight_model_type,
 			    aircraft->landed,
-			    aircraft->speed,
+			    rel_speed,
 			    SARSimStallSpeed(aircraft)
 			);
 

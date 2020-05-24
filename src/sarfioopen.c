@@ -31,7 +31,7 @@
 #include "sartime.h"
 #include "sarfio.h"
 #include "config.h"
-
+#include "sfm.h"
 
 static const char *NEXT_ARG(const char *s);
 static void CHOP_STR_BLANK(char *s);
@@ -364,6 +364,31 @@ static int SARParmLoadFromFileIterate(
             
             DO_ADD_PARM
         }
+	else if(!strcasecmp(parm_str, "wind") &&
+		FILTER_CHECK(SAR_PARM_WIND)
+	    )
+	{
+	    p = SARParmNew(SAR_PARM_WIND);
+	    sar_parm_wind_struct *pv =
+		(sar_parm_wind_struct *)p;
+
+	    /* Heading */
+	    cstrptr = val_str;
+	    pv->heading = (float)DEGTORAD(ATOF(cstrptr));
+	    cstrptr = NEXT_ARG(cstrptr);
+	    pv->speed = (float)SFMKTSToMPC((double)ATOF(cstrptr));
+	    cstrptr = NEXT_ARG(cstrptr);
+	    pv->flags = 0;
+	    while((cstrptr != NULL) ? (*cstrptr != '\0') : 0)
+	    {
+		if(strcasepfx(cstrptr, "gusts"))
+		    pv->flags |= SAR_WIND_FLAG_GUSTS;
+
+		cstrptr = NEXT_ARG(cstrptr);
+	    }
+
+	    DO_ADD_PARM
+	}
         /* Time of day */
         else if(!strcasecmp(parm_str, "time_of_day") &&
                 FILTER_CHECK(SAR_PARM_TIME_OF_DAY)

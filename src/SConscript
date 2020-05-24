@@ -51,7 +51,7 @@ if platform == "darwin":
 
 # Default defines and optional flags
 if optflags:
-    env.Append(CPPFLAGS = optflags)
+    env.Append(CPPFLAGS = list(optflags.split(" ")))
 else:
     env.Append(CPPFLAGS = ['-DHAVE_LIBXPM', '-DHAVE_XF86_VIDMODE'])
 

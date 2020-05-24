@@ -3031,14 +3031,14 @@ static void SARObjLoadLine(
 		 *
 		 * <drag_rate>
 		 */
-		float	drag_rate = 0.0f;
+		float	area = 0.0f;
 
-		arg = GET_ARG_F(arg, &drag_rate);
+		arg = GET_ARG_F(arg, &area);
 
 		if(aircraft != NULL)
 		{
-		    aircraft->air_brakes_rate = (float)SFMMPHToMPC(drag_rate);
-		    if(aircraft->air_brakes_rate <= 0.0f)
+		    aircraft->air_brakes_area = (float)area;
+		    if(aircraft->air_brakes_area <= 0.0f)
 			aircraft->air_brakes_state = -1;
 		    else
 			aircraft->air_brakes_state = 0;
@@ -3212,6 +3212,33 @@ static void SARObjLoadLine(
 
 		if(aircraft != NULL)
 		    aircraft->belly_height = height;
+	    }
+	    /* Length */
+	    else if(!strcasecmp(parm, "length"))
+	    {
+		/* Arguments:
+		 *
+		 * <length>
+		 */
+		float	length = 0.0f;
+
+		arg = GET_ARG_F(arg, &length);
+
+		if(aircraft != NULL)
+		    aircraft->length = length;
+	    }
+	    else if(!strcasecmp(parm, "wingspan"))
+	    {
+		/* Arguments:
+		 *
+		 * <wingspan>
+		 */
+		float	wingspan = 0.0f;
+
+		arg = GET_ARG_F(arg, &wingspan);
+
+		if(aircraft != NULL)
+		    aircraft->wingspan = wingspan;
 	    }
 	    /* Landing Gear Height */
 	    else if(!strcasecmp(parm, "gear_height"))

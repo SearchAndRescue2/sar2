@@ -469,6 +469,7 @@ int SARSceneLoadFromFile(
 	sar_parm_description_struct *p_description;
 	sar_parm_player_model_file_struct *p_player_model_file;
 	sar_parm_weather_struct *p_weather;
+	sar_parm_wind_struct *p_wind;
 	sar_parm_register_location_struct *p_register_location;
 	sar_parm_scene_gps_struct *p_scene_gps;
 	sar_parm_scene_map_struct *p_scene_map;

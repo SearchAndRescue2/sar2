@@ -2918,7 +2918,7 @@ void SARSimSetFlyByPosition(
 		sar_position_struct	*pos = &obj_ptr->pos,
 					*vel = &obj_aircraft_ptr->vel;
 		float	d = (float)MAX(
-			    (5 * SAR_CYCLE_TO_SEC_COEFF) * obj_aircraft_ptr->speed,
+			    (5 * SAR_CYCLE_TO_SEC_COEFF) * obj_aircraft_ptr->airspeed.y,
 			    contact_radius * 2
 			),
 			h = (float)(5 * SAR_CYCLE_TO_SEC_COEFF) * vel->z,

@@ -53,10 +53,6 @@ static float SARSimHoistDragCoeff(
 	sar_scene_struct *scene, sar_object_struct *obj_ptr,
 	const sar_obj_hoist_struct *hoist
 );
-static float SARSimAirBrakeCoeff(
-	sar_scene_struct *scene, sar_object_struct *obj_ptr,
-	sar_object_aircraft_struct *aircraft
-);
 
 float SARSimFindGround(
 	sar_scene_struct *scene,
@@ -210,44 +206,6 @@ static float SARSimHoistDragCoeff(
 	    return(0.0f);
 }
 
-/*
- *      Returns the air brake effectiveness coefficient based on the
- *	calculating of the object's speed.
- *
- *      Return value is from 0.0 to 1.0 where 0.0 is no air brake
- *	effectiveness and 1.0 is full effectiveness.
- */
-static float SARSimAirBrakeCoeff(
-	sar_scene_struct *scene, sar_object_struct *obj_ptr,
-	sar_object_aircraft_struct *aircraft
-)
-{
-	if(aircraft == NULL)
-	    return(0.0f);
-
-	/* Slower than stall speed threshold (do not account for
-	 * flaps)?
-	 */
-	if(aircraft->speed < aircraft->speed_stall)
-	{
-	    /* Return value from 0.0 to 0.1 */
- 	    return((float)((aircraft->speed_stall > 0.0) ?
-		MAX(
-(aircraft->speed / aircraft->speed_stall * 0.1), 0.0) :
-		0.0
-	    ));
-	}
-	else
-	{
-	    /* Return value from 0.1 to 1.0 */
-	    return((float)CLIP(
-((aircraft->overspeed_expected > 0.0f) ?
- (aircraft->speed / aircraft->overspeed_expected) : 0.1
-),
-		0.1, 1.0
-	    ));
-	}
-}
 
 /*
  *      Returns the elevation of (not to) the solid ground with respect
@@ -518,16 +476,18 @@ int SARSimRestart(
 			TAR_PTR->velocity_vector.y = 0.0f;
 			TAR_PTR->velocity_vector.z = 0.0f;
 
-			TAR_PTR->speed = 0.0f;
+			TAR_PTR->airspeed_vector.x = 0.0f;
+			TAR_PTR->airspeed_vector.y = 0.0f;
+			TAR_PTR->airspeed_vector.z = 0.0f;
 			TAR_PTR->landed_state = True;
 			TAR_PTR->stopped = True;
 #undef TAR_PTR
 		    }
 
 #define TAR_PTR	aircraft
-		    /* Reset current speed and velocity */
+		    /* Reset current airspeed and velocity */
 		    memset(&TAR_PTR->vel, 0x00, sizeof(sar_position_struct));
-		    TAR_PTR->speed = 0.0f;
+		    memset(&TAR_PTR->airspeed, 0x00, sizeof(sar_position_struct));
 		    TAR_PTR->z_accel = 0.0f;
 
 		    /* Control positions */
@@ -1075,7 +1035,7 @@ void SARSimSetSFMValues(
 
 	    TAR_PTR->flags = (SFMFlagFlightModelType |
 			      SFMFlagPosition | SFMFlagDirection |
-			      SFMFlagVelocityVector | SFMFlagSpeed |
+			      SFMFlagVelocityVector | SFMFlagAirspeedVector |
 			      SFMFlagSpeedStall | SFMFlagDragMin |
 			      SFMFlagSpeedMax | SFMFlagAccelResponsiveness |
 			      SFMFlagGroundElevation | SFMFlagServiceCeiling |
@@ -1089,12 +1049,12 @@ void SARSimSetSFMValues(
 			      SFMFlagAfterBurnerState | SFMFlagAfterBurnerPowerCoeff |
 			      SFMFlagEnginePower | SFMFlagTotalMass |
 			      SFMFlagAttitudeChangeRate | SFMFlagAttitudeLevelingRate |
-			      SFMFlagAirBrakesState | SFMFlagAirBrakesRate |
+			      SFMFlagAirBrakesState | SFMFlagAirBrakesArea |
 			      SFMFlagCanCrashIntoOther | SFMFlagCanCauseCrash |
 			      SFMFlagCrashContactShape | SFMFlagCrashableSizeRadius |
 			      SFMFlagCrashableSizeZMin | SFMFlagCrashableSizeZMax |
 			      SFMFlagTouchDownCrashResistance | SFMFlagCollisionCrashResistance |
-			      SFMFlagStopped
+			      SFMFlagStopped | SFMFlagLength | SFMFlagWingspan
 		);
 
 	    /* Update flight model type only if SFM not in slew mode */
@@ -1148,6 +1108,8 @@ void SARSimSetSFMValues(
 	    }
 	    TAR_PTR->service_ceiling = SRC_PTR->service_ceiling;
 	    TAR_PTR->belly_height = SRC_PTR->belly_height;
+	    TAR_PTR->length = SRC_PTR->length;
+	    TAR_PTR->wingspan = SRC_PTR->wingspan;
 	    TAR_PTR->ground_elevation_msl = obj_ptr->ground_elevation_msl;
 	    TAR_PTR->gear_state = (SFMBoolean)((lgear_ptr != NULL) ?
 		(lgear_ptr->flags & SAR_OBJ_PART_FLAG_STATE) : False
@@ -1213,8 +1175,7 @@ void SARSimSetSFMValues(
 	    TAR_PTR->attitude_leveling_rate.bank = SRC_PTR->bank_leveling;
 	    TAR_PTR->air_brakes_state = (SRC_PTR->air_brakes_state > 0) ?
 		True : False;
-	    TAR_PTR->air_brakes_rate = SRC_PTR->air_brakes_rate *
-		SARSimAirBrakeCoeff(scene, obj_ptr, SRC_PTR);
+	    TAR_PTR->air_brakes_area = SRC_PTR->air_brakes_area;
 	    /* We'll do all collision crash checks, so set 
 	     * can_crash_into_other and can_cause_crash to False so
 	     * FDM does not check for collisions.
@@ -1336,7 +1297,9 @@ void SARSimGetSFMValues(sar_scene_struct *scene, sar_object_struct *obj_ptr)
 	    TAR_PTR->vel.y = (float)SRC_PTR->velocity_vector.y;
 	    TAR_PTR->vel.z = (float)SRC_PTR->velocity_vector.z;
 
-	    TAR_PTR->speed = (float)SRC_PTR->speed;
+	    TAR_PTR->airspeed.x = (float)SRC_PTR->airspeed_vector.x;
+	    TAR_PTR->airspeed.y = (float)SRC_PTR->airspeed_vector.y;
+	    TAR_PTR->airspeed.z = (float)SRC_PTR->airspeed_vector.z;
 	    TAR_PTR->landed = SRC_PTR->landed_state;
 #undef TAR_PTR
 #undef SRC_PTR

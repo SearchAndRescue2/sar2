@@ -172,6 +172,22 @@ static int SARParmSaveToFileAnyIterate(
             );
             parms_saved++;
 #undef PARM_TYPE
+	}
+	/* Wind */
+	else if(type == SAR_PARM_WIND)
+	{
+#define PARM_TYPE	const sar_parm_wind_struct
+            PARM_TYPE *pv = (PARM_TYPE *)p;
+	    fprintf(
+		fp,
+		"wind %f %f"
+		);
+	    if(pv->flags & SAR_WIND_FLAG_GUSTS)
+		fprintf(fp, " gusts");
+
+	    fputc('\n', fp);
+	    parms_saved++;
+#undef PARM_TYPE
         }
         /* Registered location. */
         else if(type == SAR_PARM_REGISTER_LOCATION)

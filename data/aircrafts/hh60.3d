@@ -67,6 +67,9 @@ temperature 0.7 0.7       0.7
 # Belly to center height in meters
 belly_height 2.2
 
+# Length in meters
+length 19.81
+
 # Gear (down position) to belly height in meters
 gear_height 0.5
 
@@ -74,9 +77,8 @@ gear_height 0.5
 #              wheel_base_dist_m turn_vel_opt_mph turn_vel_max_mph
 ground_turning 6.0               10.0             150.0
 
-# Air brakes
-#          drag in (miles per hour)
-air_brakes 20.0
+# Air brakes exposed area when deployed (square meters)
+air_brakes 2
 
 # Attitude change rate (in degrees per second), specifies the
 # control sensitivity.
@@ -86,7 +88,7 @@ attitude_change_rate  22.0 12.0 30.0
 # Acceleration responsiveness, higher values produce less
 # responsiveness.
 #                      i        j       k
-helicopter_accelresp   7000.0   3000.0  4000.0
+helicopter_accelresp   7000.0   4500.0  4000.0
 airplane_accelresp    15000.0  12000.0     3.0
 
 # Dry mass in kg
@@ -106,25 +108,25 @@ fuel 0.146                     2022.8      2022.8
 
 # Engine settings
 #      can_pitch? initially_pitched_level? power    collective_range
-engine 0          0                        112700.0 0.98
+engine 0          0                        150000.0 0.98
 
 # Speed bounds (all in mph)
 #     stall speed_max  min_drag  overspeed_expected overspeed
-speed 90.0  43000.0    1.6       207.0              240.0
+speed 90.0  43000.0    2.0       207.0              240.0
 
 # Attitude leveling in degrees per second
 #                 h   p   b
 attitude_leveling 0.0 1.0 1.2
 
-# Service ceiling in feet (about 4 times the actual value).
-service_ceiling 12000.0
+# Service ceiling in feet
+service_ceiling 5000
 
 # Hoist position and values
 #     offset_xyz    rope_max_m rope_rate_m/c  capacity_kg  contact_r zmin zmax  b? d? h?
 hoist 1.8 0.7 -0.3  50         2.5            270          0.8       0.0  1.4  1  1  0
 
 # Crew and capacity
-#    crew  passengers passengers_max
+#    crew  passengers passengers_max0123
 crew 4     0          10
 
 
