@@ -36,17 +36,15 @@ debug = ARGUMENTS.get('debug', 0)
 # Build flags in normal or debug mode
 if int(debug):
     env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions'])
+elif optflags:
+    env.Append( CPPFLAGS = list(optflags.split(" ")) )
 else:
     env.Append(CPPFLAGS = ['-O6', '-funroll-loops',
                            '-fomit-frame-pointer',
                            '-ffast-math', '-finline-functions',
                            '-fexpensive-optimizations'])
 
-# Default defines and optional flags
-if optflags:
-    env.Append(CPPFLAGS = optflags)
-else:
-    env.Append(CPPFLAGS = ['-DHAVE_LIBXPM', '-DHAVE_XF86_VIDMODE'])
+env.Append(CPPFLAGS = ['-DHAVE_LIBXPM', '-DHAVE_XF86_VIDMODE'])
 
 if ldflags:
     env.Append(LINKFLAGS = ldflags)
