@@ -1,5 +1,5 @@
 import os.path
-
+from sys import platform
 
 AddOption( "--ldflags",
            dest="ldflags",
@@ -34,13 +34,20 @@ debug = ARGUMENTS.get('debug', 0)
 
 
 # Build flags in normal or debug mode
-if int(debug):
+if bool(debug):
     env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions'])
 else:
     env.Append(CPPFLAGS = ['-O6', '-funroll-loops',
                            '-fomit-frame-pointer',
                            '-ffast-math', '-finline-functions',
                            '-fexpensive-optimizations'])
+
+# OSX needs some special treatment
+if platform == "darwin":
+    env.Append(CPPFLAGS = ['-I/opt/X11/include',
+                            '-I/usr/local/opt/openal-soft/include'])
+    env.Append(LINKFLAGS = ['-L/opt/X11/lib', '-lGL', '-lX11',
+                            '-L/usr/local/opt/openal-soft/lib'])
 
 # Default defines and optional flags
 if optflags:
@@ -57,7 +64,7 @@ if ldflags:
 env.Append(LIBS = ['m', 'SDL2', 'SM', 'ICE',
                    'X11','Xext','Xmu', 'Xpm',
                    'Xxf86vm',
-                   'GL', 'GLU', 'pthread', 'alut', 
+                   'GL', 'GLU', 'pthread', 'alut',
                    'vorbisfile', 'openal'])
 
 
