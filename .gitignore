@@ -1,5 +1,6 @@
 src/*.o
 bin
+build
 *.sconsign.dblite
 *.tga
 *.bz2

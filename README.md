@@ -3,7 +3,7 @@
 [![sar2](https://snapcraft.io//sar2/badge.svg)](https://snapcraft.io/sar2)
 [![sar2](https://snapcraft.io//sar2/trending.svg?name=0)](https://snapcraft.io/sar2)
 
-## Features 
+## Features
 
 Search and Rescue II is an open source helicopter simulator game for Linux. It
 is a fork of the game Search and Rescue (searchandrescue.sf.net).
@@ -76,6 +76,20 @@ libxmu-dev \
 libxpm-dev
 ```
 
+For OSX:
+
+```sh
+$ brew install \
+scons \
+sdl2 \
+openal-soft \
+freealut \
+libvorbis
+
+$ brew cask install \
+xquartz
+```
+
 #### Building
 
 Run `scons` from the root folder of the repository to build the game:
@@ -123,6 +137,15 @@ them, you can install them properly with:
 $ xdg-icon-resource install --novendor --size 48 extra/sar2.xpm
 $ xdg-desktop-menu install --novendor extra/sar2.desktop
 ```
+
+#### OSX
+
+In order to be able to run `sar2` you either need XQuartz's display exported:
+```sh
+$ echo $DISPLAY
+```
+or run `./sar2.sh` directly from the XQuartz terminal.
+
 
 ## License
 
