@@ -20,6 +20,8 @@
 #include <sys/types.h>
 #include <math.h>
 #include "matrixmath.h"
+#include "obj.h"
+#include "sar.h"
 #include "sfm.h"
 #include "sarreality.h"
 
@@ -965,24 +967,46 @@ static int SFMForceApplyAirDrag(
 {
     double tc_min = MIN(realm->time_compensation, 1.0);
 
-    SFMFlags		 flags	    = model->flags;
-    SFMDirectionStruct	*dir	    = &model->direction;
-    SFMPositionStruct	*pos	    = &model->position;
-    SFMPositionStruct	*vel	    = &model->velocity_vector;
-    SFMPositionStruct	*wind	    = &realm->wind_vector;
-    double		 cur_height = pos->z;
-    double		 mass	    = model->total_mass;
-    double		 air_density, pc, lift_compensation;
+    const SFMFlags		 flags	     = model->flags;
+    const SFMDirectionStruct	*dir	     = &model->direction;
+    const SFMPositionStruct	*pos	     = &model->position;
+    const SFMPositionStruct	*base_wind   = &realm->base_wind_vector;
+    const double		 cur_height  = pos->z;
+    const double		 mass	     = model->total_mass;
+    SFMPositionStruct		*vel	     = &model->velocity_vector;
+    SFMPositionStruct		*actual_wind = &realm->actual_wind_vector;
+    double			 air_density, total_base_wind, gusts_value, gust_time, gusts_coeff, pc, lift_compensation;
 
     SFMPositionStruct rel_wind, area, surfaces, drag, accel;
 
     //SFMBoolean		gear_state	     = model->gear_state;
     //int			gear_type	     = model->gear_type;
     //double			ground_elevation_msl = model->ground_elevation_msl;
-    rel_wind.x = wind->x;
-    rel_wind.y = wind->y;
-    rel_wind.z = wind->z;
+    
+    if(realm->wind_flags & (SAR_WIND_FLAG_GUSTS))
+    {
+	/* Wind gusts are calculated by using the following function which
+	 * returns a different value given the current time. This function has
+	 * a period of about 60, so the gusts behaviour will repeat every 60
+	 * seconds or so.
+	 *
+	 * The function adds about 15 knots to the base wind at most, and removes about
+	 * 5 knots.
+	 */
+	total_base_wind = SFMHypot2(base_wind->x, base_wind->y);
+	gust_time = (double)cur_millitime / 1000.0;
+	gusts_value = total_base_wind +
+	    5 + 6 * (cos(PI/6*gust_time)+sin(PI/10*gust_time)-cos(PI/10*gust_time));
+	gusts_coeff = gusts_value / total_base_wind;
+	actual_wind->x = base_wind->x * gusts_coeff;
+	actual_wind->y = base_wind->y * gusts_coeff;
+	//printf("gusts_coeff: %f; total_wind: %f; gusts_value: %f\n", gusts_coeff, total_base_wind, gusts_value);
+    }
 
+    rel_wind.x = actual_wind->x;
+    rel_wind.y = actual_wind->y;
+    rel_wind.z = actual_wind->z;
+    
     if(flags & (SFMFlagTotalMass | SFMFlagLandedState |
 		SFMFlagPosition | SFMFlagDirection |
 		SFMFlagVelocityVector | SFMFlagAirspeedVector |
@@ -1095,7 +1119,7 @@ static int SFMForceApplyAirDrag(
 	accel.y = drag.y / mass;
 	accel.z = -drag.z / mass;
 
-	// printf("t: %d, wind: (%.2f,%.2f); wind_rel: (%.2f, %.2f); drag: (%.2f,%.2f,%.2f); accel: (%.2f,%.2f, %.2f)\n", model->type, wind->x, wind->y, rel_wind.x, rel_wind.y,drag.x, drag.y, drag.z, accel.x, accel.y, accel.z);
+	//printf("t: %d, wind: (%.2f,%.2f); wind_rel: (%.2f, %.2f); drag: (%.2f,%.2f,%.2f); accel: (%.2f,%.2f, %.2f)\n", model->type, actual_wind->x, actual_wind->y, rel_wind.x, rel_wind.y,drag.x, drag.y, drag.z, accel.x, accel.y, accel.z);
 
 	// Adjust velocity components. When aircraft is landed the wheels drag
 	// should compensate small winds (particularly side winds).
@@ -1120,7 +1144,7 @@ void SFMSetAirspeed(
     SFMDirectionStruct	*dir		= &model->direction;
     SFMPositionStruct	*vel		= &model->velocity_vector;
     SFMPositionStruct	*airspeed	= &model->airspeed_vector;
-    SFMPositionStruct	*wind		= &realm->wind_vector;
+    SFMPositionStruct	*wind		= &realm->actual_wind_vector;
     double		 rotated_wind_x = wind->x, rotated_wind_y = wind->y;
 
     if(flags & (SFMFlagVelocityVector | SFMFlagAirspeedVector))

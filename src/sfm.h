@@ -57,7 +57,8 @@ typedef struct {
 	double		gravity;		/* Gravity (in meters per cycle^2) */
 
 	/* Wind params */
-	SFMPositionStruct       wind_vector;	/* In meters per Cycle */
+	SFMPositionStruct       base_wind_vector;	/* In meters per Cycle */
+	SFMPositionStruct       actual_wind_vector;	/* In meters per Cycle */    
 	unsigned long		wind_flags;
 	/* Callbacks, typical inputs are; realm pointer,
 	 * model pointer, client data

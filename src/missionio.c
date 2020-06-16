@@ -1730,10 +1730,13 @@ sar_mission_struct *SARMissionLoadFromFile(
 		p_wind = (sar_parm_wind_struct *)p;
 		if(loaded_scene)
 		{
-		    scene->realm->wind_vector.x = sin(p_wind->heading) * p_wind->speed;
-		    scene->realm->wind_vector.y = cos(p_wind->heading) * p_wind->speed;
-		    scene->realm->wind_vector.z = 0.0;
+		    scene->realm->base_wind_vector.x = sin(p_wind->heading) * p_wind->speed;
+		    scene->realm->base_wind_vector.y = cos(p_wind->heading) * p_wind->speed;
+		    scene->realm->base_wind_vector.z = 0.0;
 		    scene->realm->wind_flags = p_wind->flags;
+		    scene->realm->actual_wind_vector.x = scene->realm->base_wind_vector.x;
+		    scene->realm->actual_wind_vector.y = scene->realm->base_wind_vector.y;
+		    scene->realm->actual_wind_vector.z = scene->realm->base_wind_vector.z;
 		}
 		else
 		{
