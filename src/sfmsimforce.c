@@ -1009,8 +1009,8 @@ static int SFMForceApplyAirDrag(
 	switch(model->type)
 	{
 	    case SFMFlightModelAirplane:
-		// An 1.5x rectangle length/diameter
-		surfaces.x = 1.5 * 2 * model->belly_height * model->length;
+		// An 2x rectangle length/diameter
+		surfaces.x = 2 * 2 * model->belly_height * model->length;
 		// 2x Circle of belly_height radius
 		surfaces.y = 2 * PI * model->belly_height * model->belly_height;
 		// 1/3rd of the rectangle
