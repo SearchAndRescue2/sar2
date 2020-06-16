@@ -600,8 +600,10 @@ int SARLoadProgressCB(void *ptr, long pos, long size)
 
 	// Update progress in 5% increments. Otherwise the progress bar
 	// is updated so much that it makes loading itself much longer.
-	if ((pos % (size / 20)) != 0)
-	    return(0);
+	if(size >= 20) {
+	    if ((pos % (size / 20)) != 0)
+		return(0);
+	}
 
 	if(cb_data == NULL)
 	    return(0);
