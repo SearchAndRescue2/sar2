@@ -3,12 +3,18 @@
 #
 
 # Name of mission
-name Los Angeles 5: Transport VIP
+name Training 11: Helicopter flight in windy weather
 
 # Description of mission (newlines and escapes accepted)
-description Depart from <bold>Santa Monica Airport<default> and\
- fly west by south-west to the <bold>Coast Guard vessel<default>. Pick up a passenger\
- and return with them to <bold>Santa Monica Airport<default>.
+description Fly from SMO to the Cost Guard vessel.\
+\n\
+ At 30 knots south-west wind, it is a windy day, but\
+ within parameters for an experienced pilot like you.\
+\n\
+ Pay attention to the airspeed indicator. You will be\
+ flying against the wind. Make sure you compensate during\
+ landing. Otherwise you will end up very wet.
+
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -17,9 +23,11 @@ weather Stormy Sparse
 # Scenery file
 mission_scene_file scenery/los_angeles.scn
 
+wind 60 30
+
 create_object 3
 model_file vessels/uscg378.3d
-translation -23758.0 34647.0 0.0
+translation -12402.0 41157.0 0.0
 rotate 310 0 0
 object_name uscg378_01
 # Helipad on vessel
@@ -50,22 +58,10 @@ mission_objective_time_left 0.0
 mission_objective_arrive_at helipad_uscg
 
 mission_objective_message_success \
-Pick-up complete. Return to Santa Monica airport!
+Training flight in windy weather complete!
 
 mission_objective_message_fail \
-You were unable to reach the ship.
-
-# Arrive at object (name of object from scene file)
-mission_objective_new arrive
-
-mission_objective_time_left 0.0
-
-mission_objective_arrive_at helipad_smo
-mission_objective_message_success \
-You made it back. Great work!
-mission_objective_message_fail \
-You failed to bring back the passenger safely!
-
+Training flight in windy weather failed!.
 
 #
 # Mission Post Data (these need to come after the objectives)
@@ -76,3 +72,5 @@ player_model_file aircrafts/uh1d.3d
 #select_object_by_name player
 rotate 0 0 0
 
+#			ref	x	y	z	radius	urgency
+mission_add_intercept	0	-12402  41157	0	0	40.0	1.0

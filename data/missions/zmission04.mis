@@ -3,7 +3,7 @@
 #
 
 # Name of mission
-name Mission: Find and rescue accident victim.
+name Los Angeles 4: Find and rescue accident victim.
 
 # Description of mission (newlines and escapes accepted)
 description Depart from <bold>Santa Monica Airport<default> and\

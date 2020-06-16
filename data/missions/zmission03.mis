@@ -3,10 +3,10 @@
 #
 
 # Name of mission
-name Mission: Speed flight from LAX to Catalina and back
+name Los Angeles 3: Speed flight from LAX to Catalina and back
 
 # Description of mission (newlines and escapes accepted)
-description Take a long, fast flight in the <bold>F-22<default>. You will depart\
+description Take a long, fast flight in the <bold>YF-22<default>. You will depart\
  from <underline>Los Angeles airport<default> and <bold>head south<default>\
  to the <underline>island<default>\
  of <underline>Catalina<default>.\

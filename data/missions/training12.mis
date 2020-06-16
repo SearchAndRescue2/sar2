@@ -3,20 +3,21 @@
 #
 
 # Name of mission
-name Training 1: Short flight from SMO to LAX
+name Training 12: Airplane flight in windy weather
 
 # Description of mission (newlines and escapes accepted)
-description Introduction to basic flight, you will <bold>depart<default>\
- from <underline>Santa Monica Municipal<default> and <bold>head south<default>\
- to the <underline>Coast Guard station<default>\
- at <underline>Los Angeles International<default>.\
+description Take a long, fast flight in the <bold>YF-22<default>,\
+ this time, in windy weather conditions. You will depart\
+ from <underline>Los Angeles airport<default> and <bold>head south<default>\
+ to the <underline>island<default>\
+ of <underline>Catalina<default>.\
 \n\
-Look for the <bold>helipad<default> and <bold>land<default> on it.\
- Be sure to <bold>touch down lightly<default> to avoid damage to the\
- aircraft.\
+ A waypoint marker is provided for convenience.\
 \n\
-Use the <bold>map<default> (press <bold>m<default>) to help with\
- your navigation.
+ The wind is 40 knots from the North West. You will\
+ have to land with cross winds. Be sure to compensate\
+ either by heading into the wind or by banking, and\
+ always watch out not to stall.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -25,11 +26,10 @@ weather Cloudy
 # Scenery file
 mission_scene_file scenery/los_angeles.scn
 
-# Wind
-wind 0 25 gusts
+wind 130 40
 
 # Begin at object (name of object from scene file)
-mission_begin_at helipad_smo
+mission_begin_at helipad_lax
 
 
 #
@@ -46,15 +46,15 @@ mission_objective_new arrive
 mission_objective_time_left 0.0
 
 # Arrive at object (name of object from scene file)
-mission_objective_arrive_at helipad_lax
+mission_objective_arrive_at helipad_cat
 
 # Mission success message
 mission_objective_message_success \
-Very nice, you made it safely to the helipad!
+Training flight in windy weather complete!
 
 # Mission failure message
 mission_objective_message_fail \
-You failed to land safely at the designated helipad!
+Training flight in windy weather failed!
 
 
 #
@@ -67,7 +67,8 @@ You failed to land safely at the designated helipad!
 
 
 # Create player object
-player_model_file aircrafts/hh65.3d
+player_model_file aircrafts/yf22.3d
 #select_object_by_name player
-rotate 270 0 0
-mission_add_intercept 3 40.0 0.5
+rotate 0 0 0
+# mission_add_intercept 3 40.0 0.5
+mission_add_intercept 0 -4530 -24900 0 40.0 1.0
