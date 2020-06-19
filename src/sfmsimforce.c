@@ -1230,8 +1230,17 @@ int SFMForceApplyArtificial(
 	    double height_coeff;
 
 	    if(model->service_ceiling > 0.0)
-		/* If we go above the service ceiling the coeff should stay at 1. */
-		height_coeff = MIN(1, (pos->z / model->service_ceiling));
+	    {
+		/* Height coeff range between 0 and 1. We multiply the service
+		 * ceiling by x1.35 so that it can realistically reach it given
+		 * air drag etc.. It grows very slowly at the beginning and
+		 * faster as it reaches 1, at which point the aircraft will
+		 * not climb anymore.
+		 */
+		height_coeff = pos->z / (model->service_ceiling * 1.35);
+		height_coeff = MIN(1, height_coeff);
+		height_coeff = POW(height_coeff, 4);
+	    }
 	    else
 		height_coeff = 0.0;
 

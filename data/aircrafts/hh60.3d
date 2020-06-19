@@ -39,7 +39,8 @@ Max Speed: <bold>180 knots<default>\
 Cruising Speed: <bold>140 knots<default>\
 Max Range: <bold>700 nautical miles<default>\
 Radius of Action: <bold>300 nautical miles<default>\
-Service Ceiling (Hover): <bold>5,000 feet above sea level<default>\
+Service Ceiling (Hover): <bold>5,000 msl<default>\
+Rate of Climb: <bold>Unknown (est. 1,800 ft/min)<default>\
 Number of Pilots: <bold>2<default>\
 Number Flight Crew: <bold>2<default>
 
@@ -58,7 +59,7 @@ crash_flags 1            0            0                4
 
 # Contact bounds (in meters)
 #                   radius  h_min  h_max
-contact_cylendrical 8.0     -2.2   0.9
+contact_cylendrical 8.0     -2.2   0.9b
 
 # Temperature
 #           day dusk/dawn night
@@ -88,7 +89,7 @@ attitude_change_rate  22.0 12.0 30.0
 # Acceleration responsiveness, higher values produce less
 # responsiveness.
 #                      i        j       k
-helicopter_accelresp   7000.0   4500.0  4000.0
+helicopter_accelresp   7000.0   4500.0  6000.0
 airplane_accelresp    15000.0  12000.0     3.0
 
 # Dry mass in kg

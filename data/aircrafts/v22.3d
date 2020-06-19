@@ -39,7 +39,8 @@ Fuel Capacity: <bold>4451 gallons<default>\
 Max Endurance: <bold>8 hours<default>\
 Max Speed: <bold>275 knots<default>\
 Max Range: <bold>515 nm (full load)<default>\
-Service Ceiling: <bold>26,000'<default>\
+Service Ceiling: <bold>25,000'<default>\
+Rate of Climb: <bold>2,320-4,000 ft/min<default>\
 Pilots: <bold>2<default>\
 Flight Crew: <bold>24<default>
 
@@ -90,7 +91,7 @@ attitude_change_rate  18.0 14.0 32.0
 # Acceleration responsiveness, higher values produce less
 # responsiveness.
 #                    i       j       k
-helicopter_accelresp 13500.0 9500.0  3000.0
+helicopter_accelresp 13500.0 9500.0  4800.0
 airplane_accelresp   30000.0 4500.0 3.5
 
 # Dry mass in kg
