@@ -2049,6 +2049,7 @@ int SARSimApplyArtificialForce(
 		aircraft->collective,
 		aircraft->collective_range
 	    );
+	    //printf("th out: %f, th: %f, coll: %f, range: %f\n", throttle_output, aircraft->throttle,    aircraft->collective, aircraft->collective_range);
 
 	    /* Any fuel left? */
 	    if(aircraft->fuel > 0.0f)

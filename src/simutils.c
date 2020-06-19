@@ -308,8 +308,8 @@ float SARSimThrottleOutputCoeff(
 	  case SAR_FLIGHT_MODEL_HELICOPTER:
 	    if(collective_range >= 0.0f)
 		return(CLIP(
-		    (throttle + (throttle * collective * collective_range))
-			/ (1.0f + collective_range),
+		    (throttle + 3 * (throttle * collective * collective_range))
+			/ (1.0f + 3 * collective_range),
 		    0.0f, 1.0f
 		));
 	    else
