@@ -3,14 +3,12 @@
 [![sar2](https://snapcraft.io//sar2/badge.svg)](https://snapcraft.io/sar2)
 [![sar2](https://snapcraft.io//sar2/trending.svg?name=0)](https://snapcraft.io/sar2)
 
-## Features
+Search and Rescue II (SaR II) is an open source helicopter simulator game for Linux and
+OSX. In it you can fly several helicopter and airplane models in some basic scenarios.
 
-Search and Rescue II is an open source helicopter simulator game for Linux. It
-is a fork of the game Search and Rescue (searchandrescue.sf.net).
-
-Among the features of SaR II are smoother graphics, full SDL Joystick support,
-playable music, OpenAL sounds, bugfixes and the Guadarrama addon packed
-in.
+SaR II has low graphic requirements while still provide a fun and demanding
+gameplay where the player needs to locate, pick-up and rescue victims of all
+sorts in steep mountains, burning buildings or in the sea.
 
 ## Documentation
 
@@ -20,6 +18,8 @@ Check the game manual for extended documentation. After installing, run:
 man sar2
 ```
 
+For in-game help, press `F1` while flying.
+
 ## Configuration
 
 Game configurations are stored in `$HOME/.config/sar2`. Check the manual for more information.
@@ -27,10 +27,18 @@ Game configurations are stored in `$HOME/.config/sar2`. Check the manual for mor
 
 ## Installation
 
-### Precompiled releases
+### Linux
 
-* [Snaps](https://snapcraft.io/sar2)
+Pre-compiled packages can be found at:
+
+* [Snap store](https://snapcraft.io/sar2)
 * [Opensuse](https://software.opensuse.org/package/sar2)
+
+### OSX
+
+No pre-compile packages yet. Check instructions to build from source
+below. Remember that in OSX you will either need the XQuartz's `DISPLAY`
+variable exported or to run the game directly from the XQuartz terminal.
 
 ### Building from source
 
@@ -90,7 +98,7 @@ $ brew cask install \
 xquartz
 ```
 
-#### Building
+#### Building and running
 
 Run `scons` from the root folder of the repository to build the game:
 
@@ -107,9 +115,11 @@ At this point you can run the game directly without installing using the `sar2.s
 $ ./sar2.sh
 ```
 
-#### Installing
+**Note**: In OSX you will either need the XQuartz's `DISPLAY` variable
+  exported or to run the game directly from the XQuartz terminal.
 
-In order to install the game, run:
+
+To install the game, run:
 
 ```sh
 $ sudo scons install
@@ -138,14 +148,17 @@ $ xdg-icon-resource install --novendor --size 48 extra/sar2.xpm
 $ xdg-desktop-menu install --novendor extra/sar2.desktop
 ```
 
-#### OSX
+### Search And Rescue vs Search and Rescue II vs Search And Rescue 2
 
-In order to be able to run `sar2` you either need XQuartz's display exported:
-```sh
-$ echo $DISPLAY
-```
-or run `./sar2.sh` directly from the XQuartz terminal.
+SaR II is a fork of the game [`Search and Rescue`](https://searchandrescue.sf.net).
 
+Among the features of SaR II are additional mission and scenarios, SDL
+Joystick support with pedals and brakes, playable music, OpenAL sounds,
+numerous bugixes, smoother simulation, reworked physics, support for wind
+etc.
+
+An additional `Search And Rescue 2` game exists, but this is unrelated to SaR
+II (notice our branding uses roman numerals).
 
 ## License
 

@@ -1,5 +1,20 @@
 # SEARCH AND RESCUE II - CHANGELOG
 
+## Version 2.5.0
+
+* Add preliminary OSX support.
+* Improve lagging on touch-down event.
+* Fix crash when loading Free Flight mode.
+* Add wind support and aerodynamic drag.
+* Add 2 training missions in windy weather.
+* Add support for wind gusts.
+* Rework airplane physics and stalling conditions.
+* Adjust models for more realistic speed and service ceiling conditions.
+* Allow a minimum helicopter throotle to 25% (previously it was 50%).
+* Let smoke be carried by the wind.
+* Add a switch in simulation options to enable/disable Wind.
+* Add wind conditions to all Guadarrama missions.
+
 ## Version 2.4.3
 
 * Fix lagging when landing due to airbone/landed flipping
