@@ -2253,23 +2253,15 @@ void SARSimSmokeSpawn(
 	    {
 		sar_position_struct *pos;
 
-		/* Set initial position */
+		/* Set initial position.
+		 * Smoke moves up at random speed and with a small but random
+		 * horizontal speeds.
+		 */
 		memcpy(&u->pos, &obj_ptr->pos, sizeof(sar_position_struct));
-
-		/* Set initial velocity to drift upwards */
-/* TODO need to apply wind and other variables to drift velocity */
 		pos = &u->vel;
-                /*
-		pos->x = 0.0f;
-		pos->y = 0.0f;
-		pos->z = 4.0f;
-                */
-
-                /* Smoke moves up at random speed and with a small but random
-                   horizontal speeds */
-                pos->x = 2 * (rand()/(float)(RAND_MAX) - 0.5);
-                pos->y = 2 * (rand()/(float)(RAND_MAX) - 0.5);
-                pos->z = 2 * rand()/(float)(RAND_MAX) + 3;
+		pos->x = 2 * (rand()/(float)(RAND_MAX) - 0.5);
+		pos->y = 2 * (rand()/(float)(RAND_MAX) - 0.5);
+		pos->z = 2 * rand()/(float)(RAND_MAX) + 3;
 
 		/* Apply offset to initial position */
 		pos = &u->pos;

@@ -1452,6 +1452,7 @@ int SARSimApplyNaturalForce(
 	    {
 		int n, units_visible = 0, smoke_puff_hidden = 0;
 		sar_object_smoke_unit_struct *u;
+		const SFMPositionStruct *wind = &scene->realm->actual_wind_vector;
 
 		/* Iterate through all smoke trail units, updating
 		 * each one to reflect on the smoke trail type's
@@ -1468,13 +1469,14 @@ int SARSimApplyNaturalForce(
 		    units_visible++;	/* Count this unit visible */
 
 		    /* Change position and size of this unit */
-		    u->pos.x += (u->vel.x *
+		    /* The current wind carries the smoke */
+		    u->pos.x += ((u->vel.x + wind->x / 2) *
 			time_compensation * time_compression
 		    );
-		    u->pos.y += (u->vel.y *
+		    u->pos.y += ((u->vel.y + wind->y / 2) *
 			time_compensation * time_compression
 		    );
-		    u->pos.z += (u->vel.z *
+		    u->pos.z += ((u->vel.z + wind->z / 2) *
 			time_compensation * time_compression
 		    );
   		    u->radius += smoke->radius_rate * time_compensation * time_compression;
