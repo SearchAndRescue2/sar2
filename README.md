@@ -6,7 +6,7 @@
 Search and Rescue II (SaR II) is an open source helicopter simulator game for Linux and
 OSX. In it you can fly several helicopter and airplane models in some basic scenarios.
 
-SaR II has low graphic requirements while still provide a fun and demanding
+SaR II has low graphic requirements while still provides a fun and demanding
 gameplay where the player needs to locate, pick-up and rescue victims of all
 sorts in steep mountains, burning buildings or in the sea.
 
