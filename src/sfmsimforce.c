@@ -1632,10 +1632,10 @@ int SFMForceApplyArtificial(
 	    {
 		/* Is currently above ground */
 
-		/* Check if above ground plus tolerance (0.5 meters) */
+		/* Check if above ground plus tolerance (0.3 meters) */
 		/* A previous version also set landed_state = False when */
 		/* the vel->z was > 0.0. This caused landed state flippin */
-		if((pos->z - 0.5) > ground_to_center_height) // || vel->z > 0.0)
+		if((pos->z - 0.3) > ground_to_center_height) // || vel->z > 0.0)
 		{
 		    /* Very much above ground, so mark as not landed */
 		    if(model->landed_state)
