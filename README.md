@@ -150,7 +150,7 @@ $ xdg-desktop-menu install --novendor extra/sar2.desktop
 
 ### Search And Rescue vs Search and Rescue II vs Search And Rescue 2
 
-SaR II is a fork of the game [`Search and Rescue`](https://searchandrescue.sf.net).
+SaR II is a fork of the game [Search and Rescue](http://searchandrescue.sourceforge.net/).
 
 Among the features of SaR II are additional mission and scenarios, SDL
 Joystick support with pedals and brakes, playable music, OpenAL sounds,
