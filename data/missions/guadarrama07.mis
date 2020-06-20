@@ -18,8 +18,8 @@ Fly west to the city, After the sightseeing you can drop him off at \
 weather Scattered
 mission_scene_file scenery/guadarrama.scn
 
-# Wind - East at 15 knots
-wind 90 15
+# Wind - East at 18 knots
+wind 90 18 gusts
 
 mission_begin_at helipad_barajas
 time_of_day 17:00

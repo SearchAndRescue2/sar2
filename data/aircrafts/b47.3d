@@ -78,7 +78,7 @@ attitude_change_rate  26.0 15.0 40.0
 # Acceleration responsiveness, higher values produce less
 # responsiveness.
 #                      i        j       k
-helicopter_accelresp   4500.0   3500.0  1400.0
+helicopter_accelresp   2000.0   2500.0  1400.0
 airplane_accelresp    14000.0  10000.0    3.0
 
 # Dry mass in kg
@@ -98,7 +98,7 @@ engine 0          0                18000.0 0.95
 
 # Speed bounds (all in mph)
 #     stall speed_max min_drag  overspeed_expected overspeed
-speed 60.0  19000.0   0.4       105.0              130.0
+speed 60.0  19000.0   1.5       105.0              130.0
 
 # Attitude leveling in degrees per second
 #                 h   p   b
