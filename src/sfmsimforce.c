@@ -1698,9 +1698,9 @@ int SFMForceApplyArtificial(
 		    double ground_speed = SFMHypot2(vel->x, vel->y);
 		    /* We stop if below 0.01. But only consider to be moving again
 		     * if above 0.05. This avoids flipping. */
-		    if(ground_speed < 0.01)
+		    if(ground_speed < 0.02)
 			model->stopped = True;
-		    else if(ground_speed > 0.05)
+		    else if(ground_speed > 0.1)
 			model->stopped = False;
 
 		    if(model->stopped && !prev_stopped) {

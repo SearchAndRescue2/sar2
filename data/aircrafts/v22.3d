@@ -92,7 +92,7 @@ attitude_change_rate  18.0 14.0 32.0
 # responsiveness.
 #                    i       j       k
 helicopter_accelresp 13500.0 9500.0  4800.0
-airplane_accelresp   30000.0 4500.0 3.5
+airplane_accelresp   20000.0 6500.0 3.5
 
 # Dry mass in kg
 dry_mass 15032.0

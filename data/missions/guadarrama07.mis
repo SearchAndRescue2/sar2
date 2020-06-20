@@ -7,16 +7,20 @@ description Mr. XanYoang is a wealthy businessman visiting \
 Madrid city. He wants to have a look around the skycrapers \
 and hired a well experienced pilot (you).\
 \n\
-Pick him up on your Bell B-47 from <underline>Barajas Airport<default>. \
+Pick him up on a classic Bell B-47 from <underline>Barajas Airport<default>. \
 Fly west to the city, After the sightseeing you can drop him off at \
 <bold>Torre Cristal<default>, one of the highest towers.\
 \n\
-(Of course, things might not go as expected)
+(Of course, things might not go as expected).
 
 #Mission parameters
 
 weather Scattered
 mission_scene_file scenery/guadarrama.scn
+
+# Wind - East at 15 knots
+wind 90 15
+
 mission_begin_at helipad_barajas
 time_of_day 17:00
 

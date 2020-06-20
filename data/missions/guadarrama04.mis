@@ -24,6 +24,9 @@ weather Cloudy
 # Scenery file
 mission_scene_file scenery/guadarrama.scn
 
+# Wind - wind from the east at constant 10 knots
+wind 90 10
+
 # Begin at object (name of object from scene file)
 mission_begin_at helipad_navacerrada
 

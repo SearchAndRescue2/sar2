@@ -20,13 +20,18 @@ and pickup a minister who just got back from a \
 trip abroad and his assistant. \
 He wants to be on board for the demo.\
 \n\
-Weather is not perfect. Do not forget to turn on \
-navigation lights with 'l'.
+Weather is not perfect and strong winds with gusts \
+are expected, but the elections are around the corner so...\
+Do not forget to turn on navigation lights with 'l'.
 
 #Mission parameters
 
 weather Stormy Dense
 mission_scene_file scenery/guadarrama.scn
+
+# Wind - SE at 35 knots with gusts
+wind 60 35 gusts
+
 mission_begin_at helipad_torrejon
 time_of_day 11:00
 
@@ -110,7 +115,7 @@ set_human_mesg_enter "Hi, I'm the minister's assistant!"
 human_reference player run_towards
 rotate 58 0 0
 
-create_object 1
+create_object 2
 model_file automobiles/cuda.3d
 translation 37394 -29845 0
 rotate 20 0 0

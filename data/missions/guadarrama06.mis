@@ -26,6 +26,9 @@ weather Clear
 # Scenery file
 mission_scene_file scenery/guadarrama.scn
 
+# Wind - East wind, 15 knots with gusts
+wind 90 15 gusts
+
 # Begin at object (name of object from scene file)
 mission_begin_at helipad_navacerrada
 
@@ -111,7 +114,7 @@ rotate 180 0 0
 
 
 # Create player object
-player_model_file aircrafts/ka27.3d
+player_model_file aircrafts/hh65.3d
 #			ref	x	y	z	radius	urgency
 mission_add_intercept	0	-7117	-16234	1300	400.0	1.0
 mission_add_intercept	0	-3468	-575   1885    40	1.0

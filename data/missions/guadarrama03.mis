@@ -27,8 +27,8 @@ their V-22 Ospray for the job. The \
 navigator will guide you north-west towards \
 the area.\
 \n\
-The situation is tough over there, with lots of fire \
-and smoke, so be careful.
+The situation is tough over there, with lots of fire, \
+smoke and strong notherly winds, so be careful.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -36,6 +36,9 @@ weather Scattered
 
 # Scenery file
 mission_scene_file scenery/guadarrama.scn
+
+# Wind - south at 40 knots with gusts
+wind 180 35 gusts
 
 # Begin at object (name of object from scene file)
 mission_begin_at helipad_torrejon
@@ -137,21 +140,24 @@ create_human default    need_rescue alert aware
 translation -9100 -13875 3005
 set_human_mesg_enter Everyone get in!
 human_reference player run_towards
-rotate 357 0 0		 
+rotate 357 0 0
 
-create_object 1
+create_object 2
 model_file automobiles/firetruck_ap.3d
-#translation -9780 -18973 2377
-translation -9088 -13913 3009
-#rotate 155 0 0
+translation -9088 -13913 3007
 rotate 329 0 0
+
+create_object 2
+model_file automobiles/firetruck_ap.3d
+translation -9125 -13878 3006
+rotate 261 0 0
 
 #fire		width height (ft)
 create_fire 18.0 100.0
 #translation -9688 -18920 2377
 translation -9622 -13392 2953
 #						radius
-#smoke  	offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
+#smoke		offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
 create_smoke    0.0     0.0     15.0        6.5  47.0 0.19  0         650  120  0
 #translation -9688 -18920 2377
 translation -9622 -13392 2943
@@ -160,7 +166,7 @@ translation -9622 -13392 2943
 create_fire 20.0 103.0
 #translation -9727 -18936 2377
 translation -9073 -13935 3007
-create_smoke    0.0     0.0     20.0        8  109.0 0.48 0         600 120   1 
+create_smoke    0.0     0.0     20.0        8  109.0 0.48 0         600 120   1
 #translation -9727 -18936 2377
 translation -9073 -13935 3007
 
@@ -246,7 +252,7 @@ create_fire 55.0 130.0
 translation -8821 -13593 2800
 create_smoke    0.0     0.0     20.0	    6.8  70.0 0.3 0       700 145 1
 #translation -9603 -18764 2287
-translation -8821 -13593 2750
+translation -8821 -13593 2790
 
 create_fire 40.0 103.0
 #translation -9565 -19673 2737
@@ -261,6 +267,32 @@ translation -9662 -13664 2985
 create_smoke    0.0     0.0     20.0        12.5  78.0 0.23 0     540 183 1
 #translation -10444 -18835 2753
 translation -9662 -13664 2985
+
+create_fire 35.0 70.0
+translation -9011 -13606 2950
+#						radius
+#smoke		offsetx offsety offsetz (m) start max  rate hide_at_max respawn_int total_units color_code
+create_smoke    0.0     0.0     25.0        12  150.0 0.48  0           800          120        0
+translation -9011 -13606 2950
+
+create_fire 25.0 55.0
+translation -8968 -13460 2801
+#						radius
+#smoke		offsetx offsety offsetz (m) start max   rate  hide_at_max respawn_int total_units color_code
+create_smoke    0.0     0.0     20.0        5     110.0 0.40  0           1000        230         1
+translation -8968 -13460 2801
+
+create_fire 40.0 80.0
+translation -9316 -13458 2946
+#						radius
+#smoke		offsetx offsety offsetz (m) start max   rate  hide_at_max respawn_int total_units color_code
+create_smoke    0.0     0.0     20.0        15    250.0 0.10  0           300         150         0
+translation -9316 -13458 2946
+
+create_fire 30.0 103.0
+translation -9144 -13510 2946
+create_smoke    0.0     0.0     15.0        8.5  86.0 0.25 0      609 120 1
+translation -9144 -13510 2946
 
 
 # Create player object

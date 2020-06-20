@@ -22,8 +22,10 @@ You will see several antennas on \
 the top of this last one.\
 \n\
 Finally, take a turn right and head south to \
-Barajas Airport (runway 18L). The helipad is by the end \
-of the runway, on the right.
+Barajas Airport (runway 18L).\
+\n\
+The helipad is by the end of the runway, on the right.\
+Mind the strong easterly winds when landing.
 
 # Weather (valid values defined in weather.ini), must specify before
 # parameter mission_scene_file.
@@ -32,7 +34,8 @@ weather Clear
 # Scenery file
 mission_scene_file scenery/guadarrama.scn
 
-wind 90 25 gusts
+# Wind - East. 35 knots with gusts.
+wind 90 35 gusts
 
 # Begin at object (name of object from scene file)
 mission_begin_at helipad_torrejon
