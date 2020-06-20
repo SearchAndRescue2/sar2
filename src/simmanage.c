@@ -655,7 +655,7 @@ int SARSimUpdateScene(sar_core_struct *core_ptr, sar_scene_struct *scene)
  *	change.
  */
 int SARSimUpdateSceneObjects(
-	sar_core_struct *core_ptr, sar_scene_struct *scene
+    sar_core_struct *core_ptr, sar_scene_struct *scene
 )
 {
 	int i, status;
@@ -689,6 +689,8 @@ int SARSimUpdateSceneObjects(
 	    /* SFM realm structure allocated? */
 	    if(scene->realm != NULL)
 	    {
+		scene->realm->wind_enabled = core_ptr->option.wind;
+
 		/* Handle by object type */
 		switch(obj_ptr->type)
 		{

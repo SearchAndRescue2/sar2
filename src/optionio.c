@@ -461,6 +461,13 @@ int SAROptionsLoadFromFile(
 		FGetValuesF(fp, vf, 1);
 		opt->flight_physics_level = (sar_flight_physics_level)vf[0];
 	    }
+	    /* Wind */
+	    else if(!strcasecmp(buf, "Wind"))
+	    {
+		double vf[1];
+		FGetValuesF(fp, vf, 1);
+		opt->wind = (Boolean)vf[0];
+	    }
 
 	    /* Last selected player */
 	    else if(!strcasecmp(buf, "LastSelectedPlayer"))
@@ -908,6 +915,13 @@ int SAROptionsSaveToFile(
 	    fp,
 	    "FlightPhysics = %i",
 	    (int)opt->flight_physics_level
+	);
+	/* Wind */
+	PUTCR
+	fprintf(
+	    fp,
+	    "Wind = %i",
+	    opt->wind
 	);
 	PUTCR
 	PUTCR

@@ -1717,6 +1717,13 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 		    break;
 	    }
 	}
+
+	/* Wind */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_WIND, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->wind;
     }
 
     /* Menu: Options->Controller */
@@ -2217,6 +2224,10 @@ to visually interprite heightfield objects."
 
 	case SAR_MENU_ID_OPT_MUSIC:
 	    opt->music = state;
+	    break;
+
+	case SAR_MENU_ID_OPT_WIND:
+	    opt->wind = state;
 	    break;
     }
 }

@@ -2287,8 +2287,8 @@ int btn_width_map = 32, btn_height_map = 32;
 	    core_ptr, menu,
 	    0.22f, 0.67f,
 	    0, 0,
-	    "Reserved 1",
-	    False, -1,
+	    "Winds",
+	    True, SAR_MENU_ID_OPT_WIND,
 	    SARMenuOptionsSwitchCB
 	);
 

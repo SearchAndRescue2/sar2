@@ -1399,6 +1399,7 @@ GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 	opt->hoist_contact_expansion_coeff = 1.0f;
 	opt->damage_resistance_coeff = 1.0f;
 	opt->flight_physics_level = FLIGHT_PHYSICS_REALISTIC;	/* Make it hard */
+	opt->wind = True;
 
 	opt->last_selected_player = 0;
 	opt->last_selected_mission = 0;

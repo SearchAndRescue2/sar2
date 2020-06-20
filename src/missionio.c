@@ -1737,6 +1737,7 @@ sar_mission_struct *SARMissionLoadFromFile(
 		    scene->realm->actual_wind_vector.x = scene->realm->base_wind_vector.x;
 		    scene->realm->actual_wind_vector.y = scene->realm->base_wind_vector.y;
 		    scene->realm->actual_wind_vector.z = scene->realm->base_wind_vector.z;
+		    scene->realm->wind_enabled = opt->wind;
 		}
 		else
 		{

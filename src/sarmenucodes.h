@@ -160,5 +160,6 @@
 #define SAR_MENU_ID_OPT_VOLUME_MUSIC		587	/* Slider */
 #define SAR_MENU_ID_OPT_SOUND_TEST		590	/* Button */
 #define SAR_MENU_ID_OPT_SOUND_INFO_SAVE		591	/* Button */
+#define SAR_MENU_ID_OPT_WIND			592	/* Switch */
 
 #endif	/* SARMENUCODES_H */

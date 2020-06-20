@@ -460,7 +460,7 @@ int SFMForceApplyNatural(
 	}
 
 	/* Apply air drag and wind. */
-	if(SFMForceApplyAirDrag(realm,model))
+	if(SFMForceApplyAirDrag(realm, model))
 	    return(1);
 
 	/* Handle air friction caused drag by flight model type */
@@ -982,8 +982,13 @@ static int SFMForceApplyAirDrag(
     //SFMBoolean		gear_state	     = model->gear_state;
     //int			gear_type	     = model->gear_type;
     //double			ground_elevation_msl = model->ground_elevation_msl;
-    
-    if(realm->wind_flags & (SAR_WIND_FLAG_GUSTS))
+    if(!realm->wind_enabled)
+    {
+	actual_wind->x = 0.0;
+	actual_wind->y = 0.0;
+	actual_wind->z = 0.0;
+    }
+    else if(realm->wind_flags & (SAR_WIND_FLAG_GUSTS))
     {
 	/* Wind gusts are calculated by using the following function which
 	 * returns a different value given the current time. This function has

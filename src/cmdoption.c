@@ -266,7 +266,7 @@ void SARCmdOption(SAR_CMD_PROTOTYPE)
 	else if(!strcasecmp(parm, "celestial_objects"))
 	{
 	    Boolean b = STR_IS_YES(val);
-	    opt->celestial_objects = STR_IS_YES(val);
+	    opt->celestial_objects = b;
 	    new_val = STRDUP(b ? "On" : "Off");
 	}
 	/* gl_polygon_offset_factor */
@@ -466,6 +466,12 @@ void SARCmdOption(SAR_CMD_PROTOTYPE)
 		opt->flight_physics_level = FLIGHT_PHYSICS_EASY;
 		new_val = STRDUP("EASY");
 	    }
+	}
+	else if(!strcasecmp(parm, "wind"))
+	{
+	    Boolean b = STR_IS_YES(val);
+	    opt->wind = b;
+	    new_val = STRDUP(b ? "On" : "Off");
 	}
 
 /* Add other option parameters here */

@@ -198,10 +198,10 @@ typedef struct {
 				gctl_js1_axis_roles;
 
 	/* Simulation difficulty */
-	float		hoist_contact_expansion_coeff;	/* Hoist contact radius coeff */
-	float		damage_resistance_coeff;
+	float				hoist_contact_expansion_coeff;	/* Hoist contact radius coeff */
+	float				damage_resistance_coeff;
 	sar_flight_physics_level	flight_physics_level;
-
+	Boolean				wind;
 
 	/* Last run selections */
 	int		last_selected_player,

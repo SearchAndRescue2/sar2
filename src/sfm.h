@@ -60,6 +60,7 @@ typedef struct {
 	SFMPositionStruct       base_wind_vector;	/* In meters per Cycle */
 	SFMPositionStruct       actual_wind_vector;	/* In meters per Cycle */    
 	unsigned long		wind_flags;
+	SFMBoolean		wind_enabled;
 	/* Callbacks, typical inputs are; realm pointer,
 	 * model pointer, client data
 	 */
