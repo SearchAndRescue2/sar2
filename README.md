@@ -2,6 +2,8 @@
 
 [![sar2](https://snapcraft.io//sar2/badge.svg)](https://snapcraft.io/sar2)
 [![sar2](https://snapcraft.io//sar2/trending.svg?name=0)](https://snapcraft.io/sar2)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/SaR_II_Game?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=SaR_II_Game)
+
 
 Search and Rescue II (SaR II) is an open source helicopter simulator game for Linux and
 OSX. In it you can fly several helicopter and airplane models in some basic scenarios.
