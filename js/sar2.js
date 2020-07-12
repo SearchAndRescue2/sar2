@@ -1,5 +1,10 @@
 jQuery(document).ready(function(){
-    jQuery('#tabs').tabs();
+    jQuery('#tabs').tabs({
+	show: function(event, ui) {
+	    window.location.hash=ui.panel.id;
+	}
+    });
+    
     jQuery(".ui-tabs .ui-tabs-nav").css({textAlign: 'center'});
     jQuery(".ui-tabs .ui-tabs-nav li").css({float: 'none', display: 'inline-block'});
     jQuery(".ui-tabs .ui-tabs-nav li a").css({float: 'none', display: 'inline-block'});
