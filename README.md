@@ -35,6 +35,7 @@ Pre-compiled packages can be found at:
 
 * [Snap store](https://snapcraft.io/sar2)
 * [Opensuse](https://software.opensuse.org/package/sar2)
+* [Arch Linux](https://aur.archlinux.org/packages/sar2/)
 
 ### OSX
 
