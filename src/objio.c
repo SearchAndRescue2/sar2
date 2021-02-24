@@ -1696,6 +1696,9 @@ int SARObjLoadSmoke(
 	  case 2:	/* Dark */
 	    tex_name = SAR_STD_TEXNAME_SMOKE_DARK;
 	    break;
+	  case 3:	/* Orange */
+	    tex_name = SAR_STD_TEXNAME_SMOKE_ORANGE;
+	    break;
 	}
 
 	/* Create new smoke trail object */
