@@ -593,6 +593,7 @@ to the fullest extent of the law."
 #define SAR_STD_TEXNAME_SMOKE_MEDIUM		"sar_smoke_medium"
 #define SAR_STD_TEXNAME_SMOKE_DARK		"sar_smoke_dark"
 #define SAR_STD_TEXNAME_WATER_RIPPLE		"sar_water_ripple"
+#define SAR_STD_TEXNAME_SMOKE_ORANGE	"sar_smoke_orange"
 
 /* Menu Background Image files */
 #define SAR_DEF_MENU_BGIMG_STANDARD_FILE	"images/menu_std_bg.tga"

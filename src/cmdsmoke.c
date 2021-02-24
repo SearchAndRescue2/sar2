@@ -100,6 +100,9 @@ void SARCmdSmoke(SAR_CMD_PROTOTYPE)
 	      case 2:	/* Dark */
 		tex_name = SAR_STD_TEXNAME_SMOKE_DARK;
 		break;
+	      case 3:	/* Orange */
+		tex_name = SAR_STD_TEXNAME_SMOKE_ORANGE;
+		break;
 	      default:	/* Light */
 		tex_name = SAR_STD_TEXNAME_SMOKE_LIGHT;
 		break;
