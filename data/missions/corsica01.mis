@@ -1,0 +1,60 @@
+# # # # #
+# Mission Header
+#
+
+# Mission file version. Program version must be >= 2.5.0 because of "wind" use.
+version 2 5 0
+
+# Mission name
+name Corsica 1: Private transport from Propriano to Ajaccio
+
+# Mission description (newlines and escapes accepted)
+description You have to <bold>board a passenger<default>\
+ at <underline>Propriano helipad<default>, then <bold>head north-northwest<default>\
+ to transport him to the <underline>Ajaccio helipad<default>.\n\
+Look for the <bold>helipad<default> and <bold>land<default> on it.\
+ Be sure to <bold>touch down slightly<default> to avoid damage your\
+ helicopter.
+
+# Weather (valid values defined in weather.ini). Must be specified before mission_scene_file.
+weather Cloudy
+
+# Scenery file
+mission_scene_file scenery/corsica.scn
+
+# Blowing to east-northeast wind, 10 knots, wothout gusts. Must be specified after mission_scene_file.
+wind 67 10
+
+
+# # # # #
+# Mission Objectives
+#
+
+# Mission first objective
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_ajaccio
+mission_objective_message_success Bye mister, hope to see you soon again!
+mission_objective_message_fail BRAKING NEWS: "Helicopter crash between Propriano and Ajaccio. The pilot and his passenger are deceased."
+
+
+# # # # #
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Passenger's "taxi", waiting at Ajaccio helipad
+create_object 2
+model_file automobiles/cuda.3d
+translate -22410 -31995 0.0
+rotate 10 0 0
+
+# Mission begins at an object defined in scene file
+mission_begin_at helipad_propriano
+
+# Create player object
+player_model_file aircrafts/as350.3d
+rotate 270 0 0
+
+# Waypoint of first objective (Ajaccio helipad, see mission_objective_arrive_at)
+#			         ref_code   radius  urgency
+mission_add_intercept    3       1.0     0.5

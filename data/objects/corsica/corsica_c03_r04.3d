@@ -1,0 +1,14 @@
+begin_header
+texture_load corsica_c03_r04 textures/corsica/corsica_c03_r04.tex.tga 0.950000
+#texture_load corse_base_night textures/corsica/corsica_c03_r04_night.tex.tga 0.950000
+end_header
+
+range 104104
+#range_far 200000
+#shade_model_smooth
+
+begin_model standard
+color 0.8 0.8 0.8 1.0
+texture_select corsica_c03_r04
+heightfield_load textures/corsica/corsica_c03_r04.hf.tga 19200 19200 2610 18900.000 9450.000 0 0 0 0
+end_model standard
