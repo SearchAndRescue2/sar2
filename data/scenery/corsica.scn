@@ -23,8 +23,8 @@ texture_load water01_tex textures/water01.tex 1.0
 scene_ground_flags is_water
 
 # Ground base tile
-#                 tilew tileh closerng  color              texture
-scene_ground_tile 1000  1000  10000     0.22 0.36 0.53 1.0 water01_tex
+#                 tilew tileh closerng             far color              texture
+scene_ground_tile 1000  1000   10000    0.171875 0.312500 0.453125 1.0  water01_tex
 
 # Map representing entire scene for briefing/log map
 #         width  height  texture_file
