@@ -3366,7 +3366,7 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 				        scene,
 				        &core_ptr->object, &core_ptr->total_objects,
 				        obj_ptr,
-				        0	/* Close */
+				        door_ptr->flags & !SAR_OBJ_PART_FLAG_STATE	/* Close */
 				    );
 			    }
 			}	/* Was rope previously out? */
@@ -3388,7 +3388,7 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 			    scene,
 			    &core_ptr->object, &core_ptr->total_objects,
 			    obj_ptr,
-			    1		/* Open */
+			    door_ptr->flags | SAR_OBJ_PART_FLAG_STATE		/* Open */
 			);
 
 			/* Here is also a good point to check if we have
@@ -3408,6 +3408,9 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 			}
 		    }
 
+		    /* Is door fully opened ? */
+			if (door_ptr->flags & SAR_OBJ_PART_FLAG_DOOR_OPENED)
+			{
 		    /* Was rope previously in? */
 		    if(hoist->rope_cur < hoist->contact_z_max)
 		    {
@@ -3453,6 +3456,7 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 			 * in the other simulation calls
 			 */
 		    }
+			}
 		}
 	    }
 	}
