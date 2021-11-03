@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        H2 { text-align: center; }
+    </style>
+  </head>
+  <body>
+    <header>
+        <h2>Search And Rescue II documentation: how to write a scenery.</h2>
+    </header>
+    <main>
+    [TODO], just a few information for now, mainly for terrain:<br>
+    <ul>
+    <li>
+    Scenery (*.scn file) loads objects (data/objects/*.3d files). Objects can be terrain, building, trees, ...
+    </li>
+    <li>
+    Terrain is an object loaded by scenery file using a "<a href= "../sar2ParmsBook/sar2ParmsBook.html#create_object">create_object</a> 6" parameter followed by a "<a href= "../sar2ParmsBook/sar2ParmsBook.html#model_file">model_file</a> objects/.../*.3d" parameter. Terrain objects refers to elevation and texture files.
+    </li>
+    <li>
+    Terrain elevation map (*.hf file, you can name it as *.hf.tga) is an 8 bits gray, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#heightfield_load">heightfield_load</a>. Its dimensions (image width and height) must be a power of 2.
+    </li>
+    <li>
+    Terrain texture (*.tex file, you can name it as *.tex.tga) is a 4*8 bits rgba, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#texture_load">texture_load</a>. Its dimensions (image width and height) must be a power of 2.
+    </li>
+    <li>
+    A full black (0x000000) pixel on an object texture will be fully transparent, thus use 0x010101 if you want a black color.
+    </li>
+    </ul>
+    </main>
+    <footer></footer>
+  </body>
+</html>

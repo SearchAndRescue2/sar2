@@ -1,0 +1,215 @@
+<html>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/setup.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:06 GMT -->
+<head>
+<title>Search and Rescue - Manual - Setup</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index-2.html">Index</a>-&gt;
+Setting Up Search and Rescue
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>Setting Up Search and Rescue</h2>
+
+<p>
+This page assumes that you <i>already</i> have Search and Rescue
+installed, if you need help installing Search and Rescue
+then please see the
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue/install.html">
+Download &amp; Installation Guide</a>
+</p>
+
+<ul>
+ <li><a href="#running">Running</a>
+ <li><a href="#graphics">Graphics</a>
+ <li><a href="#sound">Sound</a>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index-2.html#contents">Contents</a>
+]
+
+
+<a name="running">
+<hr>
+<h3>Running</h3>
+
+<p>Typically Search and Rescue is installed in
+<code>/usr/games/SearchAndRescue</code> for the UNIX/X version and
+in its own directory under the name <code>SearchAndRescue.exe</code>
+for the Win32 version.
+</p>
+
+<p>Simply create a <i>short cut</i> to the program file, the 
+<i>short cut</i> command should look something like the following.
+</p>
+
+For UNIX/X:
+<ul>
+ <li><code>/usr/games/SearchAndRescue</code>
+</ul>
+For Win32:
+<ul>
+ <li><code>D:\GAMES\SEARCHANDRESCUE.EXE</code>
+</ul>
+
+<p>
+If you would like to get a list of command line arguments that you 
+can add to the <i>short cut</i> command, run a console and type:
+</p>
+<ul>
+ <li><code>SearchAndRescue --help</code>
+</ul>
+
+<img src="main_menu.png" align=right border=0
+ alt="MAIN MENU"
+>
+<p><img src="icon_run.gif" border=0 valign=center>
+At this point you should try <b>running</b> Search and Rescue from a 
+console to see if there are any problems.  The most common problems are 
+<i>graphics problems</i> in which case the program is unable to start 
+up properly, if you encounter any problems please read the
+<a href="faq.html">
+Frequently Asked Questions</a>. If Search and Rescue is able to run 
+properly, then you should be able to see the <i>main menu</i> (as shown 
+on the right).
+</p>
+
+<p>Do not worry about running Search and Rescue in windowed mode or full 
+screen at start up, you can always adjust things later once the program
+is running correctly.
+</p>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+When the program is running you can switch from <i>windowed mode</i>
+to <i>fullscreen mode</i> by pressing <code>CTRL + F11</code>. To
+<b>change</b> the <i>resolution</i> (in <i>windowed or fullscreen 
+modes</i>) press <code>CTRL + [</code> or <code>CTRL + ]</code>.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index-2.html#contents">Contents</a>
+]
+
+
+<a name="graphics">
+<hr>
+<h3>Graphics</h3>
+
+<img src="graphics_menu.png" align=right border=0
+ alt="GRAPHICS MENU"
+>
+<p>
+To modify the graphics options, go to Options-&gt;Graphics..., there you 
+can adjust simulation detail, graphics acceleration, resolution, and 
+much more. Important settings are explained below.
+</p>
+<ul>
+ <li>Celestial - Toggle the display of the sun, moon, and overall 
+lighting.
+ <li>Dual Pass Depth - Toggle the double rendering per frame in order to 
+display heightfields more accurately.
+ <li>Object Texture - Toggles the texturing of objects, note that this
+<b>will</b> affect certain ground objects used as plots, mountains, and
+landmarks.
+ <li>Resolution - Changes the resolution (the size of the window).
+ <li>Graphics Accel - This influences frame rate versus cpu usage. If 
+you find a <i>delay</i> in the response of the program then <b>lower</b>
+this value, <i>otherwise</i> <b>increase</b> it.
+</ul>
+
+<p>To change the graphics options during simulation see
+<a href="environment.html#details">Environment Scenery Details</a>.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index-2.html#contents">Contents</a>
+]
+
+
+<a name="sound">
+<hr>
+<h3>Sound</h3>
+
+<img src="sound_menu.png" align=right border=0
+ alt="SOUND MENU"
+>
+<p>
+To modify the sound options, go to Options-&gt;Sound..., there you
+can adjust the sound level, volumes, and toggle the music.
+</p>
+
+<p>
+It is important that you have your <i>sound server</i> running before
+you enable sound. To enable sound increase the Sound Level.
+</p>
+
+<p>Important settings are explained below:
+</p>
+<ul>
+ <li>Priority - Specifies the DirectSound cooperation level (Win32 
+only, UNIX/X is always set to Background)
+ <li>Master Volume - Adjusts the mixer's volume level (not available on
+Win32).
+ <li>Sound Volume - Adjusts the mixer's PCM (aka Wave)  volume level.
+ <li>Music Volume - Adjusts the mixer's MIDI volume level.
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index-2.html#contents">Contents</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/setup.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:06 GMT -->
+</html>
+

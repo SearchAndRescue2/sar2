@@ -1,0 +1,5001 @@
+9
+CACHE-1.43
+4043
+2779
+Not Found9
+text/html10
+iso-8859-129
+Thu, 15 Jul 2004 21:50:12 GMT0
+0
+0
+16
+wolfpack.twu.net11
+/robots.txt0
+3
+HTS3
+277<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML><HEAD>
+<TITLE>404 Not Found</TITLE>
+</HEAD><BODY>
+<H1>Not Found</H1>
+The requested URL /robots.txt was not found on this server.<P>
+<HR>
+<ADDRESS>Apache/1.3.19 Server at wolfpack.twu.net Port 80</ADDRESS>
+</BODY></HTML>
+3
+2004
+35702
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:16:24 GMT21
+"29c275-df2-3f20d948"0
+0
+16
+wolfpack.twu.net24
+/SearchAndRescue/manual/146
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/index.html3
+HTS4
+3570<html>
+<head>
+<title>Search and Rescue - Manual - Contents</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>Index</font>
+  </td>
+ </tr>
+
+
+
+ <tr>
+  <td width=100% align=center valign=top>
+<a name="contents">
+
+<img src="title.png" align=center
+ alt="SEARCH AND RESCUE"
+>
+
+<table width=100% border=0 cellspacing=5 cellpadding=5>
+ <tr>
+  <td width=70% align=left valign=top>
+
+<h3>Contents</h2>
+<ol>
+ <li><a href="setup.html">Setting Up Search and Rescue</a>
+  <ul>
+   <li><a href="setup.html#running">Running</a>
+   <li><a href="setup.html#graphics">Graphics</a>
+   <li><a href="setup.html#sound">Sound</a>
+  </ul>
+ <li><a href="controls.html">Controls</a>
+  <ul>
+   <li><a href="controls.html#keyboard">Keyboard Keys</a>
+   <li><a href="controls.html#joystick">Joystick Functions</a>
+  </ul>
+ <li><a href="free_flight.html">Free Flight</a>
+  <ul>
+   <li><a href="free_flight.html#starting">Starting Free Flight</a>
+   <li><a href="free_flight.html#details">Aircraft Information</a>
+  </ul>
+ <li><a href="views.html">Views</a>
+  <ul>
+   <li><a href="views.html#camera">Using The Camera</a>
+   <li><a href="views.html#cockpit">Cockpit Head Up Display (HUD)</a>
+   <li><a href="views.html#outside">Outside Display</a>
+  </ul>
+ <li><a href="flying.html">Flying</a>
+  <ul>
+   <li><a href="flying.html#controlling">Controlling The Aircraft</a>
+   <li><a href="flying.html#landing">Landing</a>
+   <li><a href="flying.html#navigation">Navigation</a>
+   <li><a href="flying.html#rescuing">Rescuing</a>
+  </ul>
+ <li><a href="aircrafts.html">Aircrafts</a>
+ <li><a href="environment.html">Environment</a>
+  <ul>
+   <li><a href="environment.html#details">Scenery Details</a>
+   <li><a href="environment.html#weather">Weather</a>
+  </ul>
+ <li><a href="createyourown.html">Create Your Own</a>
+ <li><a href="faq.html">Frequently Asked Questions</a>
+ <li><a href="http://wolfpack.twu.net/contacts.html">Contacting The Authors</a>
+(external link)
+</ol>
+
+  </td>
+  <td width=30% align=left valign=top bgcolor=ffe0d0>
+<h3>About</h3>
+<p>
+This is the official manual for
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+Search and Rescue</a> version 0.8.x. It describes everything
+from setup to flying the aircrafts.
+</p>
+<h4>Quick Links</h4>
+<ul>
+ <li><a href="controls.html#keyboard">Keyboard Keys</a>
+ <li><a href="views.html#camera">Camera &amp; View Controls</a>
+ <li><a href="aircrafts.html">Aircrafts Listing</a>
+ <li><a href="createyourown.html">Create Your Own</a>
+ <li><a href="faq.html">FAQ</a>
+</ul>
+<h4>External Links</h4>
+<ul>
+ <li><a href="http://wolfpack.twu.net/SearchAndRescue/">
+Search and Rescue Home Page</a>
+ <li><a href="http://wolfpack.twu.net/SearchAndRescue/install.html">
+Download &amp; Installation Guide</a>
+ <li><a href="http://wolfpack.twu.net/contacts.html">
+Contacts Page</a>
+</ul>
+
+  </td>
+ </tr>
+</table>
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+2
+329d59a111cf239c982cb9685474d7c2763
+2004
+53322
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:18:18 GMT22
+"29c27b-14d4-3f20d9ba"0
+0
+16
+wolfpack.twu.net34
+/SearchAndRescue/manual/setup.html146
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/setup.html3
+HTS4
+5332<html>
+<head>
+<title>Search and Rescue - Manual - Setup</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Setting Up Search and Rescue
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>Setting Up Search and Rescue</h2>
+
+<p>
+This page assumes that you <i>already</i> have Search and Rescue
+installed, if you need help installing Search and Rescue
+then please see the
+<a href="http://wolfpack.twu.net/SearchAndRescue/install.html">
+Download &amp; Installation Guide</a>
+</p>
+
+<ul>
+ <li><a href="#running">Running</a>
+ <li><a href="#graphics">Graphics</a>
+ <li><a href="#sound">Sound</a>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="running">
+<hr>
+<h3>Running</h3>
+
+<p>Typically Search and Rescue is installed in
+<code>/usr/games/SearchAndRescue</code> for the UNIX/X version and
+in its own directory under the name <code>SearchAndRescue.exe</code>
+for the Win32 version.
+</p>
+
+<p>Simply create a <i>short cut</i> to the program file, the 
+<i>short cut</i> command should look something like the following.
+</p>
+
+For UNIX/X:
+<ul>
+ <li><code>/usr/games/SearchAndRescue</code>
+</ul>
+For Win32:
+<ul>
+ <li><code>D:\GAMES\SEARCHANDRESCUE.EXE</code>
+</ul>
+
+<p>
+If you would like to get a list of command line arguments that you 
+can add to the <i>short cut</i> command, run a console and type:
+</p>
+<ul>
+ <li><code>SearchAndRescue --help</code>
+</ul>
+
+<img src="main_menu.png" align=right border=0
+ alt="MAIN MENU"
+>
+<p><img src="icon_run.gif" border=0 valign=center>
+At this point you should try <b>running</b> Search and Rescue from a 
+console to see if there are any problems.  The most common problems are 
+<i>graphics problems</i> in which case the program is unable to start 
+up properly, if you encounter any problems please read the
+<a href="faq.html">
+Frequently Asked Questions</a>. If Search and Rescue is able to run 
+properly, then you should be able to see the <i>main menu</i> (as shown 
+on the right).
+</p>
+
+<p>Do not worry about running Search and Rescue in windowed mode or full 
+screen at start up, you can always adjust things later once the program
+is running correctly.
+</p>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+When the program is running you can switch from <i>windowed mode</i>
+to <i>fullscreen mode</i> by pressing <code>CTRL + F11</code>. To
+<b>change</b> the <i>resolution</i> (in <i>windowed or fullscreen 
+modes</i>) press <code>CTRL + [</code> or <code>CTRL + ]</code>.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="graphics">
+<hr>
+<h3>Graphics</h3>
+
+<img src="graphics_menu.png" align=right border=0
+ alt="GRAPHICS MENU"
+>
+<p>
+To modify the graphics options, go to Options-&gt;Graphics..., there you 
+can adjust simulation detail, graphics acceleration, resolution, and 
+much more. Important settings are explained below.
+</p>
+<ul>
+ <li>Celestial - Toggle the display of the sun, moon, and overall 
+lighting.
+ <li>Dual Pass Depth - Toggle the double rendering per frame in order to 
+display heightfields more accurately.
+ <li>Object Texture - Toggles the texturing of objects, note that this
+<b>will</b> affect certain ground objects used as plots, mountains, and
+landmarks.
+ <li>Resolution - Changes the resolution (the size of the window).
+ <li>Graphics Accel - This influences frame rate versus cpu usage. If 
+you find a <i>delay</i> in the response of the program then <b>lower</b>
+this value, <i>otherwise</i> <b>increase</b> it.
+</ul>
+
+<p>To change the graphics options during simulation see
+<a href="environment.html#details">Environment Scenery Details</a>.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="sound">
+<hr>
+<h3>Sound</h3>
+
+<img src="sound_menu.png" align=right border=0
+ alt="SOUND MENU"
+>
+<p>
+To modify the sound options, go to Options-&gt;Sound..., there you
+can adjust the sound level, volumes, and toggle the music.
+</p>
+
+<p>
+It is important that you have your <i>sound server</i> running before
+you enable sound. To enable sound increase the Sound Level.
+</p>
+
+<p>Important settings are explained below:
+</p>
+<ul>
+ <li>Priority - Specifies the DirectSound cooperation level (Win32 
+only, UNIX/X is always set to Background)
+ <li>Master Volume - Adjusts the mixer's volume level (not available on
+Win32).
+ <li>Sound Volume - Adjusts the mixer's PCM (aka Wave)  volume level.
+ <li>Music Volume - Adjusts the mixer's MIDI volume level.
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+67332
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:13:37 GMT22
+"29c0c8-1a4d-3f20d8a1"0
+0
+16
+wolfpack.twu.net37
+/SearchAndRescue/manual/controls.html149
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/controls.html3
+HTS4
+6733<html>
+<head>
+<title>Search and Rescue - Manual - Controls</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Controls
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h3>Controls</h3>
+
+<p>Keyboard and joystick control functions are listed here.  It would be 
+useful to bookmark this page since the keyboard keys list is
+frequently looked up.
+</p>
+
+<ul>
+ <li><a href="#keyboard">Keyboard Keys</a>
+ <li><a href="#joystick">Joystick Functions</a>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="keyboard">
+<hr>
+<h3>Keyboard Keys</h3>
+
+<p>
+<img src="icon_bulb.gif" border=0 valign=center>
+You can press <code>F1</code> during simulation to
+get a quick list of keyboard commands.
+</p>
+
+<h4>Global Key Functions</h4>
+<p>
+These keys can be used at any time to change the resolution.
+</p>
+<ul>
+ <li><code>CTRL + F11</code>
+Toggles between full screen and windowed modes.
+ <li><code>CTRL + ]</code>
+Increase resolution to the next step.
+ <li><code>CTRL + [</code>
+Decrease resolution to the previous step.
+ <li><code>CTRL + C</code> (or <code>CTRL + PRINTSCREEN</code>)
+Screen shot.
+</ul>
+
+<h4>Menu Key Functions</h4>
+<p>
+These keys functions are used while in the menus.
+</p>
+<ul>
+ <li><code>TAB</code> and <code>SHIFT + TAB</code> highlights next or
+previous item.
+ <li><code>ENTER</code> or <code>SPACE</code> selects highlighted item.
+ <li><code>CURSORS</code> scroll/select/cycle list or spin item.
+</ul>
+
+<h4>Simulation Key Functions</h4>
+<p>
+These key functions are used during simulation.
+</p>
+<ul>
+ <li><code>F1</code> Display `quick help'.
+ <li><code>F2</code> Switch to cockpit view.
+ <li><code>F3</code> Spot view.
+ <li><code>F4</code> Fly by tower view.
+ <li><code>F5</code> Rescue basket view.
+ <li><code>LEFT</code> Bank left.
+ <li><code>RIGHT</code> Bank right.
+ <li><code>DOWN</code> Pitch down.
+ <li><code>UP</code> Pitch up.
+ <li><code>CTRL + LEFT</code> Heading left.
+ <li><code>CTRL + RIGHT</code> Heading right.
+ <li><code>SHIFT + CURSORS</code> Change camera direction or position.
+ <li><code>BACKSPACE</code> Normalize view.
+ <li><code>PGUP</code> Increase throttle.
+ <li><code>PGDN</code> Decrease throttle.
+ <li><code>HOME</code> Elevator trim down or slew up in slew mode.
+ <li><code>END</code> Elevator trim up or slew down in slew mode.
+ <li><code>CTRL + HOME</code> Elevator trim center.
+ <li><code>MINUS</code> Zoom out.
+ <li><code>PLUS</code> Zoom in.
+ <li><code>CTRL + MINUS</code> Rescue basket hoist out.
+ <li><code>CTRL + PLUS</code> Rescue basket hoist in.
+ <li><code>E</code> Start up engines.
+ <li><code>SHIFT + E</code> Turn engines off.
+ <li><code>Y</code> Tilt rotors/pitch engines.
+ <li><code>G</code> Raise/lower landing gears (retractable gears only).
+ <li><code>P</code> Select hoist deployment type (basket/diver).
+ <li><code>D</code> Close/open door.
+ <li><code>O</code> Toggle strobes (flashing lights).
+ <li><code>L</code> Toggle lights (including search light).
+ <li><code>SHIFT + L</code> Toggle search light.
+ <li><code>H</code> HUD and outside text brighten.
+ <li><code>SHIFT + H</code> HUD and outside text darken.
+ <li><code>A</code> Autopilot/autohover on/off.
+ <li><code>M</code> Map view.
+ <li><code>W</code> Select next way point.
+ <li><code>SHIFT + W</code> Select previous way point.
+ <li><code>I</code> FLIR (night vision).
+ <li><code>F</code> Print fuel status and alift time left dependent
+of available fuel.
+ <li><code>SHIFT + F</code> Transfer fuel from external fuel tanks.
+ <li><code>CTRL + F</code> Jetteson external fuel tanks.
+ <li><code>S</code> Print scores, payload, occupancy, and mission 
+status.
+ <li><code>PERIOD</code> Wheel brakes.
+ <li><code>SHIFT + PERIOD</code> Parking brakes.
+ <li><code>Z</code> Decelerate time (slow motion).
+ <li><code>SHIFT + Z</code> Accelerate time (compress time).
+ <li><code>CTRL + Z</code> Normalize time rate.
+ <li><code>CTRL + W</code> Change weather.
+ <li><code>CTRL + A</code> Slew/flight toggle.
+ <li><code>/</code> Literal command (for editing/debug/cheat).
+ <li><code>T</code> Increase time of day (does not affect other timmings).
+ <li><code>SHIFT + T</code> Decrease time of day (does not affect other timmings).
+ <li><code>CTRL + D</code> Adjust flight physics difficulty.
+ <li><code>CTRL + S</code> Adjust sound level.
+ <li><code>CTRL + M</code> Toggle music.
+ <li><code>V</code> Reduce visible range.
+ <li><code>SHIFT + V</code> Increase visible range.
+ <li><code>CTRL + U</code> Change units.
+ <li><code>F9</code> Toggle ground base texture (not objects or
+landmarks).
+ <li><code>F10</code> Toggle atmosphere.
+ <li><code>F11</code> Toggle object texturing.
+ <li><code>F12</code> Toggle clouds and horizon.
+ <li><code>SHIFT + F9</code> Toggle dual pass depth.
+ <li><code>SHIFT + F10</code> Toggle celestial objects.
+ <li><code>SHIFT + F11</code> Toggle smoke trails.
+ <li><code>SHIFT + F12</code> Toggle rotor prop wash effects.
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="joystick">
+<hr>
+<h3>Joystick Functions</h3>
+
+<p>
+The joystick is only used during simulation to control the
+aircraft and move the camera. To enable the joystick(s) go to
+Options-&gt;Controller... The joystick buttons can be mapped
+by going to Options-&gt;Controller...-&gt;Buttons
+</p>
+
+<p>
+<img src="icon_bulb.gif" border=0 valign=center>
+When mapping the joystick buttons, you can select the Action and
+then <b>press</b> on the joystick button to instantly set the Button 
+Number to the joystick button you just pressed.
+</p>
+
+<h4>Axis Functions</h4>
+
+<ul>
+ <li><code>STICK AXIS XY</code> Bank and pitch (respectivly) or
+forwards/backwards and sideways (respectivly) in slew mode.
+ <li><code>STICK AXIS Z</code> Heading and turning directional landing gears.
+ <li><code>THROTTLE</code> Throttle.
+ <li><code>HAT</code> Camera direction/position.
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+
+
+
+
+
+
+
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+34082
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:15:07 GMT21
+"29c270-d50-3f20d8fb"0
+0
+16
+wolfpack.twu.net40
+/SearchAndRescue/manual/free_flight.html152
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/free_flight.html3
+HTS4
+3408<html>
+<head>
+<title>Search and Rescue - Manual - Free Flight</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Free Flight
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h3>Free Flight</h3>
+
+<ul>
+ <li><a href="#starting">Starting Free Flight</a>
+ <li><a href="#aircraft_details">Aircraft Information</a>
+</ul>
+
+<a name="starting">
+<hr>
+<h2>Starting Free Flight</h2>
+
+<ol>
+ <li>Make sure you are at the <i>Main Menu</i> and <b>click</b> on
+<u>Free Flight</u>. Then you will see a list of Theaters (scenery) and a
+list of starting Locations.
+ <li><b>Select</b> a <u>Theater</u> (scenery), the starting Locations
+for that Theater will be displayed on the list below it.
+ <li><b>Select</b> a <u>starting Location</u> and then <b>click</b> on 
+<u>Begin</u>. Then you will see a list of Aircrafts.
+ <li><b>Select</b> an <u>Aircraft</u> and then you can either begin the 
+simulation by <b>clicking</b> on <u>Begin</u> or select the weather
+by <b>clicking</b> on <u>Weather...</u>
+ <li>If you clicked on Weather... then you can <b>select</b> the
+startup <u>Weather Condition</u> and then <b>click</b> on <u>Begin</u>.
+</ol>
+
+<p>
+At this point you should see the <i>Loading Simulation</i> screen
+and afterwards you will enter simulation.
+</p>
+
+<p>To learn more about flying the aircraft see
+<a href="flying.html">Flying</a>.
+</p>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+<a name="aircraft_details">
+<hr>
+<h3>Aircraft Information</h3>
+<img src="aircraft_details.png" border=0 align=right
+ alt="AIRCRAFT DETAILS"
+>
+<p>
+While in the <i>Aircrafts Menu</i> you can get information about a
+specific aircraft by <b>selecting</b> an <u>aircraft</u> and then
+<b>click</b> on <u>Details...</u>. You should then see the
+<i>Aircraft Details Menu</i>, now you can use the pointer or keyboard to
+change the aircraft's direction and other viewing aspects. The following
+are a list of keys and their function in the
+<i>Aircraft Details Menu</i>:
+</p>
+
+<ul>
+ <li><code>CURSORS</code> - Change aircraft heading pitch.
+ <li><code>CTRL + CURSORS</code> - Change aircraft bank.
+ <li><code>SPACE</code> - Rotate aircraft about its heading azis.
+ <li><code>BACKSPACE</code> - Return to default rotation.
+ <li><code>PLUS</code> - Zoom in.
+ <li><code>MINUS</code> - Zoom out.
+ <li><code>M</code> - Toggle messages.
+ <li><code>B</code> - Cycle background color.
+ <li><code>L</code> - Toggle lighting.
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+97252
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:12:53 GMT22
+"29c0c3-25fd-3f20d875"0
+0
+16
+wolfpack.twu.net38
+/SearchAndRescue/manual/aircrafts.html150
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/aircrafts.html3
+HTS4
+9725<html>
+<head>
+<title>Search and Rescue - Manual - Aircrafts</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Aircrafts
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h3>Aircrafts</h3>
+
+<ul>
+ <li><a href="#as350">AS-350</a>
+ <li><a href="#hh65">HH-65 Dolphin</a>
+ <li><a href="#hh60">HH-60 JayHawk</a>
+ <li><a href="#v22">V-22 Ospray</a>
+ <li><a href="#s64">S-64 Skycrane</a>
+ <li><a href="#ka27">KA-27 Helix-D</a>
+ <li><a href="#b47">B-47</a>
+ <li><a href="#uh1d">UH-1D Iroquis</a>
+
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="as350">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>AS-350</h3>
+<pre><code>
+Cruise Speed:  115 kts
+Maximum Speed: 153 kts
+
+Maximum Endurance: 3.0 hrs
+Maximum Range:     360 nm
+Service Ceiling:   8,350' msl
+
+Rotor Diameter: 35' 9"
+Length:         35' 10"
+Height:         10' 11"
+
+Pilots:     2
+Crew:       2
+Passengers: 0
+
+Manufacturer:    Aerospatiale
+Engines:         2
+Propulsion Type: Turbomeca Arriel 1d1
+                 rated at 546 kw (732shp)
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="as350.png" border=0 alt="AS-350">
+<p>
+Remarks: Slow and under-powered compared to the other Search and Rescue
+helicopters, it does not accelerate too quickly and is very forgiving.
+This helicopter makes an excellent trainer and is ideal for first time
+pilots.
+</p>
+<p>
+Note: Does not have a rescue hoist and does not have capacity for 
+passengers.
+</p>
+<p>
+Model Author: Tara Milana &amp; Dan Stimiz
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="hh65">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>HH-65 Dolphin</h3>
+<pre><code>
+Cruise Speed:  120 kts
+Maximum Speed: 165 kts
+
+Maximum Endurance: 3.5 hrs
+Maximum Range:     300 nm
+Service Ceiling:   7,510' msl
+
+Rotor Diameter: 39' 2"
+Length:         44' 5"
+Height:         13' 0"
+
+Pilots:     2
+Crew:       2
+Passengers: 4
+
+Manufacturer:    Aerospatiale
+Engines:         2
+Propulsion Type: Lycoming LTS-101-750B-2
+                 Gas Turbines
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="hh65.png" border=0 alt="HH-65 Dolphin">
+<p>
+Remarks: Faster and more powerful than the AS-350, the HH-65 is better
+equiped for short range rescues. It has a rescue hoist and capacity for
+four additional passengers that you may pick up. However it does not
+have a significantly longer range or endurance time compared to the
+AS-350. The flight controls are also slightly more responsive and more
+sensitive to under/over corrections. 
+</p>
+<p>
+Model Author: Tara Milana &amp; Dan Stimiz
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="hh60">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>HH-60 JayHawk</h3>
+<pre><code>
+Cruise Speed:  140 kts
+Maximum Speed: 180 kts
+
+Maximum Endurance: 7.0 hrs
+Maximum Range:     700 nm
+Service Ceiling:   5,000' msl
+
+Rotor Diameter: 54' 0"
+Length:         65' 3"
+Height:         17' 2"
+
+Pilots:     2
+Crew:       2
+Passengers: 10
+
+Manufacturer:    Sikorsky
+Engines:         2
+Propulsion Type: General Electric
+                 T700-401C Gas Turbines
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="hh60.png" border=0 alt="HH-60 JayHawk">
+<p>
+Remarks: Extremely responsive and powerful, this helicopter has great
+acceleration and speed, along with a long 7 hour endurance. It's very
+responsive to control movements, so sensitive manuvering requires a
+delicate touch. Extra fuel tanks and a low service ceiling make this
+helicopter effective only at low altitudes.
+</p>
+<p>
+Model Author: Tara Milana &amp; Dan Stimiz
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="v22">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>V-22 Ospray</h3>
+<pre><code>
+Maximum Speed: 275 kts
+
+Maximum Endurance: 8.0 hrs
+Maximum Range:     515 nm
+Service Ceiling:   26,000' msl
+
+Rotor Diameter: 38' 0"
+Wing Span:      42' 0"
+Length:         57' 2"
+Height:         17' 6"
+
+Pilots:     2
+Crew:       24
+Passengers: 24
+
+Manufacturer:    Boeing
+Engines:         2
+Propulsion Type: Allison T406-AD-400
+                 engines
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="v22.png" border=0 alt="V-22 Ospray">
+<p>
+Remarks: As a helicopter, the V-22's performance is similar to the
+HH-60. However, the V-22 has much more power and speed due to its two
+powerful Allison engines that can pitch forward to fly like an airplane.
+It has a slightly shorter range of operation, but can hold more
+passengers than the HH-60. 
+</p>
+<p>
+Model Author: Tara Milana
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="s64">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>S-64 SkyCrane</h3>
+<pre><code>
+Cruise Speed:  95 kts
+Maximum Speed: 120 kts
+
+Maximum Range:     215 nm
+
+Rotor Diameter: 72' 0"
+Length:         70' 3"
+Height:         25' 5"
+
+Pilots:     3
+Crew:       1
+Passengers: 0
+
+Manufacturer:    Erickson
+Engines:         2
+Propulsion Type: Pratt & Whitney
+                 JFTD-12-4A
+                 turboshafts
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="s64.png" border=0 alt="S-64 Skycrane">
+<p>
+Remarks: The Skycrane is used for construction, fire fighting, and 
+utility purposes.  It is not a search and rescue or transport vehicle.
+Its flight characteristics are very bulky, requiring a lot of input to 
+achieve minimal response. It is not particularly fast but it is
+very manuverable in tight areas that require precision flying.
+</p>
+<p>
+Note: Does not have a rescue hoist and does not have capacity for
+passengers.
+</p>
+<p>
+Model Author: Stefan Maron &amp; Chris Smith
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="ka27">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>KA-27 Helix-D</h3>
+<pre><code>
+Cruise Speed:  232 kts
+Maximum Speed: 250 kts
+
+Maximum Endurance: 7.0 hrs
+Maximum Range:     570 nm
+Service Ceiling:   16,406' msl
+
+Rotor Diameter: 54' 7"
+Length:         34' 5"
+Height:         17' 8"
+
+Pilots:     2
+Crew:       2
+Passengers: 10
+
+Manufacturer:    Kamov
+Engines:         2
+Propulsion Type: Isotov TV-3-117-V
+                 Turbinen
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="ka27.png" border=0 alt="KA-27 Helix-D">
+<p>
+Remarks: This helicopter is primarly a military aircraft, however it has 
+a search and rescue version that is equiped with a hoist.  It has great 
+power and speed, comparable to the HH-60. It accelerates rapidly and 
+can climb very quickly (up to 40 feet per second). It has a higher top 
+speed than the HH-60 but is not as fuel efficient.
+</p>
+<p>
+Model Author: Stefan Maron
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="b47">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>B-47</h3>
+<pre><code>
+Cruise Speed:  70 kts
+Maximum Speed: 87 kts
+
+Maximum Endurance: 2.61 hrs
+Maximum Range:     240 nm
+Service Ceiling:   17,700' msl
+
+Rotor Diameter: 31' 1"
+Length:         31' 7"
+Height:         9' 4"
+
+Pilots:     2
+Crew:       0
+Passengers: 0
+
+Manufacturer:    Bell
+Engines:         1
+Propulsion Type: 210kW Lycoming
+                 TVO-435-F1A 6 Piston
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="b47.png" border=0 alt="B-47">
+<p>
+Remarks: Very forgiving and easy to fly, this helicopter makes a good
+trainer. It is not very fast and does not accelerate too quickly, 
+resulting in less costly overcorrections.
+</p>
+<p>
+Note: Does not have a rescue hoist and does not have capacity for
+passengers.
+</p>
+<p>
+Model Author: Stefan Maron
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="uh1d">
+<hr>
+<table>
+ <tr>
+  <td width=0% align=left valign=top>
+<h3>UH-1D Iroquis</h3>
+<pre><code>
+Cruise Speed:  105 kts
+Maximum Speed: 120 kts
+
+Maximum Endurance: 2.5 hrs
+Maximum Range:     276 nm
+Service Ceiling:   13,600' msl
+
+Rotor Diameter: 48' 6"
+Length:         41' 10"
+Height:         14' 5"
+
+Pilots:     2
+Crew:       2
+Passengers: 10
+
+Manufacturer:    Bell
+Engines:         1
+Propulsion Type: Textron Lycoming
+                 T53-L-13 1,400 shp
+</code></pre>
+  </td>
+  <td width=0% align=left valign=top>
+<img src="uh1d.png" border=0 alt="UH-1D Iroquis">
+<p>
+Remarks: A good transport vehicle but underpowered, this large 
+helicopter can carry a large number of passengers but it is slow and 
+does not accelerate very quickly.
+</p>
+<p>
+Note: Does not have a rescue hoist.
+</p>
+<p>
+Model Author: Stefan Maron
+</p>
+  </td>
+ </tr>
+</table>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+76292
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:20:08 GMT22
+"29c27f-1dcd-3f20da28"0
+0
+16
+wolfpack.twu.net34
+/SearchAndRescue/manual/views.html146
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/views.html3
+HTS4
+7629<html>
+<head>
+<title>Search and Rescue - Manual - Views</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Views
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h3>Views</h3>
+
+This page describes the different views (cockpit, spot, tower, etc),
+how to change views, and move the camera around.
+
+<ul>
+ <li><a href="#camera">Using The Camera</a>
+ <li><a href="#cockpit">Cockpit Head up Display (HUD)</a>
+ <li><a href="#outside">Outside Display</a>
+ <li><a href="#map">Map</a>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="camera">
+<hr>
+<h3>Using The Camera</h3>
+
+<p>To change camera views, that is what the camera is focused on,
+press the function keys as described below:
+</p>
+<ul>
+ <li><code>F2</code> Cockpit
+ <li><code>F3</code> Spot
+ <li><code>F4</code> Tower/Director/Audience
+ <li><code>F5</code> Hoist
+ <li><code>M</code> Map
+</ul>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+<img src="camera.png" border=0 align=right
+ alt="CAMERA DIAGRAM"
+>
+<p>In all the views listed above, you can use the joystick's <i>hat</i>
+to <b>pan around</b> and the <i>zoom in and zoom out buttons</i> to 
+adjust the <b>zoom</b> (or distance). <b>Pressing</b> 
+<code>BACKSPACE</code> will <i>normalize</i> the view (return the camera
+direction to the default direction/position/zoom for the current view).
+</p>
+
+<p>To control the camera with the keyboard instead of the joystick use
+<code>SHIFT + CURSOR</code> instead of the hat and <code>PLUS</code> and
+<code>MINUS</code> instead of the zoom buttons.
+</p>
+
+<h4>Cockpit View</h4>
+<p>In the <i>cockpit view</i> the hat is used to look around
+inside the cockpit.  The zoom buttons have no affect.  Holding
+down <code>SHIFT</code> while using the hat will turn the camera
+to 90 degree angles relative to the aircraft (not 90 degree
+increments).
+</p>
+
+<h4>Spot View</h4>
+<p>In the <i>spot view</i> the hat is used to look around the object
+it is currently focused on.  When you press <code>F3</code> for the 
+first time it is focused on your aircraft, for each additional press
+the camera will focus on the "next" object (or previous object if you
+press <code>SHIFT + F3</code>). The zoom buttons will move the camera
+closer or farther away from the object, holding the <code>SHIFT</code>
+key while zooming will cause the zoom to increment at a faster rate.
+</p>
+
+<h4>Tower/Director/Audience View</h4>
+<p>In the <i>tower/director/audience view</i> the camera does not move
+and stays fixed at its location. The camera is initially set each time 
+you press <code>F4</code> to position it in front of the object and
+close to its movement path for a "fly by view". You can use the hat
+to move the camera up and down or left and right relative to the object
+it is focused on.  The zoom buttons will move the camera closer or 
+farther away from the object.
+</p>
+
+<h4>Hoist View</h4>
+<p>The <i>hoist view</i> is similar to the <i>spot view</i> the only 
+difference is that the camera is focused at the end of the rope. This 
+view is idea for situations when you are manuvering the aircraft to pick
+someone up.
+</p>
+
+<h4>Map View</h4>
+<p>The <i>map view</i> displays the map of the entire scenery, it is 
+explained <a href="#map">further below</a>.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="cockpit">
+<hr>
+<h3>Cockpit Head up Display (HUD)</h3>
+
+<img src="cockpit.png" border=0 align=right
+ alt="COCKPIT VIEW"
+>
+
+<p>
+The <i>cockpit view</i> displays the view inside the cockpit, when the
+camera is pointed forwards you can see the Head Up Display (HUD) (as
+shown on the right.
+</p>
+
+<p>
+The HUD displays the following:
+</p>
+<ul>
+ <li><i>Heading</i> - Shown as a horizontal array of ticks with numbers 
+near the top, the units are in * 10 degrees.
+ <li><i>Attitude</i> - Shown as an array of ticks leveled with the 
+horizon, the ticks are spaced 10 degrees.
+ <li><i>Speed</i> - Shown in nautical miles per hour on the left.
+ <li><i>Altitude</i> - Shown in feet above sea level on the right (note 
+that this <b>differs</b> from the <i>Altitude</i> shown on the
+<a href="#outside"><i>outside view</i></a>.
+ <li><i>Fuel</i> - Shown in pounds on the lower right corner.
+ <li><i>Throttle/Collective</i> - Shown in percent on the lower left
+corner.
+ <li><i>Elevator/Pitch Trim</i> - Shown on the upper left corner as a
+vertical array of ticks and an arrow.
+</ul>
+
+<p>
+If a <i>Waypoint</i> is selected, then the direction to that waypoint
+will be indicated on the <i>Heading</i> ticks as an arrow and the 
+distance to the <i>Waypoint</i> (in miles) will be indicated on the 
+upper right.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="outside">
+<hr>
+<h3>Outside View</h3>
+
+<img src="outside.png" border=0 align=right
+ alt="OUTSIDE VIEW"
+>
+
+<p>
+The <i>outside view</i> can be the spot, tower/directory/audience, or 
+hoist views. All outside views display the values of your aircraft on 
+the bottom.
+</p>
+
+<p>
+The outside view display displays the following:
+</p>
+
+<ul>
+ <li><i>Velocity Compass</i> - Shown as a circular array of ticks with a
+needle indicating the direction relative to the aircraft. Below it is
+the magnitude of the velocity in miles per hour.
+ <li><i>Attitude</i> - Shown as an array of ticks specifying the 
+aircraft's pitch and bank.
+ <li><i>Heading</i> - Shown in degrees just above the <i>Attitude</i>.
+ <li><i>Air Brakes</i> - Shown when the air brakes are deployed/out just 
+above the <i>Heading</i>.
+ <li><i>Elevator/Pitch Trim</i> - Shown just to the left of the
+<i>Attitude</i> as a vertical array of ticks and an arrow.
+ <li><i>Throttle/Collective</i> - Shown in percent on the right side.
+ <li><i>Altitude</i> - Shown in feet above ground level just below the 
+<i>Throttle/Collective</i>.
+ <li><i>Rate Of Climb (ROC)</i> - Shown in feet per second just below
+the <i>Altitude</i>.
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="map">
+<hr>
+<h3>Map</h3>
+
+<img src="map.png" border=0 align=right
+ alt="MAP VIEW"
+>
+
+<p>The <i>map view</i> displays a birds eye view of your surrounding 
+area.
+</p>
+
+<p>
+You can use the hat to pan around and the zoom buttons to increase 
+or decrease the area (holding <code>SHIFT</code> while using 
+the hat or zoom buttons speeds up the movement).
+</p>
+
+<p>
+Pressing <code>BACKSPACE</code> will jump to your current location on
+the map.
+</p>
+
+<p>
+The displays shown on the <i>outside view</i> are also displayed on the
+<i>map view</i> so you can monitor your aircraft's situation. In 
+addition the <i>waypoint</i> lines will be displayed.
+Heliport, runway, and other significant markings are displayed as
+symbols.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2005
+173062
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:14:15 GMT22
+"29c0cd-439a-3f20d8c7"0
+0
+16
+wolfpack.twu.net35
+/SearchAndRescue/manual/flying.html147
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying.html3
+HTS5
+17306<html>
+<head>
+<title>Search and Rescue - Manual - Flying</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Flying
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h3>Flying</h3>
+
+<p>
+Here you will learn how to fly the aircrafts, everything from
+basic flight manuvers like take offs and landings to navigation and
+rescue.
+</p>
+
+<p>
+Search and Rescue is not, by most standards, a realistic flight 
+simulator. It focuses more on entertainment rather than authenticity,
+so flying is not too difficult and the learning curve is simple.
+</p>
+
+<ul>
+ <li><a href="#controlling">Controlling The Aircraft</a>
+ <li><a href="#landing">Landing</a>
+ <li><a href="#navigation">Navigation</a>
+ <li><a href="#rescuing">Rescuing</a>
+ <li><a href="#crashing">Crashing</a>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="controlling">
+<hr>
+<h3>Controlling The Aircraft</h3>
+
+<p>
+For the helicopter there are 4 basic compoents to its control.
+</p>
+<ul>
+ <li><i>heading</i>
+ <li><i>Pitch</i>
+ <li><i>Bank</i>
+ <li><i>Throttle/Collective</i>
+</ul>
+
+<p>The helicopter's movement is controlled by tilting the rotors 
+in various angles to cause it to move and gain momentum in a 
+desired direction. The helicopter gains altitude by increasing power to
+the main rotor which makes it spin faster and create more thrust. In 
+addition the altitude can be fine tuned with the collective which 
+adjusts the angle of the rotor blades to fine tune the amount of thrust 
+desired.
+</p>
+
+<table>
+
+ <tr>
+  <td width=0% align=left valign=top>
+<h4>Pitch</h4>
+<p>The <i>pitch</i> is the angle of the helicopter's nose with the 
+horizon, the pitch can go down or up. Pitch is the most sensitive and 
+oscilating aspect of controlling the helicopter. When the helicopter
+pitches down it causes the direction of the thrust to point sligntly
+behind it which gives it a compoent of thrust that pushes it forward.
+</p>
+<p>
+You can control the <i>pitch</i> with the joystick's pitch axis
+or by pressing <code>DOWN</code> or <code>UP</code>. The <i>pitch</i> 
+can also be fine tuned using the elevator/pitch trim by pressing 
+<code>HOME</code> or <code>END</code> (<code>CTRL + HOME</code> to
+center the trim).
+</p>
+  </td>
+  <td width=0% align=right valign=top>
+<img src="flying_pitch.png" align=right border=0
+ alt="PITCH DIAGRAM"
+>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=0% align=left valign=top>
+<h4>Bank</h4>
+<p>The <i>bank</i> is the tiling of the helicopter to either side. This 
+affect is slightly more complex than the <i>pitch</i>. If the helicopter 
+tilts to the side (<i>banks</i>) with the <i>pitch</i> <u>remaining 
+level</u>, then the thrust from the helicopter's main rotor causes the
+helicopter to <u>fly sideways</u>. If the helicopter tilts to the side
+(<i>banks</i>) and is <i>pitched</i> forwards then the helicopter's main 
+rotor creates thrust in <u>many directions</u> causing it to 
+<u>turn</u> instead of just flying sideways.
+</p>
+<p>
+You can control the <i>bank</i> with the joystick's bank axis
+or by pressing <code>LEFT</code> or <code>RIGHT</code>.
+</p>
+  </td>
+  </td>
+  <td width=0% align=right valign=top>
+<img src="flying_bank.png" align=right border=0
+ alt="BANK DIAGRAM"
+>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=0% align=left valign=top>
+<h4>Heading</h4>
+<p>The <i>heading</i> is the direction that the helicopter is flying,
+it can be changed by the tail rotor. The tail rotor adds thrust or
+eliminates thrust that counteracts the main rotor's rotational 
+momentum. This causes the helicopter's direction to change.
+</p>
+<p>If the helicopter has forwards or sideways momentum and the
+<i>heading</i> changes then it causes a <u>great loss</u> in momentum in 
+the direction in question. This is why heading should be changed in
+small amounts.
+</p>
+<p>
+You can control the <i>heading</i> with the joystick's heading axis
+or by pressing <code>CTRL + LEFT</code> or <code>CTRL + RIGHT</code>.
+If your joystick does not have a heading axis then press and hold
+the joystick's rotate modifier button (see joystick button 
+mappings) in conjunction with the bank axis.
+</p>
+  </td>
+  <td width=0% align=right valign=top>
+<img src="flying_heading.png" align=right border=0
+ alt="HEADING DIAGRAM"
+>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=0% align=left valign=top>
+<h4>Throttle/Collective</h4>
+<p>The <i>throttle</i> controls how fast the engine spins the rotors. 
+The faster the rotors spin the more power is available to create thrust.
+This thrust is used primarly to gain altitude.  The tilting of the main 
+rotor causes the thrust to be directed in the direction you want to 
+move.
+</p>
+<p>The <i>throttle</i> controls only one aspect of thrust, the 
+<i>collective</i> fine tunes the amount of thrust resulting from the 
+power of the spinning rotor blades. The <i>collective</i> adjusts the
+angle of the rotor blades (see diagram on the right) to produce more or 
+less thrust, basically it fine tunes the amount of thrust so that the
+altitude can be controlled with precision.
+</p>
+<p>You can control the <i>collective</i> with the joystick's
+throttle axis or by pressing <code>PGUP</code> or <code>PGDN</code>
+(holding down <code>SHIFT</code> increases the amount of change).
+</p>
+  </td>
+  <td width=0% align=right valign=top>
+<img src="flying_collective.png" align=right border=0
+ alt="COLLECTIVE DIAGRAM"
+>
+  </td>
+ </tr>
+
+</table>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+<h3>Flight Physics</h3>
+<p>
+The <i>flight physics</i> determines how sensitive and realistic the 
+controls behave. You can change the <i>flight physics</i> by going to
+Option-&gt;Simulation... or during simulaton by pressing
+<code>CTRL + D</code>. The settings are as follows:
+</p>
+<ul>
+ <li>Easy - All controls have nullzones and engine response is immediate
+ <li>Moderate - Some controls have nullzones and engine response is slightly delayed
+ <li>Authentic - Controls are extremely sensitive and engine response is delayed
+</ul>
+
+<h3>Engine &amp; Fuel</h3>
+<p>
+The engine uses more fuel when you increase the 
+<i>throttle/collective</i>. To see the <i>fuel status</i> press
+<code>F</code>. You can also <b>transfer</b> fuel from <i>reserved or
+external fuel tanks</i> (if the aircraft has them) by pressing
+<code>SHIFT + F</code>. To <b>drop</b> (jetteson) <i>external fuel
+tanks</i> press <code>CTRL + F</code>.
+</p>
+
+<p>To turn the engine on press <code>E</code>. The engine takes a few 
+seconds to start up (depending on the <i>flight physics</i>). If
+starting the engine while the aircraft is already airborne with the 
+rotor blades spinning, then the engine will start up almost immediately.
+</p>
+
+<p>
+To turn the engine off press <code>SHIFT + E</code>. Note that there is
+rarely a reason to turn the engines off while in flight.
+</p>
+
+<h3>Take Off &amp; Flight</h3>
+<p>Once the engine is on and you are familiar with the helicopter's 
+controls (see above), slowly increase the <i>throttle/collective</i>
+until you begin to lift off the ground.  Make sure that you are 
+at least 100 feet above the ground before you attempt to tilt the
+helicopter and begin moving.
+</p>
+
+<p>
+Once the helicopter is airborne, you can tilt the helicopter 
+pitch down to begin moving forwards.  Pitch down just a few degrees to 
+see how much of a momentum it creates.
+</p>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+When you are moving forward, practice banking and turning.  Tilt in 
+small amounts at first to stay in a safe flying situation.  Each
+helicopter has its unique handling responses, some have a lot of power 
+and can accelerate quickly, others are more forgiving and require more 
+tilting to achieve the desired momentum.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="landing">
+<hr>
+<h3>Landing</h3>
+
+<img src="flying_landing.png" align=right border=0
+ alt="LANDING"
+>
+<p>Landing a helicopter is more challenging than simply taking off. To 
+land a helicopter, first you must find a spot to land (such as a 
+helipad), manuver the helicopter over it (the approach), and then set
+it down gently.
+</p>
+
+<p>In most cases it is easiest to land using the <i>spot view</i>
+(press <code>F3</code>). Adjust the
+<a href="views.html#camera">
+camera position</a> so that you see both your helicopter and the
+desired landing site (usually a helipad) at once (see image on the
+right).
+</p>
+
+<p>As you approach the helipad, slowly reduce your speed (level the 
+helicopter to minimize any tilt) and reduce the collective until you 
+slowly begin to descend (watch the rate of climb (ROC) and the 
+altitude closely). Make sure that you stay a safe distance above 
+the ground until you are over the helipad.
+</p>
+
+<p>With the airspeed decreasing, pitch down slightly to apply a
+small amount of thrust for forward motion as needed. You can adjust the
+heading as needed, but do not bank too much or else the helicopter will
+move sideways due to the slow speed. If the helicopter has retractable
+landing gears then make sure the landing gears are down (press
+<code>G</code>).
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+As you descend and get closer to the ground you will see the
+helicopter's shadow and prop wash, use it as a guide to judge where you
+are with respect to where you want to land.
+</p>
+
+<p>Slowly position the helicopter over the landing site, keeping a safe 
+altitude above the ground (at least 20 feet).  Some helipads can be 
+located on top of buildings, mountains, vehicles, or vessels, make sure 
+that you remain a safe altitude above the helipad to avoid hitting any 
+obstructions along the way.
+Tilt the rotors sparingly to gently nudge the helicopter into position.  
+Once the helicopter is over the landing site decrease the collective and 
+let the helicopter touch down.
+</p>
+
+<p>Once landed at a helipad, you can refuel, repair, and drop off 
+passengers (press <code>R</code>). Note that not all helipads support 
+refueling, repairs, or allow the dropping off of passengers.
+</p>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+You can land on virtually any hard surface. If the aircraft has floats
+then you can also land on water. Most building rooftops are landable
+(even ones without helipads).
+</p>
+
+<p>
+You can adjust the <i>damage resistance</i> by going to
+Options-&gt;Simulation... The <i>damage resistance</i> determines how 
+"hard" you can hit the ground and/or at how steep of an angle.
+</p>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="navigation">
+<hr>
+<h3>Navigation</h3>
+
+<img src="map.png" align=right border=0
+ alt="MAP VIEW"
+>
+<p>Most theaters in Search and Rescue are considered small, so long 
+range navigation is rarely needed. There are basically two forms of
+navigation that are needed for long distance flights:
+</p>
+<ol>
+ <li>By <i>waypoints</i>.
+ <li>By <a href="views.html#map"><i>map view</i></a>.
+</ul>
+
+<p>When you fly missions, the <i>waypoints</i> have been set and all you
+need to do is follow them on the heading display (displayed on both the
+cockpit HUD and outside views). Press <code>W</code> to change
+<i>waypoints</i>. The <i>waypoints</i> are also displayed as lines when
+you view them on the map (press <code>M</code> to see the map).
+</p>
+
+<p>You can also fly using the map alone, when you are in the map view
+(press <code>M</code>) use the joystick hat and zoom buttons to pan 
+around and find your destination. You can always press
+<code>BACKSPACE</code> to jump to your aircraft's current position.
+Holding down the <code>SHIFT</code> key while using the joystick hat or
+zoom buttons will increase the amount of scroll and zooming.
+</p>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="rescuing">
+<hr>
+<h3>Rescuing</h3>
+
+<table>
+ <tr>
+  <td width=100% align=left valign=top>
+
+<p>Rescuing victims is often considered the most difficult part of 
+Search and Rescue.  First you need to find the victim (which is 
+virtually a "needle in a haystack"), manuver the aircraft over the 
+victim, and then use the hoist to pick up the victim.
+</p>
+
+<p>On most missions, the <i>waypoints</i> are <u>already</u> set to the 
+location of the victim (or near the victim).  Once you reach the 
+location of where the victim was reported to be by the <i>waypoint</i> 
+you need to begin searching for that victim by flying around the area.
+Make sure that you do not stray too far away from the search area, the 
+victim is <u>typically within a few miles of the <i>waypoint</i></u>. 
+Using the <i>spot view</i> (press <code>F3</code>) often gives you a 
+better vantage point while searching for victims.
+</p>
+
+<p>At night you should use the <i>spot light</i> to help search for
+victims, press <code>L</code> to turn on the <i>spot light</i> and hold
+the <code>CTRL</code> key down while using the joystick hat to move the
+<i>spot light</i> around. It's best to move the <i>spot light</i> 
+around in conjunction with moving the camera around in order to cover a
+broader area.
+</p>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+<i>Night vision</i> (FLIR) also helps, press <code>I</code> to toggle
+the FLIR (see image on right).
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+The <i>spot view</i> (press <code>F3</code>) is considered the best
+vantage point in the search for victims. Move the camera around to help
+cover a broader region of the search area.
+</p>
+
+
+<p>Once you have spotted a victim, you need to <b>manuver</b> the
+helicopter over that victim. This is similar to landing but make sure
+that you stay at least 20 feet above the ground. <b>Level</b> the
+helicopter to reduce momentum, <b>tilt</b> the rotors <u>sparingly</u>
+to nudge the helicopter over the victim (<u>this takes a lot of
+practice</u>).
+</p>
+
+<p>If you are picking up a victim over land, then you can simply land 
+next to the victim and let the victim come to you. However, if you are 
+<i>over water</i> then you need to <b>use the hoist</b> to lower a
+rescue basket or diver (press <code>P</code> to change the hoist
+deployment) to the victim.  Use the joystick's hoist lower/raise buttons
+or press <code>CTRL + PLUS</code> or <code>CTRL + MINUS</code> to raise
+and lower the hoist's deployment.
+</p>
+
+<p><img src="icon_warning.gif" border=0 valign=center>
+<b>Watch</b> the <i>Rate Of Climb (ROC)</i> and the <i>Altitude</i> 
+closely, <b>adjust</b> the <i>Collective</i> to maintain a <u>safe 
+distance</u> above the ground or water. Once you are at the desired
+altitude (about 20 feet above ground) you can use <i>Autohover</i> (press
+<code>A</code>) to lock the altitude. <u>Be careful not to hit the water
+or else the aircraft will sink!</u>
+</p>
+
+<p>Once you have the victim, <b>raise</b> the hoist deployment in order
+to pull the victim up into the helicopter.
+</p>
+
+
+  </td>
+  <td width=0% align=center valign=top>
+
+<img src="flying_rescue01.png" border=0
+ alt="RESCUE"
+>
+<img src="flying_rescue02.png" border=0
+ alt="RESCUE AT NIGHT WITH FLIR"
+>
+<img src="flying_rescue03.png" border=0
+ alt="PICKING UP A VICTIM"
+>
+
+  </td>
+ </tr>
+</table>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="crashing">
+<hr>
+<h3>Crashing</h3>
+
+<p>There are several ways that you can crash or damage the 
+aircraft in Search and Rescue:
+</p>
+<ul>
+ <li>Landing too hard
+(<font color="#ff0000">crash</font> or <font color="#808000">damage</font>).
+ <li>Landing at too steep of an angle
+(<font color="#ff0000">crash</font>).
+ <li>Landing in water when the aircraft does not have floats
+(<font color="#ff0000">splash</font>).
+ <li>Flying into buildings or obstructions
+(<font color="#ff0000">crash</font>).
+ <li>Flying too fast and exceeding the <i>overspeed</i> limit
+(<font color="#808000">damage</font>).
+</ul>
+
+<p>If you crash during <i>free flight</i> then you can press 
+<code>SPACE</code> to start over at the nearest helipad. The aircraft
+will be fully repaired and refueled, but any passengers on board will
+be lost.
+</p>
+
+<p>If you crash during a <i>mission</i> then (typically) the mission is 
+over
+and you have failed the mission.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+16992
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:13:39 GMT21
+"29c285-6a3-3f20d8a3"0
+0
+16
+wolfpack.twu.net42
+/SearchAndRescue/manual/createyourown.html154
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/createyourown.html3
+HTS4
+1699<html>
+<head>
+<title>Search and Rescue - Manual - Create Your Own</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Create Your Own
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>Create Your Own</h2>
+
+<p>For players who want to create their own models, scenery, and 
+missions. This is an official documentation on the format and 
+procedure for creating your own stuff for Seach and Rescue.
+</p>
+
+<ul>
+ <li><a href="creatingobjects.html">Creating SAR 3D Objects</a> -
+How to create SAR 3D objects
+
+ <li><a href="lwoimporthowto.html">LWO Import HOWTO</a> -
+How to import LWO files useable as SAR objects
+ <li><a href="lwoaircrafthowto.html">LWO Aircraft HOWTO</a> -
+How to import LWO aircraft files useable as SAR aircraft files
+
+</ul>
+
+<p>
+(Under construction, more documents to be added soon...)
+</p>
+
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+50652
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:14:06 GMT22
+"29c0cb-13c9-3f20d8be"0
+0
+16
+wolfpack.twu.net40
+/SearchAndRescue/manual/environment.html152
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/environment.html3
+HTS4
+5065<html>
+<head>
+<title>Search and Rescue - Manual - Environment</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Environment
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>Environment</h2>
+
+<ol>
+ <li><a href="#details">Scenery Detail</a>
+ <li><a href="#weather">Weather</a>
+</ol>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+<a name="details">
+<hr>
+<h3>Scenery Detail</h3>
+
+<img src="details.png" align=right border=0 alt="DETAILS">
+
+<p>You can adjust the detail by turning graphics options on or off. To 
+do this you can go to Options-&gt;Graphics... or pressing any of the 
+following keys during simulation:
+</p>
+
+<ul>
+ <li><code>T</code> Increase time of day (does not affect other
+timmings).
+ <li><code>SHIFT + T</code> Decrease time of day (does not affect other
+timmings).
+ <li><code>V</code> Reduce visiblie range.
+ <li><code>SHIFT + V</code> Increase visible range.
+ <li><code>F9</code> Toggle ground base texture (not objects or landmarks).
+ <li><code>F10</code> Toggle atmosphere.
+ <li><code>F11</code> Toggle object texturing.
+ <li><code>F12</code> Toggle clouds and horizon (also toggles cloud 
+"billboard" objects).
+ <li><code>SHIFT + F9</code> Toggle dual pass depth, the
+double rendering per frame in order to display heightfields more accurately.
+ <li><code>SHIFT + F10</code> Toggle celestial objects (also toggles lighting).
+ <li><code>SHIFT + F11</code> Toggle smoke trails.
+ <li><code>SHIFT + F12</code> Toggle rotor prop wash effects.
+</ul>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+<p>For an explaination on the more complex graphics options see
+<a href="setup.html#graphics">Setup Graphics</a>
+</p>
+
+<p>On the right are two images displaying different levels of detail. 
+The first one has minimal graphics options turned on. The second 
+image below it has all graphics options turned on. You can experiment to 
+see how things look by toggling various graphics options on and off.
+</p>
+
+<p><img src="icon_warning.gif" border=0 valign=center>
+Turning on too many graphics options can slow things down and result 
+in poor frame rates. The speed at which objects move is unaffected but 
+their granularity (how smooth they move) will feel "jumpy".
+</p>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+Note that in some cases the OpenGL hardware or software that you are 
+using can affect the quality of the graphics and/or how they appear.
+It is recommended that you have OpenGL hardware or software that is
+OpenGL version 1.2 or newer.
+</p>
+
+<p>The graphics options can be adjusted in both free flights and
+missions.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+<a name="weather">
+<hr>
+<h3>Weather</h3>
+
+<img src="weather.png" align=right border=0
+ alt="WEATHER"
+>
+
+<p>The weather can be adjusted during simulation by pressing
+<code>CTRL + W</code> to cycle through all the available weather
+conditions.
+</p>
+
+<p>Each weather condition defines the following:
+</p>
+<ul>
+ <li>Atmospheric Density
+ <li>Cloud Layers
+ <li>Sky Color
+ <li>Cloud "BillBoard" Objects
+</ul>
+
+<p>The image on the right shows the <i>Stormy Dense</i> weather 
+condition at dusk with cloud "billboard" objects. You must have 
+the graphics option Textured Clouds turned on in order to see
+cloud "billboard" objects.
+</p>
+
+<p>The weather condition will affect visiblity to some degree, but the 
+atmospheric density is also a function of the visiblity range (which is 
+not defined in the weather condition.  To adjuts the visiblity range
+press <code>V</code> or <code>SHIFT + V</code>.
+</p>
+
+<p>The weather condition can be adjusted in both free flights and
+missions. Missions usually define their own weather at startup. In
+free flight you can specify the weather at startup, for more
+information see
+<a href="free_flight.html">Free Flight</a>.
+</p>
+
+<p>
+<img src="icon_info.gif" border=0>The weather conditions are defined in 
+the file <code>weather.ini</code> you can manually edit this file to
+add in your own weather conditions.
+</p>
+
+<p>For a complete list of keyboard keys see
+<a href="controls.html#keyboard">Keyboard Keys List</a>
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="index.html#contents">Contents</a>
+]
+
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+91992
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:14:10 GMT22
+"29c0cc-23ef-3f20d8c2"0
+0
+16
+wolfpack.twu.net32
+/SearchAndRescue/manual/faq.html144
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/faq.html3
+HTS4
+9199<html>
+<head>
+<title>Search and Rescue - Manual - FAQ</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+Frequently Asked Questions
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=top>
+
+<p>
+<ol>
+ <li><a href="#000001">
+How do I get this program to run in full screen (fullscreen mode)?</a>
+ <li><a href="#000002">
+How do I specify the startup resolution?</a>
+ <li><a href="#000003">
+How do I get it to use hardware rendering?</a>
+ <li><a href="#000004">
+How come objects farther away are showing through closer objects
+(aka bleed throughs)?</a>
+ <li><a href="#000005">
+Why do some parts of the scene seem to flicker like
+miniblinds (aka miniblinds flickering effect)?</a>
+ <li><a href="#000006">
+How do I recompile with debugging support and debug the program?</a>
+ <li><a href="#000007">
+Why do I get wierd colors or missing objects using an ATI Rage 128?</a>
+ <li><a href="#000008">
+Cursor keys do not respond at all using keyboard as controller?</a>
+
+ </ol>
+</p>
+
+
+
+
+<hr>
+<a name="000001">
+<h4>
+How do I get this program to run in full screen (fullscreen mode)?
+</h4>
+
+<p>As of version 0.8.1 you can use <code>CTRL + F11</code> to switch to
+<i>full screen</i> or back to <i>windowed</i> mode while the program is 
+running. In addition you can use <code>CTRL + [</code> and
+<code>CTRL + ]</code> to adjust the <i>resolution</i> at any time.
+</p>
+
+<p>
+For 0.7.x users:
+Use the option <code>--fullscreen</code> when you run or create a shortcut
+to the application. You may also want to specify the startup resolution
+with the <code>--geometry WxH</code> argument.
+</p>
+<p>For example:</p>
+<ul>
+ <li><code>/usr/games/SearchAndRescue
+--fullscreen --geometry 640x480</code>.
+</ul>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000002">
+<h4>
+How do I specify the startup resolution?
+</h4>
+
+<p>
+Use the option <code>--geometry WxH</code> when you run or 
+create a shortcut to the application.
+</p><p>
+For example <code>/usr/games/SearchAndRescue   
+--geometry 640x480</code>.
+</p><p>
+You can also change the resolution in game (windowed mode only) by
+simply dragging the window frame. The smallest size is 100x70
+(as defined in <code>config.h</code>
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000003">
+<h4>
+How do I get it to use hardware rendering?
+</h4>
+
+<p>
+By default the application specifies to use hardware
+rendering to the OpenGL wrapper implmentation. The option <code>
+--hardware_rendering</code> is on by default so specifying it
+is meaningless.
+</p><p>
+If you are still having problems using hardware acceleration,
+then you should run this application with the <code>
+--runtime_debug</code>. It will print many initialization and runtime
+messages to stdout. If you are still having problems with hardware
+acceleration and other OpenGL applications seem to use hardware 
+acceleration properly then you should notify the authors and be sure
+to send the output from stdout when you ran with the <code>
+--runtime_debug</code> argument.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000004">
+<h4>
+How come objects farther away are showing through closer objects
+(aka bleed throughs)?
+</h4>
+
+<p>
+<b>Not</b> to be confused with the <a href="#000005">
+Z buffer 'miniblinds flickering effect'</a>, this is due
+to <i>depth testing</i> intentionally turned off for certain objects
+that are impossible to be displayed with OpenGL properly.
+</p>
+
+<p>
+Technical note, this problem is caused by the need to render objects
+such as heighfields over flat 2D surfaces where parts of the heightfield
+are parallel and at the exact height of the 2D surface. Enabling 
+OpenGL's polygon offset is not a solution as the written depth would
+otherwise be incorrect. There is a high
+performance cost solution to this using two passes and OpenGL's stencil
+buffer, however it is not a viable solution at this time (Oct 2001).
+Reffer back to this section in the future, a solution may be available
+then.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000005">
+<h4>
+Why do some parts of the scene seem to flicker like
+miniblinds (aka miniblinds flickering effect)?
+</h4>
+
+<p>
+Most objects drawn over other objects in perfect parallel alignment
+and at the same location will 'fight' to show though in the
+depth buffer. This causes a miniblinds flickering effect, the solution
+is to use a technique called polygon offsetting which this application
+uses when appropriate.
+</p><p>
+However some systems have differences in the amount of offsetting
+so sometimes the user needs to adjust this value. You can change this
+value in game by pressing the <code>/</code> key to bring up the
+prompt and then type in <code>option gl_polgyon_offset=-2.0</code>
+A typical value can be from <code>-1.5</code> to <code>-2.0</code>
+where the more negative value produces more offset. Reduce (make more
+negative) this value if you are still getting a lot of
+miniblinds flickering effect. Note that this changed value will be
+stored in your <code>SearchAndRescue.ini</code> file.
+</p>
+<p>Some scenerys are partially responsible for denoting where
+to use polygon offsetting and that the scenery builder/author may need
+to be nofitied about the problem if specifying a lower
+<code>gl_polgyon_offset</code> value does not work. If you try going below
+<code>-10.0</code> without any good results, then that might indicate
+it is a problem with the scenery.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000006">
+<h4>
+How do I recompile with debugging support and debug the program?
+</h4>
+
+<p>
+(UNIX/X version only) go back to the source directory for this program
+(or download it again if you deleted it) and type the following
+command on your shell prompt
+(you may have to replace some values to suit your system):
+<ul>
+ <li><code>./configure linux -v --prefix=/usr --enable="debug" 
+--disable="arch-i586"
+</code>
+
+</ul>
+The above command assumes you are using Linux and that your computer is
+an Intel Pentium 586 (i586). If you have a 486, then change
+<code>arch-i586</code> to <code>arch-i486</code>. Use the command
+<code>uname -m</code> to find out which one you have.
+</p>
+
+<p>
+If the source (re)configuration worked, then type
+<ul>
+ <li><code>make clean</code>
+ <li><code>make</code>
+</ul>
+</p>
+
+<p>
+If everything was successful then you can begin the debugging
+process (this assumes you've already ran <code>make install</code>
+earlier). Run <code>gdb sar/SearchAndRescue</code>, this will run
+the GNU Debugger (gdb). Once you are in gdb, type <code>run</code>
+to run the program. When/if the program crashes, type <code>bt</code>
+to display the <i>backtrace</i>. Besure to send the backtrace to
+the authors as needed. Type <code>quit</code> to quit gdb, note that gdb
+will ask if you want to quit while the program crashed but is still
+running. Say yes to that.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6> 
+
+
+<hr>
+<a name="000007">
+<h4>
+Why do I get wierd colors or missing objects using an ATI Rage 128?
+</h4>
+
+<p>
+Be sure to compile the kernel with modular support for DRI,
+use the DRI kernel module for the rage128 called <code>r128.o</code> from
+<a href="http://www.xfree86.org/~alanh">
+http://www.xfree86.org/~alanh</a>. Some older modules may cause
+unusual color behavour, try upgrading to the latest module
+if you are experiencing this problem.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+<hr>
+<a name="000008">
+<h4>
+Cursor keys do not respond at all using keyboard as controller?
+</h4>
+
+<p>
+This problem has been reported on some Debian Linux systems when
+running SAR 0.7.20 or newer, its exact cause is unknown. However the
+solution has been to manually remove the file
+<code>$HOME/.SearchAndRescue/SearchAndRescue.ini</code>
+and then running <code>SearchAndRescue</code> so that it regenerates
+a new configuration file with default values. Although there are no key
+bindings in that file, the removal of that file has been reported
+to resolve this problem.
+</p>
+
+<p>
+Next potential problem is that SAR was compiled with gcc 2.95.
+This has been reported to generate a bad binary (possibly in
+the Flight Dynamics modules). Try using a different compiler,
+we recommend egcs or gcc 3.0.
+</p>
+
+<p>
+See also
+<a href="http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=144704&repeatmerged=yes">
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=144704&repeatmerged=yes
+</a>
+</p>
+
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff>Search and Rescue</font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+3
+2005
+980192
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:19:27 GMT23
+"29c27d-17ee3-3f20d9ff"0
+0
+16
+wolfpack.twu.net33
+/SearchAndRescue/manual/title.png145
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/title.png3
+HTS1
+02
+3212367d60636f2bfe80dee77285dbd9a32
+327008a9056343751b309d13c30dd8598d2
+32f81f2eff6ec57fbe7fd042c3f63256573
+2004
+35702
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:16:24 GMT21
+"29c275-df2-3f20d948"0
+0
+16
+wolfpack.twu.net34
+/SearchAndRescue/manual/index.html148
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/index-2.html3
+HTS4
+3570<html>
+<head>
+<title>Search and Rescue - Manual - Contents</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>Index</font>
+  </td>
+ </tr>
+
+
+
+ <tr>
+  <td width=100% align=center valign=top>
+<a name="contents">
+
+<img src="title.png" align=center
+ alt="SEARCH AND RESCUE"
+>
+
+<table width=100% border=0 cellspacing=5 cellpadding=5>
+ <tr>
+  <td width=70% align=left valign=top>
+
+<h3>Contents</h2>
+<ol>
+ <li><a href="setup.html">Setting Up Search and Rescue</a>
+  <ul>
+   <li><a href="setup.html#running">Running</a>
+   <li><a href="setup.html#graphics">Graphics</a>
+   <li><a href="setup.html#sound">Sound</a>
+  </ul>
+ <li><a href="controls.html">Controls</a>
+  <ul>
+   <li><a href="controls.html#keyboard">Keyboard Keys</a>
+   <li><a href="controls.html#joystick">Joystick Functions</a>
+  </ul>
+ <li><a href="free_flight.html">Free Flight</a>
+  <ul>
+   <li><a href="free_flight.html#starting">Starting Free Flight</a>
+   <li><a href="free_flight.html#details">Aircraft Information</a>
+  </ul>
+ <li><a href="views.html">Views</a>
+  <ul>
+   <li><a href="views.html#camera">Using The Camera</a>
+   <li><a href="views.html#cockpit">Cockpit Head Up Display (HUD)</a>
+   <li><a href="views.html#outside">Outside Display</a>
+  </ul>
+ <li><a href="flying.html">Flying</a>
+  <ul>
+   <li><a href="flying.html#controlling">Controlling The Aircraft</a>
+   <li><a href="flying.html#landing">Landing</a>
+   <li><a href="flying.html#navigation">Navigation</a>
+   <li><a href="flying.html#rescuing">Rescuing</a>
+  </ul>
+ <li><a href="aircrafts.html">Aircrafts</a>
+ <li><a href="environment.html">Environment</a>
+  <ul>
+   <li><a href="environment.html#details">Scenery Details</a>
+   <li><a href="environment.html#weather">Weather</a>
+  </ul>
+ <li><a href="createyourown.html">Create Your Own</a>
+ <li><a href="faq.html">Frequently Asked Questions</a>
+ <li><a href="http://wolfpack.twu.net/contacts.html">Contacting The Authors</a>
+(external link)
+</ol>
+
+  </td>
+  <td width=30% align=left valign=top bgcolor=ffe0d0>
+<h3>About</h3>
+<p>
+This is the official manual for
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+Search and Rescue</a> version 0.8.x. It describes everything
+from setup to flying the aircrafts.
+</p>
+<h4>Quick Links</h4>
+<ul>
+ <li><a href="controls.html#keyboard">Keyboard Keys</a>
+ <li><a href="views.html#camera">Camera &amp; View Controls</a>
+ <li><a href="aircrafts.html">Aircrafts Listing</a>
+ <li><a href="createyourown.html">Create Your Own</a>
+ <li><a href="faq.html">FAQ</a>
+</ul>
+<h4>External Links</h4>
+<ul>
+ <li><a href="http://wolfpack.twu.net/SearchAndRescue/">
+Search and Rescue Home Page</a>
+ <li><a href="http://wolfpack.twu.net/SearchAndRescue/install.html">
+Download &amp; Installation Guide</a>
+ <li><a href="http://wolfpack.twu.net/contacts.html">
+Contacts Page</a>
+</ul>
+
+  </td>
+ </tr>
+</table>
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+2
+325c69e34c02aa7a9dea8a88d47edc8ea63
+2003
+9542
+OK9
+image/gif0
+29
+Fri, 25 Jul 2003 07:16:19 GMT21
+"29c283-3ba-3f20d943"0
+0
+16
+wolfpack.twu.net36
+/SearchAndRescue/manual/icon_run.gif148
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/icon_run.gif3
+HTS1
+03
+2004
+10532
+OK9
+image/gif0
+29
+Fri, 25 Jul 2003 07:16:13 GMT21
+"29c281-41d-3f20d93d"0
+0
+16
+wolfpack.twu.net37
+/SearchAndRescue/manual/icon_info.gif149
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/icon_info.gif3
+HTS1
+02
+321f451528c4ec01208be38bfd4f2c05fd2
+329bb8fe35b1077a8695f027e199e7df762
+321bab01331d52b33d6e58a53b520ba4062
+32c4ceb71a5b6f061d34a105fe7645e88f2
+32d48d861c772d3b06eaa6e87b9ee644702
+32351e541001986b487500fd51bdfbc6d33
+2003
+9892
+OK9
+image/gif0
+29
+Fri, 25 Jul 2003 07:16:04 GMT21
+"29c274-3dd-3f20d934"0
+0
+16
+wolfpack.twu.net37
+/SearchAndRescue/manual/icon_bulb.gif149
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/icon_bulb.gif3
+HTS1
+03
+2005
+583872
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:12:47 GMT22
+"29c0c2-e413-3f20d86f"0
+0
+16
+wolfpack.twu.net44
+/SearchAndRescue/manual/aircraft_details.png156
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/aircraft_details.png3
+HTS1
+03
+2005
+220482
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:13:16 GMT22
+"29c0c6-5620-3f20d88c"0
+0
+16
+wolfpack.twu.net34
+/SearchAndRescue/manual/camera.png146
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/camera.png3
+HTS1
+03
+2006
+1118932
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:18:54 GMT23
+"29c27c-1b515-3f20d9de"0
+0
+16
+wolfpack.twu.net38
+/SearchAndRescue/manual/sound_menu.png150
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/sound_menu.png3
+HTS1
+03
+2006
+1414332
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:17:37 GMT23
+"29c277-22879-3f20d991"0
+0
+16
+wolfpack.twu.net37
+/SearchAndRescue/manual/main_menu.png149
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/main_menu.png3
+HTS1
+03
+2006
+1227712
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:15:48 GMT23
+"29c271-1df93-3f20d924"0
+0
+16
+wolfpack.twu.net41
+/SearchAndRescue/manual/graphics_menu.png153
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/graphics_menu.png3
+HTS1
+03
+2005
+303852
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:13:31 GMT22
+"29c0c7-76b1-3f20d89b"0
+0
+16
+wolfpack.twu.net35
+/SearchAndRescue/manual/cockpit.png147
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/cockpit.png3
+HTS1
+03
+2004
+55312
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:18 GMT22
+"29c0ce-159b-3f20d8ca"0
+0
+16
+wolfpack.twu.net39
+/SearchAndRescue/manual/flying_bank.png151
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_bank.png3
+HTS1
+03
+2004
+72252
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:41 GMT22
+"29c26c-1c39-3f20d8e1"0
+0
+16
+wolfpack.twu.net40
+/SearchAndRescue/manual/flying_pitch.png152
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_pitch.png3
+HTS1
+03
+2004
+46492
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:27 GMT22
+"29c26a-1229-3f20d8d3"0
+0
+16
+wolfpack.twu.net42
+/SearchAndRescue/manual/flying_heading.png154
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_heading.png3
+HTS1
+03
+2005
+300952
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:17:59 GMT22
+"29c279-758f-3f20d9a7"0
+0
+16
+wolfpack.twu.net35
+/SearchAndRescue/manual/outside.png147
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/outside.png3
+HTS1
+03
+2003
+9592
+OK9
+image/gif0
+29
+Fri, 25 Jul 2003 07:16:21 GMT21
+"29c284-3bf-3f20d945"0
+0
+16
+wolfpack.twu.net40
+/SearchAndRescue/manual/icon_warning.gif152
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/icon_warning.gif3
+HTS1
+03
+2005
+243802
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:17:48 GMT22
+"29c278-5f3c-3f20d99c"0
+0
+16
+wolfpack.twu.net31
+/SearchAndRescue/manual/map.png143
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/map.png3
+HTS1
+03
+2005
+125972
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:24 GMT22
+"29c269-3135-3f20d8d0"0
+0
+16
+wolfpack.twu.net45
+/SearchAndRescue/manual/flying_collective.png157
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_collective.png3
+HTS1
+03
+2005
+217812
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:36 GMT22
+"29c26b-5515-3f20d8dc"0
+0
+16
+wolfpack.twu.net42
+/SearchAndRescue/manual/flying_landing.png154
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_landing.png3
+HTS1
+03
+2005
+187092
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:49 GMT22
+"29c26d-4915-3f20d8e9"0
+0
+16
+wolfpack.twu.net43
+/SearchAndRescue/manual/flying_rescue01.png155
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_rescue01.png3
+HTS1
+03
+2005
+197812
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:57 GMT22
+"29c26e-4d45-3f20d8f1"0
+0
+16
+wolfpack.twu.net43
+/SearchAndRescue/manual/flying_rescue02.png155
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_rescue02.png3
+HTS1
+03
+2004
+51562
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:12:56 GMT22
+"29c0c4-1424-3f20d878"0
+0
+16
+wolfpack.twu.net33
+/SearchAndRescue/manual/as350.png145
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/as350.png3
+HTS1
+03
+2005
+196762
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:15:05 GMT22
+"29c26f-4cdc-3f20d8f9"0
+0
+16
+wolfpack.twu.net43
+/SearchAndRescue/manual/flying_rescue03.png155
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/flying_rescue03.png3
+HTS1
+03
+2004
+72572
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:16:00 GMT22
+"29c273-1c59-3f20d930"0
+0
+16
+wolfpack.twu.net32
+/SearchAndRescue/manual/hh65.png144
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/hh65.png3
+HTS1
+03
+2004
+81732
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:15:55 GMT22
+"29c272-1fed-3f20d92b"0
+0
+16
+wolfpack.twu.net32
+/SearchAndRescue/manual/hh60.png144
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/hh60.png3
+HTS1
+03
+2004
+53282
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:18:02 GMT22
+"29c27a-14d0-3f20d9aa"0
+0
+16
+wolfpack.twu.net31
+/SearchAndRescue/manual/s64.png143
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/s64.png3
+HTS1
+03
+2004
+91552
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:16:28 GMT22
+"29c276-23c3-3f20d94c"0
+0
+16
+wolfpack.twu.net32
+/SearchAndRescue/manual/ka27.png144
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/ka27.png3
+HTS1
+03
+2005
+148692
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:19:38 GMT22
+"29c27e-3a15-3f20da0a"0
+0
+16
+wolfpack.twu.net31
+/SearchAndRescue/manual/v22.png143
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/v22.png3
+HTS1
+03
+2004
+65222
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:13:00 GMT22
+"29c287-197a-3f20d87c"0
+0
+16
+wolfpack.twu.net31
+/SearchAndRescue/manual/b47.png143
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/b47.png3
+HTS1
+03
+2004
+81082
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:19:31 GMT22
+"29c289-1fac-3f20da03"0
+0
+16
+wolfpack.twu.net32
+/SearchAndRescue/manual/uh1d.png144
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/uh1d.png3
+HTS1
+03
+2005
+186072
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:13:46 GMT22
+"29c2b3-48af-3f20d8aa"0
+0
+16
+wolfpack.twu.net44
+/SearchAndRescue/manual/creatingobjects.html156
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/creatingobjects.html3
+HTS5
+18607<html>
+<head>
+<title>Search and Rescue - Manual - Creating Objects</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+<a href="createyourown.html">Create Your Own</a>-&gt;
+Creating Objects
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>Creating Objects</h2>
+
+<p>This document describes how to create <i>SAR Objects</i>
+(Search and Rescue Objects) for use in Search and Rescue's
+scenery.
+</p>
+
+<ul>
+ <li><a href="#requirements">Requirements</a>
+ <li><a href="#format">SAR 3D Object Format</a>
+ <ul>
+  <li><a href="#type">Type</a>
+  <li><a href="#layout">Layout</a>
+  <li><a href="#parameters">Parameters</a>
+  <li><a href="#example">Example</a>
+  <li><a href="#filelocation">File Location</a>
+ </ul>
+ <li><a href="#scenery">Adding To The Scenery</a>
+ <ul>
+  <li><a href="#sceneryedittext">Using a Text Editor</a>
+  <li><a href="#sceneryeditscnedit">Using ScnEdit</a>
+ </ul>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="requirements">
+<hr>
+<h3>Requirements</h3>
+
+<h4>Vertex 3D</h4>
+<p>The <i>SAR 3D Object</i> is basically a <i>Vertex 3D Object</i>
+(<i>V3D Object</i>), this means that you will need
+<a href="http://wolfpack.twu.net/Vertex/">Vertex 3D</a>
+(a free <a href="http://www.opengl.org">OpenGL</a> modeller)
+to create and edit <i>SAR 3D Objects</i>.
+</p>
+
+<h4>Search and Rescue</h4>
+<p>You should also have
+<a href="http://wolfpack.twu.net/SearchAndRescue/">
+Search and Rescue</a> and its data files
+installed.
+</p>
+
+<h4>ScnEdit</h4>
+<p>To add <i>SAR 3D Objects</i> to the <i>SAR Scenery</i> files you can
+either use a text editor or
+<a href="http://wolfpack.twu.net/SearchAndRescue/">ScnEdit</a>.
+</p>
+
+<h4>LightWave 3D (optional)</h4>
+<p>Alternately you can use
+<a href="http://www.newtek.com/buynow/lw_products.html">
+LightWave 3D</a>
+to create <i>LWO models</i> and then <i>import</i> them to a <i>V3D 
+Object</i> using
+<a href="http://wolfpack.twu.net/Vertex/">Vertex 3D</a>.
+To learn how to do this you should read the
+<a href="lwoimporthowto.html">LWO Importing HOWTO</a>.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="format">
+<hr>
+<h3>SAR 3D Object Format</h3>
+
+<p>This section <b>defines</b> the <i>official SAR 3D Object format</i>
+as of version 0.8.1. The <i>SAR 3D Object format</i> <u>is
+essentially</u> the <i>V3D Object format</i> (the object format created
+and edited by
+<a href="http://wolfpack.twu.net/Vertex/">Vertex 3D</a>).
+</p>
+
+<p>Here we will refer to it as the "SAR 3D Object format" or
+just the "object format" (not the <i>V3D Object format</i> even though 
+they are essentially the same thing).
+</p>
+
+<a name="type">
+<h4>Type</h4>
+<p>Each <i>SAR Object</i> has a <i>type</i>, that specifies what type
+of object it is (<i>static</i>, <i>ground</i>, <i>aircraft</i>, etc).
+The  <i>SAR 3D Object format</i> can be "extended" (i.e. have more 
+<a href="#parameters">parameters</a>) depending on its <i>type</i>. The 
+following are a list of <i>SAR Object</i> <i>types</i> and their
+respective <i>type code</i>:
+</p>
+
+<ul>
+ <li><i>Static</i> <code>1</code>
+ <li><i>Automobile</i> <code>2</code>
+ <li><i>Watercraft</i> <code>3</code>
+ <li><i>Aircraft</i> <code>4</code>
+ <li><i>Ground</i> <code>6</code>
+ <li><i>Runway</i> <code>7</code>
+ <li><i>Helipad</i> <code>8</code>
+ <li><i>Actor/Human</i> <code>9</code>
+ <li><i>Smoke</i> <code>10</code>
+ <li><i>Fire</i> <code>11</code>
+ <li><i>Explosion</i> <code>12</code>
+ <li><i>Chemical Spray</i> <code>13</code>
+ <li><i>Fuel Tank</i> <code>14</code>
+ <li><i>Premodeled</i> <code>20</code>
+</ul>
+
+
+<p>This document <b>only</b> describes the object format for objects of
+type <i>static</i> (type code <code>1</code>). For other object types
+(such as <i>aircraft</i>), please refer to the
+<a href="createyourown.html">appropriate documentation</a>. Note that
+such documentation for other types of <i>SAR Objects</i> specify
+parameters that are <i>on top</i> of the
+<a href="#parameters">parameters</a> listed here.
+</p>
+
+<a name="layout">
+<h4>Layout</h4>
+
+<p>Since the <i>SAR Object</i> is really a <i>V3D Object</i>, it
+contains <i>V3D visual models</i> and <i>"other data" models</i>. For
+<i>SAR Object</i> of
+<a href="#type">type</a>
+<i>static</i> the layout should be as follows:
+</p>
+
+<ul>
+ <li>Header
+ <li>"Other data" (optional/misc header)
+ <li>"Other data" (text section with <a href="#parameters">parameters</a>)
+ <li>Visual model <code>standard</code>
+ <li>Visual model <code>standard_far</code> (optional)
+ <li>Visual model <code>standard_night</code> (optional)
+ <li>Visual model <code>shadow</code> (optional)
+</ul>
+
+<p>The first <i>"other data" model</i> in the <i>SAR Object file</i> is 
+sometimes kept for the <u>internal use by Vertex 3D</u> and, for this
+reason, Search and Rescue <b>ignores</b> it.
+</p>
+
+<p>The second <i>"other data" model</i> is a text section that contains
+the <i>SAR Object</i> <a href="#parameters">parameters</a>.
+</p>
+
+<p>Next is the first <i>visual model</i>, it should be named
+<code>standard</code>. <u>Every <i>SAR Object</i> <b>must</b> have a 
+<i>visual model</i> named <code>standard</code></u>.
+</p>
+
+<p>The subsequent <i>visual models</i> <code>standard_far</code>,
+<code>standard_night</code>, and <code>shadow</code> are 
+<u>optional</u>.
+</p>
+
+<p>The <code>standard_far</code> <i>visual model</i> is displayed when 
+the <i>camera</i> is <b>farther</b> than the <u>distance specified by 
+the <a href="#parameter">parameter</a>
+<code>range_far</code></u> (but still <b>with in</b> the <u>distance 
+specified by <code>range</code></u>). For this reason you should make
+the <code>standard_far</code> <i>visual model</i> <b>simpler</b> in
+detail.
+</p>
+
+<p>The <code>standard_night</code> <i>visual model</i> is 
+<b>displayed</b> <u>during night time</u> and <b>without</b> 
+<i>lighting</i> (so therefore it is not shaded). This is useful for
+displaying lit windows at night. This <i>visual model</i> can also be
+displayed at dawn by specifying <code>show_night_model_at_dawn</code>
+and displayed at dusk by specifying
+<code>show_night_model_at_dusk</code>.
+</p>
+
+<p>The <code>shadow</code> <i>visual model</i> is displayed as the
+object's shadow. It should have <b>no</b> <u>color or texture 
+primitives</u> in it.
+</p>
+
+<p><img src="icon_info.gif" border=0 align=bottom>
+With other
+<a href="#type">types</a>
+of <i>SAR Objects</i>, additional <i>"other data" models</i> may need
+to be <b>placed between</b> (just before) each <i>visual model</i>.
+Please keep this in mind when you work with other types of <i>SAR
+Objects</i> later on.
+</p>
+
+<a name="parameters">
+<h4>Parameters</h4>
+
+<p>As <a href="#layout">mentioned above</a>, the <i>parameters</i> 
+listed here belong in the second <i>"other data" model</i> in the
+<i>SAR Object</i> file. All parameters listed here apply to <u>all
+<a href="#type">types</a>
+</u> of <i>SAR Objects</i>.
+</p>
+
+<p><img src="icon_warning.gif" border=0 align=bottom>
+<i>SAR Scenery</i> files have a separate set of parameters which
+<b>differ</b> from the parameters listed here. There are some parameters
+for <i>SAR Scenery</i> files that are identical to the parameters for
+<i>SAR Object</i> files, but keep in mind that <u><b>not</b> all
+parameters listed here can be used in <i>SAR Scenery</i> files</u> (and
+vice versa).
+</p>
+
+<p><b>Legend:</b></p>
+<ul>
+ <li><i>Distances</i> are in meters
+ <li><i>Angles</i> are in degrees
+ <li><i>Heights</i> are in feet (unless noted otherwise)
+ <li><i>Colors</i> are in coefficients [0.0 to 1.0]
+ <li><i>Strings</i> can be escaped with the <code>\</code> character
+(if and only if it is the sole argument)
+ <li><i>Flags</i> are denoted with a <code>?</code> in the argument name 
+and can be a value of <code>0</code> (unset) or <code>1</code> (set)
+ <li><i>Intervals</i> are in milliseconds and are denoted with a
+<code>_int</code> in the argument name
+</ul>
+
+
+<table width=100% cellpadding=5 cellspacing=0 border=1>
+
+<tr align=left valign=top>
+ <th>Parameter</th>
+ <th>Argument(s)</th>
+ <th>Remarks</th>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>contact_cylendrical</code></td>
+ <td><code>r h_min h_max</code></td>
+ <td>Cylendrical contact bounds</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>contact_rectangular</code></td>
+ <td><code>x_min x_max y_min y_max z_min z_max</code></td>
+ <td>Rectangular contact bounds</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>contact_spherical</code></td>
+ <td><code>r</code></td>
+ <td>Spherical contact bounds</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>crash_flags</code></td>
+ <td><code>crash_other? causes_crash? support_surface? 
+crash_code</code></td>
+ <td><code>crash_other?</code> specifies that it can crash into 
+<u>other objects</u> that have <code>causes_crash?</code> set to
+<code>1</code>.<br>
+<code>support_surface?</code> specifies that other objects can
+"land" or "walk" on it.<br>
+<code>crash_code</code> specifies what kind of crash would occure if
+something crashed into it (used only if <code>causes_crash?</code> is
+<code>1</code>);
+<code>0</code> = obstruction,
+<code>1</code> = ground,
+<code>2</code> = mountain,
+<code>3</code> = building,
+<code>4</code> = aircraft.
+ </td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>description</code></td>
+ <td><code>s</code></td>
+ <td>Description of object</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>light_new</code></td>
+ <td><code>x y z r g b a radius on? type on_int off_int</code></td>
+ <td>Adds a new light to the object.
+<code>type</code> <code>0</code> is standard light,
+<code>1</code> is strobe
+<code>2</code> is spotlight (only 1 per object)</code>.
+<code>on_int</code> and <code>off_int</code> only apply to strobes
+(otherwise leave both as <code>0</code>)
+ </td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>name</code></td>
+ <td><code>s</code></td>
+ <td>Name of object</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>range</code></td>
+ <td><code>d</code></td>
+ <td>Visible range (spherical)</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>range_far</code></td>
+ <td><code>d</code></td>
+ <td>Far model visible range (spherical)</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>shade_model_smooth</code></td>
+ <td>*none*</td>
+ <td>Specifies that the visual models should be displayed using
+smooth shading (GL_SMOOTH).
+</tr>
+
+<tr align=left valign=top>
+ <td><code>show_night_model_at_dawn</code></td>
+ <td>*none*</td>
+ <td>Specifies that the <code>standard_night</code> visual model
+should be displayed at dawn.
+</tr>
+
+<tr align=left valign=top>
+ <td><code>show_night_model_at_dusk</code></td>
+ <td>*none*</td>
+ <td>Specifies that the <code>standard_night</code> visual model
+should be displayed at dusk.
+</tr>
+
+<tr align=left valign=top>
+ <td><code>type</code></td>
+ <td><code><a href="#type">type</a></code></td>
+ <td>Depreciated, the object's
+<a href="#type">type</a>
+is now set by the <i>SAR Scenery</i> file.
+</tr>
+
+<tr align=left valign=top>
+ <td><code>version</code></td>
+ <td><code>major minor release</code></td>
+ <td>Specifies 3 numbers that represent the minmum version of
+Search and Rescue needed to display this object.
+</tr>
+
+</table>
+
+<a name="example">
+<h4>Example</h4>
+<p>This is an example of a <i>SAR Object</i> file as seen when viewed
+with a <i>text editor</i> (note that the <i>visual model</i> data has
+been <b>omitted</b> and replaced with a <code>...</code> for brevity):
+</p>
+
+<table width=100% border=1 cellspacing=0 cellpadding=5>
+
+<tr align=center valign=center><th>
+<a href="hangar01.3d">
+<img src="icon_file.gif" border=0 align=bottom>
+<code>hangar01.3d</code></a> (12 kb)
+</th></tr>
+
+<tr align=left valign=top><td>
+<p><pre><code>
+begin_header
+author unspecified
+texture_base_directory /usr/share/games/SearchAndRescue
+texture_load hanger01 textures/hanger01.tex 0.600000
+texture_load hanger02 textures/hanger02.tex 0.800000
+end_header
+
+# This is a comment, all lines starting with a # are comments
+
+# Display range (in meters)
+range 5000
+
+# Range to display standard_far model (in meters)
+range_far 2000
+
+# Use smooth shading
+shade_model_smooth
+
+
+begin_model standard
+ ...
+end_model standard
+
+begin_model standard_far
+ ...
+end_model standard_far
+
+begin_model shadow
+ ...
+end_model shadow
+
+</code></pre></p>
+</td></tr>
+</table>
+
+<a name="filelocation">
+<h4>SAR Object File Location</h4>
+<p>You should place your <i>SAR Object</i> files in one of the following 
+directories from the Search and Rescue data directory.
+</p>
+
+<ul>
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>aircrafts/</code> - For aircrafts
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>automobiles/</code> - For cars, trucks, and other land vehicles
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>objects/</code> - For most objects in general
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>vessels/</code> - For ships and vehicles that go on water
+</ul>
+
+<p>You can create subdirectories within the directories listed above
+to help you organize things.
+</p>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+
+<a name="scenery">
+<hr>
+<h3>Adding To The Scenery</h3>
+
+<p>This section describes how to <b>add</b> a <i>SAR Object</i> to a
+<i>SAR Scenery</i> file.
+</p>
+
+<p>There are two methods to achieve this:
+</p>
+
+<ol>
+ <li>Using a <i>text editor</i>
+ <li>Using 
+<a href="http://wolfpack.twu.net/SearchAndRescue/">ScnEdit</a>
+</ol>
+
+
+<a name="sceneryedittext">
+<h4>Using a Text Editor</h4>
+<p>The first step is to <b>edit</b> the <i>SAR Scenery</i> file,
+the scenery files are located in:
+</p>
+
+<ul>
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>scenery/</code>
+</ul>
+
+<p>All <i>SAR Scenery</i> files have a <code>.scn</code> extension and
+are of plain text format.
+</p>
+
+<p><b>Run</b> your <u>prefered text editor</u> and <b>open</b> the
+<i>SAR Scenery</i> file that you want to add your <i>SAR Object</i> in 
+to.
+</p>
+
+<p>To <b>add</b> a <i>SAR Object</i> of
+<a href="#type">type</a>
+<i>static</i> into 
+the <i>SAR Scenery</i> file use the code:
+</p>
+
+<table width=100% border=1 cellspacing=0 cellpadding=5>
+
+<tr align=center valign=center><th>
+Sample Portion of a Scenery File
+</th></tr>
+<tr align=left valign=top><td>
+
+<p><pre><code>
+# Create a new object of type static (type code 1), this puts the new
+# object in to the current context so subsequent scenery parameters will
+# operate on this new object
+create_object 1
+
+# Load the object file for the new object that we just created
+model_file objects/hangar01.3d
+
+# Range (in meters), this overrides the range specified in the object
+# file (optional)
+range 2000
+
+# Set position (in meters)
+translation -56.0 -250.0 0.0
+
+# Set direction (in degrees)
+rotate 310 0 0
+
+# Set name of object (optional, no spaces)
+object_name my_hangar_01
+
+# Set descrption of object that is to be displayed on the mission
+# briefing map (optional)
+object_map_description 
+
+# Disable depth testing when drawing this object, useful for "flat"
+# objects that are intended to be landmarks or flat areas of land
+# (optional)
+#no_depth_test
+
+</code></pre></p>
+
+</td></tr>
+</table>
+
+<p>The <code>create_object</code> parameter specifies that a new object 
+be created and of the specified <a href="#type"><i>type</i></a>.
+</p>
+
+<p>When using the <code>model_file</code> parameter, note that the
+Search and Rescue data directory will be automatically prepended to it.
+So you only need to specify the <i>relative path</i> to your <i>SAR 
+Object</i> file from the Search and Rescue data directory.
+</p>
+
+<p><img src="icon_bulb.gif" border=0 align=bottom>
+You can <b>edit</b> a <i>SAR Scenery</i> file <u>while Search and Rescue
+is running</u>! Once you <b>save</b> the <i>SAR Scenery</i> file you 
+need to <b>exit simulation</b> and then <b>restart</b> free flight or 
+the mission (whichever you were playing).
+</p>
+
+<p><img src="icon_bulb.gif" border=0 align=bottom>
+If you just modified a <i>SAR Scenery</i> and you want to see how it 
+looks, <b>run</b> Search and Rescue from a <i>text prompt</i> 
+(XTerm, DOS Prompt, etc) so you can see the error messages (if 
+any) regarding your new modifications.
+</p>
+
+
+<a name="sceneryeditscnedit">
+<h4>Using ScnEdit</h4>
+<p>This method assumes that you have some experience in using ScnEdit.
+</p>
+
+<p>The first step is to <b>open</b> the <i>SAR Scenery</i> file,
+as you would with a text editor.
+</p>
+
+<p><b>Position</b> the <u>cursor</u> at the coordinates where you
+want the new object to be placed, then <b>select</b> from the <i>object 
+list</i> where you want the object to be inserted in the order of 
+objects.
+</p>
+
+<p>Now go to Edit-&gt;New Object, a new object will be created.
+<b>Specify</b> the appropriate values for the new object in the
+<i>object values pane</i>.
+</p>
+
+<p><b>Specify</b> the new <i>SAR Object</i> file location in the
+<u>Model File prompt</u>, note that the Search and Rescue data directory
+will be automatically prepended to it. So you only need to specify the
+<i>relative path</i> to your <i>SAR Object</i> file from the Search and
+Rescue data directory.
+</p>
+
+
+<h4>Object Ordering</h4>
+<p>
+The order in which the <i>SAR Object</i> is specified in the <i>SAR
+Scenery</i> file is important. The <i>SAR Objects</i> are drawing in 
+<i>serial order</i>, so if you use the <code>no_depth_test</code>
+parameter then you need to <b>arrange</b> the objects in <u>proper
+order</u>. In general the objects should appear in a <i>SAR 
+Scenery</i> as follows:
+</p>
+
+<ol>
+ <li>Ground objects acting as "flat" landmarks
+ <li>Ground objects acting as mountains (heightfields)
+ <li>Runways, roads, railroads, rivers, etc
+ <li>Helipads (not on buildings)
+ <li>Static objects, buildings, obstructions
+ <li>Helipads (on top of buildings)
+</ol>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2005
+128212
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:16:51 GMT22
+"29c288-3215-3f20d963"0
+0
+16
+wolfpack.twu.net43
+/SearchAndRescue/manual/lwoimporthowto.html155
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/lwoimporthowto.html3
+HTS5
+12821<html>
+<head>
+<title>Search and Rescue - Manual - LWO Import HOWTO</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+<a href="createyourown.html">Create Your Own</a>-&gt;
+LWO Import HOWTO
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>LWO Import HOWTO</h2>
+
+<p>This document describes how to import 
+<a href="http://www.newtek.com/buynow/lw_products.html">
+LightWave 3D</a>
+LWO files into
+<a href="http://wolfpack.twu.net/Vertex/">
+Vertex 3D</a>
+V3D model files for use with Search and Rescue.
+</p>
+
+<ul>
+ <li><a href="#preplanning">Preplanning</a>
+ <li><a href="#importing">Importing</a>
+ <li><a href="#postprocessing">PostProcessing</a>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="preplanning">
+<hr>
+
+<table width=100% cellpadding=5 cellspacing=0>
+ <tr>
+  <td width=0% align=left valign=top>
+
+<h3>Preplanning</h3>
+
+<h4>LWO to V3D</h4>
+<p>The goal here is to import a LightWave 3D LWO file (<code>.lwo</code>
+file) to a Vertex 3D V3D file (<code>.3d</code> file) which Search and 
+Rescue uses for its aircraft, scenery, objects, etc.
+</p>
+
+<p>First, the LWO file needs to be "preped" before it can be imported to 
+a V3D file. You should <b>save as</b> your LWO file to a <u>different 
+file name</u> and then modify it (prep it) for the eventual importing to 
+a V3D file.
+</p>
+
+<p>Below are a list of issues that need to be considered before 
+importing.
+</p>
+
+<h4>Level of Detail</h4>
+<p>Since LightWave is designed to maximize detail by creating 3d
+objects "as realistic as possible", the LWO model may be too complex 
+(have too many primitives or too many graphics statements) than 
+desireable.
+</p>
+
+<p>Objects in Search and Rescue need to have a balance between 
+simplicity and detail. For example, in a game situation you do not 
+want 60 primitives describing a cylender when you can just use 4 
+primitives to achieve a similar level of detail.
+</p>
+
+<p>Therefore it is important to simplify the LWO model before importing 
+it to a V3D model. Remember that you can use <i>normals</i> to specify 
+the exact description of shading per primitive <u>after</u> import (but 
+this can be tedious).
+</p>
+
+<h4>Normals (or lack thereof)</h4>
+<p>Unfortunately the LWO format does not support <i>normals</i>. To be 
+precise, the LWO format does not support <i>normals</i> in OpenGL's 
+concept (and the V3D file format is really a slightly more advanced 
+text file form of an OpenGL <i>display list</i>).
+</p>
+
+<p><img src="icon_warning.gif" border=0 valign=center>
+A <i>normal</i> is <b>not</b> a vector perpendicular to two "surface" 
+vectors as typically thought of in the mathimatical defination of a
+normal. Here, a <i>normal</i> directs the angle of shading in accordance
+with OpenGL's implementation of <i>normals</i>.
+</p>
+
+<p>A solution to that problem would be to use Vertex 3D's
+<a href="http://wolfpack.twu.net/Vertex/plugins.html">
+VPI Render Normals plug-in</a>,
+however the resulting normals would be calculated and not intuitively
+placed to achieve the intended shading. It would result in
+<i>precise</i> but not <i>accurate</i> shading, meaning your imported
+LWO model may not look the way you intended it to.
+</p>
+
+<p>(This issue is mentioned again in
+<a href="#postprocessing">PostProcessing</a>
+)
+</p>
+
+<h4>Graphics Statements</h4>
+
+<p><i>Graphics statements</i> can be redundant and cause the display of
+the final V3D model to be slow and inefficient. Typically,
+excessive <i>graphics statements</i> in LWO primarly consist of <i>color
+statements</i>. For example you may have colored your LWO model in may
+shades, but the imported V3D file will have color statements between
+primitives in its serial order that make it inefficient. For example, 
+the final imported V3D file may have statements of the following:
+</p>
+
+<ul>
+ <li>Color (red)
+ <li>Quad
+ <li>Color (blue)
+ <li>Quad
+ <li>Color (red)
+ <li>Quad
+ <li>Color (blue)
+ <li>Quad
+</ul>
+
+<p>It would be much more efficient if the order was:
+</p>
+
+<ul>
+ <li>Color (red)
+ <li>Quad
+ <li>Quad
+ <li>Color (blue)
+ <li>Quad
+ <li>Quad
+</ul>
+
+<p>Unfortunately, there is little control over how the LWO file is saved 
+and how color statements are arranged. The <b>best approach</b> to this 
+issue is to <u>not have too many different colors</u>.
+</p>
+
+<h4>Texturing</h4>
+<p>If your LWO model is primarly textured, then you should 
+<b>recolor</b> your LWO model <u>pure white</u> and then <b>select</b> 
+side, top/bottom, and front/back portions of the model and <b>save</b> 
+them to <u>separate LWO files</u> (later you will import them all into
+V3D and recombine them).
+</p>
+
+<h4>Winding</h4>
+<p>The <i>winding</i> of all primitives with solid surface faces should 
+be <i>clockwise</i>. This is not, however, a serious issue since the
+<i>winding</i> can be easilly <b>flipped</b> (using Vertex 3D) after the 
+LWO file is imported to a V3D file.
+</p>
+
+<h4>Concave Primitives</h4>
+<p>The OpenGL specification does <b>not</b> allow primitives with solid 
+surface edges that are <i>concave</i> curved. Such curved edges will be 
+drawn as a straight line. Since the V3D file follows the OpenGL
+specification, you will need to make sure there are no primitives 
+with solid surface edges that have <i>concave</i> curves.
+</p>
+
+<p>If you do have primitives with solid surface edges that are
+<i>concave</i> curved in your LWO file then you should <b>divide</b>
+them into smaller primitives so that there are only <i>convex</i> curved
+edges and <b>no</b> <i>concave</i> curved edges.
+</p>
+
+
+  </td>
+  <td width=0% align=center valign=top>
+
+<h4>From LightWave 3D to Search and Rescue</h4>
+<p>
+<img src="lightwave01.png" border=0
+alt="An LWO model in LightWave 3D"
+><br>
+<font size=2>
+An LWO model in LightWave 3D
+</font>
+</p>
+
+<p>
+<img src="vertexlwoimport01.png" border=0
+alt="The LWO file now imported to a Vertex 3D V3D file"
+><br>
+<font size=2>
+The LWO file now
+<a href="#import">imported</a>
+to a Vertex 3D V3D file
+</font>
+</p>
+
+<p>
+<img src="vertexlwoimport02.png" border=0
+alt="The V3D file after postprocessing"
+><br>
+<font size=2>
+The V3D file after
+<a href="#postprocessing">postprocessing</a>
+</font>
+</p>
+
+<p>
+<img src="sarlwo01.png" border=0
+alt="Finally into the Search and Rescue world"
+><br>
+<font size=2>
+Finally into the Search and Rescue world
+</font>
+</p>
+
+<ul>
+ <li><a href="cubecone.lwo">
+<img src="icon_file.gif" border=0 valign=center>
+<code>cubecone.lwo</code></a> 980 bytes
+</ul>
+
+  </td>
+ </tr>
+</table>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="importing">
+<hr>
+<h3>Importing</h3>
+
+<p>If you have not yet saved your LWO file to a different file name then
+<b>save as</b> your LWO file to a <u>different file name</u> now. Since 
+you may need to make changes to it before it is suitable for importing 
+to a V3D file.
+</p>
+
+<p><b>Select</b> <u>unwanted primitives</u> (primitives that would not 
+contribute to meaningful detail) and <b>delete them</b> from the 
+LWO file. <b>Reduce</b> the <u>level of detail</u> as needed, details 
+such as the number of primitives representing a cylender's curve. 
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+Remember that in V3D you can use OpenGL's implementation of
+<i>normals</i> to shade even a 4 primitive block into a cylender or 
+sphere (thus conserving a lot of cpu and memory use)!
+</p>
+
+<p><b>Recolor</b> the LWO model using <u>fewer colors</u>, this will 
+help reduce the number of color graphics statements and improve 
+efficiency.
+</p>
+
+<p>If your LWO model is textured then you may need to <b>select</b>
+side, top/bottom, and front/back portions of the model and save them to
+<u>separate LWO files</u> (later you will import them all into V3D and
+recombine them).
+</p>
+
+<p>At this point you can now <b>run</b> <u>Vertex 3D</u> and <b>import</b>
+the <u>LWO file(s)</u>. Make sure the LWO plug-in is enabled and go to 
+File-&gt;Import (the LWO plug-in is available in the standard
+<a href="http://wolfpack.twu.net/Vertex/plugins.html">Vertex Plug-In 
+Devel Package</a>) to import the LWO file.
+</p>
+
+<p>Once the LWO file(s) are imported, <b>save as</b> the now V3D model 
+to a <u>V3D file</u>. Next you will need to
+<a href="#postprocessing">PostProcess</a> the new V3D model.
+</p>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="postprocessing">
+<hr>
+<h3>PostProcessing</h3>
+
+<p>Since the final V3D model came from a LWO model, there are certain 
+modifications you will need to make after you import. Below are a list 
+of steps you may need to take.
+</p>
+
+
+<h4>Flip Winding, Mirror, Rotate, Translate</h4>
+
+<p>The V3D model's primitives with surfaces should be in 
+<i>clockwise</i> winding, thus you may need to <b>select</b> all the 
+primitives and <b>Flip Winding</b> (and leave the primitives selected 
+for the next few steps).
+</p>
+
+<p>Past experience shows that the imported primitives need to be 
+<b>mirrored</b> <u>along the Y axis</u>.
+</p>
+
+<p>You may also need to <b>rotate</b> the imported primitives <u>about 
+the X axis</u> too.
+</p>
+
+<p>At this point the primitives are usually centered properly, however 
+if they are not then <b>translate</b> them to the center as needed.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Setting Normals</h4>
+<p>As mentioned several times before, LWO does not support 
+<i>normals</i>, so you will now need to set normals on each primitive,
+there is the easy way and the hard way:
+</p>
+
+<p>The hard way is to go through each primitive and set a normal to each 
+vertex (very time consuming)</p>
+
+<p>The easy way is to use the
+<a href="http://wolfpack.twu.net/Vertex/plugins.html">
+Render Normals plug-in</a> to have the computer set <i>normals</i> to
+each vertex of each primitive. Go to Render-&gt;Render Normals
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Adjusting Color</h4>
+<p>You may need to adjust the color of the imported model, this can be 
+tedious as you will have to <b>select</b> and <b>modify</b> <u>every 
+color primitive</u>.
+</p>
+
+<p>Since LWO does not specify OpenGL <i>material values</i> you should 
+also set the color primitive's material values while you adjust the 
+color.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Texturing</h4>
+<p>If the LWO model was textured and you imported several LWO files into 
+your new V3D file, now is the time to put all the primitives 
+from each V3D visual model under one V3D visual model in your V3D file.
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+<b>Insert</b> a <u>comment primitive</u> between each set of primitives 
+that came from the separate LWO files. This will help you distinguish 
+which "side" to orient the texture with.
+</p>
+
+<p><b>Create</b> a <u>new V3D visual model</u> in your V3D file and
+<b>cut &amp; paste</b> all the primitives from all the other V3D 
+visual models <u>into the new V3D visual model</u>. Then <b>delete</b>
+the <u>other V3D visual models</u> in your V3D file.
+</p>
+
+<p>Now add the textures as you normally would, remember to convert 
+them to <code>tex</code> (Targa image file format) from whatever 
+format it was when used for the LWO model.
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+Use the comment primitives you inserted between each set of primitives 
+to easilly identify where the new texture select and texture orient 
+primitives go.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Header &amp; SAR Parameters</h4>
+
+<p>Now create one "other data" model and make sure it is the first model
+in the V3D file. Enter in the usual SAR parameters to describe the 
+object's behavor in Search and Rescue.
+</p>
+
+<p>Make sure that the V3D visual model is named <code>standard</code>,
+or one of the supported V3D visual model names recognized by Search and 
+Rescue.
+</p>
+
+<p>You can repeat the above process to import the
+<code>standard_far</code>, <code>standard_night</code>, etc, models.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+92592
+OK9
+text/html0
+29
+Fri, 25 Jul 2003 07:16:47 GMT22
+"29c286-242b-3f20d95f"0
+0
+16
+wolfpack.twu.net45
+/SearchAndRescue/manual/lwoaircrafthowto.html157
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/lwoaircrafthowto.html3
+HTS4
+9259<html>
+<head>
+<title>Search and Rescue - Manual - LWO Aircraft HOWTO</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index.html">Index</a>-&gt;
+<a href="createyourown.html">Create Your Own</a>-&gt;
+LWO Aircraft HOWTO
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>LWO Aircraft HOWTO</h2>
+
+<p>This document assumes that you have already read the
+<a href="lwoimporthowto.html">LWO Import HOWTO</a>
+which describes how to import
+<a href="http://www.newtek.com/buynow/lw_products.html">
+LightWave 3D</a>
+LWO files into
+<a href="http://wolfpack.twu.net/Vertex/">
+Vertex 3D</a>
+V3D model files.
+</p>
+
+<ul>
+ <li><a href="#preplanning">Preplanning</a>
+ <li><a href="#lwopreparation">LWO Preparation</a>
+ <ul>
+  <li><a href="#prepmovableparts">Movable Parts In General</a>
+  <li><a href="#prepfuselage">Fuselage</a>
+  <li><a href="#preplandinggears">Landing Gears</a>
+  <li><a href="#prepdoors">Doors</a>
+  <li><a href="#preprotors">Rotors</a>
+  <li><a href="#prefexternalfueltank">External Fuel Tanks</a>
+ </ul>
+ <li><a href="#importing">Importing</a>
+
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="preplanning">
+<hr>
+<h3>Preplanning</h3>
+
+<p>There are no significent issues regarding the importing of LWO
+aircraft files at this time, please refer to the
+<a href="lwoimporthowto.html">LWO Import HOWTO</a>
+for general preplanning issues.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="lwopreparation">
+<hr>
+<h3>LWO Preparation</h3>
+
+<p>The key to preparation is breaking down the aircraft into
+<i>parts</i>.
+</p>
+
+<p>First you need to <b>consider</b>, <b>identify</b>, and
+<b>isolate</b> all of the parts in your LWO file that may have a unique
+and particular function. These parts are often the:
+</p>
+
+<ul>
+ <li>Fuselage
+ <li>Shadow
+ <li>Landing Gears (skis, wheels, struts, gear bay doors)
+ <li>Doors
+ <li>Rotors
+ <li>Air Brakes
+ <li>Ailerons, Elevators, Canards, or Rudders
+ <li>External Fuel Tanks
+</ul>
+
+<p>Not all types of aircraft will have all of the parts listed above.
+</p>
+
+<p>It is recommended that you <b>save as</b> your LWO file to a
+different file name since you may need to modify it for the purposes of
+accomidating Search and Rescue's requirements.
+</p>
+
+<p>After you have <b>considered</b> and <b>identified</b> each part, you 
+need to <b>isolate</b> each one (by <b>selecting</b> it in LightWave 3D)
+and  <b>save</b> it to a <u>separate LWO file</u> as an object (as a
+<i>part</i>). Some additional modifications on the LWO file you just
+saved may be required, these modifications include <b>translating</b>,
+<b>rotating</b>, and <b>recoloring</b>.
+</p>
+
+<p>Below are instructions specific to certain parts.</p>
+
+
+<a name="prepmovableparts">
+<h3>Movable Parts In General</h3>
+
+<p>Movable parts should be saved to separate LWO files as mentioned 
+above, however you should also take into consideration <u>how the part
+moves.</u>
+
+</p>
+For example a landing gear that is a wheel (imagine the nose gear of the 
+HH-65) deploys and retracts by rotating about the aircraft's X axis.
+The landing gear model should be saved in its down/deployed state.
+Since center of rotation is at the top of the gear strut, you need
+to <b>translate</b> the landing gear so that the center of the model
+is at the top of the gear strut (for most cases).
+</p>
+
+<p>Almost all parts (except the fuselage and shadow) are considered
+<i>movable parts</i>, the air brakes, ailerons, elevators, canards, 
+and rudders are good examples of simple parts that move.
+</p>
+
+<p>Another simple example would be that of a rudder. You would need to 
+<b>isolate</b> (<b>select</b>) the rudder and <b>save</b> it to a
+<u>separate LWO file</u>. It should be <b>translated</b> so that it
+<u>rotates about the Z axis</u> (for most cases).
+</p>
+
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+Note in some cases (for example) a rudder may not be fully upright (that
+it pitches downwards or upwards), in such a case you should still leave
+the rudder fully upright so that it still rotates about the Z axis.
+The SAR aircraft file will specify additional complex rotations that
+you do not need to in an LWO file.
+</p>
+
+
+<a name="prepfuselage">
+<h3>Fuselage</h3>
+
+<p>If you have <i>windows</i> on the fuselage (and most aircraft do have 
+windows), you should <b>save</b> the windows to a <u>separate LWO
+file</u>.
+</p>
+
+<p>If you intend to use a <i>texture</i> for the fuselage then you 
+should <b>split</b> the fuselage <u>in half</u> so that you have two 
+sides (a left and right side) and <b>save</b> them to <u>separate LWO
+files</u>. <b>Recolor</b> the entire fuselage <u>pure white</u>.
+</p>
+
+<p>If the aircraft has doors that open, exposing the interior of
+the fuselage, then you may want to <b>isolate</b> the interior of the
+fuselage and <b>save</b> it to a <u>separate LWO file</u>.
+</p>
+
+
+<a name="preplandinggears">
+<h3>Landing Gears</h3>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+Search and Rescue requires that <u>at least one separate model act as 
+the landing gear</u>. So even if the aircraft has fixed skis or wheels,
+you need to <b>save</b> the skis or <u>each</u> wheel to a <u>separate 
+LWO file</u>.
+</p>
+
+<p>Landing gears can be wheels, skis, gear bay doors, etc. Below, we 
+explain how to handle the common types of landing gears.
+</p>
+
+<p>For <i>skis</i> <b>save</b> the skis as <u>one whole part</u> to
+an LWO file. Since they do not move you do <b>not</b> need to translate
+it.
+</p>
+
+<p>For <i>wheels</i> <b>save</b> the <u>wheel and the strut</u> to an
+LWO file. If the gear rotates to deploy/retract then <b>translate</b> it 
+so that the gear's <i>center of rotation</i> is at the top of the strut.
+</p>
+
+<p>For <i>gear bay doors</i> <b>save</b> the <u>door</u> to an LWO file.
+If the gear bay door rotates to open/close then <b>translate</b> it so 
+that the door's <i>center of rotation</i> is at its <u>hindge</u>.
+</p>
+
+
+<a name="prepdoors">
+<h3>Doors</h3>
+
+<p>If you want a door on the aircraft to open and close while acting as 
+the <i>primary rescue door</i> then you should <b>save</b> that door to 
+a <u>separate LWO file</u>.
+</p>
+
+<p>The door should be in its <u>closed position</u>, <b>translate</b>
+the door to its <u><i>rotational center</i></u> (its hindges).
+If the door only slides open then there is no need to translate it.
+</p>
+
+<p>If the door is intended to be textured then follow the same procedure 
+for the <a href="#prepfuselage">fuselage</a>.
+</p>
+
+
+<a name="preprotors">
+<h3>Rotors</h3>
+
+<p>The <i>rotors</i> in Search and Rescue spin about the Z axis, this 
+means that all rotors (even tail rotors on helicopters) <i>rotate about 
+the Z axis</i>.
+</p>
+
+<p><u>Each set of blades is considered <i>one rotor</i></u>. So you need
+to isolate the rotor blades only, but <b>not</b> the struts, housing, or
+other cylendrical like details (leave them on the fuselage).
+</p>
+
+<p>Once you hve isolated <i>one rotor</i> you need to <b>translate</b>
+and <b>rotate</b> it such that its <i>center of rotation</i> and 
+attitude would <u>spin about the Z axis</u>. Then <b>save</b> it to an
+<u>LWO file</u>.
+</p>
+
+<p><img src="icon_warning.gif" border=0 valign=center>
+Remember that tail rotors spin about the Z axis (not the X axis) so
+you need to <b>rotate</b> it accordingly. You specify in the V3D
+aircraft file that it is a tail rotor and bank it 90 or 270 degrees
+to achieve the appropriate affect.
+</p>
+
+
+<a name="prefexternalfueltank">
+<h3>External Fuel Tanks</h3>
+
+<p>Each <i>external fuel tank</i> must be <b>saved</b> to a
+<u>separate LWO file</u>. It needs to be <b>translated</b> to its 
+<u><i>center of rotation</i></u>, this is required because once the
+fuel tank is dropped it becomes its own object and may need to rotate
+accordingly.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="importing">
+<hr>
+<h3>Importing</h3>
+
+<p>For basic information on importing, please refer to the
+<a href="lwoimporthowto.html">LWO Import HOWTO</a>.
+</p>
+
+<p>You will need to <b>import</b> each <u>LWO file into your
+V3D Aircraft file</u> using Vertex 3D. Follow the V3D Aircraft file
+design when you import each LWO file. After you import you may still 
+need to create addition models in your V3D Aircraft file, things such as 
+"other data" models, cockpit model, shadow model, far view model, etc.
+</p>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+
+
+
+
+
+
+
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+</html>
+
+3
+2004
+94882
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:20:13 GMT22
+"29c280-2510-3f20da2d"0
+0
+16
+wolfpack.twu.net35
+/SearchAndRescue/manual/weather.png147
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/weather.png3
+HTS1
+03
+2005
+424342
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:14:04 GMT22
+"29c0ca-a5c2-3f20d8bc"0
+0
+16
+wolfpack.twu.net35
+/SearchAndRescue/manual/details.png147
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/details.png3
+HTS1
+02
+32c7a2a8810ecc3bfa8dd39e091a33806d3
+2003
+9832
+OK9
+image/gif0
+29
+Fri, 25 Jul 2003 07:16:07 GMT21
+"29c28f-3d7-3f20d937"0
+0
+16
+wolfpack.twu.net37
+/SearchAndRescue/manual/icon_file.gif149
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/icon_file.gif3
+HTS1
+03
+2003
+9772
+OK9
+image/gif0
+29
+Fri, 25 Jul 2003 07:16:11 GMT21
+"29c2b6-3d1-3f20d93b"0
+0
+16
+wolfpack.twu.net46
+/SearchAndRescue/manual/icon_folder_opened.gif158
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/icon_folder_opened.gif3
+HTS1
+03
+4043
+3019
+Not Found9
+text/html10
+iso-8859-129
+Thu, 15 Jul 2004 21:50:54 GMT0
+0
+0
+16
+wolfpack.twu.net35
+/SearchAndRescue/manual/hangar01.3d149
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/hangar01.html3
+HTS3
+301<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML><HEAD>
+<TITLE>404 Not Found</TITLE>
+</HEAD><BODY>
+<H1>Not Found</H1>
+The requested URL /SearchAndRescue/manual/hangar01.3d was not found on this server.<P>
+<HR>
+<ADDRESS>Apache/1.3.19 Server at wolfpack.twu.net Port 80</ADDRESS>
+</BODY></HTML>
+2
+3278474832c0c54795f9b03ea715b35cef2
+328e356b031a3874fa50700dda01058b9c3
+2005
+170362
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:18:12 GMT22
+"29c28c-428c-3f20d9b4"0
+0
+16
+wolfpack.twu.net36
+/SearchAndRescue/manual/sarlwo01.png148
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/sarlwo01.png3
+HTS1
+03
+2003
+9802
+OK10
+text/plain0
+29
+Fri, 25 Jul 2003 07:13:48 GMT21
+"29c28e-3d4-3f20d8ac"0
+0
+16
+wolfpack.twu.net36
+/SearchAndRescue/manual/cubecone.lwo148
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/cubecone.lwo3
+HTS1
+03
+2005
+407552
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:16:44 GMT22
+"29c28d-9f33-3f20d95c"0
+0
+16
+wolfpack.twu.net39
+/SearchAndRescue/manual/lightwave01.png151
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/lightwave01.png3
+HTS1
+03
+2005
+379752
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:19:52 GMT22
+"29c28a-9457-3f20da18"0
+0
+16
+wolfpack.twu.net45
+/SearchAndRescue/manual/vertexlwoimport01.png157
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/vertexlwoimport01.png3
+HTS1
+03
+2005
+362562
+OK9
+image/png0
+29
+Fri, 25 Jul 2003 07:20:05 GMT22
+"29c28b-8da0-3f20da25"0
+0
+16
+wolfpack.twu.net45
+/SearchAndRescue/manual/vertexlwoimport02.png157
+C:/WINDOWS/Desktop/Search and Rescue Folder/Search and Rescue Manael/Search and Rescue - Manual/wolfpack.twu.net/SearchAndRescue/manual/vertexlwoimport02.png3
+HTS1
+0

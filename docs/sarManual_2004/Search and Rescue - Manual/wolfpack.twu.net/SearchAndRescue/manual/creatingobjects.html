@@ -1,0 +1,658 @@
+<html>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/creatingobjects.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:40 GMT -->
+<head>
+<title>Search and Rescue - Manual - Creating Objects</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index-2.html">Index</a>-&gt;
+<a href="createyourown.html">Create Your Own</a>-&gt;
+Creating Objects
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>Creating Objects</h2>
+
+<p>This document describes how to create <i>SAR Objects</i>
+(Search and Rescue Objects) for use in Search and Rescue's
+scenery.
+</p>
+
+<ul>
+ <li><a href="#requirements">Requirements</a>
+ <li><a href="#format">SAR 3D Object Format</a>
+ <ul>
+  <li><a href="#type">Type</a>
+  <li><a href="#layout">Layout</a>
+  <li><a href="#parameters">Parameters</a>
+  <li><a href="#example">Example</a>
+  <li><a href="#filelocation">File Location</a>
+ </ul>
+ <li><a href="#scenery">Adding To The Scenery</a>
+ <ul>
+  <li><a href="#sceneryedittext">Using a Text Editor</a>
+  <li><a href="#sceneryeditscnedit">Using ScnEdit</a>
+ </ul>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="requirements">
+<hr>
+<h3>Requirements</h3>
+
+<h4>Vertex 3D</h4>
+<p>The <i>SAR 3D Object</i> is basically a <i>Vertex 3D Object</i>
+(<i>V3D Object</i>), this means that you will need
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/">Vertex 3D</a>
+(a free <a href="../../../external.html?link=http://www.opengl.org/">OpenGL</a> modeller)
+to create and edit <i>SAR 3D Objects</i>.
+</p>
+
+<h4>Search and Rescue</h4>
+<p>You should also have
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue/">
+Search and Rescue</a> and its data files
+installed.
+</p>
+
+<h4>ScnEdit</h4>
+<p>To add <i>SAR 3D Objects</i> to the <i>SAR Scenery</i> files you can
+either use a text editor or
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue/">ScnEdit</a>.
+</p>
+
+<h4>LightWave 3D (optional)</h4>
+<p>Alternately you can use
+<a href="../../../external.html?link=http://www.newtek.com/buynow/lw_products.html">
+LightWave 3D</a>
+to create <i>LWO models</i> and then <i>import</i> them to a <i>V3D 
+Object</i> using
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/">Vertex 3D</a>.
+To learn how to do this you should read the
+<a href="lwoimporthowto.html">LWO Importing HOWTO</a>.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="format">
+<hr>
+<h3>SAR 3D Object Format</h3>
+
+<p>This section <b>defines</b> the <i>official SAR 3D Object format</i>
+as of version 0.8.1. The <i>SAR 3D Object format</i> <u>is
+essentially</u> the <i>V3D Object format</i> (the object format created
+and edited by
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/">Vertex 3D</a>).
+</p>
+
+<p>Here we will refer to it as the "SAR 3D Object format" or
+just the "object format" (not the <i>V3D Object format</i> even though 
+they are essentially the same thing).
+</p>
+
+<a name="type">
+<h4>Type</h4>
+<p>Each <i>SAR Object</i> has a <i>type</i>, that specifies what type
+of object it is (<i>static</i>, <i>ground</i>, <i>aircraft</i>, etc).
+The  <i>SAR 3D Object format</i> can be "extended" (i.e. have more 
+<a href="#parameters">parameters</a>) depending on its <i>type</i>. The 
+following are a list of <i>SAR Object</i> <i>types</i> and their
+respective <i>type code</i>:
+</p>
+
+<ul>
+ <li><i>Static</i> <code>1</code>
+ <li><i>Automobile</i> <code>2</code>
+ <li><i>Watercraft</i> <code>3</code>
+ <li><i>Aircraft</i> <code>4</code>
+ <li><i>Ground</i> <code>6</code>
+ <li><i>Runway</i> <code>7</code>
+ <li><i>Helipad</i> <code>8</code>
+ <li><i>Actor/Human</i> <code>9</code>
+ <li><i>Smoke</i> <code>10</code>
+ <li><i>Fire</i> <code>11</code>
+ <li><i>Explosion</i> <code>12</code>
+ <li><i>Chemical Spray</i> <code>13</code>
+ <li><i>Fuel Tank</i> <code>14</code>
+ <li><i>Premodeled</i> <code>20</code>
+</ul>
+
+
+<p>This document <b>only</b> describes the object format for objects of
+type <i>static</i> (type code <code>1</code>). For other object types
+(such as <i>aircraft</i>), please refer to the
+<a href="createyourown.html">appropriate documentation</a>. Note that
+such documentation for other types of <i>SAR Objects</i> specify
+parameters that are <i>on top</i> of the
+<a href="#parameters">parameters</a> listed here.
+</p>
+
+<a name="layout">
+<h4>Layout</h4>
+
+<p>Since the <i>SAR Object</i> is really a <i>V3D Object</i>, it
+contains <i>V3D visual models</i> and <i>"other data" models</i>. For
+<i>SAR Object</i> of
+<a href="#type">type</a>
+<i>static</i> the layout should be as follows:
+</p>
+
+<ul>
+ <li>Header
+ <li>"Other data" (optional/misc header)
+ <li>"Other data" (text section with <a href="#parameters">parameters</a>)
+ <li>Visual model <code>standard</code>
+ <li>Visual model <code>standard_far</code> (optional)
+ <li>Visual model <code>standard_night</code> (optional)
+ <li>Visual model <code>shadow</code> (optional)
+</ul>
+
+<p>The first <i>"other data" model</i> in the <i>SAR Object file</i> is 
+sometimes kept for the <u>internal use by Vertex 3D</u> and, for this
+reason, Search and Rescue <b>ignores</b> it.
+</p>
+
+<p>The second <i>"other data" model</i> is a text section that contains
+the <i>SAR Object</i> <a href="#parameters">parameters</a>.
+</p>
+
+<p>Next is the first <i>visual model</i>, it should be named
+<code>standard</code>. <u>Every <i>SAR Object</i> <b>must</b> have a 
+<i>visual model</i> named <code>standard</code></u>.
+</p>
+
+<p>The subsequent <i>visual models</i> <code>standard_far</code>,
+<code>standard_night</code>, and <code>shadow</code> are 
+<u>optional</u>.
+</p>
+
+<p>The <code>standard_far</code> <i>visual model</i> is displayed when 
+the <i>camera</i> is <b>farther</b> than the <u>distance specified by 
+the <a href="#parameter">parameter</a>
+<code>range_far</code></u> (but still <b>with in</b> the <u>distance 
+specified by <code>range</code></u>). For this reason you should make
+the <code>standard_far</code> <i>visual model</i> <b>simpler</b> in
+detail.
+</p>
+
+<p>The <code>standard_night</code> <i>visual model</i> is 
+<b>displayed</b> <u>during night time</u> and <b>without</b> 
+<i>lighting</i> (so therefore it is not shaded). This is useful for
+displaying lit windows at night. This <i>visual model</i> can also be
+displayed at dawn by specifying <code>show_night_model_at_dawn</code>
+and displayed at dusk by specifying
+<code>show_night_model_at_dusk</code>.
+</p>
+
+<p>The <code>shadow</code> <i>visual model</i> is displayed as the
+object's shadow. It should have <b>no</b> <u>color or texture 
+primitives</u> in it.
+</p>
+
+<p><img src="icon_info.gif" border=0 align=bottom>
+With other
+<a href="#type">types</a>
+of <i>SAR Objects</i>, additional <i>"other data" models</i> may need
+to be <b>placed between</b> (just before) each <i>visual model</i>.
+Please keep this in mind when you work with other types of <i>SAR
+Objects</i> later on.
+</p>
+
+<a name="parameters">
+<h4>Parameters</h4>
+
+<p>As <a href="#layout">mentioned above</a>, the <i>parameters</i> 
+listed here belong in the second <i>"other data" model</i> in the
+<i>SAR Object</i> file. All parameters listed here apply to <u>all
+<a href="#type">types</a>
+</u> of <i>SAR Objects</i>.
+</p>
+
+<p><img src="icon_warning.gif" border=0 align=bottom>
+<i>SAR Scenery</i> files have a separate set of parameters which
+<b>differ</b> from the parameters listed here. There are some parameters
+for <i>SAR Scenery</i> files that are identical to the parameters for
+<i>SAR Object</i> files, but keep in mind that <u><b>not</b> all
+parameters listed here can be used in <i>SAR Scenery</i> files</u> (and
+vice versa).
+</p>
+
+<p><b>Legend:</b></p>
+<ul>
+ <li><i>Distances</i> are in meters
+ <li><i>Angles</i> are in degrees
+ <li><i>Heights</i> are in feet (unless noted otherwise)
+ <li><i>Colors</i> are in coefficients [0.0 to 1.0]
+ <li><i>Strings</i> can be escaped with the <code>\</code> character
+(if and only if it is the sole argument)
+ <li><i>Flags</i> are denoted with a <code>?</code> in the argument name 
+and can be a value of <code>0</code> (unset) or <code>1</code> (set)
+ <li><i>Intervals</i> are in milliseconds and are denoted with a
+<code>_int</code> in the argument name
+</ul>
+
+
+<table width=100% cellpadding=5 cellspacing=0 border=1>
+
+<tr align=left valign=top>
+ <th>Parameter</th>
+ <th>Argument(s)</th>
+ <th>Remarks</th>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>contact_cylendrical</code></td>
+ <td><code>r h_min h_max</code></td>
+ <td>Cylendrical contact bounds</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>contact_rectangular</code></td>
+ <td><code>x_min x_max y_min y_max z_min z_max</code></td>
+ <td>Rectangular contact bounds</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>contact_spherical</code></td>
+ <td><code>r</code></td>
+ <td>Spherical contact bounds</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>crash_flags</code></td>
+ <td><code>crash_other? causes_crash? support_surface? 
+crash_code</code></td>
+ <td><code>crash_other?</code> specifies that it can crash into 
+<u>other objects</u> that have <code>causes_crash?</code> set to
+<code>1</code>.<br>
+<code>support_surface?</code> specifies that other objects can
+"land" or "walk" on it.<br>
+<code>crash_code</code> specifies what kind of crash would occure if
+something crashed into it (used only if <code>causes_crash?</code> is
+<code>1</code>);
+<code>0</code> = obstruction,
+<code>1</code> = ground,
+<code>2</code> = mountain,
+<code>3</code> = building,
+<code>4</code> = aircraft.
+ </td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>description</code></td>
+ <td><code>s</code></td>
+ <td>Description of object</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>light_new</code></td>
+ <td><code>x y z r g b a radius on? type on_int off_int</code></td>
+ <td>Adds a new light to the object.
+<code>type</code> <code>0</code> is standard light,
+<code>1</code> is strobe
+<code>2</code> is spotlight (only 1 per object)</code>.
+<code>on_int</code> and <code>off_int</code> only apply to strobes
+(otherwise leave both as <code>0</code>)
+ </td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>name</code></td>
+ <td><code>s</code></td>
+ <td>Name of object</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>range</code></td>
+ <td><code>d</code></td>
+ <td>Visible range (spherical)</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>range_far</code></td>
+ <td><code>d</code></td>
+ <td>Far model visible range (spherical)</td>
+</tr>
+
+<tr align=left valign=top>
+ <td><code>shade_model_smooth</code></td>
+ <td>*none*</td>
+ <td>Specifies that the visual models should be displayed using
+smooth shading (GL_SMOOTH).
+</tr>
+
+<tr align=left valign=top>
+ <td><code>show_night_model_at_dawn</code></td>
+ <td>*none*</td>
+ <td>Specifies that the <code>standard_night</code> visual model
+should be displayed at dawn.
+</tr>
+
+<tr align=left valign=top>
+ <td><code>show_night_model_at_dusk</code></td>
+ <td>*none*</td>
+ <td>Specifies that the <code>standard_night</code> visual model
+should be displayed at dusk.
+</tr>
+
+<tr align=left valign=top>
+ <td><code>type</code></td>
+ <td><code><a href="#type">type</a></code></td>
+ <td>Depreciated, the object's
+<a href="#type">type</a>
+is now set by the <i>SAR Scenery</i> file.
+</tr>
+
+<tr align=left valign=top>
+ <td><code>version</code></td>
+ <td><code>major minor release</code></td>
+ <td>Specifies 3 numbers that represent the minmum version of
+Search and Rescue needed to display this object.
+</tr>
+
+</table>
+
+<a name="example">
+<h4>Example</h4>
+<p>This is an example of a <i>SAR Object</i> file as seen when viewed
+with a <i>text editor</i> (note that the <i>visual model</i> data has
+been <b>omitted</b> and replaced with a <code>...</code> for brevity):
+</p>
+
+<table width=100% border=1 cellspacing=0 cellpadding=5>
+
+<tr align=center valign=center><th>
+<a href="hangar01.html">
+<img src="icon_file.gif" border=0 align=bottom>
+<code>hangar01.3d</code></a> (12 kb)
+</th></tr>
+
+<tr align=left valign=top><td>
+<p><pre><code>
+begin_header
+author unspecified
+texture_base_directory /usr/share/games/SearchAndRescue
+texture_load hanger01 textures/hanger01.tex 0.600000
+texture_load hanger02 textures/hanger02.tex 0.800000
+end_header
+
+# This is a comment, all lines starting with a # are comments
+
+# Display range (in meters)
+range 5000
+
+# Range to display standard_far model (in meters)
+range_far 2000
+
+# Use smooth shading
+shade_model_smooth
+
+
+begin_model standard
+ ...
+end_model standard
+
+begin_model standard_far
+ ...
+end_model standard_far
+
+begin_model shadow
+ ...
+end_model shadow
+
+</code></pre></p>
+</td></tr>
+</table>
+
+<a name="filelocation">
+<h4>SAR Object File Location</h4>
+<p>You should place your <i>SAR Object</i> files in one of the following 
+directories from the Search and Rescue data directory.
+</p>
+
+<ul>
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>aircrafts/</code> - For aircrafts
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>automobiles/</code> - For cars, trucks, and other land vehicles
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>objects/</code> - For most objects in general
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>vessels/</code> - For ships and vehicles that go on water
+</ul>
+
+<p>You can create subdirectories within the directories listed above
+to help you organize things.
+</p>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+
+<a name="scenery">
+<hr>
+<h3>Adding To The Scenery</h3>
+
+<p>This section describes how to <b>add</b> a <i>SAR Object</i> to a
+<i>SAR Scenery</i> file.
+</p>
+
+<p>There are two methods to achieve this:
+</p>
+
+<ol>
+ <li>Using a <i>text editor</i>
+ <li>Using 
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue/">ScnEdit</a>
+</ol>
+
+
+<a name="sceneryedittext">
+<h4>Using a Text Editor</h4>
+<p>The first step is to <b>edit</b> the <i>SAR Scenery</i> file,
+the scenery files are located in:
+</p>
+
+<ul>
+ <li><img src="icon_folder_opened.gif" border=0 align=bottom>
+<code>scenery/</code>
+</ul>
+
+<p>All <i>SAR Scenery</i> files have a <code>.scn</code> extension and
+are of plain text format.
+</p>
+
+<p><b>Run</b> your <u>prefered text editor</u> and <b>open</b> the
+<i>SAR Scenery</i> file that you want to add your <i>SAR Object</i> in 
+to.
+</p>
+
+<p>To <b>add</b> a <i>SAR Object</i> of
+<a href="#type">type</a>
+<i>static</i> into 
+the <i>SAR Scenery</i> file use the code:
+</p>
+
+<table width=100% border=1 cellspacing=0 cellpadding=5>
+
+<tr align=center valign=center><th>
+Sample Portion of a Scenery File
+</th></tr>
+<tr align=left valign=top><td>
+
+<p><pre><code>
+# Create a new object of type static (type code 1), this puts the new
+# object in to the current context so subsequent scenery parameters will
+# operate on this new object
+create_object 1
+
+# Load the object file for the new object that we just created
+model_file objects/hangar01.3d
+
+# Range (in meters), this overrides the range specified in the object
+# file (optional)
+range 2000
+
+# Set position (in meters)
+translation -56.0 -250.0 0.0
+
+# Set direction (in degrees)
+rotate 310 0 0
+
+# Set name of object (optional, no spaces)
+object_name my_hangar_01
+
+# Set descrption of object that is to be displayed on the mission
+# briefing map (optional)
+object_map_description 
+
+# Disable depth testing when drawing this object, useful for "flat"
+# objects that are intended to be landmarks or flat areas of land
+# (optional)
+#no_depth_test
+
+</code></pre></p>
+
+</td></tr>
+</table>
+
+<p>The <code>create_object</code> parameter specifies that a new object 
+be created and of the specified <a href="#type"><i>type</i></a>.
+</p>
+
+<p>When using the <code>model_file</code> parameter, note that the
+Search and Rescue data directory will be automatically prepended to it.
+So you only need to specify the <i>relative path</i> to your <i>SAR 
+Object</i> file from the Search and Rescue data directory.
+</p>
+
+<p><img src="icon_bulb.gif" border=0 align=bottom>
+You can <b>edit</b> a <i>SAR Scenery</i> file <u>while Search and Rescue
+is running</u>! Once you <b>save</b> the <i>SAR Scenery</i> file you 
+need to <b>exit simulation</b> and then <b>restart</b> free flight or 
+the mission (whichever you were playing).
+</p>
+
+<p><img src="icon_bulb.gif" border=0 align=bottom>
+If you just modified a <i>SAR Scenery</i> and you want to see how it 
+looks, <b>run</b> Search and Rescue from a <i>text prompt</i> 
+(XTerm, DOS Prompt, etc) so you can see the error messages (if 
+any) regarding your new modifications.
+</p>
+
+
+<a name="sceneryeditscnedit">
+<h4>Using ScnEdit</h4>
+<p>This method assumes that you have some experience in using ScnEdit.
+</p>
+
+<p>The first step is to <b>open</b> the <i>SAR Scenery</i> file,
+as you would with a text editor.
+</p>
+
+<p><b>Position</b> the <u>cursor</u> at the coordinates where you
+want the new object to be placed, then <b>select</b> from the <i>object 
+list</i> where you want the object to be inserted in the order of 
+objects.
+</p>
+
+<p>Now go to Edit-&gt;New Object, a new object will be created.
+<b>Specify</b> the appropriate values for the new object in the
+<i>object values pane</i>.
+</p>
+
+<p><b>Specify</b> the new <i>SAR Object</i> file location in the
+<u>Model File prompt</u>, note that the Search and Rescue data directory
+will be automatically prepended to it. So you only need to specify the
+<i>relative path</i> to your <i>SAR Object</i> file from the Search and
+Rescue data directory.
+</p>
+
+
+<h4>Object Ordering</h4>
+<p>
+The order in which the <i>SAR Object</i> is specified in the <i>SAR
+Scenery</i> file is important. The <i>SAR Objects</i> are drawing in 
+<i>serial order</i>, so if you use the <code>no_depth_test</code>
+parameter then you need to <b>arrange</b> the objects in <u>proper
+order</u>. In general the objects should appear in a <i>SAR 
+Scenery</i> as follows:
+</p>
+
+<ol>
+ <li>Ground objects acting as "flat" landmarks
+ <li>Ground objects acting as mountains (heightfields)
+ <li>Runways, roads, railroads, rivers, etc
+ <li>Helipads (not on buildings)
+ <li>Static objects, buildings, obstructions
+ <li>Helipads (on top of buildings)
+</ol>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/creatingobjects.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:40 GMT -->
+</html>
+

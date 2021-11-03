@@ -1,0 +1,333 @@
+<html>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/lwoaircrafthowto.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:41 GMT -->
+<head>
+<title>Search and Rescue - Manual - LWO Aircraft HOWTO</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index-2.html">Index</a>-&gt;
+<a href="createyourown.html">Create Your Own</a>-&gt;
+LWO Aircraft HOWTO
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>LWO Aircraft HOWTO</h2>
+
+<p>This document assumes that you have already read the
+<a href="lwoimporthowto.html">LWO Import HOWTO</a>
+which describes how to import
+<a href="../../../external.html?link=http://www.newtek.com/buynow/lw_products.html">
+LightWave 3D</a>
+LWO files into
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/">
+Vertex 3D</a>
+V3D model files.
+</p>
+
+<ul>
+ <li><a href="#preplanning">Preplanning</a>
+ <li><a href="#lwopreparation">LWO Preparation</a>
+ <ul>
+  <li><a href="#prepmovableparts">Movable Parts In General</a>
+  <li><a href="#prepfuselage">Fuselage</a>
+  <li><a href="#preplandinggears">Landing Gears</a>
+  <li><a href="#prepdoors">Doors</a>
+  <li><a href="#preprotors">Rotors</a>
+  <li><a href="#prefexternalfueltank">External Fuel Tanks</a>
+ </ul>
+ <li><a href="#importing">Importing</a>
+
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="preplanning">
+<hr>
+<h3>Preplanning</h3>
+
+<p>There are no significent issues regarding the importing of LWO
+aircraft files at this time, please refer to the
+<a href="lwoimporthowto.html">LWO Import HOWTO</a>
+for general preplanning issues.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="lwopreparation">
+<hr>
+<h3>LWO Preparation</h3>
+
+<p>The key to preparation is breaking down the aircraft into
+<i>parts</i>.
+</p>
+
+<p>First you need to <b>consider</b>, <b>identify</b>, and
+<b>isolate</b> all of the parts in your LWO file that may have a unique
+and particular function. These parts are often the:
+</p>
+
+<ul>
+ <li>Fuselage
+ <li>Shadow
+ <li>Landing Gears (skis, wheels, struts, gear bay doors)
+ <li>Doors
+ <li>Rotors
+ <li>Air Brakes
+ <li>Ailerons, Elevators, Canards, or Rudders
+ <li>External Fuel Tanks
+</ul>
+
+<p>Not all types of aircraft will have all of the parts listed above.
+</p>
+
+<p>It is recommended that you <b>save as</b> your LWO file to a
+different file name since you may need to modify it for the purposes of
+accomidating Search and Rescue's requirements.
+</p>
+
+<p>After you have <b>considered</b> and <b>identified</b> each part, you 
+need to <b>isolate</b> each one (by <b>selecting</b> it in LightWave 3D)
+and  <b>save</b> it to a <u>separate LWO file</u> as an object (as a
+<i>part</i>). Some additional modifications on the LWO file you just
+saved may be required, these modifications include <b>translating</b>,
+<b>rotating</b>, and <b>recoloring</b>.
+</p>
+
+<p>Below are instructions specific to certain parts.</p>
+
+
+<a name="prepmovableparts">
+<h3>Movable Parts In General</h3>
+
+<p>Movable parts should be saved to separate LWO files as mentioned 
+above, however you should also take into consideration <u>how the part
+moves.</u>
+
+</p>
+For example a landing gear that is a wheel (imagine the nose gear of the 
+HH-65) deploys and retracts by rotating about the aircraft's X axis.
+The landing gear model should be saved in its down/deployed state.
+Since center of rotation is at the top of the gear strut, you need
+to <b>translate</b> the landing gear so that the center of the model
+is at the top of the gear strut (for most cases).
+</p>
+
+<p>Almost all parts (except the fuselage and shadow) are considered
+<i>movable parts</i>, the air brakes, ailerons, elevators, canards, 
+and rudders are good examples of simple parts that move.
+</p>
+
+<p>Another simple example would be that of a rudder. You would need to 
+<b>isolate</b> (<b>select</b>) the rudder and <b>save</b> it to a
+<u>separate LWO file</u>. It should be <b>translated</b> so that it
+<u>rotates about the Z axis</u> (for most cases).
+</p>
+
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+Note in some cases (for example) a rudder may not be fully upright (that
+it pitches downwards or upwards), in such a case you should still leave
+the rudder fully upright so that it still rotates about the Z axis.
+The SAR aircraft file will specify additional complex rotations that
+you do not need to in an LWO file.
+</p>
+
+
+<a name="prepfuselage">
+<h3>Fuselage</h3>
+
+<p>If you have <i>windows</i> on the fuselage (and most aircraft do have 
+windows), you should <b>save</b> the windows to a <u>separate LWO
+file</u>.
+</p>
+
+<p>If you intend to use a <i>texture</i> for the fuselage then you 
+should <b>split</b> the fuselage <u>in half</u> so that you have two 
+sides (a left and right side) and <b>save</b> them to <u>separate LWO
+files</u>. <b>Recolor</b> the entire fuselage <u>pure white</u>.
+</p>
+
+<p>If the aircraft has doors that open, exposing the interior of
+the fuselage, then you may want to <b>isolate</b> the interior of the
+fuselage and <b>save</b> it to a <u>separate LWO file</u>.
+</p>
+
+
+<a name="preplandinggears">
+<h3>Landing Gears</h3>
+
+<p><img src="icon_info.gif" border=0 valign=center>
+Search and Rescue requires that <u>at least one separate model act as 
+the landing gear</u>. So even if the aircraft has fixed skis or wheels,
+you need to <b>save</b> the skis or <u>each</u> wheel to a <u>separate 
+LWO file</u>.
+</p>
+
+<p>Landing gears can be wheels, skis, gear bay doors, etc. Below, we 
+explain how to handle the common types of landing gears.
+</p>
+
+<p>For <i>skis</i> <b>save</b> the skis as <u>one whole part</u> to
+an LWO file. Since they do not move you do <b>not</b> need to translate
+it.
+</p>
+
+<p>For <i>wheels</i> <b>save</b> the <u>wheel and the strut</u> to an
+LWO file. If the gear rotates to deploy/retract then <b>translate</b> it 
+so that the gear's <i>center of rotation</i> is at the top of the strut.
+</p>
+
+<p>For <i>gear bay doors</i> <b>save</b> the <u>door</u> to an LWO file.
+If the gear bay door rotates to open/close then <b>translate</b> it so 
+that the door's <i>center of rotation</i> is at its <u>hindge</u>.
+</p>
+
+
+<a name="prepdoors">
+<h3>Doors</h3>
+
+<p>If you want a door on the aircraft to open and close while acting as 
+the <i>primary rescue door</i> then you should <b>save</b> that door to 
+a <u>separate LWO file</u>.
+</p>
+
+<p>The door should be in its <u>closed position</u>, <b>translate</b>
+the door to its <u><i>rotational center</i></u> (its hindges).
+If the door only slides open then there is no need to translate it.
+</p>
+
+<p>If the door is intended to be textured then follow the same procedure 
+for the <a href="#prepfuselage">fuselage</a>.
+</p>
+
+
+<a name="preprotors">
+<h3>Rotors</h3>
+
+<p>The <i>rotors</i> in Search and Rescue spin about the Z axis, this 
+means that all rotors (even tail rotors on helicopters) <i>rotate about 
+the Z axis</i>.
+</p>
+
+<p><u>Each set of blades is considered <i>one rotor</i></u>. So you need
+to isolate the rotor blades only, but <b>not</b> the struts, housing, or
+other cylendrical like details (leave them on the fuselage).
+</p>
+
+<p>Once you hve isolated <i>one rotor</i> you need to <b>translate</b>
+and <b>rotate</b> it such that its <i>center of rotation</i> and 
+attitude would <u>spin about the Z axis</u>. Then <b>save</b> it to an
+<u>LWO file</u>.
+</p>
+
+<p><img src="icon_warning.gif" border=0 valign=center>
+Remember that tail rotors spin about the Z axis (not the X axis) so
+you need to <b>rotate</b> it accordingly. You specify in the V3D
+aircraft file that it is a tail rotor and bank it 90 or 270 degrees
+to achieve the appropriate affect.
+</p>
+
+
+<a name="prefexternalfueltank">
+<h3>External Fuel Tanks</h3>
+
+<p>Each <i>external fuel tank</i> must be <b>saved</b> to a
+<u>separate LWO file</u>. It needs to be <b>translated</b> to its 
+<u><i>center of rotation</i></u>, this is required because once the
+fuel tank is dropped it becomes its own object and may need to rotate
+accordingly.
+</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="importing">
+<hr>
+<h3>Importing</h3>
+
+<p>For basic information on importing, please refer to the
+<a href="lwoimporthowto.html">LWO Import HOWTO</a>.
+</p>
+
+<p>You will need to <b>import</b> each <u>LWO file into your
+V3D Aircraft file</u> using Vertex 3D. Follow the V3D Aircraft file
+design when you import each LWO file. After you import you may still 
+need to create addition models in your V3D Aircraft file, things such as 
+"other data" models, cockpit model, shadow model, far view model, etc.
+</p>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+
+
+
+
+
+
+
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/lwoaircrafthowto.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:41 GMT -->
+</html>
+
