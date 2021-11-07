@@ -3406,9 +3406,9 @@ static void SARMenuDoDrawObject(
 		const char *buf_ptr;
 		int lines_processed = 0, lines_drawn = 0;
 		int lines_to_skip = mesgbox->scrolled_line;
-		int	mesg_x, mesg_y,
-			lines_visable, columns_visable, scroll_width,
-            total_lines;
+		int mesg_x, mesg_y,
+		    lines_visable, columns_visable, scroll_width,
+		    total_lines;
 		const sar_menu_color_struct	*c_b = &mesgbox->bold_color,
 						*c_u = &mesgbox->underline_color;
 
@@ -3490,74 +3490,67 @@ static void SARMenuDoDrawObject(
 		}
 		while((buf_ptr != NULL) && (lines_drawn < lines_visable));
 
-		    /* Calculate total number of lines */
-		    total_lines = SARMenuMessageBoxTotalLines(
-			mesgbox->message, columns_visable
+		/* Calculate total number of lines */
+		total_lines = SARMenuMessageBoxTotalLines(
+		    mesgbox->message, columns_visable
+		);
+
+		/* Draw scroll indicator (not draggable, only a position indicator) */
+		int scroll_box_left, scroll_box_right, scroll_box_bottom, scroll_box_top, indicator_top, indicator_bottom;
+		float indicator_max_height, indicator_height, indicator_top_blank_space;
+		scroll_box_left = xc + w - DEF_MB_XMARGIN - DEF_SCROLL_CURSOR_WIDTH;
+		scroll_box_right = xc + w - DEF_MB_XMARGIN - 1;
+		scroll_box_bottom = height - (y + (h / 2) - (DEF_MB_YMARGIN + DEF_SCROLL_CURSOR_HEIGHT) + 1);
+		scroll_box_top = height - (yc + DEF_SCROLL_CURSOR_HEIGHT + DEF_MB_YMARGIN) - 1;
+        
+		glBegin(GL_LINES);
+		/* Draw left border line */
+		glVertex2i(
+		    scroll_box_left,
+		    scroll_box_top + 1
+		);
+		glVertex2i(
+		    scroll_box_left,
+		    scroll_box_bottom
+		);
+		/* Draw right border line */
+		glVertex2i(
+		    scroll_box_right,
+		    scroll_box_top + 1
+		);
+		glVertex2i(
+		    scroll_box_right,
+		    scroll_box_bottom
+		);
+		glEnd();
+
+		indicator_max_height = scroll_box_top - scroll_box_bottom - 1 - 1; /* one "blank" line at indicator top and bottom */
+		indicator_height = indicator_max_height * ((float)lines_visable / (float)total_lines);
+		if ( indicator_height > indicator_max_height )
+		    indicator_height = indicator_max_height;
+		else if ( indicator_height < 1.0 )
+		    indicator_height = 1.0; /* at least 1 pixel height */
+		indicator_top_blank_space = (float)lines_to_skip * (indicator_height / (float)lines_visable);
+		if ( lines_to_skip == 0 )
+		    indicator_top_blank_space = 0.0;
+        
+		indicator_top = scroll_box_top - (int)indicator_top_blank_space;
+		if ( (indicator_top > scroll_box_top - 1) || (lines_to_skip == 0) )
+		    indicator_top = scroll_box_top - 1;
+		indicator_bottom = indicator_top - (int)indicator_height;
+		if ( (indicator_bottom <= scroll_box_bottom + 1) || (total_lines == lines_to_skip + lines_visable) )
+		indicator_bottom = scroll_box_bottom + 2;
+
+		if ( (indicator_bottom > scroll_box_bottom) && (indicator_top < scroll_box_top) )
+		{
+		    /* Draw indicator */
+		    glRecti(
+			scroll_box_right - 2,
+			indicator_top,
+			scroll_box_left + 1,
+			indicator_bottom
 		    );
-
-	    /* Draw scroll indicator (not draggable, only a position indicator) */
-        int scroll_box_left, scroll_box_right, scroll_box_bottom, scroll_box_top, indicator_top, indicator_bottom;
-        float indicator_max_height, indicator_height, indicator_top_blank_space;
-	    scroll_box_left = xc + w - DEF_MB_XMARGIN - DEF_SCROLL_CURSOR_WIDTH;
-	    scroll_box_right = xc + w - DEF_MB_XMARGIN - 1;
-	    scroll_box_bottom = height - (y + (h / 2) - (DEF_MB_YMARGIN + DEF_SCROLL_CURSOR_HEIGHT) + 1);
-	    scroll_box_top = height - (yc + DEF_SCROLL_CURSOR_HEIGHT + DEF_MB_YMARGIN) - 1;
-        
-	    glBegin(GL_LINES);
-			/* Draw left border line */
-			glVertex2i(
-                scroll_box_left,
-                scroll_box_top + 1
-            );
-			glVertex2i(
-                scroll_box_left,
-                scroll_box_bottom 
-            );
-			/* Draw right border line */
-			glVertex2i(
-                scroll_box_right,
-                scroll_box_top + 1
-            );
-			glVertex2i(
-                scroll_box_right,
-                scroll_box_bottom
-            );
-        glEnd();
-
-        indicator_max_height = scroll_box_top - scroll_box_bottom - 1 - 1; /* one "blank" line at indicator top and bottom */
-        indicator_height = indicator_max_height * ((float)lines_visable / (float)total_lines);
-        if ( indicator_height > indicator_max_height )
-            indicator_height = indicator_max_height;
-        else if ( indicator_height < 1.0 )
-            indicator_height = 1.0; /* at least 1 pixel height */
-        indicator_top_blank_space = (float)lines_to_skip * (indicator_height / (float)lines_visable);
-        if ( lines_to_skip == 0 )
-            indicator_top_blank_space = 0.0;
-        
-        indicator_top = scroll_box_top - (int)indicator_top_blank_space;
-        if ( (indicator_top > scroll_box_top - 1) || (lines_to_skip == 0) )
-            indicator_top = scroll_box_top - 1;
-        indicator_bottom = indicator_top - (int)indicator_height;
-        if ( (indicator_bottom <= scroll_box_bottom + 1) || (total_lines == lines_to_skip + lines_visable) )
-            indicator_bottom = scroll_box_bottom + 2;
-
-        if ( (indicator_bottom > scroll_box_bottom) && (indicator_top < scroll_box_top) )
-        {
-            /* Draw indicator */
-            glRecti(
-                scroll_box_right - 2,
-                indicator_top,
-                scroll_box_left + 1,
-                indicator_bottom
-            );
-        }
-
-
-
-
-
-
-
+		}
 	    }
 	    break;
 
@@ -3683,60 +3676,59 @@ static void SARMenuDoDrawObject(
 		list->scrolled_item = 0;
         
 	    /* Draw scroll indicator (not draggable, only a position indicator) */
-        int scroll_box_left, scroll_box_right, scroll_box_bottom, scroll_box_top, indicator_top, indicator_bottom;
-        float indicator_max_height, indicator_height, indicator_top_blank_space;
+	    int scroll_box_left, scroll_box_right, scroll_box_bottom, scroll_box_top, indicator_top, indicator_bottom;
+	    float indicator_max_height, indicator_height, indicator_top_blank_space;
 	    scroll_box_left = xc + w - DEF_LIST_XMARGIN - DEF_SCROLL_CURSOR_WIDTH;
 	    scroll_box_right = xc + w - DEF_LIST_XMARGIN - 1;
 	    scroll_box_bottom = height - (y + (h / 2) - (DEF_LIST_YMARGIN + DEF_SCROLL_CURSOR_HEIGHT) + 1);
 	    scroll_box_top = height - (yc + DEF_SCROLL_CURSOR_HEIGHT) - 1;
 	    glBegin(GL_LINES);
-			/* Draw left border line */
-			glVertex2i(
-                scroll_box_left,
-                scroll_box_top + 1
-            );
-			glVertex2i(
-                scroll_box_left,
-                scroll_box_bottom 
-            );
-			/* Draw right border line */
-			glVertex2i(
-                scroll_box_right,
-                scroll_box_top + 1
-            );
-			glVertex2i(
-                scroll_box_right,
-                scroll_box_bottom
-            );
-        glEnd();
+	    /* Draw left border line */
+	    glVertex2i(
+		scroll_box_left,
+		scroll_box_top + 1
+	    );
+	    glVertex2i(
+		scroll_box_left,
+		scroll_box_bottom
+	    );
+	    /* Draw right border line */
+	    glVertex2i(
+		scroll_box_right,
+		scroll_box_top + 1
+	    );
+	    glVertex2i(
+		scroll_box_right,
+		scroll_box_bottom
+	    );
+	    glEnd();
 
-        indicator_max_height = scroll_box_top - scroll_box_bottom - 1 - 1; /* one "blank" line at indicator top and bottom */
-        indicator_height = indicator_max_height * ((float)list->items_visable / (float)list->total_items);
-        if ( indicator_height > indicator_max_height )
-            indicator_height = indicator_max_height;
-        else if ( indicator_height < 1.0 )
-            indicator_height = 1.0; /* at least 1 pixel height */
-        indicator_top_blank_space = (float)list->scrolled_item * (indicator_height / (float)list->items_visable);
-        if ( list->scrolled_item == 0 )
-            indicator_top_blank_space = 0.0;
+	    indicator_max_height = scroll_box_top - scroll_box_bottom - 1 - 1; /* one "blank" line at indicator top and bottom */
+	    indicator_height = indicator_max_height * ((float)list->items_visable / (float)list->total_items);
+	    if ( indicator_height > indicator_max_height )
+		indicator_height = indicator_max_height;
+	    else if ( indicator_height < 1.0 )
+		indicator_height = 1.0; /* at least 1 pixel height */
+	    indicator_top_blank_space = (float)list->scrolled_item * (indicator_height / (float)list->items_visable);
+	    if ( list->scrolled_item == 0 )
+		indicator_top_blank_space = 0.0;
         
-        indicator_top = scroll_box_top - (int)indicator_top_blank_space;
-        if ( (indicator_top > scroll_box_top - 1) || (list->scrolled_item == 0) )
-            indicator_top = scroll_box_top - 1;
-        indicator_bottom = indicator_top - (int)indicator_height;
-        if ( (indicator_bottom <= scroll_box_bottom + 1) || (list->total_items == list->scrolled_item + list->items_visable) )
-            indicator_bottom = scroll_box_bottom + 2;
+	    indicator_top = scroll_box_top - (int)indicator_top_blank_space;
+	    if ( (indicator_top > scroll_box_top - 1) || (list->scrolled_item == 0) )
+		indicator_top = scroll_box_top - 1;
+	    indicator_bottom = indicator_top - (int)indicator_height;
+	    if ( (indicator_bottom <= scroll_box_bottom + 1) || (list->total_items == list->scrolled_item + list->items_visable) )
+		indicator_bottom = scroll_box_bottom + 2;
 
-        if ( (indicator_bottom > scroll_box_bottom) && (indicator_top < scroll_box_top) )
-        {
-            /* Draw indicator */
-            glRecti(
-                scroll_box_right - 2,
-                indicator_top,
-                scroll_box_left + 1,
-                indicator_bottom
-            );
-        }
+	    if ( (indicator_bottom > scroll_box_bottom) && (indicator_top < scroll_box_top) )
+	    {
+		/* Draw indicator */
+		glRecti(
+		    scroll_box_right - 2,
+		    indicator_top,scroll_box_left + 1,
+		    indicator_bottom
+		);
+	    }
 
 	    /* Draw each item */
 	    for(i = list->scrolled_item; i < list->total_items; i++)
