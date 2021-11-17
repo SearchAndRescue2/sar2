@@ -649,12 +649,15 @@ void SARSimUpdatePart(
 
 		/* Already opened? */
 		if(part_ptr->anim_pos == (sar_grad_anim_t)-1)
+		{
+			part_ptr->flags |= SAR_OBJ_PART_FLAG_DOOR_OPENED; /* set "door fully opened" */
 		    break;
+		}
 
 		/* Door fixed and cannot be opened? */
 		if(flags & SAR_OBJ_PART_FLAG_DOOR_FIXED)
 		    break;
-
+		
 		prev_pos = part_ptr->anim_pos;
 
 		/* Increase animation position value */
@@ -684,6 +687,8 @@ void SARSimUpdatePart(
 		/* Door already closed? */
 		if(part_ptr->anim_pos == 0)
 		    break;
+		else
+			part_ptr->flags &= !SAR_OBJ_PART_FLAG_DOOR_OPENED; /* reset "door fully opened" */
 
 		/* Door fixed and cannot be closed? */
 		if(flags & SAR_OBJ_PART_FLAG_DOOR_FIXED)

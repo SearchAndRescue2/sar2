@@ -3366,7 +3366,7 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 				        scene,
 				        &core_ptr->object, &core_ptr->total_objects,
 				        obj_ptr,
-				        0	/* Close */
+				        door_ptr->flags & !SAR_OBJ_PART_FLAG_STATE	/* Close */
 				    );
 			    }
 			}	/* Was rope previously out? */
@@ -3388,7 +3388,7 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 			    scene,
 			    &core_ptr->object, &core_ptr->total_objects,
 			    obj_ptr,
-			    1		/* Open */
+			    door_ptr->flags | SAR_OBJ_PART_FLAG_STATE		/* Open */
 			);
 
 			/* Here is also a good point to check if we have
@@ -3408,50 +3408,54 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 			}
 		    }
 
-		    /* Was rope previously in? */
-		    if(hoist->rope_cur < hoist->contact_z_max)
+		    /* Is door fully opened ? */
+		    if (door_ptr->flags & SAR_OBJ_PART_FLAG_DOOR_OPENED)
 		    {
-			/* Hoist deployment was in so now it needs to
-			 * be put out and its values initialized
-			 */
-			sar_position_struct	*hoist_pos = &hoist->pos,
+			/* Was rope previously in? */
+			if(hoist->rope_cur < hoist->contact_z_max)
+			{
+			    /* Hoist deployment was in so now it needs to
+			    * be put out and its values initialized
+			    */
+			    sar_position_struct	*hoist_pos = &hoist->pos,
 						*hoist_offset = &hoist->offset;
-			double	tx = hoist_offset->x,
+			    double	tx = hoist_offset->x,
 				ty = hoist_offset->y,
 				tz = hoist_offset->z;
 
-			/* Move to initial position at hoist center */
-			SFMOrthoRotate2D(
-			    obj_ptr->dir.heading, &tx, &ty
-			);
-			hoist_pos->x = (float)(
-			    obj_ptr->pos.x + tx
-			);
-			hoist_pos->y = (float)(
-			    obj_ptr->pos.y + ty
-			);
-			hoist_pos->z = (float)(
-			    obj_ptr->pos.z + tz -
-			    hoist->rope_cur
-			);
+			    /* Move to initial position at hoist center */
+			    SFMOrthoRotate2D(
+				obj_ptr->dir.heading, &tx, &ty
+			    );
+			    hoist_pos->x = (float)(
+				obj_ptr->pos.x + tx
+			    );
+			    hoist_pos->y = (float)(
+				obj_ptr->pos.y + ty
+			    );
+			    hoist_pos->z = (float)(
+				obj_ptr->pos.z + tz -
+				hoist->rope_cur
+			    );
 
-			/* Reset hoist values */
-			hoist->rope_cur = hoist->contact_z_max;
-			hoist->rope_cur_vis = hoist->rope_cur;
-			hoist->on_ground = 0;
-		    }
-		    else
-		    {
-			/* Lower rope normally */
-			hoist->rope_cur += (rope_rate *
-			    time_compensation * time_compression *
-			    hoist_down_coeff);
-			if(hoist->rope_cur > hoist->rope_max)
-			    hoist->rope_cur = hoist->rope_max;
+			    /* Reset hoist values */
+			    hoist->rope_cur = hoist->contact_z_max;
+			    hoist->rope_cur_vis = hoist->rope_cur;
+			    hoist->on_ground = 0;
+			}
+			else
+			{
+			    /* Lower rope normally */
+			    hoist->rope_cur += (rope_rate *
+				time_compensation * time_compression *
+				hoist_down_coeff);
+			    if(hoist->rope_cur > hoist->rope_max)
+				hoist->rope_cur = hoist->rope_max;
 
-			/* Do not update rope_cur_vis, it will be updated
-			 * in the other simulation calls
-			 */
+			    /* Do not update rope_cur_vis, it will be updated
+			    * in the other simulation calls
+			    */
+			}
 		    }
 		}
 	    }
