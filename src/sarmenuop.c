@@ -203,11 +203,16 @@ void SARMenuSwitchToMenu(sar_core_struct *core_ptr, const char *name)
 		m->selected_object = 0;
 
 		/* Update index number of the current menu */
-	        core_ptr->cur_menu = new_menu_num;
+		core_ptr->cur_menu = new_menu_num;
+
+		/* Redraw current menu */
+		SARMenuDrawAll(display, m);
+		GWSwapBuffer(display);
 	    }
 
 	    /* Redraw */
 	    GWPostRedraw(display);
+
 
 	    /* Mark input as ready */
 	    GWSetInputReady(display);
