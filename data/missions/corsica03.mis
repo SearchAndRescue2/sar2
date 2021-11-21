@@ -1,0 +1,90 @@
+# # # # #
+# Mission Header
+#
+
+# Mission file version. Program version must be >= 2.5.0 because of "wind" use.
+version 2 5 0
+
+# Mission name
+name Corsica 3: Mountain climber rescue
+
+# Mission description (newlines and escapes accepted)
+description \
+An injured mountain climber has been signaled near <underline>Monte d'Oro<default>, at about <underline>6400ft<default>.\n\
+You will <bold>take off<default> at <underline>Ajaccio Helipad<default>, \
+then <bold>head north-east<default> to the <underline>Monte d'Oro<default> peak.\n\
+<bold>Hoist<default> the climber: one of his comrade if close to him and will can help \
+to put him into the basket.\n\
+Once injured climber aboard, you will have to bring him back to <underline>Ajaccio Helipad<default>.\n\
+<bold>Warning<default>, there're a lot of wind gusts today.
+
+# Weather (valid values defined in weather.ini). Must be specified before mission_scene_file.
+weather Cloudy
+
+# Scenery file
+mission_scene_file scenery/corsica.scn
+
+# Blowing to west wind, 8 knots, with gusts. Must be specified after mission_scene_file.
+wind 270 8 gusts
+
+
+# # # # #
+# Mission Objectives
+#
+
+# Mission first objective
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 1 1
+mission_objective_message_success Ok, mountain climber on board!\n\
+Now, fly back to Ajaccio helipad.
+mission_objective_message_fail You failed to pickup the climber!
+
+# Mission second objective
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_ajaccio
+mission_objective_message_success Good job, mountain climber can be driven to hospital.
+mission_objective_message_fail You failed to land at Ajaccio helipad!
+
+
+# # # # #
+# Mission Post Data (these need to come after the objectives)
+#
+
+# mountain climber #1, to rescue
+create_human default need_rescue sit_down
+translate 1416 -7160 6350
+rotate 180 0 0
+set_human_mesg_enter Whew, I'm never climbing those rocks again!
+
+# mountain climber #2
+create_human default
+translate 1415 -7160 6350
+rotate 90 0 0
+
+# mountain climber #3, who move his arms to draw attention
+create_human default alert
+translate 1416 -7154 6400
+rotate 180 0 0
+
+# ambulance
+create_object 2
+model_file automobiles/ambulance.3d
+translate -22409 -32010 0.0
+rotate 95 0 0
+
+# Mission begins at an object defined in scene file
+mission_begin_at helipad_ajaccio
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+rotate 10.0 0 0
+
+# Waypoint of first objective (human coordinates)
+#			        ref_code    x      y     z     radius  urgency
+mission_add_intercept   0    1416   -7160   6350     1.0    0.5
+
+# Waypoint of second objective (Ajaccio helipad, see mission_objective_arrive_at)
+#			         ref_code   radius  urgency
+mission_add_intercept    3       20.0     0.5

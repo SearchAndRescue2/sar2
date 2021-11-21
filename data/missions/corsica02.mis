@@ -1,0 +1,99 @@
+# # # # #
+# Mission Header
+#
+
+# Mission file version. Program version must be >= 2.5.0 because of "wind" use.
+version 2 5 0
+
+# Mission name
+name Corsica 2: Broken leg at Capu a u Ceppu mountain
+
+# Mission description (newlines and escapes accepted)
+description \
+A backpacker with a broken leg waits for you near the Capu a u Ceppu mountain, \
+in Bonifatu forest.\n You will <bold>depart<default> from \
+<underline>Calvi-Sainte-Catherine<default> helipad and <bold>head SSE<default> \
+to <underline>Capu a u Ceppu<default>. No need to use your winch: a friend of the backpacker said that \
+the terrain is landable. Do not forget to <bold>cut off engines<default> after landing \
+in order to board the backpacker.\n\
+Then, take off and fly back to <underline>Calvi-Sainte-Catherine<default> helipad.\
+
+# Weather (valid values defined in weather.ini). Must be specified before mission_scene_file.
+weather Cloudy
+
+# Scenery file
+mission_scene_file scenery/corsica.scn
+
+# Blowing to northeast wind, 12 knots, without gusts. Must be specified after mission_scene_file.
+wind 45 12
+
+
+# # # # #
+# Mission Objectives
+#
+
+# Mission first objective
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+mission_objective_humans_tally 1 1
+mission_objective_message_success Ok, victim is on board!\n\
+Now, fly back to Calvi-Sainte-Catherine helipad
+mission_objective_message_fail You failed to pickup the victim!
+
+# Mission second objective
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_calvi
+mission_objective_message_success Great, the backpacker will be treated!
+mission_objective_message_fail You failed to land at Calvi-Sainte-Catherine helipad!
+
+
+# # # # #
+# Mission Post Data (these need to come after the objectives)
+#
+
+# injured human to rescue
+create_human default need_rescue sit_down
+translate -21320   23310  5976
+rotate 0 0 0
+human_reference player run_towards
+set_human_mesg_enter Ouch, my leg! That hurt!
+
+# injured attendant #1
+create_human default
+translate -21320   23309.3  5975.8
+rotate 0 0 0
+human_reference player run_towards
+
+# injured attendant #2
+create_human default
+translate -21320   23310.7  5975.8
+rotate 0 0 0
+human_reference player run_towards
+
+# this human move his arms to draw attention
+create_human default alert
+translate -21320   23310  5976
+rotate -70 0 0
+translate_random 20.0 0.0
+
+# ambulance
+create_object 2
+model_file automobiles/ambulance.3d
+translate -27387 34615 136
+rotate 26 0 0
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_calvi
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+rotate 160 0 0
+
+# Position of first objective (human coordinates)
+#			        ref_code    x       y     z     radius  urgency
+mission_add_intercept   0    -21320   23310  5976    1.0    0.5
+
+# Position of second objective (Calvi helipad, see mission_objective_arrive_at)
+#			        ref_code  radius   urgency
+mission_add_intercept   3       40.0     1.0

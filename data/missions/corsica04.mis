@@ -1,0 +1,96 @@
+#
+# Mission Header
+#
+
+# Mission file version. Program version must be >= 2.5.0 because of "wind" use.
+version 2 5 0
+
+# Name of mission
+name Corsica 4: Unskilled sailors rescue
+
+# Description of mission (newlines and escapes accepted)
+description A sailing ship with 4 persons aboard has been signaled wrecked near <underline>Vacca's rock.<default>\n\
+You will <bold>take off <default> at <underline>Propriano helipad<default>, \
+then <bold>head east by south<default> to reach the <underline>wrecked sailing ship<default>. <bold>Hoist<default> the 4 castaways, \
+then <bold>head west-southwest<default> to take them to <underline>Figari helipad<default>.\n\
+There is a lot of wind and cloud ceiling is low today, then beware!
+
+# Weather (valid values defined in weather.ini). Must be specified before mission_scene_file.
+weather Stormy Dense
+
+# Scenery file
+mission_scene_file scenery/corsica.scn
+
+# Blowing to east wind, 38 knots, with gusts. Must be specified after mission_scene_file.
+wind 90 38 gusts
+
+
+# # # # #
+# Mission Objectives
+#
+
+# Mission first objective
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+# 2 pilots + 2 crew members + 4 persons to rescue = 8
+mission_objective_humans_tally 8 8
+mission_objective_message_success All castaways are aboard. Now, head to Figari helipad!
+mission_objective_message_fail You failed to board all the castaways.
+
+# Mission second objective
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_figari
+mission_objective_message_success Perfect job! All the castaways are safe.
+mission_objective_message_fail You failed to bring back the castaways to Figari helipad.
+
+
+# # # # #
+# Mission Post Data (these need to come after the objectives)
+#
+
+# sailing ship
+create_object 3
+model_file vessels/stanyoupilothouse.3d
+translate 30228 -68842 -10.0
+rotate 0 0 45
+
+# first human to rescue
+create_human default need_rescue alert
+translate 30228 -68842 5.0
+rotate 270 0 0
+set_human_mesg_enter Brr! My clothes are sodden, I'm cold!
+
+# second human to rescue
+create_human default need_rescue alert
+translate 30228 -68840.5 5.0
+rotate 270 0 0
+set_human_mesg_enter I'm hungry. I'm wet and hungry!
+
+# third human to rescue
+create_human default need_rescue
+translate 30228 -68843 5.0
+rotate 270 0 0
+set_human_mesg_enter Phew, those rocks are very dangerous! What are they doing there?
+
+# fourth human to rescue
+create_human default need_rescue alert
+translate 30228 -68844 5.0
+rotate 270 0 0
+set_human_mesg_enter I never went to sail before!
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_propriano
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+rotate -5.8 0 0
+
+# Waypoint of first objective (wrecked boat coordinates)
+#			        ref_code    x       y      z     radius    urgency   name
+mission_add_intercept   0     30228  -68842   0.0     1.0       1.0       *
+
+
+# Waypoint of second objective (Figari helipad, see mission_objective_arrive_at)
+#			        ref_code   radius   urgency
+mission_add_intercept   3       40.0     1.0
