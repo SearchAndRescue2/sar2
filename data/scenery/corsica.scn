@@ -4,8 +4,8 @@
 name Corsica
 set_welcome_message Press 'e' to start engines
 
-# Planet units		dms_x_offset	dms_y_offset	planet_radius_meters
-scene_global_position		9.080	42.194		6371000.0
+# Planet units	    dms_x_offset    dms_y_offset    planet_radius_meters
+scene_global_position	9.080		42.194		6371000.0
 
 # Cant (magnetic) angle applied to true north, i.e. difference between geographic and magnetic headings.
 # Example: if heading on map view (press 'm') is 309 degrees, heading in cockpit view (press 'F2') will be 309 - scene_cant = 304 degrees.
@@ -15,20 +15,24 @@ scene_cant 5.0
 scene_elevation 0.0
 
 # Load texture images and set named references to them:
-#
 texture_load water01_tex textures/water01.tex 1.0
+texture_load building01_tex textures/building01.tex 0.7
+texture_load building01_night_tex textures/building01_night.tex 0.7
+texture_load roof_tex textures/wall01.tex 0.7
 
 # Ground base flags
 #                  is_water
 scene_ground_flags is_water
 
 # Ground base tile
-#                 tilew tileh closerng             far color              texture
-scene_ground_tile 1000  1000   10000    0.171875 0.312500 0.453125 1.0  water01_tex
+#			rgb 8 bits :       44       80       116
+#                 tilew tileh closerng   color r  color g  color b  color a    texture
+scene_ground_tile 1000  1000  10000     0.172549 0.313725 0.454902    1.0    water01_tex
 
 # Map representing entire scene for briefing/log map
 #         width  height  texture_file
 scene_map 88200 192000  textures/corsica/corsica_small.tex.tga
+
 
 # #####################################################################
 # Registered locations
@@ -88,14 +92,43 @@ register_location -11860 -60495 0.0 1.0 0 0 Propriano Helipad
 # Ventiseri-Solenzara military Airport
 register_location 28360 -27775 0.0 -5.8 0 0 Ventiseri-Solenzara military Airport
 
-# Tolla's lake
-register_location -7500 -25880 11.3 0 0 0 Tolla's lake
+# Bocca di Maro ("Mountain pass of sea")
+register_location 13731 -40111 1585 89 0 0 Bocca di Maro
 
-# Ospédale's lake
-register_location 13700 -58000 3122.7 0 0 0 Ospedale's lake
+# Asinau shelter
+# needs to create shelter object at: translation 13285 -38275 5082 / rotate 200 0 0
+#register_location 13310 -38276 5072 190 0 0 Asinau shelter
 
-# Palo's pond
-register_location 28500 47300 0.0 0 0 0 Palo's pond
+# Lake of Calacuccia (corsica_c02_r04)
+register_location -6694 14557 2585 320 0 0 Calacuccia lake
+
+# Lake of Codole (corsica_c01_r02)
+register_location -15153 43260 395 230 0 0 Codole lake
+
+# Reservoir of Ospédale (corsica_c03_r08)
+register_location 13700 -58000 3122.7 0 0 0 Ospedale reservoir
+
+# Lake of Padula (corsica_c03_r02)
+register_location 15542 49763 200 277 0 0 Padula lake
+
+# Pond of Palo (corsica_c03/c04_r02)
+register_location 28500 47300 0.0 0 0 0 Palo pond
+
+# Reservoir of Rizzanese/Zoza (corsica_c02_r08)
+register_location 1185 -64811 559 92 0 0 Rizzanese/Zoza reservoir
+
+# Rerservoir of Sampolo (corsica_c03_r05)
+# needs some work on height field and texture
+#register_location 15778 -9269 1284 103 0 0 Sampolo reservoir
+
+# Lake of Tolla (corsica_c02_r06)
+# needs some work on height field and texture
+#register_location -7500 -25880 11.3 0 0 0 Tolla lake
+
+# Reservoir of Trévadine (corsica_c03_r05)
+# needs some work on height field and texture
+#register_location 19683 -9706 504 294 0 0 Trevadine reservoir
+
 
 # #####################################################################
 # Begin loading base objects
@@ -104,7 +137,9 @@ register_location 28500 47300 0.0 0 0 0 Palo's pond
 # depth checking and drawn in order.
 #
 
-# *** Terrain***
+#
+# *** Terrain*** cXX for column number XX, rYY for row number YY
+#
 create_object 6
 model_file objects/corsica/corsica_c00_r00.3d
 
@@ -269,6 +304,7 @@ model_file objects/corsica/corsica_c04_r09.3d
 
 create_object 6
 model_file objects/corsica/corsica_c04_r10.3d
+
 
 # #####################################################################
 # Begin loading other objects
