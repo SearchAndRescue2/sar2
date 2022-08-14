@@ -117,7 +117,7 @@ long readV3dVerticies ( FILE *fpIn, const char * endBoundString, FILE *fpOut, ch
 		fprintf( fpOut, "%lf %lf %lf\n", nx, ny, nz );
 	    }
         }
-        else if ( !strcmp(strtoupper( result, buffer), "TEXTURE") ) { // it's a texture coordinate
+        else if ( !strcmp(strtoupper( result, buffer), "TEXTURE") || !strcmp(strtoupper( result, buffer), "TEXCOORD") ) { // it's a texture coordinate
             vt++;
             fprintf( fpOut, "vt ");
 	    sscanf( lineBuffer, "%*s %lf %lf", &tu, &tv ); // u, v
@@ -553,7 +553,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
     fprintf( fpOut, "****************\n");
     */
     
-    return v;
+    return primitives;
 }
 
 int v3dToObj( const char *source, const char *dest, UserModifier *userModifier ) {
@@ -634,63 +634,53 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
             fprintf(fpOut, "%s", lineBuffer);
         }
         else if ( !strcmp(tagName, "BEGIN_POINTS") ) {
-            points++;
             fprintf(fpOut, "#*.3d begin_points\n");
-            readV3dVerticies ( fpIn, "END_POINTS", fpOut, "",  userModifier, modifier );
+            points += readV3dVerticies ( fpIn, "END_POINTS", fpOut, "",  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_points\n");
         }
         else if ( !strcmp(tagName, "BEGIN_LINES") ) {
-            lines++;
             fprintf(fpOut, "#*.3d begin_lines\n");
-            readV3dVerticies ( fpIn, "END_LINES", fpOut, "",  userModifier, modifier );
+            lines += readV3dVerticies ( fpIn, "END_LINES", fpOut, "",  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_lines\n");
         }
         else if ( !strcmp(tagName, "BEGIN_LINE_STRIP") ) {
-            line_strip++;
             fprintf(fpOut, "#*.3d begin_line_strip\n");
-            readV3dVerticies ( fpIn, "END_LINE_STRIP", fpOut, "",  userModifier, modifier );
+            line_strip += readV3dVerticies ( fpIn, "END_LINE_STRIP", fpOut, "",  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_line_strip\n");
         }
         else if ( !strcmp(tagName, "BEGIN_LINE_LOOP") ) {
-            line_loop++;
             fprintf(fpOut, "#*.3d begin_line_loop\n");
-            readV3dVerticies ( fpIn, "END_LINE_LOOP", fpOut, "",  userModifier, modifier );
+            line_loop += readV3dVerticies ( fpIn, "END_LINE_LOOP", fpOut, "",  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_line_loop\n");
         }
         else if ( !strcmp(tagName, "BEGIN_TRIANGLES") ) {
-            triangle++;
             fprintf(fpOut, "#*.3d begin_triangles\n");
-            readV3dVerticies ( fpIn, "END_TRIANGLES", fpOut, textureOrient,  userModifier, modifier );
+            triangle += readV3dVerticies ( fpIn, "END_TRIANGLES", fpOut, textureOrient,  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_triangles\n");
         }
         else if ( !strcmp(tagName, "BEGIN_TRIANGLE_STRIP") ) {
-            triangle_strip++;
             fprintf(fpOut, "#*.3d begin_triangle_strip\n");
-            readV3dVerticies ( fpIn, "END_TRIANGLE_STRIP", fpOut, textureOrient,  userModifier, modifier );
+            triangle_strip += readV3dVerticies ( fpIn, "END_TRIANGLE_STRIP", fpOut, textureOrient,  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_triangle_strip\n");
         }
         else if ( !strcmp(tagName, "BEGIN_TRIANGLE_FAN") ) {
-            triangle_fan++;
             fprintf(fpOut, "#*.3d begin_triangle_fan\n");
-            readV3dVerticies ( fpIn, "END_TRIANGLE_FAN", fpOut, textureOrient,  userModifier, modifier );
+            triangle_fan += readV3dVerticies ( fpIn, "END_TRIANGLE_FAN", fpOut, textureOrient,  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_triangle_fan\n");
         }
         else if ( !strcmp(tagName, "BEGIN_QUADS") ) {
-            quads++;
             fprintf(fpOut, "#*.3d begin_quads\n");
-            readV3dVerticies ( fpIn, "END_QUADS", fpOut, textureOrient,  userModifier, modifier );
+            quads += readV3dVerticies ( fpIn, "END_QUADS", fpOut, textureOrient,  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_quads\n");
         }
         else if ( !strcmp(tagName, "BEGIN_QUAD_STRIP") ) {
-            quad_strip++;
             fprintf(fpOut, "#*.3d begin_quad_strip\n");
-            readV3dVerticies ( fpIn, "END_QUAD_STRIP", fpOut, textureOrient,  userModifier, modifier );
+            quad_strip += readV3dVerticies ( fpIn, "END_QUAD_STRIP", fpOut, textureOrient,  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_quad_strip\n");
         }
         else if ( !strcmp(tagName, "BEGIN_POLYGON") ) {
-            polygon++;
             fprintf(fpOut, "#*.3d begin_polygon\n");
-            readV3dVerticies ( fpIn, "END_POLYGON", fpOut, textureOrient,  userModifier, modifier );
+            polygon += readV3dVerticies ( fpIn, "END_POLYGON", fpOut, textureOrient,  userModifier, modifier );
             fprintf(fpOut, "#*.3d end_polygon\n");
         }
         else if ( !strcmp(tagName, "COLOR") ) {
