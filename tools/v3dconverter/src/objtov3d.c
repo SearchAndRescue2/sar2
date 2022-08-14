@@ -365,11 +365,14 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		
 		if ( lineVerticies > 0 ) // check lineVerticies value to avoid last vertex print in case of line loop
 		{
-		    // write texture coord only if vtNum is not equal to 0
-		    if ( vtNum > 0 )
-			fprintf( fpOut, " texcoord %f %f\n", vt[vtNum].u, vt[vtNum].v );
-		    else if ( vtNum < 0 )
-			fprintf( fpOut, " texcoord %f %f\n", vt[textCoords + vtNum].u, vt[textCoords + vtNum].v );
+		    if ( textureOn == true )
+		    {
+			// write texture coord only if vtNum is not equal to 0
+			if ( vtNum > 0 )
+			    fprintf( fpOut, " texcoord %f %f\n", vt[vtNum].u, vt[vtNum].v );
+			else if ( vtNum < 0 )
+			    fprintf( fpOut, " texcoord %f %f\n", vt[textCoords + vtNum].u, vt[textCoords + vtNum].v );
+		    }
 		    
 		    // write vertex coord
 		    if ( vNum > 0 )
@@ -594,8 +597,10 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		}
 		
 		vtNum = tmpVertex[tabCounter].vt;
-		// write texture coord only if vtNum is not equal to 0
-		if ( vtNum == 0 )
+		// write texture coord only if vtNum is not equal to 0 and texture is on.
+		// "textureOn" test is not mandatory because texcoord statement is automatically ignored by v3d if texture is off,
+		// but v3d file will be smaller if we test it...
+		if ( vtNum == 0 || textureOn == false )
 		    ;
 		else if ( vtNum > 0 )
 		    fprintf( fpOut, " texcoord %f %f\n", vt[vtNum].u, vt[vtNum].v );
@@ -687,7 +692,8 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		}
 	    }
 	    
-	    fprintf( fpOut, "begin_header\n" ); // header is not mandatory if there is no material, but let's add it as a sticky note
+	    fprintf( fpOut, "begin_header\n" );
+	    fprintf( fpOut, "creator v3dconverter\n" );
 	    
 	    if ( materials > 0 )
 	    {
@@ -928,11 +934,19 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    currentColor.shi = new_shi;
 		    currentColor.emi = new_emi;
 		    
+		    if ( mat[ mtlNr ].texName == NULL ) // if material has no texture ...
+		    {
+			if ( textureOn == true ) // ... and if previous material was a textured one
+			{
+			    fprintf( fpOut, "texture_off\n" );
+			    textureOn = false;
+			}
+		    }
+		    
 		    fprintf( fpOut, "\n#OBJFILE material: %s\n", mtlName );
 		    fprintf( fpOut, "color %.6f %.6f %.6f", currentColor.r, currentColor.g, currentColor.b ); // v3d base color
 		    fprintf( fpOut, " %.6f", currentColor.a  ); // transparency
-		    fprintf( fpOut, " %.6f %.6f %.6f %.6f %.6f", currentColor.amb, currentColor.dif, currentColor.spe, currentColor.shi, currentColor.emi ); // coefficients
-		    fprintf( fpOut, "\n\n" );
+		    fprintf( fpOut, " %.6f %.6f %.6f %.6f %.6f\n", currentColor.amb, currentColor.dif, currentColor.spe, currentColor.shi, currentColor.emi ); // coefficients
 		}
 		
 		if ( mat[ mtlNr ].texName != NULL ) // if material is a texture, print it
@@ -940,6 +954,8 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    fprintf( fpOut, "texture_select %s\n", mat[ mtlNr ].name );
 		    textureOn = true;
 		}
+		
+		fprintf( fpOut, "\n" );
 	    }
 	}
 	else if ( !strcmp( objTag, "g" ) ) // group
@@ -952,13 +968,15 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    fprintf( fpOut, "#OBJFILE group: %s\n", lineBuffer );
 	}
 	else if ( !strcmp( objTag, "s" ) ) // smoothing group
-	{ // FIXME is it a good idea to convert obj 's' statement into v3d 'shade_model_*' ?
+	{
 	    if ( previousV3dParam[0] != '\0' )
 	    {
 		fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		strcpy( previousV3dParam, "" );
 	    }
 	    
+	    // Don't convert obj 's' statement into v3d 'shade_model_*' because only one 'shade_model_*' per V3d object.
+	    /*
 	    int foo = -1;
 	    if ( sscanf( lineBuffer, " s %d", &foo ) ) // if foo is an int
 	    {
@@ -968,6 +986,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    {
 		fprintf( fpOut, "shade_model_flat\n" ); // smooth off
 	    }
+	    */
 	}
 	else if ( !strcmp( objTag, "o" ) ) // new object
 	{
