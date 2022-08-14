@@ -250,11 +250,15 @@ __author author_name\
 __DESCRIPTION\
 __Name of the 3d model file author.\
 __ARGUMENTS\
-__author_name name of 3d model author. 80 characters maximum.\
+__author_name name of 3d model author. 80 characters maximum. Must be located in header block.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__##begin_header\
+__...\
+__author Original model and texture from Flightgear, adapted to SaR II.\
+__...\
+__##end_header\
 \
 __-----\
 \
@@ -331,32 +335,35 @@ __begin_model\
 __SYNOPSIS\
 __begin_model model_type\
 __DESCRIPTION\
-__Begins a model block, which defines a V3D model. You can specify one or more in a V3D file. Each should have a different name, the first one is (by tradition) named standard.\
+__Begins a model block, which defines a V3D model. You can specify one or more in a V3D file. Each should have a different name, the first one is named \"standard\" and is mandatory.\
 __ARGUMENTS\
-__model_type standard\
-__ standard_dawn\
-__ standard_dusk\
-__ standard_far\
-__ standard_night\
-__ rotor\
-__ aileron_left\
-__ aileron_right\
-__ rudder_top\
-__ rudder_bottom\
-__ elevator\
-__ cannard\
-__ aileron_elevator_left\
-__ aileron_elevator_right\
-__ flap\
-__ air_brake\
-__ landing_gear\
-__ door\
-__ fueltank\
-__ cockpit\
-__ shadow\
+__model_type standard (mandatory)\
+__ standard_dawn (optional)\
+__ standard_dusk (optional)\
+__ standard_far (optional)\
+__ standard_night (optional)\
+__ rotor (if any)\
+__ aileron_left (if any)\
+__ aileron_right (if any)\
+__ rudder_top (if any)\
+__ rudder_bottom (if any)\
+__ elevator (if any)\
+__ cannard (if any)\
+__ aileron_elevator_left (if any)\
+__ aileron_elevator_right (if any)\
+__ flap (if any)\
+__ air_brake (if any)\
+__ landing_gear (if any)\
+__ door (if any)\
+__ fueltank (if any)\
+__ cockpit (if any)\
+__ shadow (optional). Shadow color will be automatically set, don't add any \"color\" statement.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
+__begin_model standard\
+__...\
+__##end_model standard\
 __begin_model standard_far\
 __...\
 __##end_model standard_far\
@@ -530,20 +537,34 @@ __color name r g b a [ ambient diffuse specular shininess emission ]\
 __DESCRIPTION\
 __Specifies a preset color specified by 'name' who's values are those given, each in the range [0.0 to 1.0] (including <shininess> which OpenGL has a different bounds for). //FIXME from V3D format doc: \"Implementation of this not complete as of this writing\".\
 __ARGUMENTS\
-__name color name\
-__r red\
-__g green\
-__b blue\
-__a alpha (transparency)\
-__ambient \
-__diffuse \
-__specular \
-__shininess \
-__emission \
+__name color name (without any space).\
+__r red pigment color component of material\
+__g green pigment color component of material\
+__b blue pigment color component of material\
+__a alpha (transparency of material)\
+__ambient light that has been scattered so much by environment on to the material (higher values produce less shaded areas).\
+__diffuse light casted directly on to material (higher values produce greater highlights).\
+__specular light reflectiveness of material (higher values produce brighter shininess and greater reflection).\
+__shininess coherancy of specular (higher values increase localization of shininess).\
+__emission colored light that is `given off' to neighboring.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__##begin_header\
+__...\
+__color pure_white 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 0.500000 0.300000 0.000000\
+__color pure_green 0.000000 1.000000 0.000000 1.000000 1.000000 1.000000 0.500000 0.300000 0.000000\
+__...\
+__##end_header\
+__...\
+__##begin_model standard\
+__...\
+__color pure_green\
+__...(some 3D primitives that will be green)...\
+__color pure_white\
+__...(some other 3D primitives that will be white)...\
+__...\
+__##end_model standard\
 \
 __-----\
 \
@@ -554,15 +575,15 @@ __color r g b a [ ambient diffuse specular shininess emission ]\
 __DESCRIPTION\
 __Specifies the new color and material values, each in the range [0.0 to 1.0] (including <shininess> which OpenGL has a different bounds for). \
 __ARGUMENTS\
-__r red\
-__g green\
-__b blue\
-__a alpha (transparency)\
-__ambient \
-__diffuse \
-__specular \
-__shininess \
-__emission \
+__r red pigment color component of material\
+__g green pigment color component of material\
+__b blue pigment color component of material\
+__a alpha (transparency of material)\
+__ambient light that has been scattered so much by environment on to the material (higher values produce less shaded areas).\
+__diffuse light casted directly on to material (higher values produce greater highlights).\
+__specular light reflectiveness of material (higher values produce brighter shininess and greater reflection).\
+__shininess coherancy of specular (higher values increase localization of shininess).\
+__emission colored light that is `given off' to neighboring.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -575,7 +596,7 @@ __contact_cylendrical\
 __SYNOPSIS\
 __contact_cylendrical radius height_min height_max\
 __DESCRIPTION\
-__Defines cylendricals contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter.\
+__Defines cylendricals contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter. Only one contact_* supported per object.\
 __ARGUMENTS\
 __radius radius of the cylinder, in meters.\
 __height_min min height of the cylinder, in meters. Must be lower than height_max.\
@@ -584,7 +605,7 @@ __CONTEXT\
 __3d scn\
 __EXAMPLE\
 __# Crash flags\
-__crash_flags 0 1 0 0\
+__##crash_flags 0 1 0 0\
 __# Tree (palm01) contact bounds\
 __contact_cylendrical 2.0 0.0 6.0\
 \
@@ -595,7 +616,7 @@ __contact_rectangular\
 __SYNOPSIS\
 __contact_rectangular x_min x_max y_min y_max z_min z_max\
 __DESCRIPTION\
-__Defines rectangulars contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter.\
+__Defines rectangulars contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter. Only one contact_* supported per object.\
 __ARGUMENTS\
 __x_min min value in X direction, in meters. Must be lower than x_max.\
 __x_max max value in X direction, in meters. Must be greater than x_min.\
@@ -607,7 +628,7 @@ __CONTEXT\
 __3d scn\
 __EXAMPLE\
 __# Crash flags\
-__crash_flags 0 1 0 3\
+__##crash_flags 0 1 0 3\
 __# Building contact bounds\
 __contact_rectangular -6.0 6.0 -6.0 6.0 0.0 28.0\
 \
@@ -618,14 +639,14 @@ __contact_spherical\
 __SYNOPSIS\
 __contact_spherical radius\
 __DESCRIPTION\
-__Defines sphericals contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter.\
+__Defines sphericals contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter. Only one contact_* supported per object.\
 __ARGUMENTS\
 __radius radius of the sphere, in meters.\
 __CONTEXT\
 __3d scn\
 __EXAMPLE\
 __# Crash flags\
-__crash_flags 0 1 0 0\
+__##crash_flags 0 1 0 0\
 __# Contact bounds\
 __contact_spherical 20.3\
 \
@@ -663,7 +684,7 @@ __Defines how the object can be contacted by others. Must be used in conjonction
 __ARGUMENTS\
 __crash_other can be: '1' if this object can crash into or contact other objects, '0' if it can't. Can be '1' ONLY for 'human' and 'aircraft' objects, and in this case, contact bounds MUST be cylendrical (see ##contact_cylendrical parameter). Use it for mobile objects.\
 __cause_crash can be: '1' if other objects can crash into this object, '0' if they can't. MUST be '0' if 'crash_other' flag is '1'. Use it for fixed objects.\
-__support_surface must be: '1' if this object is landable/walkable, '0' if not. If '1', then the object can only have its heading rotated. MUST be '0' if 'crash_other' flag is '1'.\
+__support_surface must be: '1' if this object is landable/walkable, '0' if not.<br>If 'crash_other' flag is '1', then support_surface MUST be '0' .<br>If support_surface is set:<br> - object can only have its heading rotated.<br> - even if contact bounds don't start from ground, flying under contact bounds will cause crash.\
 __crash_type can be: 0 (obstruction), 1 (ground), 2 (mountain), 3 (building), 4 (aircraft). Defines collision message type.\
 __CONTEXT\
 __3d //FIXME and scene file (*.scn) ?\
@@ -701,16 +722,16 @@ __create_helipad style length width recession label edge_lighting has_fuel has_r
 __DESCRIPTION\
 __Creates an helipad.\
 __ARGUMENTS\
-__style Can be: 'default' or 'standard' or 'ground_paved' (same result), 'ground_bare' (unpaved), 'building' (roof top of last drawn building), 'vehicle' (on a vehicle or a vessel).\
+__style style can be:<br>'default' or 'standard' or 'ground_paved' : square or rectangular helipad with paved surface. Recession has no effect, set it to zero.<br>'ground_bare' : square or rectangular helipad with unpaved ground. Recession has no effect, set it to zero. <br>'building' : round or oval helipad, with a recession and an access ramp on both 'width' sides if recession is not null.<br>'vehicle' : square or rectangular helipad, with a recession and lifeline netting on both 'length' sides.\
 __length length, in meters.\
 __width width, in meters.\
-__recession recession\'s height, in feet.\
-__label label of the helipad, which will be \"painted\" on the ground.\
+__recession recession\'s height, in feet. \"Recession\" is a supporting wall drawn below (from top to bottom) helipad surface.\
+__label label of the helipad, which will be \"painted\" on helipad surface. Underscore characters ('_') in label will be substituted for spaces.\
 __edge_lighting has edge lighting? Can be: y (yes) or n (no).\
 __has_fuel has fuel? Can be: y (yes) or n (no). If 'y', aircraft can be refueled here.\
 __has_repair has repair? Can be: y (yes) or n (no). If 'y', aircraft can be repaired here.\
 __has_drop_off has drop off? Can be: y (yes) or n (no). If 'y', human can be dropped off here.\
-__restarting_point is a restarting point? Can be y (yes) or n (no). //FIXME Not used at now. Need more explanations !\
+__restarting_point is a restarting point? Can be y (yes) or n (no). When player crashes his aircraft, software will search for the nearest restart point and will reposition aircraft on it.\
 __ref_obj_name reference object name. Can be omitted. //FIXME Can be omitted only if helipad is on a fixed object?\
 __&nbsp;&nbsp;&nbsp;&nbsp;&#9507;&#9473;&nbsp;offset_x X offset from reference object, in meters. Must be omitted if there is no reference object.\
 __&nbsp;&nbsp;&nbsp;&nbsp;&#9507;&#9473;&nbsp;offset_y Y offset from reference object, in meters. Must be omitted if there is no reference object.\
@@ -741,6 +762,12 @@ __range 4000\
 __# building\'s height is 90 feet, and helipad\'s recession height is 3 feet, so helipad\'s Z must be 93 feet.\
 __translation -4920 44800 93\
 __<br>\
+__# US Coast Guard 378 foot cutter\
+__create_object 3\
+__model_file vessels/uscg378.3d\
+__translation -56.0 -250.0 0.0\
+__rotate 310 0 0\
+__object_name uscg378_01\
 __# Helipad on vessel\
 __create_helipad vehicle 29.0 18.0 3.2 USCG y y y y y uscg378_01 0.0 -58.5 36.0 0.0 0.0 0.0\
 __object_name helipad_default\
@@ -752,32 +779,38 @@ __-----\
 __NAME\
 __create_human\
 __SYNOPSIS\
-__create_human type_name flag [ flag ] [ ... ]\
+__create_human type_name flag [ flag ] [ ... ] [ assisted&nbsp;&nbsp;n&nbsp;&nbsp;type_name(s) ]\
 __DESCRIPTION\
-__Creates a human. Note: human types are definite in 'human.ini' file.\
+__Creates a human.\
 __ARGUMENTS\
 __<b>type_name</b> <hr>\
 __default default human. May be used whenever nothing in particular is requested.\
-__diver used for drawing at end of hoist rope.\
-__victim_streatcher_assisted victim is intended to be on a stretcher and one assisting human will be drawn.\
+__victim_streatcher_assisted male victim intended to be on a stretcher with 1 assisting human. Warning: this type name is deprecated.\
+__.........(other&nbsp;type&nbsp;name)......... Warning: <b>SaR II > 2.5.0 only!</b> See data/human.ini file for other preset human types.\
 __<b>flags</b> <hr>\
 __need_rescue this human needs to be rescued (player has to take him aboard).\
 __sit_up human is drawn sitting 'like on a chair', feet on the floor.\
 __sit_down human is drawn sitting 'like on the floor', legs straight out in front of him.\
 __sitting human is drawn sitting 'like on a chair', buttocks (not feet) on the floor.\
-__lying human is drawn lying horizontally (on the floor or on a stretcher, see on_streatcher flag below).\
-__alert human alerts (moves his arms to draw attention).\
-__aware human is aware. //FIXME need more explanations !\
+__lying human is drawn lying horizontally (on the floor or on a stretcher, see on_stretcher flag below).\
+__alert human is alert (is awake) and moves his arms to draw attention.\
+__aware human is aware (knows of surroundings).\
 __in_water human swims (moves his arms to float).\
-__on_streatcher if this flag is specified, a stretcher is drawn below the human.\
+__on_stretcher if this flag is specified, a stretcher is drawn below the human.\
+__assisted&nbsp;&nbsp;n&nbsp;&nbsp;type_name(s) Warning: <b>SaR II > 2.5.0 only!</b> human is assisted (surrounded) by 'n' (1 to 4) humans. Number 'n' must be followed by 'n' human type names.\
 __CONTEXT\
 __mis scn\
 __EXAMPLE\
-__# Human\
+__# Human in water\
 __create_human default need_rescue alert aware in_water\
 __# Human position.\
 __# If human 'z' position is greater than the ground / water / object which is under him, human will 'fall' until he comes into contact.\
 __translate 30000.0 41020.0 0.0\
+__...\
+__# Warning: <b>SaR II > 2.5.0 only!</b> Human lying on a strecher, with 2 assisting humans.\
+__create_human boy_1 need_rescue lying on_stretcher assisted 2 assistant_1 woman_1\
+__translate 20000.0 41020.0 0.0\
+__...\
 \
 __-----\
 \
@@ -822,16 +855,17 @@ __SYNOPSIS\
 __create_premodeled type range height hazard_lights\
 __create_premodeled type range length width height walls_texture roof_texture\
 __create_premodeled type range length width height walls_texture walls_texture_night roof_texture\
+__create_premodeled type range length width height roof_slopes is_lighted? walls_texture roof_texture [ floor_texture ]\
 __DESCRIPTION\
 __Creates a pre-modeled object.\
 __ARGUMENTS\
 __ <hr>\
-__ if <b>type</b> is '<b>power_transmission_tower</b>', '<b>radio_tower</b>' or '<b>tower</b>', then arguments are:\
+__<b>type</b> if <b>power_transmission_tower</b>, <b>radio_tower</b> or <b>tower</b>, then arguments are:\
 __range visible range, in meters.\
 __height height, in feet.\
 __hazard_lights number of hazard lights.\
 __ <hr>\
-__ if <b>type</b> is '<b>control_tower</b>', then arguments are:\
+__<b>type</b> if <b>control_tower</b>, then arguments are:\
 __range visible range, in meters.\
 __length length, in meters.\
 __width width, in meters.\
@@ -839,7 +873,7 @@ __height height, in feet.\
 __walls_texture name of the walls texture.\
 __roof_texture name of the roof texture.\
 __ <hr>\
-__ if <b>type</b> is '<b>building</b>', then arguments are:\
+__<b>type</b> if <b>building</b>, then arguments are:\
 __range visible range, in meters.\
 __length length, in meters.\
 __width width, in meters.\
@@ -847,6 +881,17 @@ __height height, in feet.\
 __walls_texture name of the walls texture to use when it is day.\
 __walls_texture_night name of the walls texture to use when it is night.\
 __roof_texture name of the roof texture.\
+__ <hr>\
+__<b>type</b> if <b>hangar</b> (warning: <b>SaR II > 2.5.0 only!</b>), then arguments are:\
+__range visible range, in meters.\
+__length length, in meters.\
+__width width, in meters.\
+__height side walls height, in feet.\
+__roof_slopes roof slopes. Can be 2 (one left, one right) or 4 (two left, two right).\
+__is_lighted? Is hangar lighted at night? Can be y (yes) or n (no).\
+__walls_texture name of the walls texture. This texture must include day and night texture in the same image file.\
+__roof_texture name of the roof texture.\
+__floor_texture name of the floor texture. If not specified, floor will be painted to grey.\
 __CONTEXT\
 __mis scn\
 __EXAMPLES\
@@ -861,7 +906,7 @@ __# Control tower position\
 __translation -3619 35679 0\
 __<br>\
 __# Building near LAX\
-__create_premodeled building 4000 240 140 80 building01_tex building01_night_tex wall01_tex\
+__create_premodeled building 4000 24 14 24 building01_tex building01_night_tex wall01_tex\
 __# Building position\
 __translation -2650 36900 0\
 \
@@ -943,11 +988,15 @@ __creator prog_name\
 __DESCRIPTION\
 __Specifies the program that generated this V3D model file.\
 __ARGUMENTS\
-__prog_name name of the program which created the file. 80 characters maximum.\
+__prog_name name of the program which created the file. 80 characters maximum. Must be located in header block.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__##begin_header\
+__...\
+__creator v3dconverter\
+__...\
+__##end_header\
 \
 __-----\
 \
@@ -1474,13 +1523,17 @@ __heightfield_base_directory\
 __SYNOPSIS\
 __heightfield_base_directory path\
 __DESCRIPTION\
-__Specifies heightfield base directory which must be an absolute path (or a path not containing the drive prefix if used on Windows). The program handling this item may choose to ignore this value and impose its own heightfield base directory.\
+__Specifies heightfield base directory which must be an absolute path (or a path not containing the drive prefix if used on Windows). The program handling this item may choose to ignore this value and impose its own heightfield base directory. Must be located in header block.\
 __ARGUMENTS\
 __path path of heightfield base directory.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__##begin_header\
+__...\
+____heightfield_base_directory /path/to/heightfield/base_directory\
+__...\
+__##end_header\
 \
 __-----\
 \
@@ -1597,13 +1650,15 @@ __Defines the human displacement.\
 __ARGUMENTS\
 __object_name name of the object from which one the human runs to or runs away from. Can be: 'player' or other named object.\
 __direction: <hr>\
-__run_towards human runs towards the named object. If object name is 'player', when aircraft is on ground and it's engines off, human will automatically run to aircraft, then board.\
+__run_towards human runs towards the named object. If object name is 'player', when aircraft is on ground, less than 100 meters from human, engines nearly stopped, and if there is enough room for one passenger, then human will automatically run to aircraft and board.\
 __run_to same as 'run_towards'.\
-__run_away //FIXME: human runs away from the named object. Not yet implemented.</br>See simop.c &nbsp > &nbsp else if(human->flags & SAR_HUMAN_FLAG_RUN_AWAY) &nbsp > &nbsp /* Need to work on this */\
+__run_away human runs away from the named object. <b>Not yet implemented</b> (see simop.c &#x21E8; else if(human->flags & SAR_HUMAN_FLAG_RUN_AWAY) ).\
 __CONTEXT\
 __mis scn\
 __EXAMPLE\
-__# human displacement: human runs towards the helicopter when it has touched down.\
+__##create_human default need_rescue alert aware\
+__translation 11186.0   1946   3445\
+__# human displacement: human runs towards the helicopter when touched down and engines off.\
 __human_reference player run_towards\
 \
 __-----\
@@ -1649,10 +1704,10 @@ __b blue value for light color.\
 __a alpha (transparancy) value for light color.\
 __radius light radius, in pixels. Must be positive. Use 0 for default radius.\
 __init_on? if positive, light will be on. If 0, light will be off.\
-__type type of light. Can be: 1 for strobe or 2 for spot light. Use 0 for none.\
-__&nbsp;&nbsp;int_on in milliseconds. Time on for strobe light. Total time for light to go from 50% to 100% and from 100% to 50% of its radius. Must be a positive or null integer.\
-__&nbsp;&nbsp;int_off in milliseconds. Time off for strobe light. Total time for light to go from 50% to 0% and from 0% to 50% of its radius. Must be a positive or null integer.\
-__&nbsp;&nbsp;int_on_delay in milliseconds. For strobe light. \"Additional interval to wait before turning light on when timer is reset\". Must be a positive or null integer. //FIXME: seems to have no effect.\
+__type type of light. Can be: 0 for standard light, 1 for strobe light, or 2 for spot light.\
+__&nbsp;&nbsp;int_on interval ON, in milliseconds. Applies only to strobes, otherwise leave as 0. Time on for strobe light: total time for light to go from 50% to 100% then from 100% to 50% of its radius. Must be a positive or null integer.\
+__&nbsp;&nbsp;int_off interval OFF, in milliseconds. Applies only to strobes, otherwise leave as 0. Time off for strobe light: total time for light to go from 50% to 0% then from 0% to 50% of its radius. Must be a positive or null integer.\
+__&nbsp;&nbsp;int_on_delay in milliseconds. Applies only to strobes, otherwise leave as 0. \"Additional interval to wait before turning light on when timer is reset\". Must be a positive or null integer. //FIXME: seems to have no effect.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -2010,14 +2065,16 @@ __no_depth_test\
 __SYNOPSIS\
 __no_depth_test\
 __DESCRIPTION\
-__//FIXME\
+__Disables OpenGl depth test for current object. Use only if you're sure that player will always be 'on top' or 'in front' of object. For example, if you create a house with the no_depth_test parameter, player will be visable even if he is 'behind' the house.\
 __ARGUMENTS\
 __(none)\
 __CONTEXT\
 __mis scn 3d\
 __EXAMPLE\
-__# //FIXME\
+__# Los Angeles International (LAX)\
+__create_helipad default 40.0 40.0 0.0 LAX y y y y y\
 __no_depth_test\
+__...\
 \
 __-----\
 \
@@ -2273,6 +2330,9 @@ __z_closed door closed Z position.\
 __x_opened door opened X position.\
 __y_opened door opened Y position.\
 __z_opened door opened Z position.\
+__h_opened door opened heading.\
+__p_opened door opened pitch.\
+__b_opened door opened bank.\
 __x_thres threshold X value.\
 __y_thres threshold Y value.\
 __z_thres threshold Z value.\
@@ -2654,13 +2714,14 @@ __shade_model_flat\
 __SYNOPSIS\
 __shade_model_flat\
 __DESCRIPTION\
-__Flat shading.\
+__Specifies that the visual models should be displayed using flat shading (GL_FLAT). This specification must come before the  first ##begin_model statement. Only one shade_model_* supported per *.3d file.\
 __ARGUMENTS\
 __(none)\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__shade_model_flat\
+__##begin_model standard\
 \
 __-----\
 \
@@ -2669,13 +2730,14 @@ __shade_model_smooth\
 __SYNOPSIS\
 __shade_model_smooth\
 __DESCRIPTION\
-__Smooth shading.\
+__Specifies that the visual models should be displayed using smooth shading (GL_SMOOTH). This specification must come before the first ##begin_model statement. Only one shade_model_* supported per *.3d file.\
 __ARGUMENTS\
 __(none)\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__shade_model_smooth\
+__##begin_model standard\
 \
 __-----\
 \
@@ -2828,15 +2890,19 @@ __texture_base_directory\
 __SYNOPSIS\
 __texture_base_directory path\
 __DESCRIPTION\
-__Specifies the texture base directory which must be an absolute path (or a path not containing the drive prefix if used on Windows). This item must come before any occurance of texture_load. The program handling this item may choose to ignore this value and impose its own texture base directory. 80 characters maximum.\
+__Specifies the texture base directory which must be an absolute path (or a path not containing the drive prefix if used on Windows). This item must come before any occurance of texture_load. The program handling this item may choose to ignore this value and impose its own texture base directory. Must be located in header block, 80 characters maximum.\
 __//FIXME really usefull ? Only used in 'hanger01.3d' file, and points to /usr/share/games/SearchAndRescue !\
 __ARGUMENTS\
 __path path to the texture base directory.\
 __CONTEXT\
 __mis scn 3d\
 __EXAMPLE\
+__##begin_header\
+__...\
 __# Texture base directory\
 __//FIXME (see DESCRIPTION above) texture_base_directory /usr/share/sar2\
+__...\
+__##end_header\
 \
 __-----\
 \
@@ -2845,7 +2911,7 @@ __texture_load\
 __SYNOPSIS\
 __texture_load name path priority\
 __DESCRIPTION\
-__Loads the specified texture 'path' with the given 'priority' (from 0.0 to 1.0, where 1.0 is the highest). If the given 'path' is a relative path then the texture_base_directory will be prefixed to it. The 'name' is an arbitary name used to referance this texture which can later be used to match this in a list of textures. Tip: a *.tex file is a *.tga file (top left origin, without Run Length Encoding).\
+__Loads the specified texture 'path' with the given 'priority' (from 0.0 to 1.0, where 1.0 is the highest). If the given 'path' is a relative path then the texture_base_directory will be prefixed to it. The 'name' is an arbitary name used to reference this texture which can later be used to match this in a list of textures. Must be located in header block.<br>Tips:<br> - 'name' references texture for all later loaded objects: if an object has referenced a texture with 'texture_load &nbsp;my_texture&nbsp; image_ONE.tex' and then another object tries to load a new texture with the same reference name like 'texture_load &nbsp;my_texture&nbsp; image_TWO.tex', then second object texture will be image_ONE.tex and not image_TWO.tex because reference name 'my_texture' was already assigned. Therefore, it is a very good idea to reference image file 'a_cool_texture.tex' by the reference name 'a_cool_texture_tex' to avoid objects bad texturing.<br> - a *.tex file is a rebranded *.tga file (top left origin, without Run Length Encoding).\
 __ARGUMENTS\
 __name reference name for the texture.\
 __path path to and name of the texture *.hf file.\
@@ -2853,9 +2919,13 @@ __priority texture priority, for memory management (0.0=lowest priority, 1.0=hig
 __CONTEXT\
 __mis scn 3d\
 __EXAMPLE\
+__##begin_header\
+__...\
 __# Load texture images and set named references to them:\
 __texture_load water01_tex textures/water01.tex 1.0\
 __texture_load building01_tex textures/building01.tex 0.7\
+__...\
+__##end_header\
 \
 __-----\
 \
@@ -3058,7 +3128,7 @@ __type\
 __SYNOPSIS\
 __type object_type\
 __DESCRIPTION\
-__***** Only for reference: do not use 'type' when creating new objects! ***** Note: look for '/* Type */' in objio.c file.\
+__Depreciated, the object's type is now set by the SAR Scenery file. See ##create_object .\
 __ARGUMENTS\
 __object_type see ##create_object for objects types.\
 __CONTEXT\
@@ -3101,7 +3171,7 @@ __version\
 __SYNOPSIS\
 __version major minor [ release ]\
 __DESCRIPTION\
-__Defines the version of the file format.\
+__Defines the version of the file format. Must be located in header block.\
 __For a *.3d file, specifies the V3D model file version (release number is always ignored). This number should always match the version of the libv3d that generated this file.\
 __For a mission or a scenery file, program will print a warning to console like: \"File format version 2.5.0 is newer than program version 0.8.2.\"\
 __ARGUMENTS\
@@ -3111,8 +3181,12 @@ __release release number of the version.\
 __CONTEXT\
 __mis scn 3d\
 __EXAMPLE\
+__##begin_header\
+__...\
 __# Version number\
 __version 0 8 2\
+__...\
+__##end_header\
 \
 __-----\
 \
