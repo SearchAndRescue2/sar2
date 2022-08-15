@@ -465,6 +465,7 @@ typedef struct {
 #define SAR_OBJ_PART_FLAG_DOOR_STAY_OPEN	(1 << 5)	/* Do not close door on
 								 * next loop check,
 								 * ie if door was opened by player explicitly */
+#define SAR_OBJ_PART_FLAG_DOOR_OPENED	(1 << 6)	/* True if fully opened */
 /* Landing Gears */
 #define SAR_OBJ_PART_FLAG_LGEAR_FIXED	(1 << 3)	/* Always down */
 #define SAR_OBJ_PART_FLAG_LGEAR_DAMAGED	(1 << 4)
@@ -1556,6 +1557,10 @@ typedef struct {
 	float		width,
 			length,
 			height;
+
+	/* Multipurpose variables (created for premodeled hangar). */
+	int		multipurpose_int0,
+			multipurpose_int1;
 
 	/* Animation */
 	sar_grad_anim_t	anim_pos,

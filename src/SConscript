@@ -110,6 +110,7 @@ sarsimend.c
 sartime.c
 missionio.c
 sardrawpm_building.c
+sardrawpm_hangar.c
 human.c
 simutils.c
 texturelistio.c

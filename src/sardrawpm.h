@@ -32,6 +32,7 @@
 
 extern void SARDrawPremodeledBuilding(SAR_DRAW_PREMODELED_PROTOTYPE);
 extern void SARDrawPremodeledControlTower(SAR_DRAW_PREMODELED_PROTOTYPE);
+extern void SARDrawPremodeledHangar(SAR_DRAW_PREMODELED_PROTOTYPE);
 extern void SARDrawPremodeledPowerTransmissionTower(SAR_DRAW_PREMODELED_PROTOTYPE);
 extern void SARDrawPremodeledTower(SAR_DRAW_PREMODELED_PROTOTYPE);
 extern void SARDrawPremodeledRadioTower(SAR_DRAW_PREMODELED_PROTOTYPE);

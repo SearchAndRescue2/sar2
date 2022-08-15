@@ -49,6 +49,12 @@ static void SARObjPremodeledTowerNew(
 	sar_object_premodeled_struct *premodeled,
 	int argc, char **argv
 );
+static void SARObjPremodeledHangarNew(
+	sar_core_struct *core_ptr, sar_scene_struct *scene,
+	int obj_num, sar_object_struct *obj_ptr,
+	sar_object_premodeled_struct *premodeled,
+	int argc, char **argv
+);
 static void SARObjPremodeledControlTowerNew(
 	sar_core_struct *core_ptr, sar_scene_struct *scene,
 	int obj_num, sar_object_struct *obj_ptr,
@@ -76,6 +82,8 @@ int SARObjPremodeledNew(
 #define MIN(a,b)        (((a) < (b)) ? (a) : (b))
 #define CLIP(a,l,h)     (MIN(MAX((a),(l)),(h)))
 
+#define HANGAR_ROOF_SLOPES premodeled->multipurpose_int0
+#define IS_LIGHTED_AT_NIGHT premodeled->multipurpose_int1
 
 /*
  *	Creates a new Power Transmission Tower.
@@ -398,6 +406,111 @@ static void SARObjPremodeledTowerNew(
 	);
 }
 
+
+/*
+ *	Creates a new Hangar.
+ */
+
+
+static void SARObjPremodeledHangarNew(
+	sar_core_struct *core_ptr, sar_scene_struct *scene,
+	int obj_num, sar_object_struct *obj_ptr,
+	sar_object_premodeled_struct *premodeled,
+	int argc, char **argv
+)
+{
+	int i, n;
+	
+	/* Format:
+	 *
+	 * <range> <length> <width> <height> <roof_slopes>
+	 * <is_lighted?> <walls_texture> <roof_texture>
+	 */
+	
+	premodeled->type = SAR_OBJ_PREMODELED_HANGAR;
+	
+	/* Range */
+	i = 0;
+	obj_ptr->range = (float)((i < argc) ? ATOF(argv[i]) : 1000.0);
+	
+	/* Length */
+	i = 1;
+	premodeled->length = (float)((i < argc) ? ATOF(argv[i]) : 50.0);
+	
+	/* Width */
+	i = 2;
+	premodeled->width = (float)((i < argc) ? ATOF(argv[i]) : 20.0);
+	
+	/* Height, in feet. Height is side walls height. */
+	i = 3;
+	premodeled->height = (float)SFMFeetToMeters(
+	    (i < argc) ? ATOF(argv[i]) : 50.0
+	);
+	
+	/* Numbers of roof slopes */
+	i = 4;
+	HANGAR_ROOF_SLOPES = (i < argc) ? ATOI(argv[i]) : 4;
+	if( HANGAR_ROOF_SLOPES < 4 )
+	    HANGAR_ROOF_SLOPES = 2;
+
+	/* Is hangar "lighted" at night ?
+	 * It is not really a light, but GL_LIGHTING will be disabled
+	 * and day texture will be applied to hangar inside.
+	 */
+	i = 5;
+	IS_LIGHTED_AT_NIGHT = (i < argc) && (strcasepfx(argv[i], "y")) ? 1 : 0;
+	
+	/* Walls texture */
+	i = 6; n = 0;
+	if(i < argc)
+	{
+	    if(n < SAR_OBJ_PREMODEL_MAX_TEXTURES)
+	        premodeled->tex_num[n] = SARGetTextureRefNumberByName(
+		    scene, argv[i]
+	        );
+	}
+	else
+	    premodeled->tex_num[n] = -1;
+	
+	/* Roof texture */
+	i = 7; n = 1;
+	if(i < argc)
+	{
+	    if(n < SAR_OBJ_PREMODEL_MAX_TEXTURES)
+		premodeled->tex_num[n] = SARGetTextureRefNumberByName(
+		    scene, argv[i]
+		);
+	}
+	else
+	    premodeled->tex_num[n] = -1;
+	
+	/* Floor texture */
+	i = 8; n = 2;
+	if(i < argc)
+	{
+	    if(n < SAR_OBJ_PREMODEL_MAX_TEXTURES)
+		premodeled->tex_num[n] = SARGetTextureRefNumberByName(
+		    scene, argv[i]
+		);
+	}
+	else
+	    premodeled->tex_num[n] = -1;
+	
+	
+	/* Set roof contact bounds. It will not be possible to land on roof
+	 * nor take off behind it without crash, but walls contact will not
+	 * be detected (SarII allows only one contact bound per object). */
+	SARObjAddContactBoundsRectangular(
+	    obj_ptr,
+	    SAR_CRASH_FLAG_CRASH_CAUSE,
+	    SAR_CRASH_TYPE_BUILDING,
+	    -(premodeled->length / 2), (premodeled->length / 2),
+	    -(premodeled->width / 2), (premodeled->width / 2),
+	    premodeled->height, premodeled->height + (premodeled->width / 4) * ( 0.268 + 0.07 ) + 1.2
+	);
+}
+
+
 /*
  *	Creates a new Control Tower.
  */
@@ -423,16 +536,16 @@ static void SARObjPremodeledControlTowerNew(
 
 	/* Length*/
 	i = 1;
-	premodeled->length = (float)((i < argc) ? ATOF(argv[i]) : 15.0);
+	premodeled->length = (float)((i < argc) ? ATOF(argv[i]) : 24.0);
 
 	/* Width*/
 	i = 2;
-	premodeled->width = (float)((i < argc) ? ATOF(argv[i]) : 15.0);
+	premodeled->width = (float)((i < argc) ? ATOF(argv[i]) : 12.0);
 
 	/* Height (in feet)*/
 	i = 3;
 	premodeled->height = (float)SFMFeetToMeters(
-	    (i < argc) ? ATOF(argv[i]) : 80.0
+	    (i < argc) ? ATOF(argv[i]) : 16.4
 	);
   
 	/* Walls texture*/
@@ -593,6 +706,15 @@ int SARObjPremodeledNew(
 	else if(!strcasecmp(type_name, "control_tower"))
 	{
 	    SARObjPremodeledControlTowerNew(
+		core_ptr, scene,
+		obj_num, obj_ptr, premodeled,
+		argc, argv
+	    );
+	}
+	/* Hangar */
+	else if(!strcasecmp(type_name, "hangar"))
+	{
+	    SARObjPremodeledHangarNew(
 		core_ptr, scene,
 		obj_num, obj_ptr, premodeled,
 		argc, argv

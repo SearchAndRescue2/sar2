@@ -61,7 +61,7 @@ void SARDrawPremodeled(SAR_DRAW_PREMODELED_PROTOTYPE)
 	    SARDrawPremodeledControlTower(SAR_DRAW_PREMODELED_INPUT);
 	    break;
 	  case SAR_OBJ_PREMODELED_HANGAR:
-	    /* TODO */
+	    SARDrawPremodeledHangar(SAR_DRAW_PREMODELED_INPUT);
 	    break;
 	  case SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER:
 	    SARDrawPremodeledPowerTransmissionTower(SAR_DRAW_PREMODELED_INPUT);
