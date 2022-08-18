@@ -1,0 +1,458 @@
+<html>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/lwoimporthowto.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:40 GMT -->
+<head>
+<title>Search and Rescue - Manual - LWO Import HOWTO</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index-2.html">Index</a>-&gt;
+<a href="createyourown.html">Create Your Own</a>-&gt;
+LWO Import HOWTO
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=center>
+
+<h2>LWO Import HOWTO</h2>
+
+<p>This document describes how to import 
+<a href="../../../external.html?link=http://www.newtek.com/buynow/lw_products.html">
+LightWave 3D</a>
+LWO files into
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/">
+Vertex 3D</a>
+V3D model files for use with Search and Rescue.
+</p>
+
+<ul>
+ <li><a href="#preplanning">Preplanning</a>
+ <li><a href="#importing">Importing</a>
+ <li><a href="#postprocessing">PostProcessing</a>
+</ul>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="preplanning">
+<hr>
+
+<table width=100% cellpadding=5 cellspacing=0>
+ <tr>
+  <td width=0% align=left valign=top>
+
+<h3>Preplanning</h3>
+
+<h4>LWO to V3D</h4>
+<p>The goal here is to import a LightWave 3D LWO file (<code>.lwo</code>
+file) to a Vertex 3D V3D file (<code>.3d</code> file) which Search and 
+Rescue uses for its aircraft, scenery, objects, etc.
+</p>
+
+<p>First, the LWO file needs to be "preped" before it can be imported to 
+a V3D file. You should <b>save as</b> your LWO file to a <u>different 
+file name</u> and then modify it (prep it) for the eventual importing to 
+a V3D file.
+</p>
+
+<p>Below are a list of issues that need to be considered before 
+importing.
+</p>
+
+<h4>Level of Detail</h4>
+<p>Since LightWave is designed to maximize detail by creating 3d
+objects "as realistic as possible", the LWO model may be too complex 
+(have too many primitives or too many graphics statements) than 
+desireable.
+</p>
+
+<p>Objects in Search and Rescue need to have a balance between 
+simplicity and detail. For example, in a game situation you do not 
+want 60 primitives describing a cylender when you can just use 4 
+primitives to achieve a similar level of detail.
+</p>
+
+<p>Therefore it is important to simplify the LWO model before importing 
+it to a V3D model. Remember that you can use <i>normals</i> to specify 
+the exact description of shading per primitive <u>after</u> import (but 
+this can be tedious).
+</p>
+
+<h4>Normals (or lack thereof)</h4>
+<p>Unfortunately the LWO format does not support <i>normals</i>. To be 
+precise, the LWO format does not support <i>normals</i> in OpenGL's 
+concept (and the V3D file format is really a slightly more advanced 
+text file form of an OpenGL <i>display list</i>).
+</p>
+
+<p><img src="icon_warning.gif" border=0 valign=center>
+A <i>normal</i> is <b>not</b> a vector perpendicular to two "surface" 
+vectors as typically thought of in the mathimatical defination of a
+normal. Here, a <i>normal</i> directs the angle of shading in accordance
+with OpenGL's implementation of <i>normals</i>.
+</p>
+
+<p>A solution to that problem would be to use Vertex 3D's
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/plugins.html">
+VPI Render Normals plug-in</a>,
+however the resulting normals would be calculated and not intuitively
+placed to achieve the intended shading. It would result in
+<i>precise</i> but not <i>accurate</i> shading, meaning your imported
+LWO model may not look the way you intended it to.
+</p>
+
+<p>(This issue is mentioned again in
+<a href="#postprocessing">PostProcessing</a>
+)
+</p>
+
+<h4>Graphics Statements</h4>
+
+<p><i>Graphics statements</i> can be redundant and cause the display of
+the final V3D model to be slow and inefficient. Typically,
+excessive <i>graphics statements</i> in LWO primarly consist of <i>color
+statements</i>. For example you may have colored your LWO model in may
+shades, but the imported V3D file will have color statements between
+primitives in its serial order that make it inefficient. For example, 
+the final imported V3D file may have statements of the following:
+</p>
+
+<ul>
+ <li>Color (red)
+ <li>Quad
+ <li>Color (blue)
+ <li>Quad
+ <li>Color (red)
+ <li>Quad
+ <li>Color (blue)
+ <li>Quad
+</ul>
+
+<p>It would be much more efficient if the order was:
+</p>
+
+<ul>
+ <li>Color (red)
+ <li>Quad
+ <li>Quad
+ <li>Color (blue)
+ <li>Quad
+ <li>Quad
+</ul>
+
+<p>Unfortunately, there is little control over how the LWO file is saved 
+and how color statements are arranged. The <b>best approach</b> to this 
+issue is to <u>not have too many different colors</u>.
+</p>
+
+<h4>Texturing</h4>
+<p>If your LWO model is primarly textured, then you should 
+<b>recolor</b> your LWO model <u>pure white</u> and then <b>select</b> 
+side, top/bottom, and front/back portions of the model and <b>save</b> 
+them to <u>separate LWO files</u> (later you will import them all into
+V3D and recombine them).
+</p>
+
+<h4>Winding</h4>
+<p>The <i>winding</i> of all primitives with solid surface faces should 
+be <i>clockwise</i>. This is not, however, a serious issue since the
+<i>winding</i> can be easilly <b>flipped</b> (using Vertex 3D) after the 
+LWO file is imported to a V3D file.
+</p>
+
+<h4>Concave Primitives</h4>
+<p>The OpenGL specification does <b>not</b> allow primitives with solid 
+surface edges that are <i>concave</i> curved. Such curved edges will be 
+drawn as a straight line. Since the V3D file follows the OpenGL
+specification, you will need to make sure there are no primitives 
+with solid surface edges that have <i>concave</i> curves.
+</p>
+
+<p>If you do have primitives with solid surface edges that are
+<i>concave</i> curved in your LWO file then you should <b>divide</b>
+them into smaller primitives so that there are only <i>convex</i> curved
+edges and <b>no</b> <i>concave</i> curved edges.
+</p>
+
+
+  </td>
+  <td width=0% align=center valign=top>
+
+<h4>From LightWave 3D to Search and Rescue</h4>
+<p>
+<img src="lightwave01.png" border=0
+alt="An LWO model in LightWave 3D"
+><br>
+<font size=2>
+An LWO model in LightWave 3D
+</font>
+</p>
+
+<p>
+<img src="vertexlwoimport01.png" border=0
+alt="The LWO file now imported to a Vertex 3D V3D file"
+><br>
+<font size=2>
+The LWO file now
+<a href="#import">imported</a>
+to a Vertex 3D V3D file
+</font>
+</p>
+
+<p>
+<img src="vertexlwoimport02.png" border=0
+alt="The V3D file after postprocessing"
+><br>
+<font size=2>
+The V3D file after
+<a href="#postprocessing">postprocessing</a>
+</font>
+</p>
+
+<p>
+<img src="sarlwo01.png" border=0
+alt="Finally into the Search and Rescue world"
+><br>
+<font size=2>
+Finally into the Search and Rescue world
+</font>
+</p>
+
+<ul>
+ <li><a href="cubecone.lwo">
+<img src="icon_file.gif" border=0 valign=center>
+<code>cubecone.lwo</code></a> 980 bytes
+</ul>
+
+  </td>
+ </tr>
+</table>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="importing">
+<hr>
+<h3>Importing</h3>
+
+<p>If you have not yet saved your LWO file to a different file name then
+<b>save as</b> your LWO file to a <u>different file name</u> now. Since 
+you may need to make changes to it before it is suitable for importing 
+to a V3D file.
+</p>
+
+<p><b>Select</b> <u>unwanted primitives</u> (primitives that would not 
+contribute to meaningful detail) and <b>delete them</b> from the 
+LWO file. <b>Reduce</b> the <u>level of detail</u> as needed, details 
+such as the number of primitives representing a cylender's curve. 
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+Remember that in V3D you can use OpenGL's implementation of
+<i>normals</i> to shade even a 4 primitive block into a cylender or 
+sphere (thus conserving a lot of cpu and memory use)!
+</p>
+
+<p><b>Recolor</b> the LWO model using <u>fewer colors</u>, this will 
+help reduce the number of color graphics statements and improve 
+efficiency.
+</p>
+
+<p>If your LWO model is textured then you may need to <b>select</b>
+side, top/bottom, and front/back portions of the model and save them to
+<u>separate LWO files</u> (later you will import them all into V3D and
+recombine them).
+</p>
+
+<p>At this point you can now <b>run</b> <u>Vertex 3D</u> and <b>import</b>
+the <u>LWO file(s)</u>. Make sure the LWO plug-in is enabled and go to 
+File-&gt;Import (the LWO plug-in is available in the standard
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/plugins.html">Vertex Plug-In 
+Devel Package</a>) to import the LWO file.
+</p>
+
+<p>Once the LWO file(s) are imported, <b>save as</b> the now V3D model 
+to a <u>V3D file</u>. Next you will need to
+<a href="#postprocessing">PostProcess</a> the new V3D model.
+</p>
+
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+<a name="postprocessing">
+<hr>
+<h3>PostProcessing</h3>
+
+<p>Since the final V3D model came from a LWO model, there are certain 
+modifications you will need to make after you import. Below are a list 
+of steps you may need to take.
+</p>
+
+
+<h4>Flip Winding, Mirror, Rotate, Translate</h4>
+
+<p>The V3D model's primitives with surfaces should be in 
+<i>clockwise</i> winding, thus you may need to <b>select</b> all the 
+primitives and <b>Flip Winding</b> (and leave the primitives selected 
+for the next few steps).
+</p>
+
+<p>Past experience shows that the imported primitives need to be 
+<b>mirrored</b> <u>along the Y axis</u>.
+</p>
+
+<p>You may also need to <b>rotate</b> the imported primitives <u>about 
+the X axis</u> too.
+</p>
+
+<p>At this point the primitives are usually centered properly, however 
+if they are not then <b>translate</b> them to the center as needed.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Setting Normals</h4>
+<p>As mentioned several times before, LWO does not support 
+<i>normals</i>, so you will now need to set normals on each primitive,
+there is the easy way and the hard way:
+</p>
+
+<p>The hard way is to go through each primitive and set a normal to each 
+vertex (very time consuming)</p>
+
+<p>The easy way is to use the
+<a href="../../../external.html?link=http://wolfpack.twu.net/Vertex/plugins.html">
+Render Normals plug-in</a> to have the computer set <i>normals</i> to
+each vertex of each primitive. Go to Render-&gt;Render Normals
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Adjusting Color</h4>
+<p>You may need to adjust the color of the imported model, this can be 
+tedious as you will have to <b>select</b> and <b>modify</b> <u>every 
+color primitive</u>.
+</p>
+
+<p>Since LWO does not specify OpenGL <i>material values</i> you should 
+also set the color primitive's material values while you adjust the 
+color.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Texturing</h4>
+<p>If the LWO model was textured and you imported several LWO files into 
+your new V3D file, now is the time to put all the primitives 
+from each V3D visual model under one V3D visual model in your V3D file.
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+<b>Insert</b> a <u>comment primitive</u> between each set of primitives 
+that came from the separate LWO files. This will help you distinguish 
+which "side" to orient the texture with.
+</p>
+
+<p><b>Create</b> a <u>new V3D visual model</u> in your V3D file and
+<b>cut &amp; paste</b> all the primitives from all the other V3D 
+visual models <u>into the new V3D visual model</u>. Then <b>delete</b>
+the <u>other V3D visual models</u> in your V3D file.
+</p>
+
+<p>Now add the textures as you normally would, remember to convert 
+them to <code>tex</code> (Targa image file format) from whatever 
+format it was when used for the LWO model.
+</p>
+
+<p><img src="icon_bulb.gif" border=0 valign=center>
+Use the comment primitives you inserted between each set of primitives 
+to easilly identify where the new texture select and texture orient 
+primitives go.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+
+<h4>Header &amp; SAR Parameters</h4>
+
+<p>Now create one "other data" model and make sure it is the first model
+in the V3D file. Enter in the usual SAR parameters to describe the 
+object's behavor in Search and Rescue.
+</p>
+
+<p>Make sure that the V3D visual model is named <code>standard</code>,
+or one of the supported V3D visual model names recognized by Search and 
+Rescue.
+</p>
+
+<p>You can repeat the above process to import the
+<code>standard_far</code>, <code>standard_night</code>, etc, models.
+</p>
+
+<p><b>Save</b> your <u>V3D file</u>.</p>
+
+[ <a href="#top">Top</a> |
+  <a href="createyourown.html">Create Your Own</a>
+]
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff><b>Search and Rescue</b></font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/lwoimporthowto.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:41 GMT -->
+</html>
+

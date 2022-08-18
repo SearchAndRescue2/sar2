@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        OL { counter-reset: item; padding-left: 10px; }
+        LI { display: block }
+        LI:before { content: counters(item, ".") " "; counter-increment: item }
+        CODE { display: block; background-color: #dddddd; marging: 1.0em; padding: 0.5em; }
+        H2 { text-align: center; }
+    </style>
+  </head>
+  <body>
+    <header>
+        <h2>Search And Rescue II documentation: how to write a mission.</h2>
+    </header>
+    <main>
+    <ol>
+        <h3><li>Write a scenario</h3>
+            <p>Let's say that our mission will start at US Coast Guard vessel: there is an injured sailor on board who had to be bringed to UCLA hospital. Once landed at UCLA, player will be surprised by a message wich will ask him to rescue a car accident victim, then bring him back to UCLA.</p>
+        </li>
+        <h3><li>Create a new mission file</h3>
+            <p>Create a new text file, and save it as "<i>sar2_base_directory</i>/data/missions/los_angeles99.mis". File name is not used by game engine, but it is a good idea to use scenery name followed by a 2 digit number as file name. Note: all files in missions folder will be read to generate mission list whatever their extension, thus please don't put here other files than SAR II *.mis files!</p>
+        </li>
+        <h3><li>Write the mission header</h3>
+            <p>Mission header gives some indications to player about mission and, even more most important, describes mission environment to game engine. Hereunder is an example of code. Click on links for more information about parameters.</p>
+            <ol><li>First, let's add some comment to indicate that mission header starts here:<br>
+                <code>
+                #<br>
+                # Mission Header<br>
+                #<br>
+                </code>
+            </li>
+            <br>
+            <li>Give our mission a name and a short description. This will be displayed in missions list menu.<br>
+                <code>
+                # Mission name and short description<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#name">name</a> L.A. 99: Injured sailor transport<br>
+                </code>
+            </li>
+            <br>
+            <li>Describe our mission. This is an information for player about what he/she will have to do, and which will be shawn in briefing screen. Note that as we want that mission second part be a surprise, we don't give any information about it. Important information can be bolded <b>&lt;bold></b>some important information<b>&lt;default></b>, locations names are generally underlined <b>&lt;underline></b>a location name<b>&lt;default></b>, and '<b>\n</b>' gives you a possibility to add a newline. If your text is very long, you can put a '<b>\</b>' (backslash) character and continue to write your sentence on the next line.
+                <code>
+                # Description of mission<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#description">description</a> &lt;underline>US Coast Guard vessel&lt;default> cooker has set fire to kitchen. Hopefully, \<br>
+                you and your helicopter are on board! You will have to &lt;bold>take off&lt;default> with him and a doctor \<br>
+                and bring them to &lt;underline>UCLA Hospital&lt;default>.\nHurry up, &lt;bold>time is limited&lt;default>, because cooker \<br>
+                is severely burned!<br>
+                </code>
+            </li>
+            <br>
+            <li>Now, it's time to define weather. It must specify before parameter mission_scene_file. Have a look at <i>sar2_base_directory</i>/data/weather.ini for valid values, or just click on below weather link.
+                <code>
+                # Weather<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#weather">weather</a> Cloudy<br>
+                </code>
+            </li>
+            <br>
+            <li>Here comes an important part: specify where our mission will take place. Choose one of the scenery files. You can find all of them in the <i>sar2_base_directory</i>/data/scenery/ folder.
+                <code>
+                # Scenery file<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_scene_file">mission_scene_file</a> scenery/los_angeles.scn<br>
+                </code>
+            </li>
+            <br>
+            <li>Let's add some realism and difficulty with a little bit of wind:
+                <code>
+                # Wind.<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#wind">wind</a> 90 5 gusts<br>
+                </code>
+            </code>
+            </li>
+            <br>
+            <li>Now, it's time to complement our scenery with some objects as humans, cars, vessels, fire, smoke, ..., i.e. everything that can be mission specific. Hereunder, we will add several objects: the US Coast Guard vessel with its onboard helipad, an injured sailor lying on a stretcher, a car, a car accident victim, and the car driver. Note that the object name (see <a href= "../sar2ParmsBook/sar2ParmsBook.html#object_name">object_name</a>) is mandatory only if this name is used later. Don't hesitate to click on links for more information about parameters and their possible values.<br>
+                <code>
+                # Mission specific objects to add to scenery<br>
+                <br>
+                # US Coast Guard vessel<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_object">create_object</a> 3<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#model_file">model_file</a> vessels/uscg378.3d<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#object_name">object_name</a> uscg378_01<br>
+                </code>
+                <br>
+                Here comes object position. Mission designer tip: to define position and rotation for your object, start your helicopter engine, then toggle to slew mode (<b>CTRL</b>+<b>A</b>) and move to wanted position. Your position will be displayed at left top of screen (use <b>H</b> or <b>SHIFT</b>+<b>H</b> to brighten or darken display).<br>
+                <code>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -12402.0 41157.0 0.0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#rotate">rotate</a> 0 0 0<br>
+                </code>
+                <br>
+                Note that as hereunder helipad is on a vessel, we have to reference it to "uscg378_01", which is the name we gave to USCG vessel just above.<br>
+                <code>
+                # Helipad on US Coast Guard vessel<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_helipad">create_helipad</a> vehicle 29.0 18.0 3.2 USCG y y y y y uscg378_01 0.0 -58.5 36.0  0.0 0.0 0.0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#object_name">object_name</a> helipad_uscg<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#object_map_description">object_map_description</a> US Coast Guard vessel helipad<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#range">range</a> 2200<br>
+                </code>
+                <br>
+                Smokin' kitchen<br>
+                <code>
+                # Smoke &nbsp;&nbsp;&nbsp;offsetx offsety offsetz(m) start max &nbsp;rate hide_at_max respawn_int total_units color_code<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_smoke">create_smoke</a> 0.0 &nbsp;&nbsp;&nbsp;&nbsp;0.0 &nbsp;&nbsp;&nbsp;&nbsp; 15.0 &nbsp;&nbsp;&nbsp;&nbsp;0.5 &nbsp;2.0 &nbsp;0.19 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -12379.0 41145.5 -4.0<br>
+                </code>
+                <br>
+                Now, let's define injured sailor. An important <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> parameter value is "need_rescue", which tells to game engine that this human has to be rescued. Note that this human will board "himself" because of <a href= "../sar2ParmsBook/sar2ParmsBook.html#human_reference">human_reference</a> parameter use, and do not need to be oriented because he will automatically face to player position while his run. Cool stuff: we can add a message wich will be displayed once human on board.<br>
+                <code>
+                # Injured sailor<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> victim_streatcher_assisted need_rescue lying on_streatcher<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -12398.0 41113.0 17.0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#human_reference">human_reference</a> player run_towards<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#set_human_mesg_enter">set_human_mesg_enter</a> To UCLA please! Hurry up, he's severely burned!<br>
+                </code>
+                <br>
+                Here comes the first object for second mission objective: the car.<br>
+                <code>
+                # Car<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_object">create_object</a> 2<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#model_file">model_file</a> automobiles/cuda.3d<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -7960 37990 0.0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#rotate">rotate</a> 310 0 0<br>
+                </code>
+                <br>
+                Now the victim, who will wait to be hoisted:
+                <code>
+                # Pedestrian<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> default lying need_rescue<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -7963 37992 1.0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#set_human_mesg_enter">set_human_mesg_enter</a> My leg! My leg! ... Yum yum! It smells grilled meat here, isn't it?<br>
+                </code>
+                <br>
+                And last, the pedestrian killer:
+                <code>
+                # Car driver<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> default alert<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -7962 37993.5 1.0<br>
+                </code>
+            </li>
+            <br>
+            <li>We almost finish mission header: let's indicate to game engine where player will start the mission. Begin place can be a named landable object (whether it was named in scene file or in mission file), or any other landable position. Here, we decide to start at an object that was named in mission file (look at "object_name helipad_uscg" at earlier step). As this object is not defined in scenery file, we first have to specify its position to game engine. Note that mission starts at helipad_uscg, which stays on USCG vessel, and not at uscg378_01 itself.<br>
+                <code>
+                # Begin at object (name of object from scene file or from above created objects)<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_begin_at_pos">mission_begin_at_pos</a> -12402.0 41098.5 36.0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_begin_at">mission_begin_at</a> helipad_uscg<br>
+                </code>
+            </li>
+            <br>
+            <li>Last, don't forget to specify when mission begins. In addition to having an impact on the light, time will impact too objects drawing is they have a "night" texture.<br>
+                <code>
+                # Time of day<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#time_of_day">time_of_day</a> 10:00<br>
+                </code>
+            </li>
+            <br>
+        </ol>
+        </li>
+        <h3><li>Write the mission objective(s)</h3>
+            <p>In earlier section, we describe the scenery. The mission objective(s) describes to game engine what player has to do to achieve the mission. A mission can have one or more objective(s): hereunder is a three objectives mission example of code.</p>
+            <ol>
+            <li>First, add some comment to indicate that mission objectives starts from here:<br>
+                <code>
+                #<br>
+                # Mission Objective(s)<br>
+                #<br>
+                </code>
+            </li>
+            <br>
+            <li>As we take off at helipad_uscg (see <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_begin_at">mission_begin_at</a>), our first objective will be to arrive to UCLA Medical Center. Possible objective types are: <b>arrive</b>, <b>pick_up</b>, and <b>pick_up_arrive</b>. Let's declare our first mission objective: <br>
+                <code>
+                # Mission first objective<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_new">mission_objective_new</a> arrive<br>
+                </code>
+                Here, earlier objective type is <b>arrive</b>, then we must specify where player has to arrive to. If earlier objective type was <b>pick_up</b>, we would have to specify how many people must be saved with <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_humans_tally">mission_objective_humans_tally</a>. If it was <b>pick_up_arrive</b>, we would have to specify <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_humans_tally">mission_objective_humans_tally</a> <i>and</i> <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_arrive_at">mission_objective_arrive_at</a>. Note that we want arrive at a place named "helipad_ucla", which is defined in scenery file.<br>
+                <code>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_arrive_at">mission_objective_arrive_at</a> helipad_ucla<br>
+                </code>
+                We can give a time limit to complete this objective. As cooker is severely burned, allow to player only 4 minutes and 30 seconds to fulfill this objective:<br>
+                <code>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_time_left">mission_objective_time_left</a> 4.5<br>
+                </code>
+                Finally, let's define messages that will be displayed to player when he/she success or fails this objective. Note that as we prepared a little surprise, we will use success message to display what player has to do just after completed this first objective.<br>
+                <code>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_message_success">mission_objective_message_success</a> \<br>
+                Good jo... HEY! Wait! There's a new mission for you! Car accident! Follow your navigation system and hurry up!<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_message_fail">mission_objective_message_fail</a> \<br>
+                You failed to bring the sailor to hospital<br>
+                </code>
+            </li>
+            <br>
+            <li>Here is the second objective: pick up one human. As explained earlier, we have to specify how many humans have to be picked up. Note that "pick_up" means taken aboard, whatever the means, and not specifically hoisted. For example, if human has a <a href= "../sar2ParmsBook/sar2ParmsBook.html#human_reference">human_reference</a> player run_towards parameter set, he will be picked up if helicopter is landed and its engines are off, <i>or</i> by hoisting him.<br>
+                <code>
+                # Mission second objective<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_new">mission_objective_new</a> pick_up<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_humans_tally">mission_objective_humans_tally</a> 1 1<br>
+                </code>
+                Let's not be too hard on player, and give infinite time to complete this objective:
+                <code>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_time_left">mission_objective_time_left</a> 0.0<br>
+                </code>
+                Then define objective success and fail messages:
+                <code>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_message_success">mission_objective_message_success</a> \<br>
+                Victim on board. Now, bring him to UCLA!<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_message_fail">mission_objective_message_fail</a> \<br>
+                You failed to reach and pick up the car victim safely!<br>
+                </code>
+            </li>
+            <br>
+            <li>Finally, here comes our third objective:<br>
+                <code>
+                # Mission third objective<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_new">mission_objective_new</a> arrive<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_arrive_at">mission_objective_arrive_at</a> helipad_ucla<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_time_left">mission_objective_time_left</a> 0.0<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_message_success">mission_objective_message_success</a> \<br>
+                Good job, you brought the car victim back safely to UCLA!<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_message_fail">mission_objective_message_fail</a> \<br>
+                You failed to bring the car victim back to UCLA!<br>
+                </code>
+            </li>
+            </li>
+        </ol>
+        </li>
+        <br>
+        <h3><li>Write the mission post data</h3>
+            <p>Last, the mission post data. The only one mandatory part of post data is player object creation, waypoints are facultative. Hereunder is an example of code:</p>
+            <ol>
+            <li>As previously for other mission files sections, add comment to indicate that mission post data starts from here:<br>
+            <code>
+                #<br>
+                # Mission Post Data (these need to come after the objectives)<br>
+                #<br>
+            </code>
+            </li>
+            <br>
+            <li>Let's start with player object creation, which defines player's aircraft:
+            <code>
+                # Create player object<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#player_model_file">player_model_file</a> aircrafts/hh65.3d<br>
+            </code>
+            </li>
+            <br>
+            <li>Now, we can add some waypoints, which ones will help player for navigation. Without waypoints, mission can be much more difficult to complete because player has to have a very good knowledge of relative places position, because places names are not shown on in-game map. Note that if objective position has been defined in mission objective, then game engine will automatically associate waypoint position to objective position. This is the case for our first objective (see <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_objective_arrive_at">mission_objective_arrive_at</a> helipad_ucla): waypoint position will be same as helipad_ucla position (which is defined in "scenery/los_angeles.scn" scenery file).
+            <code>
+                # First waypoint (for first objective)<br>
+                # &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ref_code&nbsp; radius&nbsp; urgency<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_add_intercept">mission_add_intercept</a> &nbsp;3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.0 &nbsp;&nbsp;&nbsp;0.5<br>
+            </code>
+            </li>
+            <br>
+            <li>Let's point our second waypoint to the poor car victim. Note that for this second objective, position is <b>not</b> defined by objective, thus we have to speciy it by setting ref_code to 0 and copying pedestrian position:
+            <code>
+                # Second waypoint (for second objective)<br>
+                # &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ref_code&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;z&nbsp; radius urgency<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_add_intercept">mission_add_intercept</a> 0&nbsp; -7963 37992 1.0&nbsp;&nbsp; 1.0&nbsp;&nbsp; 0.5<br>
+            </code>
+            </li>
+            <br>
+            <li>Third waypoint, pointing to third objective. Once again, objective place position (helipad_ucla) is known, thus we don't have to specify it:
+            <code>
+                # Third waypoint (for third objective)<br>
+                # &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ref_code&nbsp; radius&nbsp; urgency<br>
+                <a href= "../sar2ParmsBook/sar2ParmsBook.html#mission_add_intercept">mission_add_intercept</a> &nbsp;3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.0 &nbsp;&nbsp;&nbsp;0.5<br>
+            </code>
+            </li>
+            </ol>
+        </li>
+        <br>
+        <h3><li>The funniest part: test your work! &#128526;</h3>
+            <p>Save your mission file, start SAR II, then choose Mission. Missions are alphabetically sorted and this mission should appear in list as "L.A. 99: Injured sailor transport". If not, check if it has been saved in the right folder.<br>
+            If you don't already had copied code lines, here is the whole "ready to fly" <a href= "file:./los_angeles99.mis" download target="_blank">los_angeles99.mis</a> file.</p>
+            <br>
+        </li>
+    </main>
+    <footer></footer>
+  </body>
+</html>

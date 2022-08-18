@@ -1,0 +1,333 @@
+<html>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/faq.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:07 GMT -->
+<head>
+<title>Search and Rescue - Manual - FAQ</title>
+<body
+ bgcolor=ffffff
+ text=000000
+ link=808000
+ vlink=606000
+ alink=606060
+>
+</head>
+
+<body>
+<a name="top">
+<center>
+<table width=90% border=0 cellspacing=5>
+ <tr>
+  <td width=100% align=center valign=center bgcolor=ff0000>
+<font color=ffffff><b>Search and Rescue Manual</b></font>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=left valign=center bgcolor=ffff00>
+<font color=000000>
+<a href="index-2.html">Index</a>-&gt;
+Frequently Asked Questions
+</font>
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=left valign=top>
+
+<p>
+<ol>
+ <li><a href="#000001">
+How do I get this program to run in full screen (fullscreen mode)?</a>
+ <li><a href="#000002">
+How do I specify the startup resolution?</a>
+ <li><a href="#000003">
+How do I get it to use hardware rendering?</a>
+ <li><a href="#000004">
+How come objects farther away are showing through closer objects
+(aka bleed throughs)?</a>
+ <li><a href="#000005">
+Why do some parts of the scene seem to flicker like
+miniblinds (aka miniblinds flickering effect)?</a>
+ <li><a href="#000006">
+How do I recompile with debugging support and debug the program?</a>
+ <li><a href="#000007">
+Why do I get wierd colors or missing objects using an ATI Rage 128?</a>
+ <li><a href="#000008">
+Cursor keys do not respond at all using keyboard as controller?</a>
+
+ </ol>
+</p>
+
+
+
+
+<hr>
+<a name="000001">
+<h4>
+How do I get this program to run in full screen (fullscreen mode)?
+</h4>
+
+<p>As of version 0.8.1 you can use <code>CTRL + F11</code> to switch to
+<i>full screen</i> or back to <i>windowed</i> mode while the program is 
+running. In addition you can use <code>CTRL + [</code> and
+<code>CTRL + ]</code> to adjust the <i>resolution</i> at any time.
+</p>
+
+<p>
+For 0.7.x users:
+Use the option <code>--fullscreen</code> when you run or create a shortcut
+to the application. You may also want to specify the startup resolution
+with the <code>--geometry WxH</code> argument.
+</p>
+<p>For example:</p>
+<ul>
+ <li><code>/usr/games/SearchAndRescue
+--fullscreen --geometry 640x480</code>.
+</ul>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000002">
+<h4>
+How do I specify the startup resolution?
+</h4>
+
+<p>
+Use the option <code>--geometry WxH</code> when you run or 
+create a shortcut to the application.
+</p><p>
+For example <code>/usr/games/SearchAndRescue   
+--geometry 640x480</code>.
+</p><p>
+You can also change the resolution in game (windowed mode only) by
+simply dragging the window frame. The smallest size is 100x70
+(as defined in <code>config.h</code>
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000003">
+<h4>
+How do I get it to use hardware rendering?
+</h4>
+
+<p>
+By default the application specifies to use hardware
+rendering to the OpenGL wrapper implmentation. The option <code>
+--hardware_rendering</code> is on by default so specifying it
+is meaningless.
+</p><p>
+If you are still having problems using hardware acceleration,
+then you should run this application with the <code>
+--runtime_debug</code>. It will print many initialization and runtime
+messages to stdout. If you are still having problems with hardware
+acceleration and other OpenGL applications seem to use hardware 
+acceleration properly then you should notify the authors and be sure
+to send the output from stdout when you ran with the <code>
+--runtime_debug</code> argument.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000004">
+<h4>
+How come objects farther away are showing through closer objects
+(aka bleed throughs)?
+</h4>
+
+<p>
+<b>Not</b> to be confused with the <a href="#000005">
+Z buffer 'miniblinds flickering effect'</a>, this is due
+to <i>depth testing</i> intentionally turned off for certain objects
+that are impossible to be displayed with OpenGL properly.
+</p>
+
+<p>
+Technical note, this problem is caused by the need to render objects
+such as heighfields over flat 2D surfaces where parts of the heightfield
+are parallel and at the exact height of the 2D surface. Enabling 
+OpenGL's polygon offset is not a solution as the written depth would
+otherwise be incorrect. There is a high
+performance cost solution to this using two passes and OpenGL's stencil
+buffer, however it is not a viable solution at this time (Oct 2001).
+Reffer back to this section in the future, a solution may be available
+then.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000005">
+<h4>
+Why do some parts of the scene seem to flicker like
+miniblinds (aka miniblinds flickering effect)?
+</h4>
+
+<p>
+Most objects drawn over other objects in perfect parallel alignment
+and at the same location will 'fight' to show though in the
+depth buffer. This causes a miniblinds flickering effect, the solution
+is to use a technique called polygon offsetting which this application
+uses when appropriate.
+</p><p>
+However some systems have differences in the amount of offsetting
+so sometimes the user needs to adjust this value. You can change this
+value in game by pressing the <code>/</code> key to bring up the
+prompt and then type in <code>option gl_polgyon_offset=-2.0</code>
+A typical value can be from <code>-1.5</code> to <code>-2.0</code>
+where the more negative value produces more offset. Reduce (make more
+negative) this value if you are still getting a lot of
+miniblinds flickering effect. Note that this changed value will be
+stored in your <code>SearchAndRescue.ini</code> file.
+</p>
+<p>Some scenerys are partially responsible for denoting where
+to use polygon offsetting and that the scenery builder/author may need
+to be nofitied about the problem if specifying a lower
+<code>gl_polgyon_offset</code> value does not work. If you try going below
+<code>-10.0</code> without any good results, then that might indicate
+it is a problem with the scenery.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+<hr>
+<a name="000006">
+<h4>
+How do I recompile with debugging support and debug the program?
+</h4>
+
+<p>
+(UNIX/X version only) go back to the source directory for this program
+(or download it again if you deleted it) and type the following
+command on your shell prompt
+(you may have to replace some values to suit your system):
+<ul>
+ <li><code>./configure linux -v --prefix=/usr --enable="debug" 
+--disable="arch-i586"
+</code>
+
+</ul>
+The above command assumes you are using Linux and that your computer is
+an Intel Pentium 586 (i586). If you have a 486, then change
+<code>arch-i586</code> to <code>arch-i486</code>. Use the command
+<code>uname -m</code> to find out which one you have.
+</p>
+
+<p>
+If the source (re)configuration worked, then type
+<ul>
+ <li><code>make clean</code>
+ <li><code>make</code>
+</ul>
+</p>
+
+<p>
+If everything was successful then you can begin the debugging
+process (this assumes you've already ran <code>make install</code>
+earlier). Run <code>gdb sar/SearchAndRescue</code>, this will run
+the GNU Debugger (gdb). Once you are in gdb, type <code>run</code>
+to run the program. When/if the program crashes, type <code>bt</code>
+to display the <i>backtrace</i>. Besure to send the backtrace to
+the authors as needed. Type <code>quit</code> to quit gdb, note that gdb
+will ask if you want to quit while the program crashed but is still
+running. Say yes to that.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6> 
+
+
+<hr>
+<a name="000007">
+<h4>
+Why do I get wierd colors or missing objects using an ATI Rage 128?
+</h4>
+
+<p>
+Be sure to compile the kernel with modular support for DRI,
+use the DRI kernel module for the rage128 called <code>r128.o</code> from
+<a href="../../../external.html?link=http://www.xfree86.org/~alanh">
+http://www.xfree86.org/~alanh</a>. Some older modules may cause
+unusual color behavour, try upgrading to the latest module
+if you are experiencing this problem.
+</p>
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+<hr>
+<a name="000008">
+<h4>
+Cursor keys do not respond at all using keyboard as controller?
+</h4>
+
+<p>
+This problem has been reported on some Debian Linux systems when
+running SAR 0.7.20 or newer, its exact cause is unknown. However the
+solution has been to manually remove the file
+<code>$HOME/.SearchAndRescue/SearchAndRescue.ini</code>
+and then running <code>SearchAndRescue</code> so that it regenerates
+a new configuration file with default values. Although there are no key
+bindings in that file, the removal of that file has been reported
+to resolve this problem.
+</p>
+
+<p>
+Next potential problem is that SAR was compiled with gcc 2.95.
+This has been reported to generate a bad binary (possibly in
+the Flight Dynamics modules). Try using a different compiler,
+we recommend egcs or gcc 3.0.
+</p>
+
+<p>
+See also
+<a href="../../../external.html?link=http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=144704&repeatmerged=yes">
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=144704&repeatmerged=yes
+</a>
+</p>
+
+
+<h6>Back to the <a href="#top">top</a></h6>
+
+
+
+
+  </td>
+ </tr>
+
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ff0000>
+<p>
+<font color=ffffff>Search and Rescue</font>
+</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=100% align=right valign=center bgcolor=ffff00>
+<p>
+<font color=000000 size=1>
+<a href="../../../external.html?link=http://wolfpack.twu.net/SearchAndRescue">
+http://wolfpack.twu.net/SearchAndRescue</a>
+</font>
+</p>
+  </td>
+ </tr>
+
+</table>
+</center>
+
+</body>
+
+<!-- Mirrored from wolfpack.twu.net/SearchAndRescue/manual/faq.html by HTTrack Website Copier/3.x [XR&CO'2003], Thu, 15 Jul 2004 21:52:07 GMT -->
+</html>
