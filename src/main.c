@@ -1447,7 +1447,7 @@ GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
 	    if(stat(s, &stat_buf))
 		fprintf(
 		    stderr,
-"Warning: Environment variable \"%s\" value \"%s\" reffers to a non-existant object.\n",
+"Warning: Environment variable \"%s\" value \"%s\" refers to a non-existant object.\n",
 		    SAR_DEF_ENV_GLOBAL_DIR, s
 		);
 	}
