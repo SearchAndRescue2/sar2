@@ -1,11 +1,17 @@
 #!/bin/bash
+
 BIN_FILE="bin/sar2"
-PATH_TO_GAME=$(dirname $0) #make it possible to execute this from any location
+# Different shells set $0 differently (bash uses relative and fish absolute)
+# so we find what the absolute path to this script is.
+# Also SAR2_DATA must be an absolute path
+ABS_PATH=$(realpath $0)
+PATH_TO_GAME=$(dirname $ABS_PATH) # absolute path to game folder
+export SAR2_DATA="$PATH_TO_GAME/data"
 
 if [[ ! -f "$PATH_TO_GAME/$BIN_FILE" ]]
  then
      echo "Search and Rescue II will now be compiled"
-     cd "$PATH_TO_GAME"
+     pushd "$PATH_TO_GAME"
      scons
      if [[ $? -ne 0 ]]
      then 
@@ -14,8 +20,7 @@ if [[ ! -f "$PATH_TO_GAME/$BIN_FILE" ]]
      else
          echo "Search and Rescue II has been compiled successfully."
      fi
-     cd -
+     popd
 fi
-# export full path of the data location
-export SAR2_DATA="$(pwd)/$PATH_TO_GAME/data"
+
 "$PATH_TO_GAME/bin/sar2" $@
