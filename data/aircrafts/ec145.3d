@@ -84,7 +84,7 @@ dry_mass 2450.0
 # consumption_rate = fuel_max_kg / max_endurance_time_in_seconds / avg_throttle_coeff
 # where avg_throttle_coeff is the average throttle value (ie 0.8 for most cases).
 #    consumption_rate(kg/sec)  initial_kg  max_kg
-fuel          0.093               69.40    694.0
+fuel          0.093               694.0    694.0
 
 # Engine settings.
 # Power value adjusted to achieve vertical max climb rate at helicopter max weight and 100% throttle (collective),
