@@ -34,7 +34,7 @@ struct Material {
 
 #define MAX_MTLLIB_FILENAMES 10 // a mtllib statement can be followed by multiple file names. Here is defined maximum number of file names.
 
-#define FREE_AND_CLOSE_ALL \
+#define FREE_AND_CLOSE_ALL_OBJTOV3D \
 if ( v != NULL ) free( v ); \
 if ( vn != NULL ) free( vn ); \
 if ( vt != NULL ) free( vt ); \
@@ -153,7 +153,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    Vcoord *tmp = realloc( v, ( verticies + 1 ) * sizeof( Vcoord ) );
 	    if (tmp == NULL)
 	    {
-		FREE_AND_CLOSE_ALL
+		FREE_AND_CLOSE_ALL_OBJTOV3D
 		fprintf( stderr, "Line #%ld: Can't allocate memory for Vcoord[%ld].\n", lineNr, verticies );
 		return EXIT_FAILURE;
 	    }
@@ -231,7 +231,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    Vnormal *tmp = realloc( vn, ( normals + 1 ) * sizeof( Vnormal ) );
 	    if (tmp == NULL)
 	    {
-		FREE_AND_CLOSE_ALL
+		FREE_AND_CLOSE_ALL_OBJTOV3D
 		fprintf( stderr, "Line #%ld: Can't allocate memory for Vnormal[%ld].\n", lineNr, normals );
 		return EXIT_FAILURE;
 	    }
@@ -263,7 +263,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    Tcoord *tmp = realloc( vt, ( textCoords + 1 ) * sizeof( Tcoord ) );
 	    if (tmp == NULL)
 	    {
-		FREE_AND_CLOSE_ALL
+		FREE_AND_CLOSE_ALL_OBJTOV3D
 		fprintf( stderr, "Line #%ld: Can't allocate memory for Tcoord[%ld].\n", lineNr, textCoords );
 		return EXIT_FAILURE;
 	    }
@@ -450,7 +450,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    if ( tmpVertex == NULL )
 	    {
 		fprintf( stderr, "Can't allocate memory for tmpVertex.\n");
-		FREE_AND_CLOSE_ALL
+		FREE_AND_CLOSE_ALL_OBJTOV3D
 		return EXIT_FAILURE;
 	    }
 	    
@@ -458,7 +458,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    if ( tmpVertex2 == NULL )
 	    {
 		fprintf( stderr, "Can't allocate memory for tmpVertex2.\n");
-		FREE_AND_CLOSE_ALL
+		FREE_AND_CLOSE_ALL_OBJTOV3D
 		return EXIT_FAILURE;
 	    }
 	    
@@ -661,7 +661,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		if ( mtllibFileNr > MAX_MTLLIB_FILENAMES - 1 )
 		{
 		    fprintf(stderr, "Line #%ld: more than %d file names found in mtllib statement. Exiting.\n", lineNr, MAX_MTLLIB_FILENAMES );
-		    FREE_AND_CLOSE_ALL
+		    FREE_AND_CLOSE_ALL_OBJTOV3D
 		    return EXIT_FAILURE;
 		}
 	    }
@@ -681,13 +681,13 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		if ( result == -1 )
 		{
 		    fprintf(stderr, "Line #%ld: file '%s' not found. Exiting.\n", lineNr, mtlSource );
-		    FREE_AND_CLOSE_ALL
+		    FREE_AND_CLOSE_ALL_OBJTOV3D
 		    return EXIT_FAILURE;
 		}
 		else if ( result == -2 )
 		{
 		    fprintf(stderr, "Line #%ld: something wrong has happen in %s file. Exiting.\n", lineNr, mtlSource );
-		    FREE_AND_CLOSE_ALL
+		    FREE_AND_CLOSE_ALL_OBJTOV3D
 		    return EXIT_FAILURE;
 		}
 	    }
@@ -1077,7 +1077,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 
     //fprintf( stderr, "Number of\n  verticies: %ld\n    normals: %ld\n textCoords: %ld\n      faces: %ld\n", verticies, normals, textCoords, faces );
     
-    FREE_AND_CLOSE_ALL
+    FREE_AND_CLOSE_ALL_OBJTOV3D
      
     return EXIT_SUCCESS;
 }

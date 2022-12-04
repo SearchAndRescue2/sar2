@@ -15,13 +15,16 @@
 ***********************************************************************/
 
 
-#define VERSION "0.1"
+#define VERSION "0.3"
 
 #include <linux/limits.h> // for PATH_MAX
 #define MAXPATHLENGTH PATH_MAX
 
 #define MAX_LENGTH 2048
 #define MAX_PARAMETER_LINES 6
+
+#define OBJ_OBJECT_NAME_TERRAIN "Terrain"
+#define OBJ_OBJECT_NAME_V3DCONVERTER_DATA "v3dConverter_data_DO_NOT_REMOVE"
 
 typedef struct UserModifier UserModifier;
 struct UserModifier {

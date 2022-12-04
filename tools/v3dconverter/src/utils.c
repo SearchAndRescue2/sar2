@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <math.h>
+#include <time.h>
 
 
 char* extOf( char *bname) { // returns extension of base name
@@ -263,4 +264,54 @@ int calculateSurfaceNormal ( Vcoord *v, int verticies, Vnormal *vn )
 	vn->k = vn->k / vecLength;
 	return EXIT_SUCCESS;
     }
+}
+
+#include <time.h>
+char *timeStamp() // returns a YYYYMMDDHHMMSS timestamp
+{
+  int h, min, s, day, month, year;
+  time_t now;
+  char *timeStampString;
+
+  // Current time
+  time(&now);
+  // Convert to local time
+  struct tm *local = localtime(&now);
+  h = local->tm_hour;        
+  min = local->tm_min;       
+  s = local->tm_sec;       
+  day = local->tm_mday;          
+  month = local->tm_mon + 1;     
+  year = local->tm_year + 1900;  
+
+  timeStampString = strdup("YYYYMMDDHHMMSS");
+  sprintf(timeStampString, "%02d%02d%d%02d%02d%02d", year, month, day, h, min, s);
+
+  return(timeStampString);
+}
+
+#include <stdbool.h>
+bool isTex ( const char *fullFileName ) // returns 'true' if file baseName contains '.tex'
+{
+    char *path = NULL, *baseName = NULL, *extension = NULL;
+    
+    scanFileName( fullFileName, &path, &baseName, &extension );
+    
+    if ( strstr( baseName, ".tex" ) )
+	return true;
+    else
+	return false;
+}
+
+#include <stdbool.h>
+bool isHf ( const char *fullFileName ) // returns 'true' if file baseName contains '.hf'
+{
+    char *path = NULL, *baseName = NULL, *extension = NULL;
+    
+    scanFileName( fullFileName, &path, &baseName, &extension );
+    
+    if ( strstr( baseName, ".hf" ) )
+	return true;
+    else
+	return false;
 }

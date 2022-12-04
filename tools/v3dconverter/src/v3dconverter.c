@@ -25,6 +25,7 @@
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
+#include <unistd.h> // for getcwd
 
 #include "v3dconverter.h"
 #include "utils.c"
@@ -32,12 +33,16 @@
 #include "v3dtoobj.c"
 #include "ac3dtov3d.c"
 #include "objtov3d.c"
+#include "v3dhftoobj.c"
+#include "objtohf.c"
 
 int main( int argc, char *argv[] )
 {
     char * source;
     char * destination;
     char *scaleString;
+    char lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1];
+    FILE *fp;
     
     struct UserModifier userModifier;
     userModifier.rx = 0;
@@ -47,7 +52,7 @@ int main( int argc, char *argv[] )
     userModifier.ty = 0;
     userModifier.tz = 0;
     userModifier.scale = 1.0;
-    userModifier.invertFaces = 0;
+    userModifier.invertFaces = false;
     
     if ( argc == 1 )
     {
@@ -57,7 +62,7 @@ int main( int argc, char *argv[] )
     else if ( ( argc == 2 && !strcmp( argv[1], "-h" ) ) || !strcmp( argv[1], "--help" ) )
     {
 	fprintf( stdout, "v3dconverter %s\n", VERSION );
-        fprintf( stdout, "Convert a Search And Rescue V3D *.3d model file to/from Wavefront *.obj or AC3D *.ac format.\n" );
+        fprintf( stdout, "Convert a Search And Rescue V3D *.3d model or terrain file to/from Wavefront *.obj or AC3D *.ac format.\n\n" );
         fprintf( stdout, "Usage : %s -i input_file [options] -o output_file | [-h] | [--help]\n", argv[0] );
         fprintf( stdout, "   OPTIONS:\n");
         fprintf( stdout, "     -if\n");
@@ -72,22 +77,22 @@ int main( int argc, char *argv[] )
         fprintf( stdout, "        Prints v3dconverter version.\n" );
         fprintf( stdout, "\n");
         fprintf( stdout, "   Available conversions:\n");
-        fprintf( stdout, "                +--------------------+\n" );
-        fprintf( stdout, "                |    Destination     |\n" );
-        fprintf( stdout, "         +------+------+------+------+\n" );
-        fprintf( stdout, "     +--\\|format| .3d  | .obj | .ac  |\n" );
-        fprintf( stdout, "     | S +------+------+------+------+\n" );
-        fprintf( stdout, "     | o | .3d  |  .   |works1|todo? |\n" );
-        fprintf( stdout, "     | u +------+------+------+------+\n" );
-        fprintf( stdout, "     | r | .obj | DONE |  .   |   .  |\n" );
-        fprintf( stdout, "     | c +------+------+------+------+\n" );
-	fprintf( stdout, "     | e | .ac  |works2|  .   |   .  |\n" );
-	fprintf( stdout, "     +---+------+------+------+------+\n" );
-	fprintf( stdout, "     DONE   : Functional for objects with polygonal (non-\"freeform\") faces.\n" );
-	fprintf( stdout, "     works1 : Proof of concept. Whole code to rewrite, not finished, works -with color issues in Blender- with a lot of (all of ?) \"original\" Sar2 objects.\n" );
-	fprintf( stdout, "     works2 : Proof of concept. Whole code to rewrite, not finished (no -tr option, ...)\n" );
+        fprintf( stdout, "                +--------------------------+\n" );
+        fprintf( stdout, "                |        Destination       |\n" );
+        fprintf( stdout, "         +------+------+------+------+-----+\n" );
+        fprintf( stdout, "    +--. |format| .3d  | .hf  | .obj | .ac |\n" );
+        fprintf( stdout, "    | S `+------+------+------+------+-----+\n" );
+        fprintf( stdout, "    | o  | .3d  |   .  |   .  |works1|todo?|\n" );
+        fprintf( stdout, "    | u  +------+------+------+------+-----+\n" );
+        fprintf( stdout, "    | r  | .obj | DONE | DONE |  .   |  .  |\n" );
+        fprintf( stdout, "    | c  +------+------+------+------+-----+\n" );
+	fprintf( stdout, "    | e  | .ac  |works2| todo?|  .   |  .  |\n" );
+	fprintf( stdout, "    +----+------+------+------+------+-----+\n" );
+	fprintf( stdout, "     DONE   : *.obj to *.3d conversion functional for *.obj objects with polygonal (non-\"freeform\") faces. *.obj to *.hf conversion functional for *.obj \"terrain\" file converted from a *.3d terrain file.\n" );
+	fprintf( stdout, "     works1 : Works fine for *.3d terrain files. For object files, works with a lot of (all of ?) \"original\" Sar2 objects, but code is a proof of concept (not finished, to rewrite, some color issues when opening *.obj files in Blender).\n" );
+	fprintf( stdout, "     works2 : Proof of concept: code to rewrite, not finished (no -tr option, ...)\n" );
 	fprintf( stdout, "     todo?  : Maybe later...\n" );
-	fprintf( stdout, "        .   : Not planned (don't concern *.3d format).\n" );
+	fprintf( stdout, "        .   : Not planned.\n" );
 	fprintf( stdout, "     For other formats, try assimp: https://www.assimp.org/\n" );
         fprintf( stdout, "     \n" );
 	
@@ -119,7 +124,7 @@ int main( int argc, char *argv[] )
         }
         else if ( !strcmp(argv[counter], "-if") ) // invert model faces
 	{
-            userModifier.invertFaces = 1;
+            userModifier.invertFaces = true;
         }
         else if ( !strcmp(argv[counter], "-sc") ) // scale model
 	{
@@ -205,23 +210,97 @@ int main( int argc, char *argv[] )
     /* Convert */
     if ( !strcmp( extOf( source ), ".3d") && !strcmp( extOf( destination ), ".obj" ) )
     {
-	fprintf( stdout, "[ INFO ] *** .3d to .obj conversion is EXPERIMENTAL. Please don't report bugs and use it at your own risk ;-) ***\n" );
-        if ( userModifier.scale != 1.0 )
-	{
-            fprintf( stdout, "[ INFO ] -sc (scale) option currently not available in *.3d to *.obj conversion.\n" );
+	/* Check if *.3d file is a terrain file, i.e. if it has "heightfield_load" and "texture_load" statements */
+	bool hasHeightfield = false, hasTexture = false;
+	if ( ( fp = fopen(source, "r" ) ) == NULL ) {
+	    perror(source);
+	    return -1;
 	}
-        v3dToObj(source, destination, &userModifier);
+	while ( fgets(lineBuffer, MAX_LENGTH, fp) )
+	{
+	    if ( lineBuffer[ 0 ] == '\n' || lineBuffer[ 0 ] == '\r' || ( sscanf( lineBuffer, " %s[\n]", objTag ) ) == 0 ) // blank line or objTag == ""
+	    {
+		lineNr++;
+		continue;
+	    }
+	    else if ( !strcmp( objTag, "heightfield_load" ) )
+	    {
+		hasHeightfield = true;
+		if ( hasTexture )
+		    break;
+	    }
+	    else if ( !strcmp( objTag, "texture_load" ) )
+	    {
+		hasTexture = true;
+		if ( hasHeightfield )
+		    break;
+	    }
+	    else
+		;
+	}
+	fclose( fp );
+	
+	/* Select the right function, depending of *.3d file type ("object" or "terrain") */
+	if ( !hasHeightfield )
+	{ // it is *.3d object file
+	    fprintf( stdout, "[ INFO ] *** .3d object to .obj conversion is EXPERIMENTAL. Please don't report bugs and use it at your own risk ;-) ***\n" );
+	    if ( userModifier.scale != 1.0 )
+	    {
+		fprintf( stdout, "[ INFO ] -sc (scale) option currently not available in *.3d to *.obj conversion.\n" );
+		userModifier.scale = 1.0;
+	    }
+	    v3dToObj( source, destination, &userModifier );
+	}
+	else
+	{ // it is *.3d terrain file
+	    if ( userModifier.rx != 0 || userModifier.ry != 0 || userModifier.rz != 0 )
+	    {
+		fprintf( stdout, "[ INFO ] -ro (rotate) option not available in *.3d terrain to *.obj conversion.\n" );
+		userModifier.rx = 0;
+		userModifier.ry = 0;
+		userModifier.rz = 0;
+	    }
+	    if ( userModifier.invertFaces == true )
+	    {
+		fprintf( stdout, "[ INFO ] -if (invert faces visibility) option not available in *.3d terrain to *.obj conversion.\n" );
+		userModifier.invertFaces = false;
+	    }
+	    v3dHfToObj( source, destination, &userModifier );
+	}
     }
-    else if ( !strcmp(extOf( source ), ".obj" ) && !strcmp( extOf(destination ), ".3d" )  )
+    else if ( !strcmp(extOf( source ), ".obj" ) && !strcmp( extOf( destination ), ".3d" )  )
     {
         objToV3d( source, destination, &userModifier );
     }
-    else if ( !strcmp(extOf( source ), ".ac" ) && !strcmp( extOf(destination ), ".3d" )  )
+    else if ( !strcmp(extOf( source ), ".obj" ) && ( !strcmp( extOf( destination ), ".hf" ) || isHf( destination ) ) )
+    {
+		if ( userModifier.tx != 0 || userModifier.ty != 0 || userModifier.tz != 0 || userModifier.rx != 0 || userModifier.ry != 0 || userModifier.rz != 0 || userModifier.invertFaces == 1 )
+	    {
+		fprintf( stdout, "[ INFO ] -tr (translate), -ro (rotate), and -if (invert faces) options not available in *.obj terrain to *.hf conversion:\n          translations have been saved during *.3d to *.obj conversion and will be automatically set.\n" );
+		userModifier.tx = 0;
+		userModifier.ty = 0;
+		userModifier.tz = 0;
+		userModifier.rx = 0;
+		userModifier.ry = 0;
+		userModifier.rz = 0;
+		userModifier.invertFaces = false;
+		}
+		if ( userModifier.scale != 1.0 )
+	    {
+		fprintf( stdout, "[ INFO ] -sc (scale) option not available in *.obj terrain to *.hf conversion:\n          scale has been saved during *.3d to *.obj conversion and will be automatically set.\n" );
+		userModifier.scale = 1.0;
+	    }
+        objToHf( source, destination, &userModifier );
+    }
+    else if ( !strcmp(extOf( source ), ".ac" ) && !strcmp( extOf( destination ), ".3d" )  )
     {
 	fprintf( stdout, "[ INFO ] *** .ac to .3d conversion is EXPERIMENTAL. Please don't report bugs and use it at your own risk ;-) ***\n" );
 	if ( userModifier.tx != 0 || userModifier.ty != 0 || userModifier.tz != 0 )
 	{
 	    fprintf( stdout, "[ INFO ] -tr (translate) option currently not available in *.ac to *.3d conversion.\n" );
+		userModifier.tx = 0;
+		userModifier.ty = 0;
+		userModifier.tz = 0;
 	}
         ac3dToV3d( source, destination, &userModifier );
     }
