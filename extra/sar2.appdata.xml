@@ -52,4 +52,5 @@
   </releases>
   <url type="homepage">https://searchandrescue2.github.io/sar2/</url>
   <url type="bugtracker">https://github.com/SearchAndRescue2/sar2/issues</url>
+  <content_rating type="oars-1.1"/>
 </component>
