@@ -30,5 +30,25 @@
       <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar5.jpg</image>
     </screenshot>
   </screenshots>
+  <releases>
+    <release version="v2.5.0" date="2020-06-20" type="stable">
+      <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.5.0</url>
+    </release>
+    <release version="v2.4.3" date="2020-05-23" type="stable">
+      <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.4.3</url>
+    </release>
+    <release version="v2.4.2" date="2020-05-16" type="stable">
+      <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.4.2</url>
+    </release>
+    <release version="v2.4.0" date="2020-04-26" type="stable">
+      <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.4.0</url>
+    </release>
+    <release version="v2.3.3" date="2017-07-15" type="stable">
+      <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.3.3</url>
+    </release>
+    <release version="v2.3.2" date="2016-12-22" type="stable">
+      <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.3.2</url>
+    </release>
+  </releases>
   <url type="homepage">https://searchandrescue2.github.io/sar2/</url>
 </component>
