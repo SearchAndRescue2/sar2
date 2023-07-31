@@ -3791,31 +3791,23 @@ static void SARDrawOutsideAttitude(
 	    y += 18;
 
 	    /* Altitude AGL */
+	    if(aircraft->landed)
+		v1 = 0.0f;
+	    else
+		v1 = (float)MAX(
+		    -(((((gear_state == 1) || (gear_state == 2)) ? aircraft->gear_height : 0.0f) +
+		    aircraft->belly_height) +
+		    aircraft->center_to_ground_height), 0.0f
+		);
 	    switch(opt->units)
 	    {
 	      case SAR_UNITS_METRIC:
-		if(aircraft->landed)
-		  v1 = 0.0f;
-		else
-		  v1 = (float)MAX(
-		    -((((gear_state == 1) ? aircraft->gear_height : 0.0f) +
-		    aircraft->belly_height) +
-		    aircraft->center_to_ground_height), 0.0f
-		  );
 		units_str1 = "M";
 		break;
+
 	      case SAR_UNITS_METRIC_ALT_FEET:
 	      default:
-		if(aircraft->landed)
-		  v1 = 0.0f;
-		else
-		  v1 = (float)SFMMetersToFeet(
-		   MAX(
-		    -((((gear_state == 1) ? aircraft->gear_height : 0.0f) +
-		    aircraft->belly_height) +
-		    aircraft->center_to_ground_height), 0.0f
-		   )
-		  );
+		v1 = (float)SFMMetersToFeet(v1);
 		units_str1 = "FT";
 		break;
 	    }
