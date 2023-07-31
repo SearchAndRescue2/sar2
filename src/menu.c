@@ -3591,12 +3591,12 @@ static void SARMenuDoDrawObject(
 		NULL, NULL,
 		&fw, &fh
 	    );
-	    /* Calculate items visible, remember to subtract three
+	    /* Calculate items visible, remember to subtract four
 	     * items for borders and heading.
 	     */
 	    if(fh > 0)
 		items_visable = MAX(
-		    (h / fh) - 3,
+		    (h / fh) - 4,
 		    0
 		);
 	    else  
