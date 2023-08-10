@@ -1,5 +1,20 @@
 # SEARCH AND RESCUE II - CHANGELOG
 
+## Version 2.6.0
+
+- Added new Corsica scenery with missions
+- Added new Eurocopter EC145
+- Support orange smoke with create_smoke command
+- Add scroll cursors to list and message boxes
+- Wait for door to be fully open before deploying hoist
+- New docs folder in the sources with documentation for level developers
+- Fix sar2.sh when called from fish shell
+- Fix last item not shown on menu lists
+- Fix AGL altitude calculations for fixed landing gears
+- Redraw menus when switching
+- Fix names for training missions 4 and 5
+- Add support for Flatpak packages
+
 ## Version 2.5.0
 
 * Add preliminary OSX support.
