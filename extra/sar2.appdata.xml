@@ -31,6 +31,9 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="v2.6.0" date="2023-08-11" type="stable">
+      <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.6.0</url>
+    </release>    
     <release version="v2.5.0" date="2020-06-20" type="stable">
       <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.5.0</url>
     </release>
