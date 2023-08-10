@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  GO: 1.20.7
+
+jobs:
+  build:
+    name: "scons"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install \
+        scons \
+        mesa-common-dev \
+        libalut-dev \
+        libopenal-dev \
+        libvorbis-dev \
+        libsdl2-dev \
+        libice-dev \
+        libsm-dev \
+        libx11-dev \
+        libxext-dev \
+        libxmu-dev \
+        libxpm-dev
+
+    - name: "Run scons"
+      run: scons
