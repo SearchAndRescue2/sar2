@@ -1,19 +1,26 @@
 # SEARCH AND RESCUE II - CHANGELOG
 
+## Version NEXT
+
+* Model improvements for as350 and ec145 helicopters.
+* Upgrades to Corsica scenery with high-res textures, 3d objects, new missions and more than 40 new water bodies.
+* Better water detection for altitude lakes.
+* Updates to Aircraft and Scenery guides and other improvements for level developers in the docs.
+
 ## Version 2.6.0
 
-- Added new Corsica scenery with missions
-- Added new Eurocopter EC145
-- Support orange smoke with create_smoke command
-- Add scroll cursors to list and message boxes
-- Wait for door to be fully open before deploying hoist
-- New docs folder in the sources with documentation for level developers
-- Fix sar2.sh when called from fish shell
-- Fix last item not shown on menu lists
-- Fix AGL altitude calculations for fixed landing gears
-- Redraw menus when switching
-- Fix names for training missions 4 and 5
-- Add support for Flatpak packages
+* Added new Corsica scenery with missions.
+* Added new Eurocopter EC145.
+* Support orange smoke with create_smoke command.
+* Add scroll cursors to list and message boxes.
+* Wait for door to be fully open before deploying hoist.
+* New docs folder in the sources with documentation for level developers.
+* Fix sar2.sh when called from fish shell.
+* Fix last item not shown on menu lists.
+* Fix AGL altitude calculations for fixed landing gears.
+* Redraw menus when switching.
+* Fix names for training missions 4 and 5.
+* Add support for Flatpak packages.
 
 ## Version 2.5.0
 
@@ -32,18 +39,18 @@
 
 ## Version 2.4.3
 
-* Fix lagging when landing due to airbone/landed flipping
-* Speed up progress bar
-* Add ldflags option to Scons
+* Fix lagging when landing due to airbone/landed flipping.
+* Speed up progress bar.
+* Add ldflags option to Scons.
 * Enable menu redraws by default (fixes black/blinking menus).
-* Fix encoding and command help Spanish Translation
+* Fix encoding and command help Spanish Translation.
 
 ## Version 2.4.2
 
-* Fix video mode selection (out of bounds error)
-* List video modes supported by the current display
-* Fix menu artifacts and blank issues when changing resolution or resizing
-* Increase human speed
+* Fix video mode selection (out of bounds error).
+* List video modes supported by the current display.
+* Fix menu artifacts and blank issues when changing resolution or resizing.
+* Increase human speed.
 
 ## Version 2.4.1
 
@@ -68,15 +75,15 @@ Hector Sanjuan <code@hector.link>:
 
 Hector Sanjuan <code@hector.link>:
 
-* Custom optflags (@zezinho42)
-* Add appdata.xml (@Mailaender)
+* Custom optflags (@zezinho42).
+* Add appdata.xml (@Mailaender).
 
 ## Version 2.3.2
 
 Hector Sanjuan <code@hector.link>:
 
-* Improve sound system
-* Some other bug fixes
+* Improve sound system.
+* Some other bug fixes.
 
 ## Version 2.3.1
 		   
