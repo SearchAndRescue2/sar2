@@ -72,8 +72,10 @@ air_brakes 0.0
 attitude_change_rate  38.0  20.0  40.0
 
 # Helicopter acceleration responsiveness. Higher values produce less responsiveness.
+# For max rate of climb at 80% throttle test: 1600ft/min = 26.7ft/s
 #                   right/left  fwd/bckwd  up/down
-helicopter_accelresp  4200.0      3800.0    2200.0
+#                       i           j         k
+helicopter_accelresp  1455.0      1455.0    1065.0
 
 # Dry mass, in kg (EMS equipped, with 2 pilots)
 dry_mass 2450.0
@@ -87,21 +89,17 @@ dry_mass 2450.0
 fuel          0.093               694.0    694.0
 
 # Engine settings.
-# Power value adjusted to achieve vertical max climb rate at helicopter max weight and 100% throttle (collective),
-# with EC-145 takeoff max weight = 3585 kg = dry_mass max + fuel initial_kg = 2891 + 694.
 #      can_pitch? initial_pitch   power   collective_range
-engine      n           0        47500.0       1.00
+engine      n           0        39275.0       0.50
 
 # Speed bounds, all in mph
-# min_drag adusted to reach cruising speed (133 knot) when flying horizontally (no elevation) at 80% throttle,
-# with the "standard take off" weight (dry_mass = 2450.0 kg).
 # 133 knot = 153 mph, 145 knot = 166.9 mph, 150 knot = 172.6 mph.
 #     stall  speed_max  min_drag  overspeed_expected  overspeed
-speed  0.0     600.0      0.73          166.9           172.6
+speed  0.0      0.0       0.95          166.9           172.6
 
 # Attitude leveling, in degrees per second
-#                   h    p    b
-attitude_leveling  0.0  1.1  1.5
+#                   h    p     b
+attitude_leveling  0.0  5.0  10.0
 
 # Service ceiling, in feet
 service_ceiling 17200
