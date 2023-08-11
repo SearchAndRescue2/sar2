@@ -15,7 +15,7 @@
 ***********************************************************************/
 
 
-#define VERSION "0.3"
+#define VERSION "0.3.2"
 
 #include <linux/limits.h> // for PATH_MAX
 #define MAXPATHLENGTH PATH_MAX
