@@ -7999,8 +7999,9 @@ void SARDrawMap(
 	if(opt->textured_objects)
 	{
 	    /* Enable alpha testing and turn on GL_TEXTURE_2D */
+	    /* If ground texture opacity is lower or equal to 99%, ground will be considered as water */
 	    StateGLEnable(state, GL_ALPHA_TEST);
-	    StateGLAlphaFunc(state, GL_GREATER, 0.5);
+	    StateGLAlphaFunc(state, GL_GREATER, 0.99);
 
 	    SAR_DRAW_TEXTURE_2D_ON
 	}
