@@ -1,0 +1,102 @@
+#
+# Mission Header
+#
+
+# Mission file version. Program version must be >= 2.5.0 because of "wind" use.
+version 2 5 0
+
+# Name of mission
+name Corsica 5: Injured on high sea
+
+# Description of mission (newlines and escapes accepted)
+description An old man has fallen when going to restaurant on a luxury <underline>cruise ship<default> \
+and onboard doctor can't operate him because he's sick himself !\n\
+You have to <bold>take off<default> at <underline>Ajaccio civil defence helipad<default>, then your <bold>\
+guiding system<default> will help you to reach the <underline>cruise ship<default>. Once arrived, <bold>land<default> \
+on <underline>onboard helipad<default>, take old man aboard, then  <bold>fly back<default> to <underline>Ajaccio \
+hospital helipad<default>.\n Warning: there's a little bit of wind today, and landing pad is small. Don't forget to apply wheels brakes!
+
+# Weather (valid values defined in data/weather.ini). Must be specified before mission_scene_file.
+weather Overcast
+
+# Scenery file
+mission_scene_file scenery/corsica.scn
+
+# Blowing to east wind, 5 knots, with gusts. Must be specified after mission_scene_file.
+wind 90 5 gusts
+
+time_of_day 08:00
+
+# # # # #
+# Mission Objectives
+#
+
+# Mission first objective
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+# 1 person to rescue
+mission_objective_humans_tally 1 1
+mission_objective_message_success - Okay, let's go.
+mission_objective_message_fail You failed to board injured person.
+
+# Mission second objective
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at hospital_ajaccio
+mission_objective_message_success Done! Injured person will be treated by a surgeon.
+mission_objective_message_fail You failed to bring back injured person to Ajaccio hospital helipad.
+
+
+# # # # #
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Cruise ship
+create_object 3
+object_name CruiseShip
+model_file vessels/silvershadow.3d
+translation -105300.0 -12264.0 0.0
+# Bow contact bounds must be rotated by 45 degrees.
+# O = silvershadow and silvershadow_bow origins.
+#    silvershadow_bow            silvershadow contact bounds
+#     contact bounds
+#            *     +-----------------------------------------------------+
+#         *     *  |                                                     |
+#       *         *|                                                     |
+#     *      O     |*                                                    |
+#       *         *|                                                     |
+#         *     *  |                                                     |
+#            *     +-----------------------------------------------------+
+#
+create_object 3
+model_file vessels/silvershadow_bow.3d
+translation -105300.0 -12264.0 0.0
+rotate 0 0 45
+
+# Cruise ship helipad
+create_helipad building 10.5 10.5 0.0 _ y n n y n CruiseShip 2.1 0.0 37.54 270 0 0
+
+# Human to rescue
+#create_human man_1 need_rescue lying on_stretcher assisted 1 assistant_1    <= comming soon ;-)
+create_human victim_streatcher_assisted need_rescue lying on_streatcher
+translation -105305.0 -12256.5 37.54
+rotate 0 0 0
+human_reference player run_towards
+set_human_mesg_enter - Hi! What a hard day, today! To Ajaccio hospital, please.
+
+
+# Begin at object (name of object from scene file)
+mission_begin_at dragon_ajaccio
+
+# Create player object
+player_model_file aircrafts/hh65.3d
+rotate -5.8 0 0
+
+# Waypoint of first objective (boat coordinates)
+#		     ref_code    x       y        z     radius    urgency       name
+mission_add_intercept   0     -105300.0 -12264.0 37.54     1.0       1.0     Silver Shadow
+
+
+# Waypoint of second objective (Ajaccio hospital, see mission_objective_arrive_at)
+#			        ref_code   radius   urgency
+mission_add_intercept   3       40.0     1.0

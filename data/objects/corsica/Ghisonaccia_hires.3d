@@ -1,0 +1,23 @@
+begin_header
+texture_load ghisonaccia_hires_tex textures/corsica/ghisonaccia_hires.tex
+end_header
+
+name Ghisonaccia_hires
+
+range 9000
+
+begin_model standard
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+texture_select ghisonaccia_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -512 512 0
+ texcoord 1.0 1.0
+ 512 512 0
+ texcoord 1.0 0.0
+ 512 -512 0
+ texcoord 0.0 0.0
+ -512 -512 0
+end_quads
+end_model standard

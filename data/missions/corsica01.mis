@@ -45,8 +45,8 @@ mission_objective_message_fail BRAKING NEWS: "Helicopter crash between Propriano
 # Passenger's "taxi", waiting at Ajaccio helipad
 create_object 2
 model_file automobiles/cuda.3d
-translate -22410 -31995 0.0
-rotate 10 0 0
+translate -22451 -32022 0.0
+rotate 137 0 0
 
 # Mission begins at an object defined in scene file
 mission_begin_at helipad_propriano

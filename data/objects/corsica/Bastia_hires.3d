@@ -1,0 +1,56 @@
+begin_header
+creator v3dconverter
+texture_load bastia_1_hires_tex textures/corsica/bastia_1_hires.tex 0.8
+texture_load bastia_2_hires_tex textures/corsica/bastia_2_hires.tex 0.8
+texture_load bastia_3_hires_tex textures/corsica/bastia_3_hires.tex 0.8
+end_header
+
+name Bastia_hires
+
+range 9000
+
+begin_model standard
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+
+texture_select bastia_1_hires_tex
+
+begin_quads
+ normal 0.000000 0.000000 1.000000
+ texcoord 0.000100 0.000100
+ 512.000000 512.000000 -0.000000
+ texcoord 0.000100 0.999900
+ 1536.000000 512.000000 -0.000000
+ texcoord 0.999900 0.999900
+ 1536.000000 -512.000000 -0.000000
+ texcoord 0.999900 0.000100
+ 512.000000 -512.000000 -0.000000
+end_quads
+
+texture_select bastia_2_hires_tex
+
+begin_quads
+ normal 0.000000 0.000000 1.000000
+ texcoord 0.000100 0.999900
+ 512.000000 512.000000 -0.000000
+ texcoord 0.999900 0.999900
+ 512.000000 -512.000000 -0.000000
+ texcoord 0.999900 0.000100
+ -512.000000 -512.000000 0.000000
+ texcoord 0.000100 0.000100
+ -512.000000 512.000000 0.000000
+end_quads
+
+texture_select bastia_3_hires_tex
+
+begin_quads
+ normal 0.000000 0.000000 1.000000
+ texcoord 0.999900 0.999900
+ -512.000000 -512.000000 0.000000
+ texcoord 0.999900 0.000100
+ -1536.000000 -512.000000 0.000000
+ texcoord 0.000100 0.000100
+ -1536.000000 512.000000 0.000000
+ texcoord 0.000100 0.999900
+ -512.000000 512.000000 0.000000
+end_quads
+end_model standard

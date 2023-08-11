@@ -16,9 +16,10 @@ scene_elevation 0.0
 
 # Load texture images and set named references to them:
 texture_load water01_tex textures/water01.tex 1.0
-texture_load building01_tex textures/building01.tex 0.7
-texture_load building01_night_tex textures/building01_night.tex 0.7
+#texture_load building01_day_tex textures/building01_day.tex 0.7
+#texture_load building01_night_tex textures/building01_night.tex 0.7
 texture_load roof_tex textures/wall01.tex 0.7
+texture_load walls05_tex textures/wall05.tex  0.5
 
 # Ground base flags
 #                  is_water
@@ -34,6 +35,7 @@ scene_ground_tile 1000  1000  10000     0.172549 0.313725 0.454902    1.0    wat
 scene_map 88200 192000  textures/corsica/corsica_small.tex.tga
 
 
+
 # #####################################################################
 # Registered locations
 #
@@ -42,68 +44,180 @@ scene_map 88200 192000  textures/corsica/corsica_small.tex.tga
 #
 #                 x y z   h p b name
 
-# Map origin
-#register_location 0 0 0 0 0 0 Map origin
+#
+# Helipads and airports
+#
 
-# Altitude test
-#register_location -3000 2050 45 0 0 0 Altitude test
+# Helipads and airports separator (same location as first airport in list).
+register_location -21740 -32075 0.0 20.6 0 0 -------- Helipads and airports ---------
 
 # Ajaccio Airport: 8'48:01E 41'55:14N, alt. 3.44m / 11.3ft
 register_location -21740 -32075 0.0 20.6 0 0 Ajaccio Airport
 
-# Ajaccio Helipad: 8'47:31E 41'55:20N, alt. 3.8m / 12.3ft
-register_location -22430 -31995 0.0 0 0 0 Ajaccio Helipad
+# Ajaccio civil defence helipad: 8'48:13E 41'55:8N, alt. 2.4m / 8.3ft
+register_location -21469.0 -32293.0 0.0 290 0 0 Ajaccio Civil defence Helipad
+
+# Ajaccio Hospital Helipad
+register_location -27229.0 -32272.0 278.7 -22.0 0.0 0.0 Ajaccio Hospital
+
+# Ajaccio charter Helipad: 8'47:31E 41'55:20N, alt. 3.8m / 12.3ft
+register_location -22456 -32039 0.0 90 0 0 Ajaccio charter helipad
 
 # Bastia-Poretta Airport: 9'29:02E 42'33:07N
-register_location 29130 42405 0.0 -22.0 0 0 Bastia-Poretta Airport
+register_location 29131.4 42422.5 0.0 -22.0 0 0 Bastia-Poretta Airport
 
-# Bastia-Poretta Helipad: 9'28:47E 42'33:13N
-register_location 28745 42525 0.0 69.0 0 0 Bastia-Poretta Helipad
+# Bastia-Poretta civile defence helipad: 9'28:47E 42'33:13N
+register_location 28755.7 42527.7 0.0 69.0 0 0 Bastia-Poretta Civil defence Helipad
 
 # Calvi Airport: 8'47:34E 42'31:53N, alt. 40.1m / 131.6ft
-register_location -27340 35675 134.7 -4.4 0 0 Calvi-Sainte-Catherine Airport
+register_location -27343 35664.6 134.7 0.0 0 0 Calvi-Sainte-Catherine Airport
 
 # Calvi Helipad: 8'47:28E 42'31:12N, alt. 59.7m / 195.9ft
-register_location -27400 34580 134.7 -4.4 0 0 Calvi-Sainte-Catherine Helipad
+register_location -27419.2 34673.9 134.7 0.0 0 0 Calvi-Sainte-Catherine Helipad
 
 # Corte Airport
 # 9'11:24E 42'17:53N, alt. 335.4m / 1100ft
 register_location 7300 11545 1107.7 -59.0 0 0 Corte Airport
 
+# Corte Helipad
+register_location 7559.2 11283.2 1107.7 -142.0 0 0 Corte Helipad
+
 # Figari Airport: 9'05:50E 41'30:08N, alt. 19.1m / 62.7ft
 register_location 6480 -76635 33.6 43.1 0 0 Figari Airport
 
 # Figari Helipad: 9'05:58E 41'30:07N, alt. 20.6m / 67.7ft
-register_location 6670 -76670 33.6 46.9 0 0 Figari Helipad
+register_location 6433.4 -76684.0 33.6 43.118 0 0 Figari Helipad
 
-# Ghisonaccia Airport
+# Ghisonaccia Airfield
 # 9'24:00E 42'3;0N , alt. 49.9m / 163.7ft
-register_location 26780 -13655 134.7 0.0 0 0 Ghisonaccia-Alzitone Airport
+register_location 26790 -13619 134.7 0.0 0 0 Ghisonaccia-Alzitone Airfield
 
 # Porto-Vecchio Helipad: 9'16:37E 41°34:48N, alt. 7.08m / 23.9ft
-register_location 20781 -66878 0.0 164.0 0 0 Porto-Vecchio Helipad
+register_location 20771.7 -66884.6 0.0 0.0 0 0 Porto-Vecchio Helipad
 
-# Propriano Airport: 9'05:50E 41'30:08N, alt. 3.5m / 11.5ft
-register_location -12175 -60405 0.0 91.0 0 0 Propriano Airport
+# Propriano-Tavaria Airfield: 9'05:50E 41'30:08N, alt. 3.5m / 11.5ft
+register_location -12170.0 -60412.6 0.0 91.2 0 0 Propriano-Tavaria Airfield
 
-# Propriano Helipad: 8'53:38E 41'39:36N, alt. 3.5m / 11.5ft
-register_location -11860 -60495 0.0 1.0 0 0 Propriano Helipad
+# Propriano-Tavaria Helipad: 8'53:38E 41'39:36N, alt. 3.5m / 11.5ft
+register_location -11845 -60488 0.0 181.2 0 0 Propriano-Tavaria Helipad
 
 # Ventiseri-Solenzara military Airport
-register_location 28360 -27775 0.0 -5.8 0 0 Ventiseri-Solenzara military Airport
+register_location 28360.0 -27787.0 0.0 -5.7 0 0 Ventiseri-Solenzara military Airport
 
-# Bocca di Maro ("Mountain pass of sea")
-register_location 13731 -40111 1585 89 0 0 Bocca di Maro
+# Ventiseri-Solenzara military Helipad
+register_location 27896.3 -27185.0 0.0 264.0 0 0 Ventiseri-Solenzara military Helipad
 
-# Asinau shelter
-# needs to create shelter object at: translation 13285 -38275 5082 / rotate 200 0 0
-#register_location 13310 -38276 5072 190 0 0 Asinau shelter
+#
+# Water bodies
+#
+
+# Water bodies separator (same location as first water body in list).
+register_location 30923 14021 543 60 0 0 ------------- Water bodies -------------
+
+# Lac de l'Alesani (corsica_c04_r04)
+register_location 30923 14021 543 60 0 0 Alesani lake
+
+# Lac de l'Argentella (corsica_c00_r03)
+register_location -35476 27049 168 338 0 0 Argentella lake
+
+# Lake of Argento (corsica_c01_r03)
+register_location -13848 20011 7456 57 0 0 Argento lake
+
+# Lake of Alzeta (corsica_c02_r05)
+register_location 5905 -9063 5709 280 0 0 Alzeta lake
+
+# Réservoir d'Alzitone (corsica_c03/04_r05)
+register_location 28608 -11768 202 319 0 0 Alzitone reservoir
+
+# Réservoir de Bacciana (corsica_c04_r05)
+register_location 29840 -5986 202 168 0 0 Bacciana reservoir
+
+# Lake of Bastani (corsica_c02_r05)
+register_location 4759 -13932 6985 345 0 0 Bastani lake
+
+# Lake of Betaniella (corsica_c02_r04)
+register_location -3098 1859 7691 170 0 0 Betaniella lake
+
+# Lake of Bracca (corsica_c02_r05)
+register_location 3219 -15777 7153 126 0 0 Bracca lake
 
 # Lake of Calacuccia (corsica_c02_r04)
 register_location -6694 14557 2585 320 0 0 Calacuccia lake
 
+# Barrage de Calca Tavulaghjiu (corsica_c00_r03)
+register_location -38428 19858 437 1 0 0 Calca Tavulaghjiu dam
+
+# Lake of Capitello (corsica_c02_r04)
+register_location -6638 1447 6667 23 0 0 Capitello lake
+
+# Lake of Cavacciole (corsica_c02_r04)
+register_location -3697 1961 7725 319 0 0 Cavacciole lake
+
+# Lake of Ceppu (corsica_c01_r03)
+register_location -20925 23976 5844 194 0 0 Ceppu lake
+
+# Lake of Cinto (corsica_c01_r04)
+register_location -14508 18743 7758 96 0 0 Cinto lake
+
 # Lake of Codole (corsica_c01_r02)
 register_location -15153 43260 395 230 0 0 Codole lake
+
+# Barrage de Corscia (corsica_c02_r04)
+register_location -5100 16069 2284 44 0 0 Corscia dam
+
+# Creno (corsica_c01_r04)
+register_location -11952 305 4333 320 0 0 Creno lake
+
+# Pond of Gialicatapiano (corsica_c02_r05)
+register_location -2618 -1718 5273 18 0 0 Gialicatapiano pond
+
+# Lake of Galiera (corsica_c02_r04)
+# Too small (near Punta Gallera / Monte Rotondo).
+
+# Lake of Ghiarghe Rosse (corsica_c01_r03)
+register_location -9917 21916 7322 221 0 0 Ghiarghe Rosse lake
+
+# Lake of Goria (corsica_c02_r04)
+register_location -7264 2491 6214 -20 0 0 Goria lake
+
+# Lake of Lancone Sottano (corsica_c01_r03)
+register_location -9923 21650 7288 142 0 0 Lancone Sottano lake
+
+# Lake of Lavigliolu (corsica_c01_r04)
+register_location -11639 7399 6213 335 0 0 Lavigliolu lake
+
+# Lake of Oriente (corsica_c02_r04)
+register_location -2960 3580 6919 20 0 0 Oriente lake
+
+# Big lake of Oro (corsica_c02_r05)
+register_location 706 -5879 6582 10 0 0 Oro big lake
+
+# Little lake of Oro (corsica_c02_r05)
+register_location 853 -5077 5575 -10 0 0 Oro little lake
+
+# Lac de l'Ortolo (corsica_c02_r08)
+register_location 1839 -64559 572 224 0 0 Ortolo lake
+
+# Lac de Peri (corsica_c04_r04)
+register_location 34664 11184 229 236 0 0 Peri lake
+
+# Lake Maggiore (corsica_c01_r03)
+register_location -10353 21446 7758 199 0 0 Lake Maggiore
+
+# Lake of Melo (corsica_c02_r04)
+register_location -5675 1663 5676 2 0 0 Melo lake
+
+# Lake of Muvrella (corsica_c01_r03)
+register_location -16891 23158 6046 354 0 0 Lake of Muvrella
+
+# Lake of Nielluccio (corsica_c02_r05)
+register_location 5269 -14381 6215 35 0 0 Nielluccio lake
+
+# Lake of Nino (corsica_c01_r04)
+register_location -12769 5859 5776 307 0 0 Nino lake
+
+# Lake of Occhi Neri (corsica_c01_r03)
+register_location -9944 21717 7288 249 0 0 Occhi Neri lake
 
 # Reservoir of Ospédale (corsica_c03_r08)
 register_location 13700 -58000 3122.7 0 0 0 Ospedale reservoir
@@ -111,23 +225,82 @@ register_location 13700 -58000 3122.7 0 0 0 Ospedale reservoir
 # Lake of Padula (corsica_c03_r02)
 register_location 15542 49763 200 277 0 0 Padula lake
 
+# Lake of Paglia Orba (corsica_c01_r04)
+register_location -17424 15641 5173 71 0 0 Paglia Orba lake
+
 # Pond of Palo (corsica_c03/c04_r02)
 register_location 28500 47300 0.0 0 0 0 Palo pond
 
-# Reservoir of Rizzanese/Zoza (corsica_c02_r08)
-register_location 1185 -64811 559 92 0 0 Rizzanese/Zoza reservoir
+# Lake of Pozzolo (corsica_c02_r04)
+register_location -2501 2224 7926 146 0 0 Pozzolo lake
 
-# Rerservoir of Sampolo (corsica_c03_r05)
-# needs some work on height field and texture
-#register_location 15778 -9269 1284 103 0 0 Sampolo reservoir
+# Lake of Rina Soprano (corsica_c02_r05)
+register_location 6398 -16198 6314 340 0 0 Rina Soprano lake
+
+# Lake of Rina Sottano (corsica_c02_r05)
+register_location 6990 -16040 6011 328 0 0 Rina Sottano lake
+
+# Higher lake of Rinella Soprano (corsica_c02_r04)
+register_location -7702 1093 6851 220 0 0 Rinella Soprano lake
+
+# Big lake of Rinoso (corsica_c02_r04)
+register_location -4967 1406 6785 335 0 0 Rinoso big lake
+
+# Little lake of Rinoso (corsica_c02_r04)
+register_location -4687 1387 6878 -20 0 0 Rinoso little lake
+
+# Reservoir of Rizzanese/Zoza (corsica_c02_r08)
+register_location 1226 -64886 570 40 0 0 Rizzanese/Zoza reservoir
+
+# Reservoir of Sampolo (corsica_c03_r05)
+register_location 15778 -9269 1284 103 0 0 Sampolo reservoir
+
+# Lake of San Ciprianu (corsica_c02_r04)
+# Too small... Coordinates: 42.235026 9.010725
+
+# Lake of Scapuccioli (corsica_c02_r04)
+register_location -3704 1962 7725 305 0 0 Scapuccioli lake
+
+# Lake of Soglia (corsica_c02_r04)
+register_location -5820 1208 6147 15 0 0 Soglia lake
+
+# Lake of Sorbi (corsica_c02_r04)
+register_location -8134 1928 6784 10 0 0 Sorbi lake
+
+# Lac de Talza/Figari (corsica_c03_r09)
+register_location 10897 -81347 168 5 0 0 Talza/Figari lake
+
+# Réservoir de Teppe Rosse (corsica_c04_r05)
+register_location 31438 -7693 101 350 0 0 Teppe Rosse reservoir
 
 # Lake of Tolla (corsica_c02_r06)
-# needs some work on height field and texture
-#register_location -7500 -25880 11.3 0 0 0 Tolla lake
+register_location -7364 -25434 1845 246 0 0 Tolla lake
 
 # Reservoir of Trévadine (corsica_c03_r05)
-# needs some work on height field and texture
-#register_location 19683 -9706 504 294 0 0 Trevadine reservoir
+register_location 19683 -9706 504 294 0 0 Trevadine reservoir
+
+# Lake of Vitalaca (corsica_c02_r05)
+register_location 3728 -16027 6112 163 0 0 Vitalaca lake
+
+#
+# Other locations
+#
+
+# Other locations separator (same location as first other location in list).
+register_location 13310 -38276 5072 190 0 0 ------------- Other locations -------------
+
+# Asinau shelter
+register_location 13326 -38307 5037 105 0 0 Asinau shelter
+
+# Bocca di Maro ("Mountain pass of sea")
+register_location 13726.4 -40034.9 1588 95 0 0 Bocca di Maro
+
+# Map origin
+#register_location 0 0 0 0 0 0 Map origin
+
+# Altitude test
+#register_location -3000 2050 45 0 0 0 Altitude test
+
 
 
 # #####################################################################
@@ -137,9 +310,14 @@ register_location 1185 -64811 559 92 0 0 Rizzanese/Zoza reservoir
 # depth checking and drawn in order.
 #
 
+# Note that high resolution "terrains" for airports are loaded as
+# "objects" because they are flat and supposed to be on a flat terrain
+# (look for "model_file objects/corsica/*_hires.3d" below).
+
 #
 # *** Terrain*** cXX for column number XX, rYY for row number YY
 #
+
 create_object 6
 model_file objects/corsica/corsica_c00_r00.3d
 
@@ -305,7 +483,6 @@ model_file objects/corsica/corsica_c04_r09.3d
 create_object 6
 model_file objects/corsica/corsica_c04_r10.3d
 
-
 # #####################################################################
 # Begin loading other objects
 #
@@ -313,68 +490,108 @@ model_file objects/corsica/corsica_c04_r10.3d
 # objects.
 #
 
-# Ajaccio Airport
-create_runway 4000 2180 20 2 35 60 20 02 30 30 thresholds borders td_markers
+# Ajaccio Airport (corsica_c01_r06)
+create_object 1
+no_depth_test
+model_file objects/corsica/Ajaccio_hires.3d
+translation -21740 -32075 0.0
+#rotate 20.850164 0 0
+create_runway 4000 2200 43 2 35 60 20 02 30 30 thresholds borders td_markers
 no_depth_test
 object_name airport_ajaccio
 object_map_description Airport - Ajaccio
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation -21740 -32075 0.0
-rotate 20.6 0 0
+translation -21745.0 -32088.0 0.0
+rotate 20.685 0 0
 
-# Ajaccio Helipad
-create_helipad default 35.0 35.0 0.0 \n n y y y y
+# Ajaccio civil defence helipad
+create_helipad default 20.0 20.0 0.0 civil_defence_-_Ajaccio n y y y y
+no_depth_test
+object_name dragon_ajaccio
+object_map_description Civil defence Helipad - Ajaccio
+range 5000
+#translation x y z (x, y in meters, z in feet)
+translation -21469.0 -32293.0 0.0
+rotate 290 0 0
+
+# Ajaccio Hospital Helipad
+create_helipad building 29.0 29.0 0.0 _ y n n y n
+no_depth_test
+object_name hospital_ajaccio
+object_map_description Hospital - Ajaccio
+range 5000
+#translation x y z (x, y in meters, z in feet)
+translation -27229.0 -32272.0 278.7
+rotate 158.0 0.0 0.0
+
+# Ajaccio charter Helipad
+create_helipad default 40.0 20.0 0.0 _ n y y y y
 no_depth_test
 object_name helipad_ajaccio
 object_map_description Helipad - Ajaccio
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation -22430 -31995 0.0
+translation -22456 -32039 0.0
 rotate 0 0 0
 
 # Bastia-Poretta Airport
-create_runway 4000 2530 50 2 40 60 16 34 30 30 borders td_markers
+create_object 1
+no_depth_test
+model_file objects/corsica/Bastia_hires.3d
+translation 28807 42260 0.0
+rotate -112.0 0 0
+create_runway 4000 2520 46 2 40 60 16 34 30 30 borders td_markers
 no_depth_test
 object_name airport_bastia
 object_map_description Airport - Bastia-Poretta
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation 29130 42405 0.0
-rotate -22.0 0 0
+translation 29131.4 42422.5 0.0
+rotate -22.13 0 0
 
-# Bastia-Poretta Helipad
-create_helipad default 35.0 35.0 0.0 \n n y y y y
+# Bastia-Poretta Civil Defence Helipad
+create_helipad default 20.0 20.0 0.0 Civil_Defence_-_Bastia n y y y y
 no_depth_test
-object_name helipad_bastia
-object_map_description Helipad - Bastia-Poretta
+object_name dragon_bastia
+object_map_description Civile defence helipad - Bastia-Poretta
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation 28745 42525 0.0
-rotate 69.0 0 0
+translation 28755.7 42527.7 0.0
+rotate 248.2 0 0
 
-# Calvi Airport
+# Calvi Airport (corsica_c01_r03)
+create_object 1
+no_depth_test
+model_file objects/corsica/Calvi_hires.3d
+translation -27394 35510 134.7
+rotate 0 0 0
 create_runway 4000 2100 45 2 33 67.5 18 36 30 30 td_markers
 no_depth_test
 object_name airport_calvi
 object_map_description Airport - Calvi-Sainte-Catherine
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation -27340 35675 134.7
+translation -27343 35664.6 134.7
 rotate -4.4 0 0
 
 # Calvi Helipad
-create_helipad ground_bare 35.0 35.0 0.0 \n n y y y y
+create_helipad ground_bare 15.0 15.0 0.0 _ n y y y y
 no_depth_test
 object_name helipad_calvi
 object_map_description Helipad - Calvi-Sainte-Catherine
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation -27400 34580 134.7
-rotate -4.4 0 0
+translation -27419.2 34673.9 134.7
+rotate 0.0 0 0
 
-# Corte Airport
-create_runway 4000 944 20 2 11 0.0 12 30 180 0 td_markers
+# Corte Airport (corsica_c02_r04)
+create_object 1
+no_depth_test
+model_file objects/corsica/Corte_hires.3d
+translation 7263.5 11544.4 1107.7
+rotate -59.8 0 0
+create_runway 4000 950 20 2 11 0.0 12 30 180 0 td_markers
 no_depth_test
 object_name airport_corte
 object_map_description Airport - Corte
@@ -383,72 +600,325 @@ range 5000
 translation 7300 11545 1107.7
 rotate -59.0 0 0
 
-# Figari Airport
-create_runway 4000 2420 50 2 46 60 23 05 30 30 thresholds borders td_markers
+# Corte Helipad
+create_helipad default 7.2 7.2 0.0 _ n n n y y
+no_depth_test
+object_name helipad_corte
+object_map_description Helipad - Corte
+range 5000
+#translation x y z (x, y in meters, z in feet)
+translation 7559.2 11283.2 1107.7
+rotate -142.0 0 0
+
+# Figari Airport (corsica_c02_r09)
+create_object 1
+no_depth_test
+model_file objects/corsica/Figari_hires.3d
+translation 6652.0 -76704.0 33.6
+rotate -46.9 0 0
+create_runway 4000 2476 45 2 46 60 23 05 30 30 thresholds borders td_markers
 no_depth_test
 object_name airport_figari
 object_map_description Airport - Figari
 range 5000
-#translation x y z (x, y in meters, z in feet)
-translation 6480 -76635 33.6
-rotate 43.1 0 0
+translation x y z (x, y in meters, z in feet)
+translation 6433.4 -76684.0 33.6
+rotate 43.118 0 0
 
 # Figari Helipad
-create_helipad default 10.3 10.3 0.0 \n n y y y y
+create_helipad default 15.0 15.0 0.0 _ n y y y y
 no_depth_test
 object_name helipad_figari
 object_map_description Helipad - Figari
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation 6670 -76670 33.6
-rotate 46.9 0 0
+translation 6664.1 -76676.8 33.6
+rotate 43.5 0 0
 
-# Ghisonaccia Airport - LFKG
+# Ghisonaccia Airfield - LFKG
+create_object 1
+no_depth_test
+model_file objects/corsica/Ghisonaccia_hires.3d
+translation 26554 -13559 134.7
+rotate -0.2 0 0
 create_runway 4000 800 18 2 12 0.0 18 36 0.0 0.0 thresholds
 no_depth_test
-object_name airport_ghisonaccia
-object_map_description Ghisonaccia - Alzitone Airport
+object_name airfield_ghisonaccia
+object_map_description Airfield - Ghisonaccia-Alzitone
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation 26780 -13655 134.7
-rotate 0.0 0 0
+translation 26790 -13619 134.7
+rotate -0.8 0 0
 
-# Porto-Vecchio Helipad
-create_helipad ground_bare 17.5 17.5 0.0 \n n y y y y
+# Porto-Vecchio Helipad (corsica_c03_r08)
+create_object 1
+no_depth_test
+model_file objects/corsica/Porto-Vecchio_hires.3d
+translation 20756.5 -66818.3 0.0
+rotate 0.0 0 0
+create_helipad ground_bare 17.0 17.0 0.0 _ n y y y y
 no_depth_test
 object_name helipad_porto-vecchio
 object_map_description Helipad - Porto-Vecchio
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation 20781 -66878 0.0
-rotate 164.0 0 0
+translation 20772.0 -66884.9 0.0
+rotate 0.0 0 0
 
-# Propriano Airport
-create_runway 4000 1400 29 2 22 60 27 09 30 30 thresholds
+# Propriano-Tavaria Airfield (corsica_c01_r08)
+create_object 1
 no_depth_test
-object_name airport_propriano
-object_map_description Airport - Propriano
+model_file objects/corsica/Propriano_hires.3d
+translation -12070.6 -60394.0 0.0
+rotate 0.0 0 0
+create_runway 4000 1395 29 2 22 60 27 09 30 30 thresholds
+no_depth_test
+object_name airfield_propriano
+object_map_description Airfield - Propriano-Tavaria
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation -12175 -60405 0.0
-rotate 91.0 0 0
+translation -12170.0 -60412.6 0.0
+rotate 91.2 0 0
 
-# Propriano Helipad
-create_helipad ground_bare 17.5 17.5 0.0 \n n y y y y
+# Propriano-Tavaria Helipad
+create_helipad ground_bare 17.5 17.5 0.0 _ n y y y y
 no_depth_test
 object_name helipad_propriano
-object_map_description Helipad - Propriano
+object_map_description Helipad - Propriano-Tavaria
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation -11860 -60495 0.0
-rotate 1.0 0 0
+translation -11845 -60488 0.0
+rotate 181.2 0 0
 
-# Ventiseri-Solenzara military Airport
-create_runway 4000 2627 50 2 0 0.0 - - 0.0 0.0 td_markers
+# Ventiseri-Solenzara military Airport (corsica_c03/c04_r06)
+create_object 1
+no_depth_test
+model_file objects/corsica/Solenzara_hires.3d
+translation 28155.0 -27800.0 0.0
+rotate -5.7 0 0
+create_runway 4000 2627 49 2 0 0.0 - - 0.0 0.0 td_markers
 no_depth_test
 object_name airport_solenzara
 object_map_description Ventiseri-Solenzara military Airport
 range 5000
 #translation x y z (x, y in meters, z in feet)
-translation 28360 -27775 0.0
+translation 28360.0 -27787.0 0.0
+rotate -5.7 0 0
+
+# Ventiseri-Solenzara military Helipad
+create_helipad building 30.0 30.0 0.0 _ n y y y y
+no_depth_test
+object_name helipad_solenzara
+object_map_description Ventiseri-Solenzara military Helipad
+range 5000
+#translation x y z (x, y in meters, z in feet)
+translation 27896.3 -27185.0 0.0
+rotate 264.0 0 0
+
+#
+# Airports buildings and other objects
+#
+
+# Ajaccio civil defence hangar (Dragon 2A)
+create_object 1
+object_name Ajaccio_civil_defence_hangar
+model_file objects/building_hangar_31x21m.3d
+translation -21493.3 -32256.0 0.000
+rotate 290 0.0 0.0
+# Civil defence hangar logo
+create_object 1
+object_name Ajaccio_civil_defence_hangar_logo
+model_file objects/civil_defence_logo.3d
+translation -21483.5 -32259.9 20.00
+rotate 200.0 0.0 0.0
+
+# Water bomber plane #1 in front of Ajaccio civil defence hangar
+create_object 1
+model_file objects/plane_CL-415.3d
+translation -21537.0 -32176.0 0.000
+rotate -70.0 0.0 0.0
+
+# Water bomber plane #2 in front of Ajaccio civil defence hangar
+create_object 1
+model_file objects/plane_CL-415.3d
+translation -21525.0 -32141.0 0.000
+rotate -70.0 0.0 0.0
+
+# Ajaccio terminal
+create_object 1
+model_file objects/corsica/Ajaccio_terminal.3d
+translation -22234.0 -32260.0 0.000
+rotate -159.8.0 0.0 0.0
+
+# Plane in front of Ajaccio terminal
+create_object 1
+model_file objects/plane_A310_Corsair.3d
+translation -22108.0 -32202.0 0.000
+rotate -20.0 0.0 0.0
+
+# Ajaccio control tower (old one)
+create_object 1
+model_file objects/corsica/Ajaccio_control_tower_old.3d
+translation -22213.4 -32166.7 0.000
+rotate -160.0 0.0 0.0
+
+# Ajaccio control tower (new one)
+create_object 1
+model_file objects/corsica/Ajaccio_control_tower_new.3d
+translation -22195.6 -32133.4 0.000
+rotate -70.0 0.0 0.0
+
+# Ajaccio SSLIA (Airport Fire Department) building
+create_object 1
+model_file objects/building_fire_department_01.3d
+translation -22191.5 -32098.2 0.000
+rotate 200.0 0.0 0.0
+
+# Fire truck, in front of Ajaccio SSLIA building
+create_object 2
+model_file automobiles/firetruck_ap.3d
+translation -22171.0 -32101.5 0.000
+rotate 110.0 0.0 0.0
+
+# Ajaccio building in front of charter helipad
+create_object 1
+model_file objects/building_office_40x12m.3d
+translation -22429.0 -32066.0 0.000
+rotate 90.0 0.0 0.0
+
+# Ajaccio hangar beside office building
+create_object 1
+model_file objects/building_hangar_66x28m.3d
+translation -22367.0 -32079.0 0.000
+rotate 90.0 0.0 0.0
+
+# Ajaccio hangar#1 in front of charter helipad
+create_object 1
+model_file objects/building_hangar_31x21m.3d
+translation -22342.0 -31972.0 0.000
+rotate 0.0 0.0 0.0
+
+# Ajaccio hangar#2 in front of charter helipad
+create_object 1
+model_file objects/building_hangar_31x21m.3d
+translation -22373.0 -31972.0 0.000
+rotate 0.0 0.0 0.0
+
+# Plane in front of hangar#1
+create_object 1
+model_file objects/plane_Cessna150.3d
+translation -22332.0 -32045.0 0.000
+rotate 180 0 0
+
+# Ajaccio hospital
+create_object 1
+model_file objects/corsica/Ajaccio_hospital.3d
+translation -27242.0 -32239.0 278.7
+rotate -112.0 0.0 0.0
+
+# Bastia-Poretta terminal
+create_object 1
+model_file objects/corsica/Bastia_terminal.3d
+translate 28945.5 41848.0 0.0
+rotate 158 0 0
+
+# Plane in front of Bastia-Poretta terminal
+create_object 1
+model_file objects/plane_A310_Corsair.3d
+translation 28986.5 41980.0 0.000
+rotate -83.0 0.0 0.0
+
+# Bastia-Poretta control tower (let's take Ajaccio CT and rename it)
+create_object 1
+model_file objects/corsica/Ajaccio_control_tower_new.3d
+object_name Bastia-Poretta_control_tower
+translate 28933.4 41979.4 0.0
+rotate 258 0 0
+
+# Bastia-Poretta civil defence hangar (Dragon 2B)
+create_object 1
+object_name Bastia-Poretta_civil_defence_hangar
+model_file objects/building_industrial_48x54m.3d
+translation 28728.5 42493 0.000
+rotate 159.0 0.0 0.0
+# Civil defence hangar logo
+create_object 1
+object_name Bastia-Poretta_civil_defence_hangar_logo
+model_file objects/civil_defence_logo.3d
+translation 28751.9 42498.9 4.6
+rotate 159.0 0.0 0.0
+
+# Calvi terminal
+create_object 1
+model_file objects/corsica/Calvi_terminal.3d
+translate -27524.4 34940.5 134.2
+rotate -94.2 0 0
+
+# Calvi control tower
+create_object 1
+model_file objects/corsica/Calvi_control_tower.3d
+translate -27526.3 35155.0 134.2
+rotate -182.4 0 0
+
+# Figari terminal
+create_object 1
+model_file objects/corsica/Figari_terminal.3d
+translate 6557.0 -77047.0 34.5
+rotate 223.3 0 0
+
+# Figari control tower (let's take Ajaccio CT and rename it)
+create_object 1
+model_file objects/corsica/Ajaccio_control_tower_new.3d
+object_name Figari_control_tower
+translate 6598.2 -76963.0 34.5
+rotate 133.3 0 0
+
+# Plane in front of Figari terminal
+create_object 1
+model_file objects/plane_ATR42_Air_France.3d
+translation 6536.6 -76966.5 34.5
+rotate 44.0 0.0 0.0
+
+# Propriano control tower
+create_object 1
+model_file objects/corsica/Propriano_control_tower.3d
+translate -11867.0 -60549.5 0.0
+rotate -59.0 0 0
+
+# Propriano hangar
+create_object 1
+model_file objects/building_hangar_31x21m.3d
+translate -11812.0 -60561.5 0.0
+rotate 180.0 0 0
+
+# Tree beside Propriano hangar
+create_object 1
+model_file objects/tree_round_08m_tex_1.3d
+translate -11835.8 -60558.6 0.0
+
+# Plane near Propriano hangar
+create_object 1
+model_file objects/plane_Cessna150.3d
+translate -11844.8 -60538.4 0.0
+rotate 180.0 0 0
+
+# Glider near Propriano hangar
+create_object 1
+model_file objects/plane_glider_red.3d
+translate -11769 -60554 0.0
+rotate 271 0 0
+
+# Ventiseri-Solenzara control tower
+create_object 1
+model_file objects/corsica/Solenzara_control_tower.3d
+translation 27825 -28024 33.0
 rotate -5.8 0 0
+
+
+
+# Asinau shelter
+create_object 1
+model_file objects/building_farmhouse.3d
+object_name Asinau_shelter
+translation 13310 -38276 5037
+rotate 100 0 0

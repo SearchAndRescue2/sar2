@@ -1,0 +1,90 @@
+#
+# Mission Header
+#
+
+# Mission file version. Program version must be >= 2.5.0 because of "wind" use.
+version 2 5 0
+
+# Name of mission
+name Corsica 6: Distress at Propriano bay
+
+# Description of mission (newlines and escapes accepted)
+description A tourist plane pilot has seen an <underline>inflatable boat<default> which seems to be in distress near Propriano bay.\n \
+You have to <bold>take off<default> at <underline>Propriano helipad<default>, then follow your <bold>guiding system<default> \
+to reach the boat last known position. Once this position reached, look for the boat and hoist occupant(s), then <bold>fly back<default> \
+to <underline>Propriano helipad<default>.\n
+
+# Weather (valid values defined in data/weather.ini). Must be specified before mission_scene_file.
+weather Stormy Sparse
+
+# Scenery file
+mission_scene_file scenery/corsica.scn
+
+# Blowing to east wind, 5 knots, with gusts. Must be specified after mission_scene_file.
+wind 90 5 gusts
+
+time_of_day 08:00
+
+# # # # #
+# Mission Objectives
+#
+
+# Mission first objective
+mission_objective_new pick_up
+mission_objective_time_left 0.0
+# 1 person to rescue
+mission_objective_humans_tally 1 1
+mission_objective_message_success - Hey, feel lucky, I found you! You don't have any safety flares ?!?
+mission_objective_message_fail You failed to board lost person.
+
+# Mission second objective
+mission_objective_new arrive
+mission_objective_time_left 0.0
+mission_objective_arrive_at helipad_propriano
+mission_objective_message_success Well done! Lost person is now safe.
+mission_objective_message_fail You failed to bring back lost person to Propriano helipad.
+
+
+# # # # #
+# Mission Post Data (these need to come after the objectives)
+#
+
+# Inflatable boat
+create_object 3
+model_file vessels/inflatable_boat_motorized_gray.3d
+translation -27500.0 -62140.0 0.0
+rotate 45 0 0
+# Inflatable boat underwater motor part
+#create_object 3
+#model_file vessels/inflatable_boat_motor_underwater_part.3d
+#translation -27500.0 -62140.0 0.0
+#rotate 45 0 0
+
+# Smoking engine
+#             <x> <y>  <z> <r_st> <r_max>  <r_rate>  <hide@max> <respawn_int> <units> <color_code>
+create_smoke -2.0 1.5 0.55   0.1     1.2      -1         10         333         20         2
+translation -27499.4 -62143.25 1.0
+
+
+# Human to rescue
+create_human default need_rescue alert aware
+translation -27499.9 -62139.9 0.0
+rotate 45 0 0
+set_human_mesg_enter - Fu***ng outboard motor !
+
+
+# Begin at object (name of object from scene file)
+mission_begin_at helipad_propriano
+
+# Create player object
+player_model_file aircrafts/ec145.3d
+rotate -5.8 0 0
+
+# First waypoint (last known boat coordinates)
+#		     ref_code    x       y        z
+mission_add_intercept   0     -24593.0 -59568.0  0.0
+
+
+# Waypoint of second objective (Propriano helipad, see mission_objective_arrive_at)
+#                   ref_code   radius   urgency
+mission_add_intercept   3       40.0      1.0

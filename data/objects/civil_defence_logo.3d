@@ -1,0 +1,26 @@
+#
+#  Civil defence logo
+#
+
+begin_header
+texture_load civil_defence_logo_tex textures/civil_defence_logo.tex 0.5
+end_header
+
+range 500
+
+shade_model_flat
+
+begin_model standard
+# 1x1m civil defence logo
+texture_select civil_defence_logo_tex
+begin_quads
+ texcoord 0.000000 0.999999
+ 0.000000 0.500000 0.500000
+ texcoord 0.999999 0.999999
+ 0.000000 -0.500000 0.500000
+ texcoord 0.999999 0.000000
+ 0.000000 -0.500000 -0.500000
+ texcoord 0.000000 0.000000
+ 0.000000 0.500000 -0.500000
+end_quads
+end_model standard

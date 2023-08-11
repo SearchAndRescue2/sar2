@@ -1,0 +1,37 @@
+begin_header
+# Texture image must be square, thus use we 2 squares to do a rectangle.
+texture_load propriano_1_hires_tex textures/corsica/propriano_1_hires.tex
+texture_load propriano_2_hires_tex textures/corsica/propriano_2_hires.tex
+end_header
+
+name Propriano_hires
+
+range 9000
+
+begin_model standard
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+texture_select propriano_1_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -1024 512 0
+ texcoord 1.0 1.0
+ 0 512 0
+ texcoord 1.0 0.0
+ 0 -512 0
+ texcoord 0.0 0.0
+ -1024 -512 0
+end_quads
+texture_select propriano_2_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ 0 512 0
+ texcoord 1.0 1.0
+ 1024 512 0
+ texcoord 1.0 0.0
+ 1024 -512 0
+ texcoord 0.0 0.0
+ 0 -512 0
+end_quads
+end_model standard
