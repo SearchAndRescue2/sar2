@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        OL { counter-reset: item; padding-left: 10px; }
+        LI { display: block }
+        LI:before { content: counters(item, ".") " "; counter-increment: item }
+        CODE { display: block; background-color: #dddddd; marging: 1.0em; padding: 0.5em; }
+        H2 { text-align: center; }
+    </style>
+  </head>
+  <body>
+    <header>
+        <h2>[INWORK] Search And Rescue II documentation: how to do an aircraft.<br>
+        <br>
+        <i>For now, just a few information about Helicopter Flight Model values setting.</i>
+        </h2>
+    </header>
+    <main>
+    <ol>
+        <h3><li>...</h3>
+            <p>.....</p>
+        </li>
+        <h3><li>...</h3>
+            <p>....</p>
+        </li>
+        <h3><li>...</h3>
+            <p>.....</p>
+        </li>
+        <h3><li>Set aircraft characteristics</h3>
+            <p>If you don't work at an aircraft factory, the easier way is to look for aircraft real characteristics on the internet. You will have to find the following data (here is an example for the EC145 helicopter), and include them in the description tag as below. In game, these data will be printed on the "Aircraft Details..." screen.</p>
+		<ol><code>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#name">name</a> Eurocopter EC145<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#description">description</a> <b>&lt;bold&gt;</b>Eurocopter EC145 (MBB-BK117 C-2)<b>&lt;default&gt;</b>\<br>
+		Manufacturer: <b>&lt;bold&gt;</b>Eurocopter<b>&lt;default&gt;</b>\<br>
+		Rotor Diameter: <b>&lt;bold&gt;</b>36' 1"<b>&lt;default&gt;</b>\<br>
+		Height: <b>&lt;bold&gt;</b>12' 12"<b>&lt;default&gt;</b>\<br>
+		Length: <b>&lt;bold&gt;</b>42' 9"<b>&lt;default&gt;</b>\<br>
+		Max Gross Weight: <b>&lt;bold&gt;</b>7,904 lbs<b>&lt;default&gt;</b>\<br>
+		Empty Weight: <b>&lt;bold&gt;</b>3,977 lbs<b>&lt;default&gt;</b>\<br>
+		Number Engines: <b>&lt;bold&gt;</b>2<b>&lt;default&gt;</b>\<br>
+		Propulsion Type: <b>&lt;bold&gt;</b>Turbomeca ARRIEL 1E2 rated at 574kW (770shp)<b>&lt;default&gt;</b>\<br>
+		Fuel Capacity: <b>&lt;bold&gt;</b>1,530 lbs<b>&lt;default&gt;</b>\<br>
+		Max Endurance: <b>&lt;bold&gt;</b>2h35<b>&lt;default&gt;</b>\<br>
+		Max Speed: <b>&lt;bold&gt;</b>145 knots<b>&lt;default&gt;</b>\<br>
+		Never Exceed Speed (VNE): <b>&lt;bold&gt;</b>150 knots<b>&lt;default&gt;</b>\<br>
+		Cruising Speed: <b>&lt;bold&gt;</b>133 knots<b>&lt;default&gt;</b>\<br>
+		Max Range: <b>&lt;bold&gt;</b>380 nm<b>&lt;default&gt;</b>\<br>
+		Service Ceiling: <b>&lt;bold&gt;</b>17,200 ft msl<b>&lt;default&gt;</b>\<br>
+		Rate of climb: <b>&lt;bold&gt;</b>1,600 ft/min<b>&lt;default&gt;</b>\<br>
+		Number of Pilots: <b>&lt;bold&gt;</b>1<b>&lt;default&gt;</b>\<br>
+		Number of Flight Crew: <b>&lt;bold&gt;</b>1<b>&lt;default&gt;</b>\<br>
+		Number of passengers (max): <b>&lt;bold&gt;</b>5<b>&lt;default&gt;</b><br>
+		</code>
+		</ol>
+	</li>
+	<h3><li>Adjust helicopter Flight Model (FM) values</h3>
+	    <p>Helicopter FM values will define how your helicopter will fly and react to player steering. Below is how I went about doing it. There is maybe (certainly?) a better way, but this method seems to give acceptable results...</p>
+	    <ol><li>First, start Sar II, select Free Flight, select a Theater and a location, select the aircraft that you are working on, then click on the [Begin] button, then set units [CTRL+U] to English. Remember this: in english unit, speed will be indicated in <b>knots</b> in cokpit view [F2] and in <b>m</b>iles <b>p</b>er <b>h</b>our in external view [F3]. Then, finish game ( [ESC], [y] ). It is important to finish game now because new FM values are loaded when you press the [Begin] button. You will have to finish game at each time you want to modify a FM value.<br>
+	    </li>
+	    <br>
+	    <li>Stall and speed_max are not used for a copter, you can set them to zero. Define min_drag to a value between let's say 0.8 for a modern and very efficient helicopter and 1.5 for an old and/or hugly one. Set overspeed_expected at Max Speed value and overspeed at Never Exceed Speed (formaly VNE, <b>V</b>elocity to <b>N</b>ever <b>E</b>xceed).<br>
+		<code>
+		# Speed bounds, all in mph<br>
+		# 133 knot = 153 mph, 145 knot = 166.9 mph, 150 knot = 172.6 mph.<br>
+		# &nbsp;&nbsp;&nbsp;stall&nbsp;&nbsp;speed_max&nbsp;&nbsp;min_drag&nbsp;&nbsp;overspeed_expected&nbsp;&nbsp;overspeed<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#speed">speed</a>&nbsp;0.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.95&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;166.9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;172.6<br>
+		</code>
+	    </li>
+	    <br>
+	    <li>Set fuel value.<br>
+		<code>
+		# Fuel capacity and efficiency. For the consumption_rate we just use the equation:<br>
+		# consumption_rate = fuel_max_kg / max_endurance_time_in_seconds / avg_throttle_coeff<br>
+		# where avg_throttle_coeff is the average throttle value (ie 0.8 for most cases).<br>
+		# consumption_rate(kg/sec)&nbsp;&nbsp;initial_kg&nbsp;&nbsp;max_kg<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#fuel&nbsp;(*.3d)">fuel</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.093&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;694.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;694.0<br>
+		</code>
+	    </li>
+	    <br>
+	    <li>Set dry mass as this: <i>dry_mass</i> <b>=</b> <i>aircraft standard mass at takeofff</i> <b>-</b> <i>fuel initial_kg</i> . It's a good idea to calculate a second dry_mass for helicopter max weight too, because we will need it later.<br>
+		<code>
+		# Dry mass, in kg (EMS equipped, with 2 pilots)<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#dry_mass">dry_mass</a> <b>2450.0</b><br>
+		# EC-145 dry_mass for max weight test:<br>
+		#<a href= "../sar2ParmsBook/sar2ParmsBook.html#dry_mass">dry_mass</a> <b>2891.0</b><br>
+		</code>
+	    </li>
+	    <br>
+	    <li>Set engine settings.<br>
+		To define power, in cockpit view [F2], at 80% throttle/collective, flight forward at a constant altitude (speed is not important at this time), and adjust engine power to obtain a cockpit inclination angle of about<sup>*</sup> -12°. Head Up Display as a mark at -10°, but not at -12°. It will help you if you add a mark at -12°: I made that with an arrow cutted up in a Post-it&reg; and pasted on the monitor.<br>
+		<sup>*</sup> I found the -12° angle value on the internet and decided to use it as a goal to reach.
+		<code>
+		# Engine settings.<br>
+		# &nbsp;can_pitch?&nbsp;&nbsp;initial_pitch&nbsp;&nbsp;&nbsp;<b>power</b>&nbsp;&nbsp;&nbsp;collective_range<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#engine">engine</a>&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>39275.0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.50<br>
+		</code>
+	    </li>
+            <br>
+            <li>Set helicopter climb rate.<br>
+		Adjust vertical acceleration responsiveness (helicopter_accelresp "<b>k</b>" coefficient) to reach maximum rate of climb at 100% throttle (collective). More "k" = less climb rate, less "k" = more climb rate. Climb rate is shown in external view [F3]. I read that in real life maximum climb rate is reached only when helicopter flights forward but Sar II is a game, thus let's say that we want to reach it when helicopter moves vertically only.<br>
+		<code>
+		# Helicopter acceleration responsiveness. Higher values produce less responsiveness.<br>
+		# EC145 max climb rate: 1600ft/min = 26.7ft/s (for max rate of climb at 100% throttle)<br>
+		#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right/left&nbsp;&nbsp;fwd/bckwd&nbsp;&nbsp;<b>up/down</b><br>
+		#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>k</b><br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#helicopter_accelresp">helicopter_accelresp</a>&nbsp;&nbsp;4200.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1455.0 &nbsp;&nbsp;&nbsp;&nbsp;<b>1065.0</b><br>
+		</code>
+	    </li>
+            <br>
+            <li>Stabilize engine power and helicopter acceleration responsiveness "k" coefficient values.<br>
+		Iterate the two points above until both values are stable before going to next point.<br>
+	    </li>
+            <br>
+            <li>Set helicopter horizontal cruise speed.<br>
+		Adjust horizontal acceleration responsiveness (helicopter_accelresp "<b>j</b>" coefficient) to reach cruise speed when flying at constant altitude with 80% throttle (collective). More "j" = less speed, less "j" = more speed.<br>
+		<code>
+		# Helicopter acceleration responsiveness. Higher values produce less responsiveness.<br>
+		# EC145 max climb rate: 1600ft/min = 26.7ft/s (for max rate of climb at 100% throttle)<br>
+		#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right/left&nbsp;&nbsp;<b>fwd/bckwd</b>&nbsp;&nbsp;up/down<br>
+		#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>j</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;k<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#helicopter_accelresp">helicopter_accelresp</a>&nbsp;&nbsp;4200.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>1455.0</b> &nbsp;&nbsp;&nbsp;&nbsp;1065.0<br>
+		</code>
+	    </li>
+            <br>
+            <li>Set left/right acceleration responsiveness "<b>i</b>" coefficient.<br>
+		Copy forward/backward helicopter_accelresp "<b>j</b>" coefficient to left/right "<b>i</b>" coefficient.<br>
+		<code>
+		# Helicopter acceleration responsiveness. Higher values produce less responsiveness.<br>
+		# EC145 max climb rate: 1600ft/min = 26.7ft/s (for max rate of climb at 100% throttle)<br>
+		#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>right/left</b>&nbsp;&nbsp;fwd/bckwd&nbsp;&nbsp;up/down<br>
+		#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>i</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;k<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#helicopter_accelresp">helicopter_accelresp</a>&nbsp;&nbsp;<b>1455.0</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1455.0 &nbsp;&nbsp;&nbsp;&nbsp;1065.0<br>
+		</code>
+	    </li>
+            <br>
+            <li>Set attitude_leveling heading, pitch, and bank values.<br>
+		Except heading which must be null for an helicopter, I don't have any rule for pitch and bank values... Test and do it as you feel it!<br>
+		<code>
+		# Attitude leveling, in degrees per second<br>
+		#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;h&nbsp;&nbsp;&nbsp;&nbsp;p&nbsp;&nbsp;&nbsp;&nbsp;b<br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#attitude_leveling">attitude_leveling</a>&nbsp;&nbsp;0.0&nbsp;&nbsp;5.0&nbsp;&nbsp;10.0<br>
+		</code>
+	    </li>
+            <br>
+	    <li>Set dry_mass at maximum mass.<br>
+		Set dry mass as this (you should already have calculate it...): <i>dry_mass</i> <b>=</b> <i>aircraft maximum mass at takeofff</i> <b>-</b> <i>fuel initial_kg</i> .<br>
+		<code>
+		# Dry mass, in kg (EMS equipped, with 2 pilots)<br>
+		#<a href= "../sar2ParmsBook/sar2ParmsBook.html#dry_mass">dry_mass</a> 2450.0<br>
+		# EC-145 dry_mass for max weight test:<br>
+		<b><a href= "../sar2ParmsBook/sar2ParmsBook.html#dry_mass">dry_mass</a> 2891.0</b><br>
+		</code>
+	    </li>
+	    <br>
+	    <li>
+		Start game and check if helicopter can takeoff (it should).<br>
+	    </li>
+	    <br>
+	    <li>
+		Reset dry mass to its original value:<br>
+		<code>
+		# Dry mass, in kg (EMS equipped, with 2 pilots)<br>
+		<b><a href= "../sar2ParmsBook/sar2ParmsBook.html#dry_mass">dry_mass</a> 2450.0</b><br>
+		# EC-145 dry_mass for max weight test:<br>
+		#<a href= "../sar2ParmsBook/sar2ParmsBook.html#dry_mass">dry_mass</a> 2891.0<br>
+		</code>
+	    </li>
+	    <br>
+	    <li>
+		Set collective_range.<br>
+		Start game, takeoff, stabilize altitude between 10 to 20 feet <b>A</b>bove <b>G</b>round <b>L</b>evel, then suddenly bring throttle/collective to the minimal position: helicopter must crash and explode. If not, increase the collective_range value (max value: 1.0).<br>
+		<code>
+		# Engine settings.<br>
+		# &nbsp;can_pitch?&nbsp;&nbsp;initial_pitch&nbsp;&nbsp;&nbsp;power&nbsp;&nbsp;&nbsp;<b>collective_range</b><br>
+		<a href= "../sar2ParmsBook/sar2ParmsBook.html#engine">engine</a>&nbsp;&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;39275.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>0.50</b><br>
+		</code>
+	    </li>
+	    <br>
+	    <b>Your helicopter is now ready to fly!</b>
+        </ol>
+        </li>
+    </main>
+    <footer></footer>
+  </body>
+</html>
