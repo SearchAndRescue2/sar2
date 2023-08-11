@@ -20,8 +20,8 @@ texture_load as350_fuselage_left02 textures/as350/fuselage_left02.tex 0.800000
 texture_load as350_fuselage_bottom textures/as350/fuselage_bottom.tex 0.600000
 end_header
 version 0 8 1
-name Aerospatile AS-350
-desc <bold>Aerospatile AS-350<default>\
+name Aerospatiale AS350 B2
+desc <bold>Aerospatiale AS350 B2 <default>\
 Manufacturer: <bold>Aerospatiale<default>\
 Rotor Diameter: <bold>35' 9"<default>\
 Height: <bold>10' 11"<default>\
@@ -81,14 +81,15 @@ air_brakes 0.0
 #                     h    p    b
 attitude_change_rate  27.0 18.0 40.0
 
-# Acceleration responsiveness, higher values produce less
-# responsiveness.
-#                      i        j       k
-helicopter_accelresp   4200.0   12100.0  1100.0
-airplane_accelresp    14000.0  10000.0    3.0
+# Acceleration responsiveness, higher values produce less responsiveness.
+#                  right/left  fwd/bckwd   up/down
+#                       i          j          k
+helicopter_accelresp   600.0     600.0      575.0
 
 # Dry mass in kg
 dry_mass 1220.0
+# AS-350 dry_mass for max weight test (2250 kg - fuel initial_kg = 1669 kg):
+#dry_mass 1669.0
 
 # Fuel capacity and efficiency. For the consumption_rate we just use
 # the equation (fuel_max_kg / max_endurance_time_in_seconds /
@@ -99,16 +100,21 @@ dry_mass 1220.0
 fuel 0.069                     581.0       581.0
 
 # Engine settings
-#      can_pitch? initial_pitched? power   collective_range
-engine 0          0                27000.0 0.95
+# Power value adjusted to achieve vertical max climb rate (1,670 ft/min = 27.8 ft/s) at helicopter normal weight
+# and 100% throttle (collective), with AS-350 takeoff normal weight = 1801 kg = dry_mass + fuel initial_kg = 1220 + 581.
+#      can_pitch? initial_pitched?   power   collective_range
+engine      0           0           22590.0        0.50
 
 # Speed bounds (all in mph)
-#     stall speed_max min_drag  overspeed_expected overspeed
-speed 60.0  37000.0   0.75      176.0              210.0
+# min_drag adusted to reach cruising speed (115 knot) when flying horizontally (no elevation) at 80% throttle,
+# with the "standard take off" weight (dry_mass = 1220.0 kg).
+# 115 knot = 132 mph, 133 knot = 153 mph, 155 knot = 178 mph.
+#     stall speed_max min_drag  overspeed_expected  overspeed
+speed  0.0    600.0     1.0           153.0          178.0
 
 # Attitude leveling in degrees per second
-#                 h   p   b
-attitude_leveling 0.0 1.1 1.5
+#                  h    p    b
+attitude_leveling 0.0  2.0  2.5
 
 # Service ceiling in feet
 service_ceiling 15100
@@ -119,7 +125,7 @@ service_ceiling 15100
 
 # Crew and capacity
 #    crew  passengers passengers_max
-crew 4     0          0
+crew   1       0            4
 
 # Sounds
 #                name range range_far pos_xyz cutoff dir_hpb sample_rate_limit filename
