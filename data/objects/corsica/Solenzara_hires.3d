@@ -1,0 +1,89 @@
+begin_header
+# Texture image must be square, thus use we 2 squares to do a rectangle.
+texture_load solenzara_1_hires_tex textures/corsica/solenzara_1_hires.tex
+texture_load solenzara_2_hires_tex textures/corsica/solenzara_2_hires.tex
+texture_load solenzara_3_hires_tex textures/corsica/solenzara_3_hires.tex
+texture_load solenzara_4_hires_tex textures/corsica/solenzara_4_hires.tex
+texture_load solenzara_5_hires_tex textures/corsica/solenzara_5_hires.tex
+texture_load solenzara_6_hires_tex textures/corsica/solenzara_6_hires.tex
+end_header
+
+name Solenzara_hires
+
+range 9000
+
+begin_model standard
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+texture_select solenzara_1_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -288 1753 0
+ texcoord 1.0 1.0
+ 288 1753 0
+ texcoord 1.0 0.0
+ 288 1168.666667 0
+ texcoord 0.0 0.0
+ -288 1168.666667 0
+end_quads
+texture_select solenzara_2_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -288 1168.666667 0
+ texcoord 1.0 1.0
+ 288 1168.666667 0
+ texcoord 1.0 0.0
+ 288 584.333333 0
+ texcoord 0.0 0.0
+ -288 584.333333 0
+end_quads
+texture_select solenzara_3_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -288 584.333333 0
+ texcoord 1.0 1.0
+ 288 584.333333 0
+ texcoord 1.0 0.0
+ 288 0 0
+ texcoord 0.0 0.0
+ -288 0 0
+end_quads
+texture_select solenzara_4_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -288 0 0
+ texcoord 1.0 1.0
+ 288 0 0
+ texcoord 1.0 0.0
+ 288 -584.333333 0
+ texcoord 0.0 0.0
+ -288 -584.333333 0
+end_quads
+texture_select solenzara_5_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -288 -584.333333 0
+ texcoord 1.0 1.0
+ 288 -584.333333 0
+ texcoord 1.0 0.0
+ 288 -1168.666667 0
+ texcoord 0.0 0.0
+ -288 -1168.666667 0
+end_quads
+texture_select solenzara_6_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -288 -1168.666667 0
+ texcoord 1.0 1.0
+ 288 -1168.666667 0
+ texcoord 1.0 0.0
+ 288 -1753 0
+ texcoord 0.0 0.0
+ -288 -1753 0
+end_quads
+end_model standard

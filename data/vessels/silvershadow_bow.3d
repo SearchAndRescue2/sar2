@@ -1,0 +1,10 @@
+# Silver Shadow bow (for better contact bounds)
+
+type 3
+range 20
+
+crash_flags 0 1 1 0
+contact_rectangular -8.5 8.5 -8.5 8.5 0 11.2
+
+begin_model standard
+end_model standard

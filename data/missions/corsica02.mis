@@ -80,8 +80,8 @@ translate_random 20.0 0.0
 # ambulance
 create_object 2
 model_file automobiles/ambulance.3d
-translate -27387 34615 136
-rotate 26 0 0
+translate -27435 34667 136
+rotate 221 0 0
 
 # Begin at object (name of object from scene file)
 mission_begin_at helipad_calvi

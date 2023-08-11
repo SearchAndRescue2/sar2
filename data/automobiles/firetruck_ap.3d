@@ -22,7 +22,7 @@ texture_load firetruck_ap_right textures/firetruck_ap/right.tex 0.500000
 texture_load firetruck_ap_wheel textures/firetruck_ap/wheel.tex 0.200000
 end_header
 version 0 8 1
-name Airport Fire Truck
+name Airport_Fire_Truck
 
 range 5000
 range_far 500
@@ -1013,7 +1013,7 @@ texture_off
 end_model standard
 begin_model standard_far
 #$model_flags hide
-color 0.800000 1.000000 0.040000 1.000000 1.000000 1.000000 1.000000 0.100000 0.000000
+color 0.600000 0.750000 0.350000 1.000000 1.000000 0.100000 0.000000 0.000000 0.000000
 begin_quads
  normal 0.000000 0.000000 1.000000
  -1.800000 5.140000 3.700000

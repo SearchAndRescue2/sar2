@@ -1,0 +1,89 @@
+begin_header
+# Texture image must be square, thus use we 2 squares to do a rectangle.
+texture_load calvi_1_hires_tex textures/corsica/calvi_1_hires.tex
+texture_load calvi_2_hires_tex textures/corsica/calvi_2_hires.tex
+texture_load calvi_3_hires_tex textures/corsica/calvi_3_hires.tex
+texture_load calvi_4_hires_tex textures/corsica/calvi_4_hires.tex
+texture_load calvi_5_hires_tex textures/corsica/calvi_5_hires.tex
+texture_load calvi_6_hires_tex textures/corsica/calvi_6_hires.tex
+end_header
+
+name Calvi_hires
+
+range 9000
+
+begin_model standard
+color 1.000000 1.000000 1.000000 1.000000 0.000000 0.000000 0.000000 0.000000 0.000000
+texture_select calvi_1_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -256 1536 0
+ texcoord 1.0 1.0
+ 256 1536 0
+ texcoord 1.0 0.0
+ 256 1024 0
+ texcoord 0.0 0.0
+ -256 1024 0
+end_quads
+texture_select calvi_2_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -256 1024 0
+ texcoord 1.0 1.0
+ 256 1024 0
+ texcoord 1.0 0.0
+ 256 512 0
+ texcoord 0.0 0.0
+ -256 512 0
+end_quads
+texture_select calvi_3_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -256 512 0
+ texcoord 1.0 1.0
+ 256 512 0
+ texcoord 1.0 0.0
+ 256 0 0
+ texcoord 0.0 0.0
+ -256 0 0
+end_quads
+texture_select calvi_4_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -256 0 0
+ texcoord 1.0 1.0
+ 256 0 0
+ texcoord 1.0 0.0
+ 256 -512 0
+ texcoord 0.0 0.0
+ -256 -512 0
+end_quads
+texture_select calvi_5_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -256 -512 0
+ texcoord 1.0 1.0
+ 256 -512 0
+ texcoord 1.0 0.0
+ 256 -1024 0
+ texcoord 0.0 0.0
+ -256 -1024 0
+end_quads
+texture_select calvi_6_hires_tex
+begin_quads
+ normal 0.0 0.0 1.0
+ texcoord 0.0 1.0
+ -256 -1024 0
+ texcoord 1.0 1.0
+ 256 -1024 0
+ texcoord 1.0 0.0
+ 256 -1536 0
+ texcoord 0.0 0.0
+ -256 -1536 0
+end_quads
+end_model standard
