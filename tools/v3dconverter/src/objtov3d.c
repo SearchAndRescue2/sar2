@@ -54,17 +54,19 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ); // read .mtl (m
 int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) { // special bit nr0 = 1: invert faces
     FILE *fpIn = NULL, *fpOut = NULL, *fopen();
     long lineNr = 1;
-    long verticies = 0, textCoords = 0, normals = 0, faces = 0; // counters.
+    long vertices = 0, textCoords = 0, normals = 0, faces = 0; // counters.
     int materials = 0; // counters.
     double vx = 0, vy = 0, vz = 0, vni = 0, vnj = 0, vnk = 0;
-    bool textureOn = false;
-    double Xmin = 999999999, Xmax = -999999999, Ymin = 999999999, Ymax = -999999999, Zmin = 999999999, Zmax = -999999999; // object bounds
+    bool textureOn = false, firstObject = true;
+    double Xmin = 999999999, Xmax = -999999999, Ymin = 999999999, Ymax = -999999999, Zmin = 999999999, Zmax = -999999999; // object rectangular bounds
+    double XYradius, maxXYradius = 0; // object cylendrical bounds (maxXYradius, Zmin, Zmax)
+    double XYZradius, maxXYZradius = 0; // object spherical bound (maxXYZradius)
     char lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1];
     char previousV3dParam[ 40 + 1 ] = "";
-    char currentV3dModelType[ MAX_LENGTH + 1 ] = "standard";
     
-    #define V3DMODELTYPES 18
-    char v3dModelType[ V3DMODELTYPES ][ 15 ] = {
+    #define V3DMODELTYPES 18+1
+    #define V3DMODELTYPEMAXLENGTH 14
+    char v3dModelType[ V3DMODELTYPES ][ V3DMODELTYPEMAXLENGTH + 1 ] = {
 	{ "standard" }, // "by tradition", first model is always named 'standard'. V3dconverter will automatically create it after "texture_load" statements.
 	{ "standard_dawn" },
 	{ "standard_dusk" },
@@ -82,15 +84,17 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	{ "door" },
 	{ "fueltank" },
 	{ "cockpit" },
-	{ "shadow" }
+	{ "shadow" },
+	{ "" }
     };
+    char currentV3dModelType[ V3DMODELTYPEMAXLENGTH + 1 ] = "";
     
     /* Input and output files ok ? */
     if ( ( fpIn = fopen(source, "r" ) ) == NULL ) {
 	perror(source);
 	return -1;
     }
-    if ( ( fpOut = fopen( dest, "w" ) ) == NULL ) {
+    if ( ( fpOut = fopen( dest, "w+" ) ) == NULL ) {
 	fclose( fpIn );
 	perror( dest );
 	return -1;
@@ -148,13 +152,13 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		strcpy( previousV3dParam, "" );
 	    }
 	    
-	    verticies++; // add a vertex coord. v[0] is never used (as in *.obj file format description).
+	    vertices++; // add a vertex coord. v[0] is never used (as in *.obj file format description).
 	    
-	    Vcoord *tmp = realloc( v, ( verticies + 1 ) * sizeof( Vcoord ) );
+	    Vcoord *tmp = realloc( v, ( vertices + 1 ) * sizeof( Vcoord ) );
 	    if (tmp == NULL)
 	    {
 		FREE_AND_CLOSE_ALL_OBJTOV3D
-		fprintf( stderr, "Line #%ld: Can't allocate memory for Vcoord[%ld].\n", lineNr, verticies );
+		fprintf( stderr, "Line #%ld: Can't allocate memory for Vcoord[%ld].\n", lineNr, vertices );
 		return EXIT_FAILURE;
 	    }
 	    v = tmp;
@@ -200,9 +204,9 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    }
 	    
 	    /* store coords */
-	    v[verticies].x = vx;
-	    v[verticies].y = vy;
-	    v[verticies].z = vz;
+	    v[vertices].x = vx;
+	    v[vertices].y = vy;
+	    v[vertices].z = vz;
 	    
 	    /* easy way to compute object rectangular bounds */
 	    if ( vx <  Xmin )
@@ -217,6 +221,16 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		Zmin = vz;
 	    if ( vz >  Zmax )
 		Zmax = vz;
+	    
+	    /* cylindrical bounds */
+	    XYradius = sqrt( pow( vx, 2 ) + pow( vy, 2 ) );
+	    if ( XYradius > maxXYradius )
+		maxXYradius = XYradius;
+
+	    /* spherical bound */
+	    XYZradius = sqrt( pow( XYradius, 2 ) + pow( vz, 2 ) );
+	    if ( XYZradius > maxXYZradius )
+		maxXYZradius = XYZradius;
 	}
 	else if ( !strcmp( objTag, "vn" ) ) // vertex normal
 	{
@@ -298,12 +312,12 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		if ( vNum > 0 )
 		    fprintf( fpOut, " %f %f %f\n", v[vNum].x, v[vNum].y, v[vNum].z );
 		else
-		    fprintf( fpOut, " %f %f %f\n", v[verticies + vNum].x, v[verticies + vNum].y, v[verticies + vNum].z );
+		    fprintf( fpOut, " %f %f %f\n", v[vertices + vNum].x, v[vertices + vNum].y, v[vertices + vNum].z );
 	    }
 	}
 	else if ( !strcmp( objTag, "l" ) ) // line
 	{
-	    // count line verticies
+	    // count line vertices
 	    int lineVerticies = 0, lastStatementPos = 0, firstVertexNr = 0, lastVertexNr = 0;
 	    int vNum = 0, vtNum = 0;
 	    const char delim[2] = " ";
@@ -334,7 +348,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    strcpy( previousV3dParam, "lines" );
 		}
 	    }
-	    else if ( firstVertexNr == lastVertexNr ) // there are more than 2 verticies and it's a line loop
+	    else if ( firstVertexNr == lastVertexNr ) // there are more than 2 vertices and it's a line loop
 	    {
 		// always only one loop per v3d "begin_line_loop" statement: no need to check previous type, just "end_" it.
 		if ( previousV3dParam[0] != '\0' )
@@ -346,7 +360,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		lineVerticies--; // will be used when writing datas to avoid last vertex print in case of line loop
 		
 	    }
-	    else // there are more than 2 verticies, and it's a line strip
+	    else // there are more than 2 vertices, and it's a line strip
 	    {
 		// always only one strip per v3d "begin_line_strip" statement: no need to check previous type, just "end_" it.
 		if ( previousV3dParam[0] != '\0' )
@@ -378,7 +392,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    if ( vNum > 0 )
 			fprintf( fpOut, " %f %f %f\n", v[vNum].x, v[vNum].y, v[vNum].z );
 		    else
-			fprintf( fpOut, " %f %f %f\n", v[verticies + vNum].x, v[verticies + vNum].y, v[verticies + vNum].z );
+			fprintf( fpOut, " %f %f %f\n", v[vertices + vNum].x, v[vertices + vNum].y, v[vertices + vNum].z );
 		}
 		
 		lineVerticies--;
@@ -393,7 +407,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    
 	    faces++;
 
-	    /* count face verticies in order to determine face type (triangle, quad, polygon) */
+	    /* count face vertices in order to determine face type (triangle, quad, polygon) */
 	    int cnt = 0;
 	    int bufLength = strlen( lineBuffer );
 	    while ( ( cnt < bufLength ) && ( lineBuffer[ cnt ] != 'f' ) ) // look for 'f'
@@ -442,7 +456,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    }
 	    else  // faceVerticies < 3 : should never happen !!!
 	    {
-		fprintf( stderr, " Warning in *.obj file, line #%ld: face with only %d verticies detected and removed.\n", lineNr, faceVerticies );
+		fprintf( stderr, " Warning in *.obj file, line #%ld: face with only %d vertices detected and removed.\n", lineNr, faceVerticies );
 	    }
 	    
 	    /* alloc memory */
@@ -462,7 +476,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		return EXIT_FAILURE;
 	    }
 	    
-	    /* face type (triangle, quad, polygon) has been determined. Now, read input line until end and write face verticies. */
+	    /* face type (triangle, quad, polygon) has been determined. Now, read input line until end and write face vertices. */
 	    token = strtok( lineBuffer, " " ); // first token contains "f" (face)
 	    token = strtok( NULL, " " ); // second token contains first v/vt/vn reference numbers
 	    long tabCounter;
@@ -510,7 +524,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		}
 	    }
 	    
-	    /* check faces has identical verticies */
+	    /* check faces has identical vertices */
 	    bool faceHasIdenticalVertexIndicies = false;
 	    for ( int cnt0 = 0; cnt0 < faceVerticies - 1; cnt0++ )
 	    {
@@ -532,7 +546,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		continue; // go to *.obj file next line
 	    }
 
-	    // if verticies don't have normals, then calculate face normal and write it
+	    // if vertices don't have normals, then calculate face normal and write it
 	    if ( tmpVertex[1].vn == 0 ) // if first vertex normal is not defined
 	    {
 		faceNormal = true;
@@ -543,7 +557,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    ; // DIV BY ZERO ERROR when calculating normal
 	    }
 	    else
-	    { // check if normal is a face normal (i.e. not a vertex one)
+	    { // check if normal is a face normal (i.e. not a vertex one). If all vertices on a face have the same normal, then normal is a face normal. 
 		vnNum = tmpVertex[0].vn;
 		if ( vnNum > 0 )
 		{
@@ -563,21 +577,24 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    vnNum = tmpVertex[tabCounter].vn;
 		    if ( vnNum > 0 )
 		    {
-			if ( ( first_i != vn[vnNum].i ) || ( first_j != vn[vnNum].j ) || ( first_k != vn[vnNum].k ) ) 
+			if ( ( vn[vnNum].i != first_i ) || ( vn[vnNum].j != first_j ) || ( vn[vnNum].k != first_k ) ) 
 			{
 			    faceNormal = false;
-			    tabCounter = faceVerticies;
+			    break;
 			}
 		    }
-		    else // vnNum < 0
+		    else // vnNum is negative (a *.obj vertex number can't be null)
 		    {
-			fprintf( fpOut, " normal %f %f %f\n", vn[normals + vnNum].i, vn[normals + vnNum].j, vn[normals + vnNum].k );
-			if ( ( first_i != vn[normals + vnNum].i ) || ( first_j != vn[normals + vnNum].j ) || ( first_k != vn[normals + vnNum].k ) ) 
+			if ( ( vn[normals + vnNum].i != first_i ) || ( vn[normals + vnNum].j != first_j ) || ( vn[normals + vnNum].k != first_k ) ) 
 			{
 			    faceNormal = false;
-			    tabCounter = faceVerticies;
+			    break;
 			}
 		    }
+		}
+		if ( faceNormal == true )
+		{
+		    fprintf( fpOut, " normal %f %f %f\n", first_i, first_j, first_k );
 		}
 	    }
 	    free( tmpVertex2 );
@@ -612,7 +629,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		if ( vNum > 0 )
 		    fprintf( fpOut, " %f %f %f\n", v[vNum].x, v[vNum].y, v[vNum].z );
 		else // vNum < 0
-		    fprintf( fpOut, " %f %f %f\n", v[verticies + vNum].x, v[verticies + vNum].y, v[verticies + vNum].z );
+		    fprintf( fpOut, " %f %f %f\n", v[vertices + vNum].x, v[vertices + vNum].y, v[vertices + vNum].z );
 	    }
 	    
 	    free( tmpVertex );
@@ -772,14 +789,11 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	     * we can write some generic statements.
 	     */
 	    fprintf( fpOut, "# Generic statements for making this object visible:\n" );
-	    fprintf( fpOut, "type 1\n" );
+	    //fprintf( fpOut, "type 1\n" ); // deprecated
 	    fprintf( fpOut, "range 2000\n\n" );
 	    
 	    fprintf( fpOut, "# Generic statement to add object smoothing. Generally, buildings do not need to be smoothed:\n" );
 	    fprintf( fpOut, "shade_model_smooth\n\n" );
-	    
-	    fprintf( fpOut, "# Generic model type:\n" );
-	    fprintf( fpOut, "begin_model standard\n\n" );
 	}
 	else if ( !strcmp( objTag, "usemtl" ) )
 	{
@@ -958,6 +972,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "\n" );
 	    }
 	}
+	/* ### See "o" (object) ###
 	else if ( !strcmp( objTag, "g" ) ) // group
 	{
 	    // remove carriage return
@@ -967,6 +982,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    
 	    fprintf( fpOut, "#OBJFILE group: %s\n", lineBuffer );
 	}
+	*/
 	else if ( !strcmp( objTag, "s" ) ) // smoothing group
 	{
 	    if ( previousV3dParam[0] != '\0' )
@@ -988,7 +1004,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    }
 	    */
 	}
-	else if ( !strcmp( objTag, "o" ) ) // new object
+	else if ( !strcmp( objTag, "o" ) || !strcmp( objTag, "g" ) ) // new object or group
 	{
 	    if ( previousV3dParam[0] != '\0' )
 	    {
@@ -1021,11 +1037,8 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    fprintf( fpOut, "end_model %s\n", currentV3dModelType );
 		}
 		
-		if ( cnt != 0 ) // if it's not the 'standard' model
-		{
-		    fprintf( fpOut, "begin_model %s\n", objectName );
-		    strcpy( currentV3dModelType, objectName );
-		}
+		fprintf( fpOut, "begin_model %s\n", objectName );
+		strcpy( currentV3dModelType, objectName );
 	    }
 	    else
 	    {
@@ -1034,7 +1047,17 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    if ( objectName[ cnt ] == ' ')
 			objectName[ cnt ] = '_';
 		}
-		fprintf( fpOut, "#OBJFILE object:  %s\n", objectName );
+		if ( !strcmp( objTag, "o" ) )
+		    fprintf( fpOut, "#OBJFILE object:  %s\n", objectName );
+		else
+		    fprintf( fpOut, "#OBJFILE group:  %s\n", objectName );
+		
+		if ( firstObject )
+		{
+		    strcpy( currentV3dModelType, "standard" );
+		    fprintf( fpOut, "begin_model standard\n" );
+		    firstObject = false;
+		}
 	    }
 	}
 	else if ( objTag[0] == '#' ) // comment
@@ -1071,11 +1094,30 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
     if ( currentV3dModelType[0] != '\0' )
 	fprintf( fpOut, "end_model %s\n", currentV3dModelType ); // write end of previous model type (if any)
     
-    // print some usefull information on console
+    // print some usefull information at start of v3d output file and on console
+    FILE* tmp = tmpfile();
+    int c;
+    rewind ( fpOut );
+    while ( ( c = fgetc( fpOut ) ) != EOF )
+        fputc( c, tmp );
+    rewind (fpOut);
+    fprintf( fpOut, "# Object X, Y and Z dimensions [m]: %.3lf %.3lf %.3lf\n", Xmax - Xmin, Ymax - Ymin, Zmax - Zmin );
     fprintf( stdout, "Object X, Y and Z dimensions [m]: %.3lf %.3lf %.3lf\n", Xmax - Xmin, Ymax - Ymin, Zmax - Zmin );
-    fprintf( stdout, "Rectangular Xmin Xmax Ymin Ymax Zmin Zmax bounds [m]: %.3lf %.3lf %.3lf %.3lf %.3lf %.3lf\n", Xmin, Xmax, Ymin, Ymax, Zmin, Zmax );
+    double volume = (Xmax - Xmin) * (Ymax - Ymin) * (Zmax - Zmin);
+    fprintf( fpOut, "# Rectangular Xmin Xmax Ymin Ymax Zmin Zmax bounds [m]: %.3lf %.3lf %.3lf %.3lf %.3lf %.3lf (volume: %.1lf m3)\n", Xmin, Xmax, Ymin, Ymax, Zmin, Zmax, volume );
+    fprintf( stdout, "Rectangular Xmin Xmax Ymin Ymax Zmin Zmax bounds [m]: %.3lf %.3lf %.3lf %.3lf %.3lf %.3lf (volume: %.1lf m3)\n", Xmin, Xmax, Ymin, Ymax, Zmin, Zmax, volume );
+    volume = M_PI * maxXYradius * maxXYradius * (Zmax - Zmin);
+    fprintf( fpOut, "# Cylendrical radius Zmin Zmax bounds [m]: %.3lf %.3lf %.3lf (volume: %.1lf m3)\n", maxXYradius, Zmin, Zmax, volume );
+    fprintf( stdout, "Cylendrical radius Zmin Zmax bounds [m]: %.3lf %.3lf %.3lf (volume: %.1lf m3)\n", maxXYradius, Zmin, Zmax, volume );
+    volume = 4/3 * M_PI * pow(maxXYZradius, 3.0);
+    fprintf( fpOut, "# Spherical bound radius [m]: %.3lf (volume: %.1lf m3)\n\n", maxXYZradius, volume );
+    fprintf( stdout, "Spherical bound radius [m]: %.3lf (volume: %.1lf m3)\n", maxXYZradius, volume );
+    rewind ( tmp );
+    while ( ( c = fgetc( tmp ) ) != EOF )
+        fputc( c, fpOut );
+    fclose( tmp );
 
-    //fprintf( stderr, "Number of\n  verticies: %ld\n    normals: %ld\n textCoords: %ld\n      faces: %ld\n", verticies, normals, textCoords, faces );
+    //fprintf( stderr, "Number of\n  vertices: %ld\n    normals: %ld\n textCoords: %ld\n      faces: %ld\n", vertices, normals, textCoords, faces );
     
     FREE_AND_CLOSE_ALL_OBJTOV3D
      

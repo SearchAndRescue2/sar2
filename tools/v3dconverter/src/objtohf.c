@@ -28,10 +28,11 @@ if ( fpConversionDataFileIn != NULL ) fclose( fpConversionDataFileIn );
 
 int objToHf(const char *source, const char *dest, UserModifier *userModifier ) {
     FILE *fpObjIn = NULL, *fpHfOut = NULL, *fopen(), *fpConversionDataFileIn = NULL;
-    char lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1];
+    char lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1], terrainFileName[MAX_LENGTH + 1];
     long lineNr = 1;
     unsigned long verticesNr = 0;
     bool specFileFound = false;
+    double newObjMaxAltitude = 0; // max altitude in modified *.obj file
     
     struct TGAImageHeader {
 	/*** Fixed length data ***/
@@ -71,11 +72,10 @@ int objToHf(const char *source, const char *dest, UserModifier *userModifier ) {
 	double p;			// pitch rotation, in degrees
 	double b;			// bank rotation, in degrees
 	double scale;			// scale applied by user during *.3d to *.obj conversion
-	int bitsWidth;			// image width, in bits
-	int bitsHeight;			// image height, in bits
+	uint16_t bitsWidth;		// image width, in bits (0 to 65535)
+	uint16_t bitsHeight;		// image height, in bits (0 to 65535)
     };
     struct TerrainSpec terrainSpec;
-    
     
     /*
      * Input and output files ready ?
@@ -148,6 +148,10 @@ int objToHf(const char *source, const char *dest, UserModifier *userModifier ) {
 			
 			if ( !strcmp( lineBuffer, "file" ) )
 			{
+			    strncpy( terrainFileName, &lineBuffer[ cnt ], MAX_LENGTH + 1 );
+			    char * lastDotPos = strrchr( terrainFileName, '.' );
+			    strcpy( lastDotPos, ".3d" );
+			    terrainFileName[ strlen( terrainFileName ) ] = '\0';
 			    //fprintf( stdout, "file = %s", &lineBuffer[ cnt ] );
 			}
 			else if ( !strcmp( lineBuffer, "material_name" ) )
@@ -199,13 +203,13 @@ int objToHf(const char *source, const char *dest, UserModifier *userModifier ) {
 			else if ( !strcmp( lineBuffer, "terrain_bitsWidth" ) )
 			{
 			    valueSet++;
-			    sscanf( &lineBuffer[ cnt ], "%d", &terrainSpec.bitsWidth );
+			    sscanf( &lineBuffer[ cnt ], "%hd", &terrainSpec.bitsWidth );
 			    //fprintf( stdout, "terrain_bitsWidth = %d\n", terrainSpec.bitsWidth );
 			}
 			else if ( !strcmp( lineBuffer, "terrain_bitsHeight" ) )
 			{
 			    valueSet++;
-			    sscanf( &lineBuffer[ cnt ], "%d", &terrainSpec.bitsHeight );
+			    sscanf( &lineBuffer[ cnt ], "%hd", &terrainSpec.bitsHeight );
 			    //fprintf( stdout, "terrain_bitsHeight = %d\n", terrainSpec.bitsHeight );
 			}
 			else
@@ -223,9 +227,22 @@ int objToHf(const char *source, const char *dest, UserModifier *userModifier ) {
 		; // sscanf error
 	    }
 	}
+	else if ( !strcmp( objTag, "v" ) ) // *.obj vertex
+	{
+	    if ( sscanf( lineBuffer, "v %*s %s %*s", objTag ) == 1 )
+	    {
+		double foo;
+		sscanf( objTag, "%lf", &foo );
+		if ( foo > newObjMaxAltitude )
+		    newObjMaxAltitude = foo;
+	    }
+	    else
+	    {
+		; // sscanf error
+	    }
+	}
 	lineNr++;
     }
-    
     
     /*
      * Check if all terrain specification values are set, and ask them to user if not.
@@ -353,7 +370,7 @@ for ( int cnt1 = cnt - 1; cnt1 >= 0; cnt1-- ) \
 	
 	while ( true )
 	{
-	    fprintf( stderr, "Please enter terrain scale value: " );
+	    fprintf( stderr, "Please enter *.obj terrain scale value (\"*.obj/*.hf distances ratio\"): " );
 	    
 	    READ_AND_CHECK_STDIN
 	    
@@ -399,6 +416,7 @@ for ( int cnt1 = cnt - 1; cnt1 >= 0; cnt1-- ) \
 		fprintf( stderr, "INPUT ERROR\n" );
 	}
 	
+	
 	if ( valueSet != TERRAIN_SPEC_VALUES_TO_SET )
 	    fprintf( stderr, "objtohf.c : something bad has happen. Wrong TERRAIN_SPEC_VALUES_TO_SET ?\n" );
 	
@@ -432,10 +450,10 @@ for ( int cnt1 = cnt - 1; cnt1 >= 0; cnt1-- ) \
     hfTexHeader.xOriginH = 0;
     hfTexHeader.yOriginL = 0;
     hfTexHeader.yOriginH = 0;
-    hfTexHeader.widthL = terrainSpec.bitsWidth << 8;
-    hfTexHeader.widthH = terrainSpec.bitsWidth / 256;
-    hfTexHeader.heightL = terrainSpec.bitsHeight << 8;
-    hfTexHeader.heightH = terrainSpec.bitsHeight / 256;
+    hfTexHeader.widthL = terrainSpec.bitsWidth & 0xFF;
+    hfTexHeader.widthH = terrainSpec.bitsWidth >> 8;
+    hfTexHeader.heightL = terrainSpec.bitsHeight & 0xFF;
+    hfTexHeader.heightH = terrainSpec.bitsHeight >> 8;
     hfTexHeader.bitsPerPixel = 8;
     hfTexHeader.imageDescriptor = 32; // Top left origin
     
@@ -443,7 +461,7 @@ for ( int cnt1 = cnt - 1; cnt1 >= 0; cnt1-- ) \
     /*
      * Reserve memory for tga '.hf' image data (i.e. color bytes).
      */
-    uint32_t imageDataBytes = ( 256 * hfTexHeader.widthH + hfTexHeader.widthL ) * ( 256 * hfTexHeader.heightH + hfTexHeader.heightL ) * ( hfTexHeader.bitsPerPixel / 8 );
+    uint64_t imageDataBytes = ( 256 * hfTexHeader.widthH + hfTexHeader.widthL ) * ( 256 * hfTexHeader.heightH + hfTexHeader.heightL ) * ( hfTexHeader.bitsPerPixel / 8 );
     uint8_t *tgaImageData = malloc( imageDataBytes );
     if ( tgaImageData == NULL )
     {
@@ -462,12 +480,24 @@ for ( int cnt1 = cnt - 1; cnt1 >= 0; cnt1-- ) \
     lineNr = 1;
     double perPixelXDistance = terrainSpec.sizeX / (double)terrainSpec.bitsWidth;
     double perPixelYDistance = terrainSpec.sizeY / (double)terrainSpec.bitsHeight;
-    double perPixelZDistance = terrainSpec.maxAltitude / 255; // altitude is always an 8 bits value
+    double newTerrainMaxAltitude = ( newObjMaxAltitude - terrainSpec.zPos ) / terrainSpec.scale;
+    
+    double perPixelZDistance = 0;
+    if ( round( newTerrainMaxAltitude ) <= round( terrainSpec.maxAltitude ) )
+	perPixelZDistance = terrainSpec.maxAltitude / 255; // altitude is always an 8 bits value
+    else
+    { // New max altitude is higher than original one
+	perPixelZDistance = newTerrainMaxAltitude / 255;
+	fprintf( stdout, "\e[1;33mYou should modify the heightfield_load 4th argument (altitude) value to %.3f in the *.3d terrain file\e[0m.\n", newTerrainMaxAltitude );
+	//fprintf( stdout, "\e[1;33mYou should modify the heightfield_load 4th argument (altitude) value to %.3f instead of %.3f in the %s file\e[0m.\n", newTerrainMaxAltitude, terrainSpec.maxAltitude, terrainFileName );
+    }
+    
     double halfXSize = terrainSpec.sizeX / 2 - perPixelXDistance / 2;
     double halfYSize = terrainSpec.sizeY / 2 - perPixelYDistance / 2;
     double x = 0;
     double y = 0;
     double z = 0;
+    bool objectFound = false;
     while ( fgets(lineBuffer, MAX_LENGTH, fpObjIn) ) {
 	if ( lineBuffer[ 0 ] == '\n' || lineBuffer[ 0 ] == '\r' || ( sscanf( lineBuffer, " %s[\n]", objTag ) ) == 0 ) // blank line or objTag == ""
 	{
@@ -529,10 +559,22 @@ for ( int cnt1 = cnt - 1; cnt1 >= 0; cnt1-- ) \
 	    else
 	    {
 		fprintf( stderr, "objtohf.c : tgaImageData offset error. Bad terrain specification data ?\n" );
+		FREE_AND_CLOSE_ALL_OBJTOHF
+		
+		return EXIT_FAILURE;
 	    }
 	}
-	else
-	    ;
+	else if ( !strcmp( objTag, "o" ) ) // object
+	{
+	    if ( !objectFound ) objectFound = true;
+	    else
+	    {
+		fprintf( stderr, "File %s, line #%ld: can't convert *.obj to *.hf because more than one object found in *.obj file. Exiting.\n", source, lineNr );
+		FREE_AND_CLOSE_ALL_OBJTOHF
+		
+		return EXIT_FAILURE;
+	    }
+	}
 
 	lineNr++;
     }

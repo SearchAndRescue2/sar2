@@ -103,7 +103,7 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     char *name = malloc( homeLength + dirLength + fileNameLength + 1 );
     if ( name == NULL )
     {
-	fprintf( stderr, "v3dhftobj.c: can't allocate memory for name.\n" );
+	fprintf( stderr, "v3dhftoobj.c: can't allocate memory for name.\n" );
         return -1;
     }
     
@@ -112,21 +112,20 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     
     errno = 0;
     if ( ( mkdir(name, S_IRWXU) ) == -1 ) {
-	fprintf( stderr, "v3dhftobj.c: ");
         switch ( errno ) {
 	    case EEXIST:
-                //fprintf( stderr, "Pathname already exists.\n");
+                //fprintf( stderr, "v3dhftoobj.c: pathname already exists.\n");
 		break;
             case EACCES :
-                fprintf( stderr, "the parent directory does not allow write.\n");
+                fprintf( stderr, "v3dhftoobj.c: the parent directory does not allow write.\n");
                 //exit(EXIT_FAILURE);
 		break;
             case ENAMETOOLONG:
-                fprintf( stderr, "pathname is too long.\n");
+                fprintf( stderr, "v3dhftoobj.c: pathname is too long.\n");
                 //exit(EXIT_FAILURE);
 		break;
             default:
-                fprintf( stderr, "mkdir error.\n");
+                fprintf( stderr, "v3dhftoobj.c: mkdir error.\n");
                 //exit(EXIT_FAILURE);
 		break;
         }
@@ -140,7 +139,6 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     }
     else
     {
-	printf("name = '%s'\n", name);
 	free( name );
     }
     
@@ -537,13 +535,13 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     fprintf( fpTerrainDataOut, "# File automatically generated. Do not edit manually.\n" );
     fprintf( fpTerrainDataOut,   "file=%s.obj\n", baseName );
     fprintf( fpTerrainDataOut,   "material_name=%s\n", timeStampString );
-    fprintf( fpTerrainDataOut,   "terrain_width=%.3f\n", terrain.sizeX );
-    fprintf( fpTerrainDataOut,  "terrain_height=%.3f\n", terrain.sizeY );
-    fprintf( fpTerrainDataOut,"terrain_altitude=%.3f\n", terrain.maxAltitude );
-    fprintf( fpTerrainDataOut,  "terrain_transX=%.3f\n", terrain.xPos + userModifier->tx );
-    fprintf( fpTerrainDataOut,  "terrain_transY=%.3f\n", terrain.yPos + userModifier->ty );
-    fprintf( fpTerrainDataOut,  "terrain_transZ=%.3f\n", terrain.zPos + userModifier->tz );
-    fprintf( fpTerrainDataOut,   "terrain_scale=%.3f\n", userModifier->scale );
+    fprintf( fpTerrainDataOut,   "terrain_width=%.6f\n", terrain.sizeX );
+    fprintf( fpTerrainDataOut,  "terrain_height=%.6f\n", terrain.sizeY );
+    fprintf( fpTerrainDataOut,"terrain_altitude=%.6f\n", terrain.maxAltitude );
+    fprintf( fpTerrainDataOut,  "terrain_transX=%.6f\n", terrain.xPos + userModifier->tx );
+    fprintf( fpTerrainDataOut,  "terrain_transY=%.6f\n", terrain.yPos + userModifier->ty );
+    fprintf( fpTerrainDataOut,  "terrain_transZ=%.6f\n", terrain.zPos + userModifier->tz );
+    fprintf( fpTerrainDataOut,   "terrain_scale=%.6f\n", userModifier->scale );
     fprintf( fpTerrainDataOut, "terrain_bitsWidth=%d\n", hfHeader.width );
     fprintf( fpTerrainDataOut,"terrain_bitsHeight=%d\n", hfHeader.height );
     fclose( fpTerrainDataOut );
