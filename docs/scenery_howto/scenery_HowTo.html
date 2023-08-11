@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title></title>
     <style>
+        CODE { display: block; background-color: #dddddd; marging: 1.0em; padding: 0.5em; }
         H2 { text-align: center; }
     </style>
   </head>
@@ -12,7 +13,7 @@
         <h2>Search And Rescue II documentation: how to write a scenery.</h2>
     </header>
     <main>
-    [TODO], just a few information for now, mainly for terrain:<br>
+    [TODO], just a few information for now, mainly for terrain, and two usefull tips to place objects on a scenery and to edit a terrain height field:<br>
     <ul>
     <li>
     Scenery (*.scn file) loads objects (data/objects/*.3d files). Objects can be terrain, building, trees, ...
@@ -21,13 +22,130 @@
     Terrain is an object loaded by scenery file using a "<a href= "../sar2ParmsBook/sar2ParmsBook.html#create_object">create_object</a> 6" parameter followed by a "<a href= "../sar2ParmsBook/sar2ParmsBook.html#model_file">model_file</a> objects/.../*.3d" parameter. Terrain objects refers to elevation and texture files.
     </li>
     <li>
-    Terrain elevation map (*.hf file, you can name it as *.hf.tga) is an 8 bits gray, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#heightfield_load">heightfield_load</a>. Its dimensions (image width and height) must be a power of 2.
+    Terrain elevation map (*.hf file, you can name it as *.hf.tga) is an 8 bits gray, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#heightfield_load">heightfield_load</a>. <del>Its dimensions (image width and height) must be a power of 2</del>.
     </li>
     <li>
     Terrain texture (*.tex file, you can name it as *.tex.tga) is a 4*8 bits rgba, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#texture_load">texture_load</a>. Its dimensions (image width and height) must be a power of 2.
     </li>
     <li>
     A full black (0x000000) pixel on an object texture will be fully transparent, thus use 0x010101 if you want a black color.
+    </li>
+    <br>
+    
+    <li>
+    If you want to place objects on a scenery, you can easily determine object coordinates and rotation whith this tip:
+	<ul>
+	<li>
+	First, create the following "object_placer.3d" file with a text editor then save it in the "<i>sar2_base_directory/data/aircrafts/</i>" directory. This will create a very minimal "aircraft" wich will only be able to move in slew mode.
+	<code>
+	begin_header<br>
+	<b>#------------- You can put object texture(s) path(s) here -------------#</b><br>
+	end_header<br>
+	<br>
+	name Object placer<br>
+	type 4<br>
+	range 20000<br>
+	dry_mass 1000.0<br>
+	fuel 0.0001 1000.0 1000.0<br>
+	engine n 0 100 1.0<br>
+	<br>
+	begin_model standard<br>
+	<b>#---------------------- Put object vertices here ----------------------#</b><br>
+	end_model standard<br>
+	<br>
+	begin_model cockpit<br>
+	# Don't put anything here<br>
+	end_model cockpit<br>
+	</code>
+	</li>
+	<li>
+	Once done, complete this file with your object verticies and (it's not mandatory but prettier) texture path, and save it.
+	</li>
+	<li>
+	Start sar2, select Free Flight, then your scenery, then select the "Object placer" aircraft, then Begin. After loading, <b>DON'T PANIC</b> and press [F3] key... Phew! Better, isn't it? Now, press [E] to start engine.
+	</li>
+	<li>
+	Once engine started (wait to see "Thr: x%" instead of "Eng(O): 0%"), press [CTRL]+[A] to activate slew mode. You can now move your object horizontally as you want with joystick or the cursor keys. Use joystick twist rudder or press [CTRL] + [Left]/[Right] cursor keys for steering (heading), and press [HOME]/[END] keys for up/down (25 feet steps).<br>
+	Note: your object will always be on or above the ground. If it is above the ground, press [END] key until it touches ground (it will never move below ground).
+	</li>
+	<li>
+	Place your object where you want. You will see it's position (relative to scenery origin point) at the top left corner of the screen. Interesting values are <b>h</b>eading, <b>x</b> and <b>y</b> coordinates, and <b>z <i><u>in feet</u></i></b>, because you will can use them to set object position in scenery or mission files with the <a href= "../sar2ParmsBook/sar2ParmsBook.html#rotate">rotate</a> and <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> statements.<br>
+	<img src="./images/object_placer.jpg"><br>
+	</li>
+	</ul>
+    </li>
+    <br>
+    
+    <li>
+    There is a <b>very</b> cool tool to generate height fields: <a href= "https://tangrams.github.io/heightmapper/">https://tangrams.github.io/heightmapper/</a>. It can export *.png 8 bits gray images, which can easily be converted to *.tga format with <a href= "https://imagemagick.org/">ImageMagick</a> as this: "convert tangrams_export.png -type Grayscale -depth 8 tga:image-origin=TopLeft myHeightField.tga".
+    </li>
+    <br>
+    
+    <li>
+    It is possible to edit a height field ("elevation map") with <a href= "https://github.com/SearchAndRescue2/sar2/tree/v3dconverter/tools/v3dconverter" >v3dconverter</a> and <a href= "https://www.blender.org/" >Blender</a>. Below is an example with mesa01.3d terrain from Desert scenery.
+    <ol>
+	<img src="./images/mesa01_before.jpg"><br>
+	<li>
+	Create a working directory:
+	<code>
+	cd sar2/tools/v3dconverter/<br>
+	mkdir workdir
+	</code>
+	</li>
+	<li>
+	Copy mesa01.tex texture file to your workdir. If not, it will work, but you will not be able to activate terrain texture display in Blender because it will not find it:
+	<code>
+	cp sar2_base_directory/data/textures/desert/mesa01.tex workdir<br>
+	</code>
+	</li>
+	<li>
+	Convert mesa01.3d file to mesa01.obj and apply a 1/1000 scale (one meter in Sar2 will be one millimeter in Blender):
+	<code>
+	./v3dconverter -i sar2_base_directory/data/objects/desert/mesa01.3d -sc 1/1000 -o workdir/mesa01.obj<br>
+	</code>
+	</li>
+	<li>
+	Start Blender, import Wavefront mesa01.obj file. Once done, go to Modeling tab <img height="28" src="./images/Blender_modeling.jpg">, activate Material preview mode <img height="28" src="./images/Blender_material_prewiew_mode.jpg">, then activate "mesa01" meshes <img height="28" src="./images/Blender_meshes_activation.jpg">: you should see a lot of triangles which represents terrain profile. Now, move some vertices along Z axis <b>(no X/Y nor 'below 0' Z modifications allowed!!!)</b>. Export your work to Wavefront format as workdir/mesa01_new.obj.<br>
+	<img src="./images/mesa01_Blender.jpg"><br>
+	Note: I suppose that an other software than Blender can work too <u>if it don't modify material name</u>.<br>
+	</li>
+	<li>
+	Convert your mesa01_new.obj file to mesa01_new.hf height field file as this:<br>
+	<i>Note: scale previously applied will be automatically reverted during conversion process.</i></br>
+	<code>
+	./v3dconverter -i workdir/mesa01_new.obj -o workdir/mesa01_new.hf
+	</code>
+	</li>
+	<li>
+	Look at the command line. If, as in this example, a point in mesa01_new.obj has a max altitude bigger than the original one defined in the mesa01.3d file, v3dconverter will advise you to modify altitude value in *.3d terrain file:
+	<code>
+	<b>You should modify the heightfield_load 4th argument (altitude) value to 2594.018 in the *.3d terrain file.</b>
+	</code>
+	Do do this, first do a backup of mesa01.3d:
+	<code>
+	cp sar2_base_directory/data/objects/desert/mesa01.3d sar2_base_directory/data/objects/desert/mesa01.3d.bak
+	</code>
+	Then open sar2_base_directory/data/objects/desert/mesa01.3d file with a text editor and modify the following line:
+	<code>
+	heightfield_load textures/desert/mesa01.hf  11000 6000 <b>1400</b>  0 0 0  0 0 0
+	</code>
+	As this (of course, if you did your own test, v3converter has certainly proposed you another value):
+	<code>
+	heightfield_load textures/desert/mesa01.hf  11000 6000 <b>2594</b>  0 0 0  0 0 0
+	</code>
+	</li>
+	<li>
+	Now, rename the original mesa01.hf file as a backup, then rename and copy the new file at the right place:<br>
+	<code>
+	mv sar2_base_directory/data/textures/desert/mesa01.hf sar2_base_directory/data/textures/desert/mesa01.hf.bak<br>
+	cp workdir/mesa01_new.hf sar2_base_directory/data/textures/desert/mesa01.hf
+	</code>
+	</li>
+	<li>
+	Start sar2, go to Free Flight, select Desert scenery and Runway 36 location, click on Aircraft then on Begin, and look at your modifications.<br>
+	<img src="./images/mesa01_after.jpg"><br>
+	</li>
+    </ol>
     </li>
     </ul>
     </main>

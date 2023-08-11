@@ -190,9 +190,9 @@ __airplane_acceleration_responsiveness i j k\
 __DESCRIPTION\
 __Airplane acceleration responsiveness.\
 __ARGUMENTS\
-__i must be positive.\
-__j must be positive.\
-__k must be positive.\
+__i right/left acceleration responsiveness. Must be positive or null.\
+__j forward/backward acceleration responsiveness. Must be positive or null.\
+__k up/down acceleration responsiveness. Must be positive or null.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -214,7 +214,7 @@ __attitude_change_rate\
 __SYNOPSIS\
 __attitude_change_rate heading pitch bank\
 __DESCRIPTION\
-__Attitude change rates.\
+__Attitude change rates. \"How fast aircraft attitude change when player gives rotating order.\"\
 __ARGUMENTS\
 __heading heading change rate, in degrees per second.\
 __pitch pitch change rate, in degrees per second.\
@@ -231,7 +231,7 @@ __attitude_leveling\
 __SYNOPSIS\
 __attitude_leveling heading pitch bank\
 __DESCRIPTION\
-__Attitude leveling.\
+__Attitude leveling. \"How fast aircraft attitude will reach zero when player stops giving rotating order.\"\
 __ARGUMENTS\
 __heading heading attitude leveling, in degrees per second.\
 __pitch pitch attitude leveling, in degrees per second.\
@@ -337,33 +337,35 @@ __begin_model model_type\
 __DESCRIPTION\
 __Begins a model block, which defines a V3D model. You can specify one or more in a V3D file. Each should have a different name, the first one is named \"standard\" and is mandatory.\
 __ARGUMENTS\
-__model_type standard (mandatory)\
-__ standard_dawn (optional)\
-__ standard_dusk (optional)\
-__ standard_far (optional)\
-__ standard_night (optional)\
-__ rotor (if any)\
-__ aileron_left (if any)\
-__ aileron_right (if any)\
-__ rudder_top (if any)\
-__ rudder_bottom (if any)\
-__ elevator (if any)\
-__ cannard (if any)\
-__ aileron_elevator_left (if any)\
-__ aileron_elevator_right (if any)\
-__ flap (if any)\
-__ air_brake (if any)\
-__ landing_gear (if any)\
-__ door (if any)\
-__ fueltank (if any)\
-__ cockpit (if any)\
-__ shadow (optional). Shadow color will be automatically set, don't add any \"color\" statement.\
+__model_type Can be:\
+__ standard : this type is mandatory in a V3D (*.3d) file.\
+__ standard_dawn : optional model to display at dawn.\
+__ standard_dusk : optional model to display at dusk.\
+__ standard_far : optional model to display from far away. See ##range_far .\
+__ standard_night : optional model to display at night.\
+__ rotor : (if any). Begins the model block of an aircraft main or tail rotor. See ##rotor_new for rotor settings.\
+__ aileron_left : (if any). Begins the model block of the left aileron. See ##aileron_left_new for aileron_left settings.\
+__ aileron_right : (if any). Begins the model block of the right aileron. See ##aileron_right_new for aileron_right settings.\
+__ rudder_top : (if any). Begins the model block of the top rudder. See ##rudder_top_new for rudder_top settings.\
+__ rudder_bottom : (if any). Begins the model block of the bottom rudder. See ##rudder_bottom_new for rudder_bottom settings.\
+__ elevator : (if any). Begins the model block of an elevator. See ##elevator_new for elevator settings.\
+__ cannard : (if any). Begins the model block of a cannard. See ##cannard_new for cannard settings.\
+__ aileron_elevator_left : (if any). Begins the model block of a left elevator aileron. See ##aileron_elevator_left_new for aileron_elevator_left settings.\
+__ aileron_elevator_right : (if any). Begins the model block of a right elevator aileron. See ##aileron_elevator_right_new for aileron_elevator_right settings.\
+__ flap : (if any). Begins the model block of a flap. See ##flap_new for flap settings.\
+__ air_brake : (if any). Begins the model block of an air brake. See ##air_brake_new for air_brake settings.\
+__ landing_gear : (if any). Begins the model block of a landing gear. See ##landing_gear_new for landing gear settings.\
+__ door : (if any). Begins the model block of a rescue door. See ##rescue_door_new for door settings.\
+__ fueltank : (if any). Begins the model block of an external fuel tank. See ##fuel_tank_new for fueltank settings.\
+__ cockpit : (if any). This is the player aircraft model block shown in cockpit view. All other model blocks (standard, rotor, door, ...), except shadow, will be hidden. Conversely, when player is not in cockpit vue, this model block is not drawn. Inside this block, all \"parts\" must be sorted from farthest to nearest from pilot eyes. See ##cockpit_offset to set pilot eyes position.\
+__ shadow : optional 2D model used to draw aircraft shadow. Shadow color will be automatically set, you don't have to add any \"color\" statement before it.\
 __CONTEXT\
 __3d\
-__EXAMPLE\
+__EXAMPLES\
 __begin_model standard\
 __...\
 __##end_model standard\
+__<br>\
 __begin_model standard_far\
 __...\
 __##end_model standard_far\
@@ -518,15 +520,17 @@ __cockpit_offset\
 __SYNOPSIS\
 __cockpit_offset x y z\
 __DESCRIPTION\
-__Cockpit offset.\
+__Cockpit vue offset -pilot eyes position-, relative to cockpit center point.\
 __ARGUMENTS\
-__x \
-__y \
-__z \
+__x cockpit vue X offset, in meters.\
+__y cockpit vue Y offset, in meters.\
+__z cockpit vue Z offset, in meters.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__cockpit_offset 0.41 2.08 -0.08\
+__##begin_model cockpit\
+__...\
 \
 __-----\
 \
@@ -657,7 +661,7 @@ __control_panel\
 __SYNOPSIS\
 __control_panel x y z heading pitch bank width height path\
 __DESCRIPTION\
-__Control panel position.\
+__Control panel position and dimension. //FIXME: control panel is not fully implemented (not drawn).\
 __ARGUMENTS\
 __x control panel X position, in centimeters.\
 __y control panel Y position, in centimeters.\
@@ -665,9 +669,9 @@ __z control panel Z position, in centimeters.\
 __heading control panel heading, in degrees.\
 __pitch control panel pitch, in degrees.\
 __bank control panel bank, in degrees.\
-__width width, in centimeters.\
-__height height, in centimeters.\
-__path specifies the control panel directory (not the instruments file)\
+__width control panel width, in centimeters.\
+__height control panel height, in centimeters.\
+__path specifies the control panel directory (not the instruments file). //Can be: data/control_panels/default\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -680,7 +684,7 @@ __crash_flags\
 __SYNOPSIS\
 __crash_flags crash_other cause_crash support_surface crash_type\
 __DESCRIPTION\
-__Defines how the object can be contacted by others. Must be used in conjonction with a ##contact_cylendrical , ##contact_rectangular or ##contact_spherical parameter.\
+__Defines how the object can be contacted by others. Must be used in conjunction with a ##contact_cylendrical , ##contact_rectangular or ##contact_spherical parameter.\
 __ARGUMENTS\
 __crash_other can be: '1' if this object can crash into or contact other objects, '0' if it can't. Can be '1' ONLY for 'human' and 'aircraft' objects, and in this case, contact bounds MUST be cylendrical (see ##contact_cylendrical parameter). Use it for mobile objects.\
 __cause_crash can be: '1' if other objects can crash into this object, '0' if they can't. MUST be '0' if 'crash_other' flag is '1'. Use it for fixed objects.\
@@ -819,14 +823,16 @@ __create_object\
 __SYNOPSIS\
 __create_object object_type\
 __DESCRIPTION\
-__Creates an object. Note: you can look for 'Object Types:' in obj.h file.\
+__Creates an object.\
+__Note 1: //FIXME : object_type value seems to have any effect, except for type 4 (see below).\
+__Note 2: you can look for 'Object Types:' in obj.h file.\
 __ARGUMENTS\
 __<b>object_type</b> <hr>\
-__0 (garbage).\
+__0 (garbage). This object will not be drawn.\
 __1 object is static. A house, a tree, or even a car or a boat which don't move are static objects.\
 __2 object is an automobile.\
 __3 object is a watercraft.\
-__4 object is an aircraft (helicopter or airplane).\
+__4 object is an aircraft (helicopter or airplane). If the model (*.3d) file don't contain any cockpit (begin_model cockpit, ... end_model cockpit statements), whole model will not be displayed.\
 __5 (not used, old 'airplane' object type).\
 __6 object is ground, or a landable object.\
 __7 object is a runway. Don't use \"create_object 7\": use ##create_runway instead.\
@@ -836,7 +842,7 @@ __10 object is smoke. Don't use \"create_object 10\": use ##create_smoke instead
 __11 object is a fire. Don't use \"create_object 11\": use ##create_fire instead.\
 __12 object is an explosion. //FIXME : seems to be used in sar2 code only (it's not possible to use it in missions and sceneries).\
 __13 object is chemical spray: water, fire-retardant, etc. Note: not yet implemented.\
-__14 object is a fuel tank, dropped from an aircraft.\
+__14 object is an aircraft fuel tank. Don't use \"create_object 14\": use  ##fuel_tank_new instead.\
 __20 object is premodeled. Don't use \"create_object 20\": use ##create_premodeled instead.\
 __CONTEXT\
 __mis scn\
@@ -870,17 +876,17 @@ __range visible range, in meters.\
 __length length, in meters.\
 __width width, in meters.\
 __height height, in feet.\
-__walls_texture name of the walls texture.\
-__roof_texture name of the roof texture.\
+__walls_texture name of the walls texture. See ##texture_load .\
+__roof_texture name of the roof texture. See ##texture_load .\
 __ <hr>\
 __<b>type</b> if <b>building</b>, then arguments are:\
 __range visible range, in meters.\
 __length length, in meters.\
 __width width, in meters.\
 __height height, in feet.\
-__walls_texture name of the walls texture to use when it is day.\
-__walls_texture_night name of the walls texture to use when it is night.\
-__roof_texture name of the roof texture.\
+__walls_texture name of the walls texture to use when it is day. See ##texture_load .\
+__walls_texture_night name of the walls texture to use when it is night. See ##texture_load .\
+__roof_texture name of the roof texture. See ##texture_load .\
 __ <hr>\
 __<b>type</b> if <b>hangar</b> (warning: <b>SaR II > 2.5.0 only!</b>), then arguments are:\
 __range visible range, in meters.\
@@ -889,9 +895,9 @@ __width width, in meters.\
 __height side walls height, in feet.\
 __roof_slopes roof slopes. Can be 2 (one left, one right) or 4 (two left, two right).\
 __is_lighted? Is hangar lighted at night? Can be y (yes) or n (no).\
-__walls_texture name of the walls texture. This texture must include day and night texture in the same image file.\
-__roof_texture name of the roof texture.\
-__floor_texture name of the floor texture. If not specified, floor will be painted to grey.\
+__walls_texture name of the walls texture. This texture must include day and night texture in the same image file. See ##texture_load .\
+__roof_texture name of the roof texture. See ##texture_load .\
+__floor_texture name of the floor texture. If not specified, floor will be painted to grey. See ##texture_load .\
 __CONTEXT\
 __mis scn\
 __EXAMPLES\
@@ -970,7 +976,7 @@ __r_rate radius rate, in meters per second. At which speed the clouds grows. If 
 __hide@max altitude, in meters, at which one smoke clouds will be hidden when they reach it.\
 __respawn_int respawn interval, in milliseconds. Time interval between two clouds generation.\
 __units number of clouds.\
-__color_code smoke clouds color code. Can be: 0 (light grey/white), 1 (medium grey), 2 (dark/black), and 3 (orange).\
+__color_code smoke clouds color code. Can be: 0 (light grey/white), 1 (medium grey), 2 (dark/black), or 3 (orange).\
 __CONTEXT\
 __mis scn\
 __EXAMPLE\
@@ -1064,7 +1070,7 @@ __dry_mass\
 __SYNOPSIS\
 __dry_mass mass\
 __DESCRIPTION\
-__Dry mass.\
+__Dry mass. Aircrat mass including pilot(s) and excluding ##fuel&nbsp;(*.3d) mass.\
 __ARGUMENTS\
 __mass mass, in kg.\
 __CONTEXT\
@@ -1158,7 +1164,8 @@ __end_model model_type\
 __DESCRIPTION\
 __Ends a model block.\
 __ARGUMENTS\
-__model_type standard\
+__model_type Can be:\
+__ standard\
 __ standard_dawn\
 __ standard_dusk\
 __ standard_far\
@@ -1314,10 +1321,10 @@ __engine can_pitch? initial_pitch power collective_range\
 __DESCRIPTION\
 __Engine.\
 __ARGUMENTS\
-__can_pitch? can be: y (yes), or n (no). Set it to 'y' for aicrafts (helicopters or airplanes) only.\
-__initial_pitch initial pitch angle. Mandatory, even if can_pitch? is 'n' (in this case, set initial_pitch to 0).\
-__power engine power (in kg * m / s^2).\
-__collective_range collective range coefficient (from 0.0 to 1.0)\
+__can_pitch? can be: y (yes), or n (no). Set it to yes if engine can rock around X axis. See ##rotor_new 'can_pitch?' argument too.\
+__initial_pitch initial pitch angle. Mandatory, even if 'can_pitch?' is 'n' (in this case, set initial_pitch to 0).\
+__power engine power.\
+__collective_range collective range coefficient (from 0.0 to 1.0) for elevation throttle. Less collective_range means less throttle responsiveness, so it will be easier for player to operate collective more precisely, but if collective range is too low, it can be impossible to crash a helicopter at vertical landing.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -1390,11 +1397,11 @@ __#\
 __-----\
 \
 __NAME\
-__fuel (*.3d)\
+__fuel&nbsp;(*.3d)\
 __SYNOPSIS\
 __fuel consumption_rate initial max\
 __DESCRIPTION\
-__Defines the fuel capacity and efficiency for the aircraft.\
+__Defines the fuel capacity and efficiency for the aircraft. One liter of fuel &#8771; 0.8kg.\
 __ARGUMENTS\
 __consumption_rate consumption rate, in kg/sec. Must be positive or null.\
 __initial initial fuel quantity, in kg. Must be positive or null, and equal or lower than the 'max' value.\
@@ -1410,7 +1417,7 @@ __fuel 0.069 581.0 581.0\
 __-----\
 \
 __NAME\
-__fuel (*.scn)\
+__fuel&nbsp;(*.scn)\
 __SYNOPSIS\
 __fuel current max\
 __DESCRIPTION\
@@ -1545,15 +1552,15 @@ __DESCRIPTION\
 __Heightfield definition and position. A *.hf file is an 8 bits gray, top left origin, without Run Length Encoding *.tga file.\
 __ARGUMENTS\
 __path heightfield (*.hf) file path, relative to \"sar2/data/\" directory.\
-__hfx heightfield X, in meter.\
-__hfy heightfield Y, in meter.\
-__hfz heightfield Z (altitude), in meters. Altitude corresponds to altitude which is given to a full white (0b11111111) pixel. A full black (0b00000000) pixel correponds to an altitude of zero meters.\
-__x heightfield X translation.\
-__y heightfield Y translation.\
-__z heightfield Z translation.\
-__heading heightfield heading rotation.\
-__pitch heightfield pitch rotation.\
-__bank heightfield bank rotation.\
+__hfx heightfield X, in meters.\
+__hfy heightfield Y, in meters.\
+__hfz heightfield Z (altitude), in meters. Altitude corresponds to altitude which is given to a full white (0b11111111) pixel. A full black (0b00000000) pixel correponds to an altitude of zero meter.\
+__x heightfield X translation, in meters.\
+__y heightfield Y translation, in meters.\
+__z heightfield Z translation, in meters.\
+__heading heightfield heading rotation, in degrees.\
+__pitch heightfield pitch rotation, in degrees.\
+__bank heightfield bank rotation, in degrees.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -1579,11 +1586,11 @@ __helicopter_acceleration_responsiveness\
 __SYNOPSIS\
 __helicopter_acceleration_responsiveness i j k\
 __DESCRIPTION\
-__Helicopter acceleration responsiveness\
+__Helicopter acceleration responsiveness.\
 __ARGUMENTS\
-__i must be positive.\
-__j must be positive.\
-__k must be positive.\
+__i right/left acceleration responsiveness. Must be positive or null.\
+__j forward/backward acceleration responsiveness. Must be positive or null.\
+__k up/down acceleration responsiveness. Must be positive or null.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -1701,7 +1708,7 @@ __z Z position, in meters.\
 __r red value for light color.\
 __g green value for light color.\
 __b blue value for light color.\
-__a alpha (transparancy) value for light color.\
+__a alpha (transparency) value for light color.\
 __radius light radius, in pixels. Must be positive. Use 0 for default radius.\
 __init_on? if positive, light will be on. If 0, light will be off.\
 __type type of light. Can be: 0 for standard light, 1 for strobe light, or 2 for spot light.\
@@ -2131,12 +2138,13 @@ __object_name\
 __SYNOPSIS\
 __object_name name\
 __DESCRIPTION\
-__Defines object name. This name can be used later as argument for some parameters (for example for a ##mission_begin_at parameter).\
+__Defines object name. This name can be used later as argument for some parameters (for example for a ##mission_begin_at parameter). Tip: if used AFTER model_file declaration, then model will be renamed.\
 __ARGUMENTS\
 __name name_of_the_object (without spaces!).\
 __CONTEXT\
 __mis scn\
-__EXAMPLE\
+__EXAMPLES\
+__<b>Object name as parameter:</b>\
 __... if in scenery file there is:\
 __# Los Angeles International (LAX)\
 __create_helipad default 40.0 40.0 0.0 LAX y y y y y\
@@ -2148,6 +2156,13 @@ __translation -5430 35750 0\
 __... then, in mission file you can write:\
 __# Arrive at object (name of object from scene file)\
 __mission_objective_arrive_at helipad_lax\
+__<br>\
+__<b>Object renaming:</b>\
+__create_object 1\
+__model_file automobiles/cuda.3d\
+__# Object name is defined in cuda.3d as 'Cuda'. Let's rename it:\
+__object_name What_a_cool_car\
+__# From now, this object is refered as 'What_a_cool_car'\
 \
 __-----\
 \
@@ -2156,7 +2171,7 @@ __offset_polygons\
 __SYNOPSIS\
 __offset_polygons\
 __DESCRIPTION\
-__Offset Polygons FIXME ##https://en.wikipedia.org/wiki/Z-fighting\
+__Offset Polygons //FIXME ##https://en.wikipedia.org/wiki/Z-fighting\
 __ARGUMENTS\
 __(none)\
 __CONTEXT\
@@ -2333,10 +2348,10 @@ __z_opened door opened Z position.\
 __h_opened door opened heading.\
 __p_opened door opened pitch.\
 __b_opened door opened bank.\
-__x_thres threshold X value.\
-__y_thres threshold Y value.\
-__z_thres threshold Z value.\
-__anim_rate door animation rate.\
+__x_thres X position of the center of the door frame on the fuselage. X/Y/Z threshold defines the position at which one a human boards.\
+__y_thres Y position of the center of the door frame on the fuselage.\
+__z_thres Z position of the center of the door frame on the fuselage.\
+__anim_rate door animation rate (speed of door movement).\
 __opened? is this door opened by default at model generation? Can be y (yes) or n (no).\
 __CONTEXT\
 __3d\
@@ -2369,7 +2384,7 @@ __SYNOPSIS\
 __rotate dh dp db\
 __DESCRIPTION\
 __Specifies to push a matrix and rotate all primitives by the given values that exist after this primitive but before the next ##unrotate primitive (if any). Rotation matrixes are always returned to level 0 at each ##end_model .\
-__FIXME: seems to have no effect whatever the model. In an aircraft model, this primitive seems to be superseded by the ##---&nbsp;flight&nbsp;control&nbsp;surfaces&nbsp;list&nbsp;--- heading, pitch and bank values.\
+__//FIXME: seems to have no effect whatever the model. In an aircraft model, this primitive seems to be superseded by the ##---&nbsp;flight&nbsp;control&nbsp;surfaces&nbsp;list&nbsp;--- heading, pitch and bank values.\
 __ARGUMENTS\
 __dh heading offset, in degrees. Clockwise rotation around Z (vertical) axis.\
 __dp pitch offset, in degrees. Rotation around Y axis.\
@@ -2392,9 +2407,9 @@ __rotor_blade_blur_texture\
 __SYNOPSIS\
 __rotor_blade_blur_texture name\
 __DESCRIPTION\
-__Rotor blade blur texture.\
+__Rotor blade blur texture. Warning: if ##rotor_blur_color hasn't been defined, blur texture will not be visible.\
 __ARGUMENTS\
-__name texture name\
+__name texture name. See ##texture_load .\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -2407,12 +2422,12 @@ __rotor_blur_color\
 __SYNOPSIS\
 __rotor_blur_color r g b a\
 __DESCRIPTION\
-__Rotor blur color. Only if blur_criteria ( see ##rotor_new ) is not set to 'never'.\
+__Rotor blur \"background\" color. See ##rotor_blade_blur_texture for texture.\
 __ARGUMENTS\
 __r red value of light color.\
 __g green value of light color.\
 __b blue value of light color.\
-__a alpha (transparancy) value of light color.\
+__a alpha (transparency) value of light color.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -2427,25 +2442,33 @@ __rotor_new nblades x y z heading pitch bank radius has_prop_wash? follow_contro
 __DESCRIPTION\
 __New rotor.\
 __ARGUMENTS\
-__nblades number of blades\
+__nblades number of rotor blades.\
 __x X position of rotor.\
 __y Y position of rotor.\
 __z Z position of rotor.\
 __heading heading of rotor.\
 __pitch pitch of rotor.\
 __bank bank of rotor.\
-__radius radius of rotor blades. Must be positive or null.\
+__radius radius of rotor blades, in meter. Must be positive or null.\
 __has_prop_wash? has a rotor wash? 0 if no, 1 if yes.\
 __follow_controls? follow controls for pitch and bank? 0 if no, 1 if yes.\
-__blur_criteria can be: 0 (never blur), 1 (blur when spinning fast), 2 (blur always).\
-__can_pitch? can pitch? 0 if no, 1 if yes.\
+__blur_criteria can be: 0 (never blur), 1 (blur when spinning fast), 2 (blur always). Defines when blur effect must be applied. See ##rotor_blade_blur_texture and ##rotor_blur_color .\
+__can_pitch? can pitch? 0 if no, 1 if yes. If 1 (yes), rotor can be rocked around its X axis with in game \"Y\" key. Example: Boeing V-22 Ospray. See ##engine 'can_pitch?' argument too. \
 __no_pitch_landed? no pitching of rotors when landed? 0 if no, 1 if yes.\
 __no_rotate? no rotate?\
-__blades_offset blades offset\
+__blades_offset blades offset in rotor axis direction, in meter.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__# Main rotor\
+__rotor_new 4&nbsp; 0.0&nbsp; 0.0&nbsp; 0.8&nbsp; 0.0&nbsp; 0.0&nbsp; 0.0&nbsp; 5.95&nbsp; 1&nbsp; 1&nbsp; 1\
+__##rotor_blur_color 0.2&nbsp; 0.2&nbsp; 0.2&nbsp; 0.75\
+__##rotor_blade_blur_texture rotor_blade_blur_tex\
+__##begin_model rotor\
+__##translate 0.0 0.0 0.8\
+__##rotate 0.0 0.0 0.0\
+__...\
+__##end_model rotor\
 \
 __-----\
 \
@@ -2607,7 +2630,7 @@ __color_r red value of the far solid color (0.00=0%, 1.00=100%).\
 __color_g green value of the far solid color (0.00=0%, 1.00=100%).\
 __color_b blue value of the far solid color (0.00=0%, 1.00=100%).\
 __color_a alpha channel of the far solid color (0.00=fully transparent, 1.00=fully opaque).\
-__texture name of the texture file.\
+__texture name of the texture file. See ##texture_load .\
 __CONTEXT\
 __scn\
 __EXAMPLE\
@@ -2793,13 +2816,43 @@ __sound_source_new name range range_far x y z cutoff heading pitch bank sample_r
 __DESCRIPTION\
 __New sound source.\
 __ARGUMENTS\
-__name sound name, with no space character.\
-__range //FIXME: range for close sound file use ?\
-__range_far //FIXME: range for far sound file use ?\
+__name Can be one of below:\
+__ air_brake_in\
+__ air_brake_in_inside\
+__ air_brake_out\
+__ air_brake_out_inside\
+__ door_close\
+__ door_close_inside\
+__ door_open\
+__ door_open_inside\
+__ engine_inside\
+__ engine_outside\
+__ engine_shutdown\
+__ engine_shutdown_inside\
+__ engine_start\
+__ engine_start_inside\
+__ flap_down\
+__ flap_down_inside\
+__ flap_up\
+__ flap_up_inside\
+__ gear_down\
+__ gear_down_inside\
+__ gear_up\
+__ gear_up_inside\
+__ land_belly\
+__ land_belly_inside\
+__ land_ski_skid\
+__ land_ski_skid_inside\
+__ land_wheel_skid\
+__ land_wheel_skid_inside\
+__ overspeed\
+__ stall\
+__range distance, in meters, beyond which sound will be inaudible.\
+__range_far //FIXME: range for far sound use? Seems to have not effect.\
 __x X position, in meters.\
 __y Y position, in meters.\
-__z Z position, in meters. //FIXME: or in feet ?\
-__cutoff //FIXME: cutoff frequency ?\
+__z Z position, in meters.\
+__cutoff cutoff, in radians. //FIXME Attenuation cone angle? Seems to have not effect.\
 __heading sound heading angle, in degrees.\
 __pitch sound pitch angle, in degrees.\
 __bank sound bank angle, in degrees.\
@@ -2821,11 +2874,11 @@ __speed speed_stall speed_max min_drag overspeed_expected overspeed\
 __DESCRIPTION\
 __Speed.\
 __ARGUMENTS\
-__speed_stall stall speed, in miles per hour.\
-__speed_max maximum speed, in miles per hour. Must be positive.\
+__speed_stall stall speed, in miles per hour. //FIXME: For airplanes only, set it to 0 for helicopters.\
+__speed_max maximum speed, in miles per hour. Must be positive. //FIXME: what for ?\
 __min_drag minimum drag, in miles per hour. Must be positive.\
-__overspeed_expected expected overspeed, in miles per hour. Must be lower than overspeed value.\
-__overspeed overspeed, in miles per hour.\
+__overspeed_expected speed at which the overspeed alarm will be activated, in miles per hour. Must be lower than overspeed value.\
+__overspeed overspeed, in miles per hour. Once overspeed exceeded, aircraft becomes uncontrollable then crashes.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -2838,11 +2891,11 @@ __temperature\
 __SYNOPSIS\
 __temperature temperature_day temperature_dusk/dawn temperature_night\
 __DESCRIPTION\
-__Temperature.\
+__Object temperature when FLIR (Forward Looking InfraRed) mode is on.\
 __ARGUMENTS\
-__temperature_day temperature at day, from 0.0 to 1.0\
-__temperature_dusk/dawn temperature at dusk and dawn, from 0.0 to 1.0\
-__temperature_night temperature at night, from 0.0 to 1.0\
+__temperature_day object temperature at day, from 0.0 (coldest) to 1.0 (hottest).\
+__temperature_dusk/dawn object temperature at dusk and dawn, from 0.0 to 1.0 .\
+__temperature_night object temperature at night, from 0.0 to 1.0 .\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -2911,7 +2964,7 @@ __texture_load\
 __SYNOPSIS\
 __texture_load name path priority\
 __DESCRIPTION\
-__Loads the specified texture 'path' with the given 'priority' (from 0.0 to 1.0, where 1.0 is the highest). If the given 'path' is a relative path then the texture_base_directory will be prefixed to it. The 'name' is an arbitary name used to reference this texture which can later be used to match this in a list of textures. Must be located in header block.<br>Tips:<br> - 'name' references texture for all later loaded objects: if an object has referenced a texture with 'texture_load &nbsp;my_texture&nbsp; image_ONE.tex' and then another object tries to load a new texture with the same reference name like 'texture_load &nbsp;my_texture&nbsp; image_TWO.tex', then second object texture will be image_ONE.tex and not image_TWO.tex because reference name 'my_texture' was already assigned. Therefore, it is a very good idea to reference image file 'a_cool_texture.tex' by the reference name 'a_cool_texture_tex' to avoid objects bad texturing.<br> - a *.tex file is a rebranded *.tga file (top left origin, without Run Length Encoding).\
+__Loads the specified texture 'path' with the given 'priority' (from 0.0 to 1.0, where 1.0 is the highest). If the given 'path' is a relative path then the texture_base_directory will be prefixed to it. The 'name' is an arbitary name used to reference this texture which can later be used to match this in a list of textures. Must be located in header block.<br>Tips:<br> - 'name' references texture for all later loaded objects (goal is to reduce memory usage). If an object has referenced a texture with 'texture_load &nbsp;my_texture&nbsp; image_ONE.tex' and then another object tries to load a new texture with the same reference name like 'texture_load &nbsp;my_texture&nbsp; image_TWO.tex', then second object texture will be image_ONE.tex and not image_TWO.tex because reference name 'my_texture' was already assigned. Therefore, it is a very good idea to reference image file 'a_cool_texture.tex' by the reference name 'a_cool_texture_tex' to avoid objects bad texturing.<br> - a *.tex file is a rebranded *.tga file (top left origin, without Run Length Encoding).\
 __ARGUMENTS\
 __name reference name for the texture.\
 __path path to and name of the texture *.hf file.\
@@ -3005,7 +3058,7 @@ __texture_select name\
 __DESCRIPTION\
 __Enables texture and selects the one specified by 'name'.\
 __ARGUMENTS\
-__name texture name.\
+__name texture name. See ##texture_load .\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -3066,7 +3119,7 @@ __SYNOPSIS\
 __translate dx dy dz\
 __DESCRIPTION\
 __Specifies to push a matrix and translate all primitives by the given values that exist after this primitive but before the next ##untranslate primitive (if any). Translation matrixes are always returned to level 0 at each ##end_model .\
-__FIXME: seems to have no effect whatever the model. In an aircraft model, this primitive seems to be superseded by the ##---&nbsp;flight&nbsp;control&nbsp;surfaces&nbsp;list&nbsp;--- x, y and z values.\
+__//FIXME: seems to have no effect whatever the model. In an aircraft model, this primitive seems to be superseded by the ##---&nbsp;flight&nbsp;control&nbsp;surfaces&nbsp;list&nbsp;--- x, y and z values.\
 __ARGUMENTS\
 __dx X offset, in meters.\
 __dy Y offset, in meters.\
@@ -3128,12 +3181,11 @@ __type\
 __SYNOPSIS\
 __type object_type\
 __DESCRIPTION\
-__Depreciated, the object's type is now set by the SAR Scenery file. See ##create_object .\
+__Deprecated, the object's type is now set by the SAR Scenery file. See ##create_object .\
 __ARGUMENTS\
 __object_type see ##create_object for objects types.\
 __CONTEXT\
 __3d\
-\
 __-----\
 \
 __NAME\
@@ -3197,7 +3249,7 @@ __weather weather_type\
 __DESCRIPTION\
 __Defines mission's weather. Must be specified before mission_scene_file.\
 __ARGUMENTS\
-__weather_type type of weather. Can be: 'Clear', 'Hazy', 'Scattered', 'Cloudy', 'Overcast', 'Foggy', 'Stormy Sparse', 'Stormy Dense'.<br>Note: weather types are defined in 'weather.ini' file.\
+__weather_type type of weather. Can be: 'Clear', 'Hazy', 'Scattered', 'Cloudy', 'Overcast', 'Foggy', 'Stormy Sparse', 'Stormy Dense'.<br>Note: weather types are defined in '/data/weather.ini' file.\
 __CONTEXT\
 __mis scn\
 __EXAMPLE\
