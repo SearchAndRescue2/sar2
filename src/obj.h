@@ -26,7 +26,7 @@
 #include "sfm.h"
 #include "v3dtex.h"
 #include "sound.h"
-
+#include <GL/gl.h>
 
 /*
  *	Object Flags Type:
@@ -146,7 +146,7 @@ typedef struct {
 	char		*filename;	/* Can be NULL */
 	char		*name;		/* Can be NULL */
 
-	void		*data;		/* A GLuint referencing a GL list */
+	GLuint		data;		/* A GLuint referencing a GL list */
 
 	/* Statistics */
 	unsigned long	mem_size;	/* Memory size, in bytes */

@@ -74,7 +74,7 @@ extern sar_visual_model_struct *SARVisualModelNew(
 	sar_scene_struct *scene,
 	const char *filename, const char *name
 );
-extern void *SARVisualModelNewList(sar_visual_model_struct *vmodel);
+extern GLuint SARVisualModelNewList(sar_visual_model_struct *vmodel);
 extern int SARVisualModelGetRefCount(sar_visual_model_struct *vmodel);
 extern void SARVisualModelRef(sar_visual_model_struct *vmodel);
 extern void SARVisualModelUnref(
