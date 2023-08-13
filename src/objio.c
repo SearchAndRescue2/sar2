@@ -1608,6 +1608,8 @@ int SARObjLoadHuman(
 	    core_ptr->human_data,
 	    scene, &core_ptr->object, &core_ptr->total_objects,
 	    p_new_human->flags,
+	    p_new_human->assisting_humans,
+	    p_new_human->assisting_human_preset_name,
 	    p_new_human->type_name
 	);
 
@@ -1696,7 +1698,7 @@ int SARObjLoadSmoke(
 	  case 2:	/* Dark */
 	    tex_name = SAR_STD_TEXNAME_SMOKE_DARK;
 	    break;
-	  case 3:	/* Orange */
+	 case 3:	/* Orange */
 	    tex_name = SAR_STD_TEXNAME_SMOKE_ORANGE;
 	    break;
 	}

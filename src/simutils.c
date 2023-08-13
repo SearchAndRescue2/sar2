@@ -2561,7 +2561,7 @@ int SARSimDoPickUpHuman(
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_LYING;
 	    /* Leave SAR_HUMAN_FLAG_ALERT and SAR_HUMAN_FLAG_AWARE as is */
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_IN_WATER;
-	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_ON_STREATCHER;
+	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_ON_STRETCHER;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN_TOWARDS;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN_AWAY;
@@ -2578,7 +2578,7 @@ int SARSimDoPickUpHuman(
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_LYING;
 	    /* Leave SAR_HUMAN_FLAG_ALERT and SAR_HUMAN_FLAG_AWARE as is */
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_IN_WATER;
-	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_ON_STREATCHER;
+	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_ON_STRETCHER;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN_TOWARDS;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN_AWAY;
@@ -2595,7 +2595,7 @@ int SARSimDoPickUpHuman(
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_LYING;
 	    /* Leave SAR_HUMAN_FLAG_ALERT and SAR_HUMAN_FLAG_AWARE as is */
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_IN_WATER;
-	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_ON_STREATCHER;
+	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_ON_STRETCHER;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN_TOWARDS;
 	    obj_human_ptr->flags &= ~SAR_HUMAN_FLAG_RUN_AWAY;
@@ -2854,16 +2854,13 @@ int SARSimBoardObject(
 	    break;
 	}
 
-
-	/* Begin moving source object into target object */
-
 	/* Increment passengers count */
 	*passengers = MAX(*passengers, 0) + 1;
 
 	/* Increment passengers mass if possible */
 	if(passengers_mass != NULL)
 	    *passengers_mass = MAX(*passengers_mass, 0.0f) + src_mass;
-	
+
 	/* If a mission is active then call the mission passengers enter
 	 * notify callback
 	 */

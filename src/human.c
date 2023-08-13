@@ -44,6 +44,8 @@ int SARHumanCreate(
 	sar_scene_struct *scene,
 	sar_object_struct ***object, int *total_objects,
 	sar_obj_flags_t human_flags,
+	int assisting_humans,
+	const char *assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX],
 	const char *name
 );
 void SARHumanSetObjectPreset(
@@ -177,6 +179,8 @@ int SARHumanCreate(
         sar_scene_struct *scene,
         sar_object_struct ***object, int *total_objects,
 	sar_obj_flags_t human_flags,
+	int assisting_humans,
+	const char *assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX],
         const char *name
 )
 {
@@ -237,7 +241,14 @@ int SARHumanCreate(
 	    human->intercepting_object_distance3d = 0.0;
 
 	/* Number of assisting humans */
-	human->assisting_humans = 0;
+	human->assisting_humans = assisting_humans;
+
+	/* Assisting humans preset(s) */
+	if (human->assisting_humans)
+	{
+	    for(int i = 0; i < human->assisting_humans; i++)
+		human->assisting_human_preset_name[i] = assisting_human_preset_name[i];
+	}
 
 	/* Model human object values to preset values from the human
 	 * data presets.
@@ -291,19 +302,27 @@ void SARHumanSetObjectPreset(
 
 	/* Height in meters */
 	human->height = entry->height;
-
+	
 	/* Weight in kg */
 	human->mass = entry->mass;
+	
+	/* Gender */
+	if(entry->preset_entry_flags & SAR_HUMAN_FLAG_GENDER_FEMALE)
+	    human->flags |= SAR_HUMAN_FLAG_GENDER_FEMALE;
 
-	/* Number of assisting humans */
-	human->assisting_humans = entry->assisting_humans;
+	/* Number of assisting humans. Do not overwrite if assisting_humans
+	 * number has been defined earlier by a create_human parameter.
+	 */
+	if(human->assisting_humans == 0)
+	    human->assisting_humans = entry->assisting_humans;
 
-        /* Color palette for assisting humans */
-        memcpy(
-            &human->assisting_human_color[0],
-            &entry->assisting_human_color[0],
-            SAR_HUMAN_COLORS_MAX * sizeof(sar_color_struct)
-        );
+	/* Color palette for assisting humans */
+	memcpy(
+	    &human->assisting_human_color[0],
+	    &entry->assisting_human_color[0],
+	    SAR_HUMAN_COLORS_MAX * sizeof(sar_color_struct)
+	);
+
 
 
 	/* Add support for other things that need to be coppied here */

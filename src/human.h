@@ -24,7 +24,6 @@
 #include <sys/types.h>
 #include "obj.h"		/* For SAR_HUMAN_COLOR_* definations */
 
-
 /*
  *	Human Presets Data Entry:
  */
@@ -38,12 +37,14 @@ typedef struct {
 	/* Height in meters */
 	float		height;
 
+	/* For gender SAR_HUMAN_FLAG_GENDER_FEMALE (see obj.h). */
+	sar_obj_flags_t preset_entry_flags;
+	
 	/* Color palette */
 	sar_color_struct	color[SAR_HUMAN_COLORS_MAX];
 
 	/* Number of assisting humans (0 for none) */
 	int		assisting_humans;
-
 	/* Assisting human color palette */
 	sar_color_struct	assisting_human_color[SAR_HUMAN_COLORS_MAX];
 
@@ -81,6 +82,8 @@ extern int SARHumanCreate(
 	sar_scene_struct *scene,
 	sar_object_struct ***object, int *total_objects,
 	sar_obj_flags_t human_flags,
+	int assisting_humans,
+	const char *assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX],
 	const char *name
 );
 extern void SARHumanSetObjectPreset(

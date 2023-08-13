@@ -1461,6 +1461,7 @@ typedef struct {
 /*
  *	Human/Actor:
  */
+#define SAR_ASSISTING_HUMANS_MAX	4
 typedef enum {
 	SAR_HUMAN_FLAG_NEED_RESCUE	= (1 << 1),
 	SAR_HUMAN_FLAG_SIT		= (1 << 2),	/* Base at tush */
@@ -1471,7 +1472,7 @@ typedef enum {
 	SAR_HUMAN_FLAG_ALERT		= (1 << 6),	/* Is awake */
 	SAR_HUMAN_FLAG_AWARE		= (1 << 7),	/* Knows of surroundings */
 	SAR_HUMAN_FLAG_IN_WATER		= (1 << 8),
-	SAR_HUMAN_FLAG_ON_STREATCHER	= (1 << 9),
+	SAR_HUMAN_FLAG_ON_STRETCHER	= (1 << 9),
 	SAR_HUMAN_FLAG_RUN		= (1 << 10),	/* Animate as running */
 	SAR_HUMAN_FLAG_RUN_TOWARDS	= (1 << 11),	/* Intends to run towards
 							 * (does not imply currently
@@ -1483,8 +1484,10 @@ typedef enum {
 	SAR_HUMAN_FLAG_GRIPPED		= (1 << 14),	/* Someone/something is
 							 * holding this (ie in
 							 * rescue basket */
-	SAR_HUMAN_FLAG_DIVER_CATCHER	= (1 << 15)
+	SAR_HUMAN_FLAG_DIVER_CATCHER	= (1 << 15),
+	SAR_HUMAN_FLAG_GENDER_FEMALE	= (1 << 16)
 } sar_human_flags;
+
 typedef struct {
 
 	sar_human_flags	flags;
@@ -1529,7 +1532,14 @@ typedef struct {
 	 * humans.
 	 */
 	int		assisting_humans;
+	
+	/* Assisting human(s) preset name. When human has assisting humans(s),
+	 * preset name of each one assisting human is stored here.
+	 */
+	const char	*assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX];
+	
 	sar_color_struct	assisting_human_color[SAR_HUMAN_COLORS_MAX];
+	
 
 	/* Messages */
 	char		*mesg_enter;	/* Entering into aircraft or vehicle */

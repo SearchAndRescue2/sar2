@@ -32,6 +32,7 @@
 #include "sarfio.h"
 #include "config.h"
 #include "sfm.h"
+#include "human.h"
 
 static const char *NEXT_ARG(const char *s);
 static void CHOP_STR_BLANK(char *s);
@@ -1127,7 +1128,8 @@ static int SARParmLoadFromFileIterate(
 	     *
 	     *	<type_name>
 	     *	<need_rescue?> <sitting?> <lying?> <alert?>
-	     *	<aware?> <in_water?> <on_streatcher?>
+	     *	<aware?> <in_water?> <on_stretcher?>
+	     * <assisted?> <assisting_humans> <assisting_numan_preset_name[]>
              */
 
 	    /* First argument is type name */
@@ -1172,11 +1174,59 @@ static int SARParmLoadFromFileIterate(
                         strcasepfx(cstrptr, "inwater")
                 )
                     pv->flags |= SAR_HUMAN_FLAG_IN_WATER;
-                /* On streatcher? */
-                else if(strcasepfx(cstrptr, "on_streatcher") ||
-                        strcasepfx(cstrptr, "onstreatcher")
+                /* On stretcher? */
+                else if(strcasepfx(cstrptr, "on_stretcher") ||
+                        strcasepfx(cstrptr, "onstretcher")  ||
+			strcasepfx(cstrptr, "on_streatcher")||
+			strcasepfx(cstrptr, "onstreatcher")
                 )
-                    pv->flags |= SAR_HUMAN_FLAG_ON_STREATCHER;
+		    pv->flags |= SAR_HUMAN_FLAG_ON_STRETCHER;
+		/* Assisted? */
+                else if(strcasepfx(cstrptr, "assisted") ||
+                        strcasepfx(cstrptr, "assistants") ||
+                        strcasepfx(cstrptr, "assistant")
+		)
+		{
+		    cstrptr = NEXT_ARG(cstrptr);
+		    if((cstrptr != NULL) ? (*cstrptr != '\0') : 0)
+		    {
+			if(isdigit(cstrptr[0]))
+			/* Assisting_humans number found. */
+			{
+			    pv->assisting_humans = ( ATOI(cstrptr) <= SAR_ASSISTING_HUMANS_MAX ?
+				ATOI(cstrptr) : SAR_ASSISTING_HUMANS_MAX);
+
+			    if(pv->assisting_humans < 0)
+				pv->assisting_humans = 0;
+
+			    /* Save name of assisting human(s) preset(s) */
+			    for(int j = 0; j < pv->assisting_humans; j++)
+			    {
+				cstrptr = NEXT_ARG(cstrptr);
+				if((cstrptr != NULL) ? (*cstrptr != '\0') : 0)
+				{
+				    pv->assisting_human_preset_name[j] = STRDUP(cstrptr);
+				    CHOP_STR_BLANK(pv->assisting_human_preset_name[j]);
+				}
+				else
+				   pv->assisting_human_preset_name[j] = STRDUP(SAR_HUMAN_PRESET_NAME_ASSISTING_HUMAN);
+			    }
+			}
+			else
+			/* Assisting_humans number not found. */
+			{
+			    pv->assisting_humans = 0;
+			    /* Allow to re-read current parameter at next loop. */
+			    cstrptr--;
+			}
+		    }
+		    if(pv->assisting_humans == 0)
+			fprintf(
+			    stderr,
+"%s: %i: Warning: Assisting humans number missing or null.\n",
+			    filename, *lines_read
+			);
+		}
 		else
 		    fprintf(
 			stderr,

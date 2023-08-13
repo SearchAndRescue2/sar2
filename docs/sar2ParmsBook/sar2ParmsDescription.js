@@ -789,8 +789,8 @@ __Creates a human.\
 __ARGUMENTS\
 __<b>type_name</b> <hr>\
 __default default human. May be used whenever nothing in particular is requested.\
-__victim_streatcher_assisted male victim intended to be on a stretcher with 1 assisting human. Warning: this type name is deprecated.\
-__.........(other&nbsp;type&nbsp;name)......... Warning: <b>SaR II > 2.5.0 only!</b> See data/human.ini file for other preset human types.\
+__.......(other&nbsp;type&nbsp;name)....... See data/human.ini file for other allowed preseted names.\
+__victim_streatcher_assisted Warning: this type name is deprecated. Victim intended to be on a stretcher with 1 assisting human.\
 __<b>flags</b> <hr>\
 __need_rescue this human needs to be rescued (player has to take him aboard).\
 __sit_up human is drawn sitting 'like on a chair', feet on the floor.\
@@ -801,7 +801,7 @@ __alert human is alert (is awake) and moves his arms to draw attention.\
 __aware human is aware (knows of surroundings).\
 __in_water human swims (moves his arms to float).\
 __on_stretcher if this flag is specified, a stretcher is drawn below the human.\
-__assisted&nbsp;&nbsp;n&nbsp;&nbsp;type_name(s) Warning: <b>SaR II > 2.5.0 only!</b> human is assisted (surrounded) by 'n' (1 to 4) humans. Number 'n' must be followed by 'n' human type names.\
+__assisted&nbsp;&nbsp;n&nbsp;&nbsp;type_name(s) Warning: <b>SaR II > 2.6.0 only!</b> human is assisted (surrounded) by 'n' (1 to 4) humans. Number 'n' must be followed by 'n' human type names.\
 __CONTEXT\
 __mis scn\
 __EXAMPLE\
@@ -811,7 +811,7 @@ __# Human position.\
 __# If human 'z' position is greater than the ground / water / object which is under him, human will 'fall' until he comes into contact.\
 __translate 30000.0 41020.0 0.0\
 __...\
-__# Warning: <b>SaR II > 2.5.0 only!</b> Human lying on a strecher, with 2 assisting humans.\
+__# Warning: <b>SaR II > 2.6.0 only!</b> Human lying on a strecher, with 2 assisting humans.\
 __create_human boy_1 need_rescue lying on_stretcher assisted 2 assistant_1 woman_1\
 __translate 20000.0 41020.0 0.0\
 __...\
