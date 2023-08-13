@@ -1430,7 +1430,7 @@ static void V3DGLProcessModelStandard(
 			&widthp, &heightp,
 			&x_spacing, &y_spacing,
 			NULL,		/* No allocated z points. */
-			NULL,		/* GL list not important. */
+			0,		/* GL list not important. */
 			&hfopt
 		    );
 		    glPopMatrix();

@@ -95,7 +95,7 @@ sar_visual_model_struct *SARVisualModelNew(
 	sar_scene_struct *scene,
 	const char *filename, const char *name
 );
-void *SARVisualModelNewList(sar_visual_model_struct *vmodel);
+GLuint SARVisualModelNewList(sar_visual_model_struct *vmodel);
 int SARVisualModelGetRefCount(sar_visual_model_struct *vmodel);  
 void SARVisualModelRef(sar_visual_model_struct *vmodel);
 void SARVisualModelUnref(
@@ -816,7 +816,7 @@ sar_visual_model_struct *SARVisualModelNew(
 	    vmodel->filename = STRDUP(filename);
 	    vmodel->name = STRDUP(name);
 
-	    vmodel->data = NULL;
+	    vmodel->data = 0;
 
 	    vmodel->mem_size = 0;
 	    vmodel->statements = 0;
@@ -832,15 +832,15 @@ sar_visual_model_struct *SARVisualModelNew(
  *	The return value is really a GLuint (not a void *), can return
  *	NULL on failure.
  */
-void *SARVisualModelNewList(sar_visual_model_struct *vmodel)
+GLuint SARVisualModelNewList(sar_visual_model_struct *vmodel)
 {
 	GLuint list;
 
 	if(vmodel == NULL)
-	    return(NULL);
+	    return 0;
 
 	/* Get existing GL display list if any */
-	list = (GLuint)vmodel->data;
+	list = vmodel->data;
 	if(list > 0)
 	{
 	    /* Already has an allocated GL display list so delete it
@@ -848,7 +848,7 @@ void *SARVisualModelNewList(sar_visual_model_struct *vmodel)
 	     */
 	    glDeleteLists(list, 1);
 	    list = 0;
-	    vmodel->data = NULL;
+	    vmodel->data = 0;
 	}
 
 	/* Create new GL display list */
@@ -857,9 +857,9 @@ void *SARVisualModelNewList(sar_visual_model_struct *vmodel)
 	/* Set new GL display list as the data pointer on the visual
 	 * model structure
 	 */
-	vmodel->data = (void *)list;
+	vmodel->data = list;
 
-	return((void *)list);
+	return list;
 }
 
 /*

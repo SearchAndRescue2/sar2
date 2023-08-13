@@ -22,6 +22,7 @@
 #define V3DHF_H
 
 #include <sys/types.h>
+#include <GL/gl.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,7 +76,7 @@ extern int V3DHFLoadFromFile(
 	double **data_rtn,      /* Dynamically allocated z points, each of
 				 * type double (can be NULL).
 				 */
-	void *gl_list,		/* GL list (can be NULL). */
+	GLuint gl_list,		/* GL list (can be NULL). */
 	v3d_hf_options_struct *hfopt
 );
 

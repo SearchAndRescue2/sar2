@@ -54,7 +54,7 @@ int V3DHFLoadFromFile(
 	double **data_rtn,	/* Dynamically allocated z points, each of
 				 * type double (can be NULL).
 				 */
-	void *gl_list,          /* GL list (can be NULL). */
+	GLuint gl_list,          /* GL list (can be NULL). */
 	v3d_hf_options_struct *hfopt
 );
 
@@ -157,7 +157,7 @@ int V3DHFLoadFromFile(
 	double **data_rtn,	/* Dynamically allocated z points, each of
 				 * type double (can be NULL).
 				 */
-	void *gl_list,          /* GL list (can be NULL). */
+	GLuint gl_list,          /* GL list (can be NULL). */
 	v3d_hf_options_struct *hfopt
 )
 {
@@ -344,7 +344,7 @@ int V3DHFLoadFromFile(
 	/* Begin issuing gl draw commands to draw the heightfield if
 	 * a GL list is given (which implies a GL list is being recorded.
 	 */
-	if((total_z_points > 0) && (gl_list != NULL))
+	if((total_z_points > 0) && (gl_list > 0))
 	{
 	    int cx, cy;         /* Current position in HF pixels (which is
 				 * also grid edge).

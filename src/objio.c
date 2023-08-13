@@ -746,7 +746,7 @@ sar_visual_model_struct *SARObjLoadX3DDataVisualModel(
 	/* New visual model must not be shared */
 	if(SARVisualModelGetRefCount(vmodel) == 1)
 	{
-	    GLuint list = (GLuint)SARVisualModelNewList(vmodel);
+	    GLuint list = SARVisualModelNewList(vmodel);
 	    if(list != 0)
 	    {
 		vmodel->load_state = SAR_VISUAL_MODEL_LOADING;
@@ -1805,7 +1805,7 @@ int SARObjLoadHeightField(
 		&num_grids_x, &num_grids_y,	/* Number of grids */
 		&grid_space_x, &grid_space_y,	/* Grid spacing in meters */
 		&zpoints,			/* Heightfield points return */
-		(void *)list,			/* GL display list */
+		list,			/* GL display list */
 		&hfopt
 	    );
 	    if(status)
