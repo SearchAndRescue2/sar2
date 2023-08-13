@@ -85,9 +85,30 @@ void SARDrawRunway(
 		y_min, y_max,
 		yt_min, yt_max;
 	sar_position_struct cam_pos_runway;
+
 	if((length <= 0.0f) || (width <= 0.0f))
 	    return;
 
+	/* We will be skipping the drawing of some elements when rendering
+	   with GL_SELECT as it triggers ghosting of these elements (they are
+	   drawn and not removed anymore on subsequent frames). This is only
+	   done for ground contact check and these elements (thresholds,
+	   midway markers, touchdown markers, north-south text...) are not
+	   relevant objects. Under GL_SELECT an error is thrown sometimes on
+	   my intel hardware:
+
+	   "HW GL_SELECT does not support draw mode GL_LINES_ADJACENCY"
+
+	   GL_LINES_ADJACENCY must be internally use by the OpenGL
+	   implementation but ghosting also happens without it
+	   sometimes.. This appears to affect only runway elements. I am not
+	   sure why it doesn't affect Helipad or anything else
+	   apparently... *shrug*. This can well be a manifestation of a Mesa
+	   OpenGL bug with intel, as I have not found any other cause.
+	*/
+	GLint render_mode;
+	glGetIntegerv(GL_RENDER_MODE, &render_mode);
+	render_mode = GL_RENDER;
 
 	/* Get runway background texture */
 	if(SARIsTextureAllocated(scene, tex_num))
@@ -190,7 +211,7 @@ void SARDrawRunway(
 
 	    /* Draw north displaced threshold? */
 	    vmodel = runway->north_displaced_threshold_vmodel;
-	    if(vmodel != NULL)
+	    if(vmodel != NULL && render_mode != GL_SELECT)
 	    {
 		glPushMatrix();
 		{
@@ -207,7 +228,7 @@ void SARDrawRunway(
 	    }
 	    /* Draw south displaced threshold? */
 	    vmodel = runway->south_displaced_threshold_vmodel;
-	    if(vmodel != NULL)
+	    if(vmodel != NULL && render_mode != GL_SELECT)
 	    {
 		glPushMatrix();
 		{
@@ -272,7 +293,7 @@ void SARDrawRunway(
 
 	    /* Draw touchdown markers */
 	    vmodel = runway->td_marker_vmodel;
-	    if(vmodel != NULL)
+	    if(vmodel != NULL && render_mode != GL_SELECT)
 	    {
 		glPushMatrix();
 		{
@@ -299,7 +320,7 @@ void SARDrawRunway(
 
 	    /* Draw midway markers */
 	    vmodel = runway->midway_marker_vmodel;
-	    if(vmodel != NULL)
+	    if(vmodel != NULL && render_mode != GL_SELECT)
 	    {
 		glPushMatrix();
 		{
@@ -326,7 +347,7 @@ void SARDrawRunway(
 
 	    /* Draw threshold */
 	    vmodel = runway->threshold_vmodel;
-	    if(vmodel != NULL)
+	    if(vmodel != NULL && render_mode != GL_SELECT)
 	    {
 		glPushMatrix();
 		{
@@ -406,7 +427,8 @@ void SARDrawRunway(
 	    /* Draw north label? */
 	    vmodel = runway->north_label_vmodel;
 	    if((vmodel != NULL) &&
-	       (runway->north_label_width > 0.0f)
+	       (runway->north_label_width > 0.0f) &&
+	       render_mode != GL_SELECT
 	    )
 	    {
 		float label_width = runway->north_label_width;
@@ -427,7 +449,8 @@ void SARDrawRunway(
 	    /* Draw south label? */
 	    vmodel = runway->south_label_vmodel;
 	    if((vmodel != NULL) &&
-	       (runway->south_label_width > 0.0f)
+	       (runway->south_label_width > 0.0f) &&
+	       render_mode != GL_SELECT
 	    )
 	    {
 		float label_width = runway->south_label_width;
