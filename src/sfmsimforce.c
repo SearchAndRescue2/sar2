@@ -1524,6 +1524,42 @@ int SFMForceApplyArtificial(
 			sin_bank = sin(dir->bank),
 			cos_bank = cos(dir->bank);
 
+		/* Rotor effects */
+
+		/* IGE effect (In-Ground-Effect) adds more lift force when close to the ground.
+		 * We effectively give thrust_output a maximum of 28% bonus in that region.
+		 *
+		 * Effect starts at a rotor height of 1.25 rotor diameter.
+		 * http://www.copters.com/aero/ground_effect.html
+		 */
+		if(flags & SFMFlagRotorDiameter)
+		{
+		    // Twin-rotor aircrafts note:
+		    //   - Coaxial are assumed to experience normal IGE since its a single
+		    //     engine after all.
+		    //   - Transverse (V22 Ospray): the model engine is already sized at 2x
+		    //     I think, so we should be good.
+
+		    // horizontallity_coeff dampens IGE based on how horizontal to the
+		    // ground the aircraft is. It can be played with.
+		    double horizontallity_coeff = POW(ABS(cos_pitch) * ABS(cos_bank),2);
+		    double ige_height = 1.25 * model->rotor_diameter;
+		    // The rotor is as high as the center of the aircraft plus
+		    // the belly_height (assume distance from center to belly
+		    // is the same as from center to rotor. This saves having
+		    // to carry exact rotor elevation to the FSM model,
+		    // although that could be done.
+		    double rotor_height = ABS(pos->z - model->ground_elevation_msl + model->belly_height);
+		    // Increases towards 1 when ground_elevation is lower. Non
+		    // linear, approximate by the square.
+		    double ige_coeff = (1 - POW(CLIP(rotor_height, 0, ige_height) / ige_height, 2));
+		    // Increase thrust output 28% at most.
+		    // It is always assumed that the ground is horizontal and effect happens
+		    // when we are parallel to ground.
+		    thrust_output = (1 + 0.28 * ige_coeff * horizontallity_coeff) * thrust_output;
+		    // fprintf(stderr, "IGE. hor_coeff: %.2f, coeff: %.2f, thrust_bonus: %.2f\n", horizontallity_coeff, ige_coeff, 1 + 0.28 * ige_coeff);
+		}
+
 		/* This is the speed vector relative to the rotor blades.
 		   Used to calculate pitch and bank changes. It should match
 		   airspeed vector when aircraft horizontal */
@@ -1533,6 +1569,8 @@ int SFMForceApplyArtificial(
 		// heading of the aircraft so we don't need to rotate
 		// heading. A rotor moving forward will just see y_speed and
 		// z_speed (because pitched).
+		// FIXME: rotor follows control so it may not be perpendicular to
+		// aircraft as assumed here, but close enough.
 		double a[3 *1], r[3 * 1];
 		a[0] = airspeed->x;
 		a[1] = airspeed->y;
@@ -1546,31 +1584,7 @@ int SFMForceApplyArtificial(
 		double airspeed_rotor_2d = SFMHypot2(airspeed_rotor.x, airspeed_rotor.y);
 		// fprintf(stderr, "airspeed_rotor. b: %.2f, p: %.2f, h: %.2f x: %.2f, y: %.2f, z: %.2f, 2d: %.2f\n", dir->bank, dir->pitch, dir->heading, a[0], a[1], a[2], airspeed_rotor_2d);
 
-		/* IGE effect (In-Ground-Effect) adds more lift force when close to the ground.
-		 * We effectively give thrust_output a maximum of 28% bonus in that region.
-		 *
-		 * Effect starts at a rotor height of 1.25 rotor diameters.
-		 * http://www.copters.com/aero/ground_effect.html
-		 */
-		if(flags & SFMFlagRotorDiameter && model->rotor_diameter > 0)
-		{
-		    // horizontallity_coeff dampens IGE based on how horizontal to the
-		    // ground the aircraft is. It can be played with.
-		    double horizontallity_coeff = POW(ABS(cos_pitch) * ABS(cos_bank),2);
-		    double ige_height = 1.25 * model->rotor_diameter;
-		    // The rotor is as high as the center of the aircraft plus the
-		    // belly_height (assume distance from center to belly is the
-		    // same as from center to rotor.
-		    double rotor_height = ABS(pos->z - model->ground_elevation_msl + model->belly_height);
-		    // Increases towards 1 when ground_elevation is lower. Non
-		    // linear, approximate by the square.
-		    double ige_coeff = (1 - POW(CLIP(rotor_height, 0, ige_height) / ige_height, 2));
-		    // Increase thrust output 28% at most.
-		    // It is always assumed that the ground is horizontal and effect happens
-		    // when we are parallel to ground.
-		    thrust_output = (1 + 0.28 * ige_coeff * horizontallity_coeff) * thrust_output;
-		    // fprintf(stderr, "IGE. hor_coeff: %.2f, coeff: %.2f, thrust_bonus: %.2f\n", horizontallity_coeff, ige_coeff, 1 + 0.28 * ige_coeff);
-		}
+
 
 		/* Transverse Flow Effect (TF) happens from around 5 knots,
 		 * reaches max magnitude at 15 knots and dissapears by 25
@@ -1581,10 +1595,13 @@ int SFMForceApplyArtificial(
 		 * https://en.wikipedia.org/wiki/Transverse_flow_effect
 		 */
 
-		// The effect starts at SFMTFStart and follows a sin wave
-		// incidence until it is 0 again at SFMTFEnd. Otherwise 0.
-		// sin((speed-effect_start)*PI / effect_speed_range)
-		if (!model->landed_state && airspeed_rotor_2d > 0) {
+		if (flags & SFMFlagSingleMainRotor && // does not affect twin as they compensate.
+		    !model->landed_state &&
+		    airspeed_rotor_2d > 0
+		    ) {
+		    // The effect starts at SFMTFStart and follows a sin wave
+		    // incidence until it is 0 again at SFMTFEnd. Otherwise 0.
+		    // sin((speed-effect_start)*PI / effect_speed_range)
 		    double tf_coeff = sin(
 			(CLIP(airspeed_rotor_2d, SFMTFStart, SFMTFEnd) - SFMTFStart) * PI / (SFMTFEnd - SFMTFStart));
 
@@ -1598,7 +1615,7 @@ int SFMForceApplyArtificial(
 		/* Effective Transactional Lift (ETL): as airspeed increases, air
 		 * vortexes at the tip of the rotor blades dissappear,
 		 * providing a bonus lift effect. Fully effective at
-		 * SFMETLEnd (24 knots). Without ETL, we suffer a thrust
+		 * SFMETLSpeed (24 knots). Without ETL, we suffer a thrust
 		 * penalty of up to 25%.
 		 *
 		 * ETL effect on the advancing side vs retreating side
@@ -1614,7 +1631,9 @@ int SFMForceApplyArtificial(
 		double etl_thrust_coeff = 1 - POW(CLIP(airspeed_rotor_2d / SFMETLSpeed, 0, 1),2);
 		thrust_output = (1 - 0.25 * etl_thrust_coeff) * thrust_output;
 
-		if (!model->landed_state && airspeed_rotor_2d > 0) {
+		if (!model->landed_state &&
+		    airspeed_rotor_2d > 0
+		    ) {
 		    // Similar to TF, we add some pitch/bank changes while
 		    // entering ETL. The difference here is that nose rises
 		    // when going forward, rather than causing a roll.  By end
@@ -1639,8 +1658,9 @@ int SFMForceApplyArtificial(
 		 * there.
 		 */
 
-		if(!model->landed_state)
-		{
+		if(flags & SFMFlagSingleMainRotor && // does not affect twin rotors
+		   !model->landed_state
+		    ) {
 		    // torque_coeff: 1 at 0-speed, 0 at SFMETLEnd and negative
 		    // above that so that torque acceleration dissappears.
 		    double torque_coeff = 1 - airspeed_2d / SFMETLSpeed;

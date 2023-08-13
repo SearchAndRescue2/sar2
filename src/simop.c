@@ -1054,7 +1054,7 @@ void SARSimSetSFMValues(
 			      SFMFlagCrashContactShape | SFMFlagCrashableSizeRadius |
 			      SFMFlagCrashableSizeZMin | SFMFlagCrashableSizeZMax |
 			      SFMFlagTouchDownCrashResistance | SFMFlagCollisionCrashResistance |
-			      SFMFlagStopped | SFMFlagLength | SFMFlagWingspan | SFMFlagRotorDiameter
+			      SFMFlagStopped | SFMFlagLength | SFMFlagWingspan
 		);
 
 	    /* Update flight model type only if SFM not in slew mode */
@@ -1110,7 +1110,32 @@ void SARSimSetSFMValues(
 	    TAR_PTR->belly_height = SRC_PTR->belly_height;
 	    TAR_PTR->length = SRC_PTR->length;
 	    TAR_PTR->wingspan = SRC_PTR->wingspan;
-	    TAR_PTR->rotor_diameter = SRC_PTR->rotor_diameter;
+	    {
+		double rotor_diameter = 0.0;
+		int main_rotor_count = 0;
+		// Calculate effective rotor diameter
+		for (i = 0; i<SRC_PTR->total_rotors; i++) {
+		    sar_obj_rotor_struct *rotor = SRC_PTR->rotor[i];
+
+		    // Identify main rotors as rotors with blades that follow
+		    // controls or can pitch.
+		    if (rotor->total_blades > 0 &&
+			(rotor->flags & SAR_ROTOR_FLAG_FOLLOW_CONTROLS ||
+			 rotor->flags & SAR_ROTOR_FLAG_CAN_PITCH)
+			) {
+			main_rotor_count++;
+			// Effective diameter will come from the biggest rotor.
+			rotor_diameter = MAX(rotor_diameter, rotor->radius*2);
+			}
+		}
+		if (rotor_diameter > 0) {
+		    TAR_PTR->rotor_diameter = rotor_diameter;
+		    TAR_PTR->flags |= SFMFlagRotorDiameter;
+		}
+		if (main_rotor_count == 1)
+		    TAR_PTR->flags |= SFMFlagSingleMainRotor;
+	    }
+
 	    TAR_PTR->ground_elevation_msl = obj_ptr->ground_elevation_msl;
 	    TAR_PTR->gear_state = (SFMBoolean)((lgear_ptr != NULL) ?
 		(lgear_ptr->flags & SAR_OBJ_PART_FLAG_STATE) : False

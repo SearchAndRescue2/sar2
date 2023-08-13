@@ -861,9 +861,6 @@ typedef struct {
 	/* Wingspan of aircraft in meters */
 	float		wingspan;
 
-	/* Rotor diameter in meters */
-	float		rotor_diameter;
-
 	/* Height of landing gear in meters */
 	float		gear_height;
 

@@ -3245,19 +3245,6 @@ static void SARObjLoadLine(
 		if(aircraft != NULL)
 		    aircraft->wingspan = wingspan;
 	    }
-	    else if(!strcasecmp(parm, "rotor_diameter"))
-	    {
-		/* Arguments:
-		 *
-		 * <wingspan>
-		 */
-		float	rotor_diameter = 0.0f;
-
-		arg = GET_ARG_F(arg, &rotor_diameter);
-
-		if(aircraft != NULL)
-		    aircraft->rotor_diameter = rotor_diameter;
-	    }
 	    /* Landing Gear Height */
 	    else if(!strcasecmp(parm, "gear_height"))
 	    {

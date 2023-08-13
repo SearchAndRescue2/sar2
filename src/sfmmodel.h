@@ -79,6 +79,7 @@
 #define SFMFlagLength			((SFMFlags)1 << 42)
 #define SFMFlagWingspan			((SFMFlags)1 << 43)
 #define SFMFlagRotorDiameter		((SFMFlags)1 << 44)
+#define SFMFlagSingleMainRotor		((SFMFlags)1 << 45)
 
 /*
  *	Flight model types:
