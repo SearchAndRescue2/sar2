@@ -108,7 +108,6 @@ void SARDrawRunway(
 	*/
 	GLint render_mode;
 	glGetIntegerv(GL_RENDER_MODE, &render_mode);
-	render_mode = GL_RENDER;
 
 	/* Get runway background texture */
 	if(SARIsTextureAllocated(scene, tex_num))
