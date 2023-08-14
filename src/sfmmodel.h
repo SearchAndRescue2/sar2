@@ -130,7 +130,7 @@ typedef struct {
 	 */
 	SFMFlags	flags;
 
-	int			type;	/* One of SFMFlightModel*. */
+	int			type;		/* One of SFMFlightModel*. */
 	SFMPositionStruct	position;	/* Meters. */
 	SFMDirectionStruct	direction;	/* Radians. */
 	SFMPositionStruct	velocity_vector;	/* Meters/cycle. */
@@ -148,7 +148,7 @@ typedef struct {
 	SFMPositionStruct	accel_responsiveness;
 	double			ground_elevation_msl;	/* Meters. */
 	double			service_ceiling;	/* Meters. */
-	double			length;	/* Meters */
+	double			length;		/* Meters */
 	double			wingspan;	/* Meters */
 	double			rotor_diameter;	/* Meters */
 	double			belly_height;	/* Undercarrage to center, meters. */
@@ -173,7 +173,7 @@ typedef struct {
 	double			pitch_control_coeff;	/* -1.0 to 1.0. */
 	double			bank_control_coeff;	/* -1.0 to 1.0. */
 	double			elevator_trim_coeff;	/* -1.0 to 1.0. */
-	double			throttle_coeff;	/* 0.0 to 1.0. */
+	double			throttle_coeff;		/* 0.0 to 1.0. */
 	SFMBoolean		after_burner_state;
 	double			after_burner_power_coeff;	/* Times engine power. */
 	double			engine_power;	/* In kg * m / cycle^2. */

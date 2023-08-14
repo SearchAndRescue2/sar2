@@ -73,7 +73,11 @@ typedef struct {
 	SFMPositionStruct       actual_wind_vector;	/* In meters per Cycle */    
 	unsigned long		wind_flags;
 	SFMBoolean		wind_enabled;
-	/* Callbacks, typical inputs are; realm pointer,
+
+	/* Realism setting */
+	SFMFlightPhysicsLevel	flight_physics_level;
+
+        /* Callbacks, typical inputs are; realm pointer,
 	 * model pointer, client data
 	 */
 

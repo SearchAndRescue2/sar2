@@ -785,11 +785,11 @@ int SFMForceApplyNatural(
 		     * It improves upon the original code doing this, which
 		     * has been removed:
 
-		       if(!model->landed_state)
-                          dir->heading = SFMSanitizeRadians(
-                            dir->heading + (sin_pitch * sin_bank *
-                              (0.2 * PI) *
-                              time_compensation * time_compression)
+			if(!model->landed_state)
+			    dir->heading = SFMSanitizeRadians(
+			    dir->heading + (sin_pitch * sin_bank *
+				(0.2 * PI) *
+				time_compensation * time_compression)
 
 		     *
 		     * When the helicopter pitches forward and banks, the
@@ -814,7 +814,7 @@ int SFMForceApplyNatural(
 		     * We have however reduced the PI multiplier to 0.15
 		     * instead of 0.2.
 		     */
-		    
+
 		    // Originally this was part of ArtificialForces, but
 		    // now it is here (i don't remember the reason). It is a
 		    // thrust-independent effect after all.
@@ -1532,7 +1532,8 @@ int SFMForceApplyArtificial(
 		 * Effect starts at a rotor height of 1.25 rotor diameter.
 		 * http://www.copters.com/aero/ground_effect.html
 		 */
-		if(flags & SFMFlagRotorDiameter)
+		if(flags & SFMFlagRotorDiameter &&
+		    realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_MODERATE)
 		{
 		    // Twin-rotor aircrafts note:
 		    //   - Coaxial are assumed to experience normal IGE since its a single
@@ -1596,6 +1597,7 @@ int SFMForceApplyArtificial(
 		 */
 
 		if (flags & SFMFlagSingleMainRotor && // does not affect twin as they compensate.
+		    realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_REALISTIC &&
 		    !model->landed_state &&
 		    airspeed_rotor_2d > 0
 		    ) {
@@ -1626,12 +1628,17 @@ int SFMForceApplyArtificial(
 		 *
 		 * https://en.wikipedia.org/wiki/Translational_lift
 		 */
+
+		// ETL Thrust penalty
 		// Goes from 1 (full penalty) to 0 when it reaches SFMETLSpeed
 		// Square progression so that it goes a bit slower close to 0.
-		double etl_thrust_coeff = 1 - POW(CLIP(airspeed_rotor_2d / SFMETLSpeed, 0, 1),2);
-		thrust_output = (1 - 0.25 * etl_thrust_coeff) * thrust_output;
-
-		if (!model->landed_state &&
+		if (realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_MODERATE) {
+		    double etl_thrust_coeff = 1 - POW(CLIP(airspeed_rotor_2d / SFMETLSpeed, 0, 1),2);
+		    thrust_output = (1 - 0.25 * etl_thrust_coeff) * thrust_output;
+		}
+		// ETL pitch
+		if (realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_REALISTIC &&
+		    !model->landed_state &&
 		    airspeed_rotor_2d > 0
 		    ) {
 		    // Similar to TF, we add some pitch/bank changes while
@@ -1659,6 +1666,7 @@ int SFMForceApplyArtificial(
 		 */
 
 		if(flags & SFMFlagSingleMainRotor && // does not affect twin rotors
+		   realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_REALISTIC &&
 		   !model->landed_state
 		    ) {
 		    // torque_coeff: 1 at 0-speed, 0 at SFMETLEnd and negative
