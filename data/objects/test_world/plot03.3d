@@ -1,0 +1,11 @@
+begin_header
+texture_load plot03_tex textures/test_world/plot03.tex
+end_header
+
+range 4000
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+texture_select plot03_tex
+heightfield_load textures/test_world/plot03.hf  600 400 155.563  0 0 0  0 0 0
+end_model standard
