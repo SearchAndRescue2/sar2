@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <errno.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 #include <sys/stat.h>
 
 #include "../include/fio.h"
@@ -79,16 +79,16 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 	/* Check if the file exists and get its stats */
 	if(stat(filename, &stat_buf))
 	{
-            char *s = STRDUP(strerror(errno));
-            if(s == NULL)
-                s = STRDUP("no such file");
-            *s = toupper(*s);
-            fprintf(
-                stderr,
-                "%s: %s.\n",
-                filename, s
-            );
-            free(s);
+	    char *s = STRDUP(strerror(errno));
+	    if(s == NULL)
+		s = STRDUP("no such file");
+	    *s = toupper(*s);
+	    fprintf(
+		stderr,
+		"%s: %s.\n",
+		filename, s
+	    );
+	    free(s);
 	    return(-1);
 	}
 #ifdef S_ISDIR
@@ -129,7 +129,7 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 	 */
 	version_major = 1;
 	version_minor = 0;
-	
+
 	do
 	{
 	    buf = FSeekNextParm(
@@ -174,10 +174,10 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 		    calloc(1, sizeof(sar_human_data_entry_struct))
 		);
 		hdp_ptr->name = STRDUP(s);
-		
+
 		/* Set gender to default value (male) for current preset. */
 		hdp_ptr->preset_entry_flags &= ~SAR_HUMAN_FLAG_GENDER_FEMALE;
-		
+
 		free(s);
 	    }
 	    /* Height */
@@ -193,14 +193,14 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 	    else if(!strcasecmp(buf, "Mass"))
 	    {
 		FGetValuesF(fp, value, 1);
-		
+
 		/* Mass for a 1.90m tall human was set to 54kg in original
 		 * "Version 1.0" human.ini file. It was certainly an error, so
 		 * let's overwrite it to 90kg.
 		 */
 		if(version_major == 1 && version_minor == 0)
 		    value[0] = 90;
-		
+
 		if(hdp_ptr != NULL)
 		{
 		    hdp_ptr->mass = (float)MAX(value[0], 0.0);	/* kg */
@@ -212,7 +212,7 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 		/* Male is default gender.
 		* If Female, breasts will be drawn on torso.
 		*/
-		
+
 		char *s = FGetString(fp);
 		if( (s != NULL) && (hdp_ptr != NULL) )
 		{

@@ -102,7 +102,7 @@ void SARDrawHumanIterate(
 	torso_len   *= height_coef;
 	bisep_len   *= height_coef;
 	trisep_len  *= height_coef;
-	
+
 	/* Body width and thick depends of human mass: let's consider
 	 * that standard is 1.9m / 90kg => BMI is ~25.
 	 */
@@ -197,10 +197,10 @@ void SARDrawHumanIterate(
 	    left_trisep_angle = (float)(1.75 * PI);
 	    right_trisep_angle = (float)(1.75 * PI);
 	    left_hip_to_thigh_angle = (float)(1.5 * PI);
-	    right_hip_to_thigh_angle = (float)(1.5 * PI); 
+	    right_hip_to_thigh_angle = (float)(1.5 * PI);
 	    left_knee_to_calv_angle = (float)(0.5 * PI);
 	    right_knee_to_calv_angle = (float)(0.5 * PI);
-	
+
 	    base_to_torso = calf_len + foot_height * height_coef;
 	}
 	else if(flags & SAR_HUMAN_FLAG_DIVER_CATCHER)
@@ -211,11 +211,11 @@ void SARDrawHumanIterate(
 	    right_shoulder_angle = (float)(1.9 * PI);
 	    left_bisep_angle = (float)(1.8 * PI);
 	    right_bisep_angle = (float)(1.8 * PI);
-	    left_trisep_angle = (float)(1.8 * PI);   
+	    left_trisep_angle = (float)(1.8 * PI);
 	    right_trisep_angle = (float)(1.8 * PI);
 	    left_hip_to_thigh_angle = (float)(1.9 * PI);
 	    right_hip_to_thigh_angle = (float)(1.9 * PI);
-	    left_knee_to_calv_angle = (float)(0.2 * PI); 
+	    left_knee_to_calv_angle = (float)(0.2 * PI);
 	    right_knee_to_calv_angle = (float)(0.2 * PI);
 
 	    /* If gripped it implies on end of rescue hoist rope. */
@@ -292,7 +292,7 @@ void SARDrawHumanIterate(
 		left_bisep_angle = (float)(1.5 * PI);
 		right_bisep_angle = (float)(1.5 * PI);
 		left_trisep_angle = (float)(0.0 * PI);
-	        right_trisep_angle = (float)(0.0 * PI);
+		right_trisep_angle = (float)(0.0 * PI);
 		left_hip_to_thigh_angle = (float)(0.0 * PI);
 		right_hip_to_thigh_angle = (float)(0.0 * PI);
 		left_knee_to_calv_angle = (float)(0.0 * PI);
@@ -356,7 +356,7 @@ void SARDrawHumanIterate(
 		draw_shadow_std = True;
 	    }
 	}
-	
+
 	/* At this point the human's appendage length and rotation
 	 * values have now been set up.
 	 */
@@ -445,7 +445,7 @@ void SARDrawHumanIterate(
 	    glEnd();
 
 	    /* Right grids. */
-	    glBegin(GL_LINE_LOOP);  
+	    glBegin(GL_LINE_LOOP);
 	    {
 		glNormal3f(1.0, 0.0, 0.0);
 		glVertex3f(x, hl, -y);
@@ -475,12 +475,12 @@ void SARDrawHumanIterate(
 	    }
 	    glEnd();
 
-	    glBegin(GL_QUADS);        
+	    glBegin(GL_QUADS);
 	    {
 		glNormal3f(-1.0f, 0.0f, 0.0f);
 		glVertex3f(-x, hl, y);
 		glVertex3f(-x, hl, (y - 0.1f));
-		glVertex3f(-x, 0.0f, (y - 0.1f)); 
+		glVertex3f(-x, 0.0f, (y - 0.1f));
 		glVertex3f(-x, 0.0f, y);
 
 		glNormal3f(1.0f, 0.0f, 0.0f);
@@ -498,7 +498,7 @@ void SARDrawHumanIterate(
 		glVertex3f(x, hl, -y);
 		glVertex3f(x, hl, -(y - 0.1f));
 		glVertex3f(x, 0.0f, -(y - 0.1f));
-		
+
 		glNormal3f(-1.0f, 0.0f, 0.0f);
 		glVertex3f(x, 0.0f, -y);
 		glVertex3f(x, 0.0f, -(y - 0.1f));
@@ -514,7 +514,7 @@ void SARDrawHumanIterate(
 		glVertex3f(x, hl, (y - 0.1f));
 		glVertex3f(x, hl, y);
 		glVertex3f(x, 0.0f, y);
-		
+
 		glNormal3f(-1.0f, 0.0f, 0.0f);
 		glVertex3f(x, 0.0f, (y - 0.1f));
 		glVertex3f(x, 0.0f, y);
@@ -530,7 +530,7 @@ void SARDrawHumanIterate(
 	glPushMatrix();
 	{
 	    /* Check if on stretcher, if so translate up. */
-	    if(flags & SAR_HUMAN_FLAG_ON_STRETCHER)  
+	    if(flags & SAR_HUMAN_FLAG_ON_STRETCHER)
 	    {
 		/* Push on extra matrix and move up (matrix poped later). */
 		glPushMatrix();
@@ -569,7 +569,7 @@ void SARDrawHumanIterate(
 		{
 		    /* Male upper torso (default torso). */
 		    glTranslatef(0.0f, 0.10f * torso_len, 0.0f);
-		    
+
 		    c = &palette[SAR_HUMAN_COLOR_TORSO];
 		    SET_BODY_COLOR
 		    glBegin(GL_QUADS);
@@ -587,7 +587,7 @@ void SARDrawHumanIterate(
 		{
 		    /* Female upper torso. */
 		    glTranslatef(0.0f, 0.10f * torso_len, 0.0f);
-		    
+
 		    float half_thick = (0.25f * torso_len * thick_coef) / 2.0f;
 		    float half_width = 0.45f * torso_len * width_coef / 2.0f;
 		    float torso_z0 = 0.0f;
@@ -596,7 +596,7 @@ void SARDrawHumanIterate(
 		    float torso_z2 = torso_z4 - 0.19f * height_coef;
 		    float torso_y2 = -half_thick - 0.08f * thick_coef;
 		    float torso_z3 = torso_z4 - 0.10f * height_coef;
-		    
+
 		    c = &palette[SAR_HUMAN_COLOR_TORSO];
 		    SET_BODY_COLOR
 		    glBegin(GL_TRIANGLES);
@@ -782,10 +782,10 @@ void SARDrawHumanIterate(
 			0.5f * thigh_len * thick_coef,
 			-thigh_len,
 			True
-		    );  
+		    );
 		}
-		glEnd();   
-		
+		glEnd();
+
 		/* Calv. */
 		glTranslatef(0.0f, -thigh_len, 0.0f);
 		glRotatef(
@@ -973,18 +973,18 @@ void SARDrawHumanIterate(
 	    if ((&palette[SAR_HUMAN_COLOR_HAIR])->a == 0.0f)
 	    {
 		head_height += hairs_height / 3.0f;
-		
+
 		/* Head */
 		c = &palette[SAR_HUMAN_COLOR_FACE];
 		SET_BODY_COLOR
-		
+
 		glTranslatef(0.0f, 0.05f * torso_len * height_coef, 0.0f);
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(0.18f * width_coef, head_thick, head_height, True);
 		}
 		glEnd();
-		
+
 		/* Dont' draw hair. */
 	    }
 	    else
@@ -992,23 +992,23 @@ void SARDrawHumanIterate(
 		/* Head */
 		c = &palette[SAR_HUMAN_COLOR_FACE];
 		SET_BODY_COLOR
-		
+
 		glTranslatef(0.0f, 0.05f * torso_len * height_coef, 0.0f);
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(0.18f * width_coef, head_thick, head_height, True);
 		}
 		glEnd();
-		
+
 		/* Hair. */
 		glPushMatrix();
 		{
 		    /* Move to head top */
 		    glTranslatef(0.0f, head_height, 0.0f);
-		    
+
 		    c = &palette[SAR_HUMAN_COLOR_HAIR];
 		    SET_BODY_COLOR
-		    
+
 		    glBegin(GL_QUADS);
 		    {
 			SARDrawBoxBaseNS(0.18f * width_coef,  head_thick,  hairs_height, False);
@@ -1016,7 +1016,7 @@ void SARDrawHumanIterate(
 		    glEnd();
 		}
 		glPopMatrix();
-		
+
 		/* Back of head hair. */
 		glPushMatrix();
 		{
@@ -1161,7 +1161,7 @@ void SARDrawHuman(
 	    else
 		/* Shift to stretcher rear end. */
 		sfr = 0.9f;
-		
+
 	    /* Draw one to four assisting human objects */
 	    for(i = 0; i < human->assisting_humans; i++)
 	    {
@@ -1172,14 +1172,14 @@ void SARDrawHuman(
 
 		    /* Set up `filtered' human flags that will be
 		     * passed to the human draw itteration function.
-		     * This is so that we don't pass all the flags, 
+		     * This is so that we don't pass all the flags,
 		     * because in some situations the human may be
 		     * lying on a stretcher and the assisting humans
 		     * need to be running.
 		     */
 		    flags = 0;
 		    if(human->flags & SAR_HUMAN_FLAG_ALERT)
-		        flags |= SAR_HUMAN_FLAG_ALERT;
+			flags |= SAR_HUMAN_FLAG_ALERT;
 		    if(human->flags & SAR_HUMAN_FLAG_AWARE)
 			flags |= SAR_HUMAN_FLAG_AWARE;
 		    if(human->flags & SAR_HUMAN_FLAG_IN_WATER)
@@ -1216,10 +1216,10 @@ void SARDrawHuman(
 		    }
 		}
 		glPopMatrix();
-		
+
 		/* Shift left/right spacing to other side. */
 		slr *= -1.0;
-		
+
 		/* When second assistant has been drawn, shift to stretcher front end. */
 		if(i == 1)
 		    sfr *= -1.0;

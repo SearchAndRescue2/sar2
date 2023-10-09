@@ -15,7 +15,7 @@
 ***********************************************************************/
 
 /*
-                               Human Preset Data
+			       Human Preset Data
  */
 
 #ifndef HUMAN_H
@@ -39,7 +39,7 @@ typedef struct {
 
 	/* For gender SAR_HUMAN_FLAG_GENDER_FEMALE (see obj.h). */
 	sar_obj_flags_t preset_entry_flags;
-	
+
 	/* Color palette */
 	sar_color_struct	color[SAR_HUMAN_COLORS_MAX];
 

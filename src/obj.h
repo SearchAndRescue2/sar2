@@ -160,7 +160,7 @@ typedef struct {
 /*
  *	Position/Velocity:
  *
- *	Each member must be of type float and their order is 
+ *	Each member must be of type float and their order is
  *	important.
  *
  *	When used as position the units are in meters, when used as
@@ -268,7 +268,7 @@ typedef enum {
     SAR_CRASH_TYPE_OBSTRUCTION,
     SAR_CRASH_TYPE_GROUND,
     SAR_CRASH_TYPE_MOUNTAIN,		/* To be more specific than
-                                         * just ground */
+					 * just ground */
     SAR_CRASH_TYPE_BUILDING,
     SAR_CRASH_TYPE_AIRCRAFT,		/* Not used */
     SAR_CRASH_TYPE_FIRE
@@ -483,7 +483,7 @@ typedef struct {
 				pos_cen,
 				pos_max;
 
-	/* Direction, dir_min and dir_max are deltas relative to 
+	/* Direction, dir_min and dir_max are deltas relative to
 	 * dir_cen
 	 *
 	 * Note that some part types interprite these values differently
@@ -890,7 +890,7 @@ typedef struct {
 	sar_engine_state	engine_state;
 	time_t		next_engine_on;		/* Time till engine starts up (in ms) */
 
-	/* Throttle control position. In aircraft flight model this is 
+	/* Throttle control position. In aircraft flight model this is
 	 * the actual throttle control position, in helicopter flight
 	 * model this is the speed at which the rotors are spinning.
 	 * Range is from 0.0 to 1.0
@@ -1135,7 +1135,7 @@ typedef struct {
 	 */
 	float		radius_rate;
 
-	/* If this is true then when a smoke unit has reached its 
+	/* If this is true then when a smoke unit has reached its
 	 * maximum size its visiblity will be reset to 0.0 (thus marking
 	 * it as "available for use")
 	 */
@@ -1220,12 +1220,12 @@ typedef struct {
 #define SAR_OBJECT_EXPLOSION(p)	((sar_object_explosion_struct *)(p))
 
 
-/* 
+/*
  *	Fire:
  */
 typedef struct {
 
-	/* Cylendrical size of fire in meters, this is also used to 
+	/* Cylendrical size of fire in meters, this is also used to
 	 * calculate the fire billboard
 	 *
 	 * Center is at the base of the fire
@@ -1234,13 +1234,13 @@ typedef struct {
 			height;
 
 	time_t		frame_inc_int,	/* Frame increment interval, in ms */
-			next_frame_inc;	/* Time to increment next frame, in ms */ 
+			next_frame_inc;	/* Time to increment next frame, in ms */
 	int		cur_frame,	/* Current frame */
 			frame_repeats;	/* Number of times animation has cycled */
 
 	/* Number of frame repeats, 0 or less to repeat forever (or
 	 * when life span has exceeded)
-	 */     
+	 */
 	int		total_frame_repeats;
 
 	/* Texture number on scene */
@@ -1269,7 +1269,7 @@ typedef struct {
 
 	sar_chemical_type	chemical_type;
 
-	int		owner;		/* Object that created this spray or -1 
+	int		owner;		/* Object that created this spray or -1
 					 * for none */
 
 	/* Texture number on the scene */
@@ -1514,8 +1514,8 @@ typedef struct {
 	 *	-1	No intercepting
 	 *	-2	Intercept player
 	 *
-	 * Works when flags SAR_HUMAN_FLAG_RUN_TOWARDS xor 
-	 * SAR_HUMAN_FLAG_RUN_AWAY is set and intercepting_object is 
+	 * Works when flags SAR_HUMAN_FLAG_RUN_TOWARDS xor
+	 * SAR_HUMAN_FLAG_RUN_AWAY is set and intercepting_object is
 	 * valid and not the human object itself.
 	 */
 	int		intercepting_object;
@@ -1532,14 +1532,14 @@ typedef struct {
 	 * humans.
 	 */
 	int		assisting_humans;
-	
+
 	/* Assisting human(s) preset name. When human has assisting humans(s),
 	 * preset name of each one assisting human is stored here.
 	 */
 	const char	*assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX];
-	
+
 	sar_color_struct	assisting_human_color[SAR_HUMAN_COLORS_MAX];
-	
+
 
 	/* Messages */
 	char		*mesg_enter;	/* Entering into aircraft or vehicle */
@@ -1644,7 +1644,7 @@ typedef struct {
 
 
 	/* Time stamp of when this object was created in milliseconds
-	 * and in systime seconds (respectivly). The value in milliseconds 
+	 * and in systime seconds (respectivly). The value in milliseconds
 	 * may not be accurate when timmers are reset
 	 */
 	time_t		birth_time_ms,
@@ -1746,7 +1746,7 @@ typedef struct {
  */
 typedef struct {
 
-	/* Note, cloud layer moves with camera in modulous           
+	/* Note, cloud layer moves with camera in modulous
 	 * of the tiled width and height on the XY plane
 	 */
 
@@ -1942,7 +1942,7 @@ typedef struct {
 	 * rotate any vertex relative to the camera's rotation, each
 	 * a 3 * 3 matrix.
 	 * Member camera_rotmatrix_count indicates the actual number
-	 * of matrixes set, which is equal or less than 
+	 * of matrixes set, which is equal or less than
 	 * SAR_CAMERA_ROTMATRIX_MAX
 	 */
 #define SAR_CAMERA_ROTMATRIX_MAX	5
@@ -2041,13 +2041,13 @@ typedef struct {
 	time_t		camera_ref_title_display_until;
 
 	/* Flight dynamics model realm structure, used by the SFM
-	 * library as global reference while simulating all flight 
+	 * library as global reference while simulating all flight
 	 * dynamics models
 	 */
 	SFMRealmStruct	*realm;
-    
-        /* Welcome message - to be displayed at being of game */
-        char           *welcome_message;
+
+	/* Welcome message - to be displayed at being of game */
+	char           *welcome_message;
 
 } sar_scene_struct;
 #define SAR_SCENE(p)	((sar_scene_struct *)(p))
