@@ -49,10 +49,10 @@ scene_ground_tile 1000  1000  10000     0.22 0.36 0.53 1.0 water01_tex
 # object names to match beginning location).
 #
 
-#                       x       y       z       h   p b  name
-register_location	-10.92	-289.42	36.0	30  0 0  CG Cutter
-#register_location       -332.93	3320.24 0.0	170 0 0  Runway 17
-
+#			 x(m)	y(m)	z(ft)	h	p	b	name
+register_location	-10.92	-289.42	36.0	30	0	0	CG Cutter
+register_location       -332.93	3320.24	0.0	170	0	0	Runway 17
+register_location	 454.0	 276.0	5.0	180.0	0	0	Humans test
 
 # #####################################################################
 # Begin loading base objects
@@ -68,6 +68,18 @@ register_location	-10.92	-289.42	36.0	30  0 0  CG Cutter
 #model_file objects/test_world/plot02.3d
 #translation -200 50 0
 #rotate 315 0 0
+
+# 3 plots height field
+# Note that "plot04.3d" ground object is translated 328.084ft (100m) up.
+create_object 6
+model_file objects/test_world/plot03.3d
+translation 600 300 0
+create_object 6
+model_file objects/test_world/plot04.3d
+translation 600 -200 328.084
+create_object 6
+model_file objects/test_world/plot05.3d
+translation 100 300 0
 
 
 # #####################################################################
@@ -160,7 +172,7 @@ translation 48 -190 0
 set_human_mesg_enter Thanks for saving me!
 
 # Human      type_name  flags
-create_human default    need_rescue alert aware in_water
+create_human boy_2    need_rescue alert aware in_water
 translation 35 -200 0
 set_human_mesg_enter Thanks for saving me!
 
@@ -176,3 +188,59 @@ create_human default    need_rescue alert aware
 translation 109.0 -52.5 86.0
 set_human_mesg_enter Thanks for the lift!
 human_reference player run_towards
+
+
+#              "main human" preset name |           flag(s)            |  assist. human(s)  +  assistant preset name(s)    |       flag(s)
+#                                       |                              |  number (0 to 4)                                  |
+create_human            woman_1             need_rescue     assisted               3           woman_1   boy_1   bad_name       on_stretcher lying
+translation 450.5 260 0
+rotate 40 0 0
+
+create_human boy_1 need_rescue sit_down on_stretcher assisted 2 assistant_1 woman_1
+translation 453.5 260 0
+rotate -10 0 0
+
+create_human baby_1 alert
+translation 455.2 260 0
+rotate 0 0 0
+
+create_human girl_1 need_rescue
+translation 456.0 260 0
+rotate 0 0 0
+
+create_human boy_1
+translation 456.3 260 0
+rotate 0 0 0
+
+create_human woman_1 need_rescue
+translation 457.4 260 1.0
+rotate 85 0 0
+
+create_human woman_2 need_rescue
+translation 457.9 260 1.0
+rotate -85 0 0
+create_object 1
+
+create_human man_1
+translation 459.0 260.0 1.0
+rotate -19 0 0
+
+create_human baby_1 sitting
+translation 459.3 260 7.0
+rotate -18 0 0
+
+create_human man_2
+object_name Bald_man
+translation 460.0 260 1.0
+rotate 0 0 0
+
+create_human default
+translation 461.0 260 1.0
+rotate -20 0 0
+
+# Only the "main human" -i.e. woman_2, who runs in the middle of the group- will board. Assistants never board.
+create_human  woman_2  aware  assisted  4  man_1  default  man_2  assistant_1
+translation 442 244 0
+rotate 0 0 0
+human_reference player run_towards 
+set_human_message_enter I'm the only one passenger, my bodyguards don't come with me...

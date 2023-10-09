@@ -1,0 +1,13 @@
+begin_header
+# Note: as in plot04.tex lava lake area is at least 1% transparent,
+# it will be detected as a liquid surface.
+texture_load plot04_tex textures/test_world/plot04.tex
+end_header
+
+range 4000
+
+begin_model standard
+color 1.0 1.0 1.0 1.0
+texture_select plot04_tex
+heightfield_load textures/test_world/plot04.hf  600 600 170.875  0 0 0  0 0 0
+end_model standard
