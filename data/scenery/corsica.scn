@@ -15,7 +15,7 @@ scene_cant 5.0
 scene_elevation 0.0
 
 # Load texture images and set named references to them:
-texture_load water01_tex textures/water01.tex 1.0
+texture_load water02_tex textures/water02.tex 1.0
 #texture_load building01_day_tex textures/building01_day.tex 0.7
 #texture_load building01_night_tex textures/building01_night.tex 0.7
 texture_load roof_tex textures/wall01.tex 0.7
