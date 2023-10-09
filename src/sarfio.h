@@ -432,6 +432,8 @@ typedef struct {
 	int type;
 	char	*type_name;
 	sar_obj_flags_t	flags;	/* Any of SAR_HUMAN_FLAG_* */
+	int assisting_humans;	/* Assisting humans number. */
+	char	*assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX];	/* Assisting human(s) preset name. */
 
 } sar_parm_new_human_struct;
 

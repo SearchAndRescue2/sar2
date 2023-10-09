@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <errno.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 #include <sys/stat.h>
 
 #include "../include/fio.h"
@@ -55,6 +55,7 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename);
 int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 {
 	int i;
+	int version_major, version_minor;
 	FILE *fp;
 	char *buf = NULL;
 	struct stat stat_buf;
@@ -78,16 +79,16 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 	/* Check if the file exists and get its stats */
 	if(stat(filename, &stat_buf))
 	{
-            char *s = STRDUP(strerror(errno));
-            if(s == NULL)
-                s = STRDUP("no such file");
-            *s = toupper(*s);
-            fprintf(
-                stderr,
-                "%s: %s.\n",
-                filename, s
-            );
-            free(s);
+	    char *s = STRDUP(strerror(errno));
+	    if(s == NULL)
+		s = STRDUP("no such file");
+	    *s = toupper(*s);
+	    fprintf(
+		stderr,
+		"%s: %s.\n",
+		filename, s
+	    );
+	    free(s);
 	    return(-1);
 	}
 #ifdef S_ISDIR
@@ -122,6 +123,13 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
   (_p_)->a = (float)value[3];		\
 } }
 
+	/* Set version default values.
+	 * Historically first human.ini file had no version number:
+	 * this version will be named "1.0".
+	 */
+	version_major = 1;
+	version_minor = 0;
+
 	do
 	{
 	    buf = FSeekNextParm(
@@ -135,18 +143,17 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 
 	    /* Begin handling parameter */
 
-	    /* Version */
+	    /* File version */
 	    if(!strcasecmp(buf, "Version"))
 	    {
 		FGetValuesF(fp, value, 2);
-
-		/* Ignore */
+		version_major = (int)value[0];
+		version_minor = (int)value[1];
 	    }
 	    /* PresetAdd */
 	    else if(!strcasecmp(buf, "PresetAdd"))
 	    {
 		char *s = FGetString(fp);
-
 		/* Reset context pointers */
 		hdp_ptr = NULL;
 		palette_ptr = NULL;
@@ -168,9 +175,11 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 		);
 		hdp_ptr->name = STRDUP(s);
 
+		/* Set gender to default value (male) for current preset. */
+		hdp_ptr->preset_entry_flags &= ~SAR_HUMAN_FLAG_GENDER_FEMALE;
+
 		free(s);
 	    }
-
 	    /* Height */
 	    else if(!strcasecmp(buf, "Height"))
 	    {
@@ -184,19 +193,43 @@ int SARHumanLoadFromFile(sar_human_data_struct *hd, const char *filename)
 	    else if(!strcasecmp(buf, "Mass"))
 	    {
 		FGetValuesF(fp, value, 1);
+
+		/* Mass for a 1.90m tall human was set to 54kg in original
+		 * "Version 1.0" human.ini file. It was certainly an error, so
+		 * let's overwrite it to 90kg.
+		 */
+		if(version_major == 1 && version_minor == 0)
+		    value[0] = 90;
+
 		if(hdp_ptr != NULL)
 		{
 		    hdp_ptr->mass = (float)MAX(value[0], 0.0);	/* kg */
 		}
+	    }
+	    /* Gender */
+	    else if(!strcasecmp(buf, "Gender"))
+	    {
+		/* Male is default gender.
+		* If Female, breasts will be drawn on torso.
+		*/
+
+		char *s = FGetString(fp);
+		if( (s != NULL) && (hdp_ptr != NULL) )
+		{
+		    if( !strcasecmp(s, "Female") || !strcasecmp(s, "female") )
+			hdp_ptr->preset_entry_flags |= SAR_HUMAN_FLAG_GENDER_FEMALE;
+		    else
+			/* default */
+			hdp_ptr->preset_entry_flags &= ~SAR_HUMAN_FLAG_GENDER_FEMALE;
+		}
+		free(s);
 	    }
 	    /* AssistingHumans */
 	    else if(!strcasecmp(buf, "AssistingHumans"))
 	    {
 		FGetValuesF(fp, value, 1);
 		if(hdp_ptr != NULL)
-		{
-		    hdp_ptr->assisting_humans = MAX((int)value[0], 0);
-		}
+		    hdp_ptr->assisting_humans = CLIP((int)value[0], 0, SAR_ASSISTING_HUMANS_MAX);
 	    }
 
 

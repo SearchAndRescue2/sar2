@@ -921,7 +921,7 @@ void SARSimSetAircraftCrashed(
 		    /* Not in water (need to work on this) */
 		    human->flags &= ~SAR_HUMAN_FLAG_IN_WATER;
 
-		    human->flags &= ~SAR_HUMAN_FLAG_ON_STREATCHER;
+		    human->flags &= ~SAR_HUMAN_FLAG_ON_STRETCHER;
 		}
 		break;
 
@@ -3409,7 +3409,7 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 		    }
 
 		    /* Is door fully opened ? */
-		    if (door_ptr->flags & SAR_OBJ_PART_FLAG_DOOR_OPENED)
+		    if(door_ptr->flags & SAR_OBJ_PART_FLAG_DOOR_OPENED)
 		    {
 			/* Was rope previously in? */
 			if(hoist->rope_cur < hoist->contact_z_max)
@@ -3420,8 +3420,8 @@ void SARSimApplyGCTL(sar_core_struct *core_ptr, sar_object_struct *obj_ptr)
 			    sar_position_struct	*hoist_pos = &hoist->pos,
 						*hoist_offset = &hoist->offset;
 			    double	tx = hoist_offset->x,
-				ty = hoist_offset->y,
-				tz = hoist_offset->z;
+				    ty = hoist_offset->y,
+				    tz = hoist_offset->z;
 
 			    /* Move to initial position at hoist center */
 			    SFMOrthoRotate2D(

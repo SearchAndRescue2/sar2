@@ -653,6 +653,7 @@ to the fullest extent of the law."
  */
 #define SAR_HUMAN_PRESET_NAME_STANDARD		"standard"
 #define SAR_HUMAN_PRESET_NAME_DIVER		"diver"
+#define SAR_HUMAN_PRESET_NAME_ASSISTING_HUMAN	"assistant_1"
 
 
 /*

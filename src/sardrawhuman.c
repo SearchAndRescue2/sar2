@@ -79,17 +79,36 @@ void SARDrawHumanIterate(
 	float left_knee_to_calv_angle, right_knee_to_calv_angle;
 
 	float thigh_len = 0.3f;
-	float calv_len = 0.4f;
+	float calf_len = 0.4f;
+	float foot_height = 0.08f;
+	float foot_length;
 	float torso_len = 0.8f;
 	float bisep_len = 0.3f;
 	float trisep_len = 0.4f;
 	float base_to_torso = 0.0f;	/* Ground to bottom of torso
 					 * (calculated later).
 					 */
-	float streatcher_height = 0.8f;	/* Ground to bed of streatcher. */
+	float stretcher_height = 0.8f;	/* Ground to bed of stretcher. */
 
 	const sar_color_struct *c;
 	Boolean draw_shadow_std = False;
+
+	/* Body segments length depends of human total height */
+	float height_coef = height / 1.9f; // SarII standard human height is 1.9m
+	thigh_len   *= height_coef;
+	calf_len    *= height_coef;
+	foot_height *= height_coef;
+	foot_length = 1.90f * 0.13f * height_coef;
+	torso_len   *= height_coef;
+	bisep_len   *= height_coef;
+	trisep_len  *= height_coef;
+
+	/* Body width and thick depends of human mass: let's consider
+	 * that standard is 1.9m / 90kg => BMI is ~25.
+	 */
+	float bmi = mass / (height * height);
+	float width_coef = (bmi * 0.66f) / 25;
+	float thick_coef = (bmi * 1.2f) / 25;
 
 /* Macro to set the color pointed to by c.  The color must be specifying
  * a color on the human's body, because dc->flir will be checked and if
@@ -108,7 +127,7 @@ void SARDrawHumanIterate(
 	    StateGLDisable(state, GL_LIGHTING);
 	StateGLDisable(state, GL_TEXTURE_2D);
 	V3DTextureSelect(NULL);
-	StateGLShadeModel(state, opt->gl_shade_model);
+	StateGLShadeModel(state, GL_SMOOTH);
 
 	/* Calculate angles of body parts. Note that all zero radians
 	 * indicates human is standing upright with hands to side.
@@ -127,9 +146,9 @@ void SARDrawHumanIterate(
 	    left_knee_to_calv_angle = (float)(0.0 * PI);
 	    right_knee_to_calv_angle = (float)(0.0 * PI);
 
-	    base_to_torso = thigh_len + calv_len;
+	    base_to_torso = thigh_len + calf_len + foot_height * height_coef;
 
-	    if(flags & SAR_HUMAN_FLAG_ON_STREATCHER)
+	    if(flags & SAR_HUMAN_FLAG_ON_STRETCHER)
 	    {
 		/* Some translating will be done later. */
 	    }
@@ -178,11 +197,11 @@ void SARDrawHumanIterate(
 	    left_trisep_angle = (float)(1.75 * PI);
 	    right_trisep_angle = (float)(1.75 * PI);
 	    left_hip_to_thigh_angle = (float)(1.5 * PI);
-	    right_hip_to_thigh_angle = (float)(1.5 * PI); 
+	    right_hip_to_thigh_angle = (float)(1.5 * PI);
 	    left_knee_to_calv_angle = (float)(0.5 * PI);
 	    right_knee_to_calv_angle = (float)(0.5 * PI);
-	
-	    base_to_torso = calv_len;
+
+	    base_to_torso = calf_len + foot_height * height_coef;
 	}
 	else if(flags & SAR_HUMAN_FLAG_DIVER_CATCHER)
 	{
@@ -192,11 +211,11 @@ void SARDrawHumanIterate(
 	    right_shoulder_angle = (float)(1.9 * PI);
 	    left_bisep_angle = (float)(1.8 * PI);
 	    right_bisep_angle = (float)(1.8 * PI);
-	    left_trisep_angle = (float)(1.8 * PI);   
+	    left_trisep_angle = (float)(1.8 * PI);
 	    right_trisep_angle = (float)(1.8 * PI);
 	    left_hip_to_thigh_angle = (float)(1.9 * PI);
 	    right_hip_to_thigh_angle = (float)(1.9 * PI);
-	    left_knee_to_calv_angle = (float)(0.2 * PI); 
+	    left_knee_to_calv_angle = (float)(0.2 * PI);
 	    right_knee_to_calv_angle = (float)(0.2 * PI);
 
 	    /* If gripped it implies on end of rescue hoist rope. */
@@ -205,7 +224,7 @@ void SARDrawHumanIterate(
 	    else if(flags & SAR_HUMAN_FLAG_IN_WATER)
 		base_to_torso = torso_len * -0.92f;
 	    else
-		base_to_torso = thigh_len + calv_len;
+		base_to_torso = thigh_len + calf_len + foot_height * height_coef;
 	}
 	/* Run should be checked last since lying and setting have
 	 * precidence.
@@ -251,7 +270,7 @@ void SARDrawHumanIterate(
 	    left_knee_to_calv_angle = (float)(0.2 * PI);
 	    right_knee_to_calv_angle = (float)(0.2 * PI);
 
-	    base_to_torso = thigh_len + calv_len;
+	    base_to_torso = thigh_len + calf_len + foot_height * height_coef;
 
 	    draw_shadow_std = True;
 	}
@@ -273,7 +292,7 @@ void SARDrawHumanIterate(
 		left_bisep_angle = (float)(1.5 * PI);
 		right_bisep_angle = (float)(1.5 * PI);
 		left_trisep_angle = (float)(0.0 * PI);
-	        right_trisep_angle = (float)(0.0 * PI);
+		right_trisep_angle = (float)(0.0 * PI);
 		left_hip_to_thigh_angle = (float)(0.0 * PI);
 		right_hip_to_thigh_angle = (float)(0.0 * PI);
 		left_knee_to_calv_angle = (float)(0.0 * PI);
@@ -315,7 +334,7 @@ void SARDrawHumanIterate(
 		    left_knee_to_calv_angle = (float)(0.0 * PI);
 		    right_knee_to_calv_angle = (float)(0.0 * PI);
 
-		    base_to_torso = thigh_len + calv_len;
+		    base_to_torso = thigh_len + calf_len + foot_height * height_coef;
 		}
 		else
 		{
@@ -332,7 +351,7 @@ void SARDrawHumanIterate(
 		    left_knee_to_calv_angle = (float)(0.0 * PI);
 		    right_knee_to_calv_angle = (float)(0.0 * PI);
 
-		    base_to_torso = thigh_len + calv_len;
+		    base_to_torso = thigh_len + calf_len + foot_height * height_coef;
 		}
 		draw_shadow_std = True;
 	    }
@@ -345,7 +364,7 @@ void SARDrawHumanIterate(
 	/* Draw shadow? */
 	if(draw_shadow_std)
 	{
-	    float theta, r = 0.5f;
+	    float theta, r = 0.07f + height / 4.4f;
 	    StateGLBoolean lighting = state->lighting;
 	    StateGLBoolean depth_mask_flag = state->depth_mask_flag;
 	    GLenum shade_model_mode = state->shade_model_mode;
@@ -387,15 +406,15 @@ void SARDrawHumanIterate(
 	    StateGLShadeModel(state, shade_model_mode);
 	}
 
-	/* Draw streatcher? */
-	if(flags & SAR_HUMAN_FLAG_ON_STREATCHER)
+	/* Draw stretcher? */
+	if(flags & SAR_HUMAN_FLAG_ON_STRETCHER)
 	{
 	    float x = 0.35f, y = 1.05f;
-	    float h = streatcher_height - 0.1f, hl = 0.1f;
+	    float h = stretcher_height - 0.1f, hl = 0.1f;
 
 	    glColor4f(0.8f, 0.8f, 0.8f, 1.0f);
 
-	    /* Bed of streatcher. */
+	    /* Bed of stretcher. */
 	    glBegin(GL_QUADS);
 	    {
 		glNormal3f(0.0f, 1.0f, 0.0f);
@@ -426,7 +445,7 @@ void SARDrawHumanIterate(
 	    glEnd();
 
 	    /* Right grids. */
-	    glBegin(GL_LINE_LOOP);  
+	    glBegin(GL_LINE_LOOP);
 	    {
 		glNormal3f(1.0, 0.0, 0.0);
 		glVertex3f(x, hl, -y);
@@ -439,7 +458,7 @@ void SARDrawHumanIterate(
 
 	    glColor4f(0.1f, 0.1f, 0.1f, 1.0f);
 
-	    /* Simple square wheels. */
+	    /* Simple square wheels, outside / inside. */
 	    glBegin(GL_QUADS);
 	    {
 		glNormal3f(-1.0f, 0.0f, 0.0f);
@@ -447,16 +466,28 @@ void SARDrawHumanIterate(
 		glVertex3f(-x, 0.0f, -(y - 0.1f));
 		glVertex3f(-x, hl, -(y - 0.1f));
 		glVertex3f(-x, hl, -y);
+
+		glNormal3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(-x, 0.0f, -y);
+		glVertex3f(-x, hl, -y);
+		glVertex3f(-x, hl, -(y - 0.1f));
+		glVertex3f(-x, 0.0f, -(y - 0.1f));
 	    }
 	    glEnd();
 
-	    glBegin(GL_QUADS);        
+	    glBegin(GL_QUADS);
 	    {
 		glNormal3f(-1.0f, 0.0f, 0.0f);
 		glVertex3f(-x, hl, y);
 		glVertex3f(-x, hl, (y - 0.1f));
-		glVertex3f(-x, 0.0f, (y - 0.1f)); 
+		glVertex3f(-x, 0.0f, (y - 0.1f));
 		glVertex3f(-x, 0.0f, y);
+
+		glNormal3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(-x, hl, y);
+		glVertex3f(-x, 0.0f, y);
+		glVertex3f(-x, 0.0f, (y - 0.1f));
+		glVertex3f(-x, hl, (y - 0.1f));
 	    }
 	    glEnd();
 
@@ -467,6 +498,12 @@ void SARDrawHumanIterate(
 		glVertex3f(x, hl, -y);
 		glVertex3f(x, hl, -(y - 0.1f));
 		glVertex3f(x, 0.0f, -(y - 0.1f));
+
+		glNormal3f(-1.0f, 0.0f, 0.0f);
+		glVertex3f(x, 0.0f, -y);
+		glVertex3f(x, 0.0f, -(y - 0.1f));
+		glVertex3f(x, hl, -(y - 0.1f));
+		glVertex3f(x, hl, -y);
 	    }
 	    glEnd();
 
@@ -477,6 +514,12 @@ void SARDrawHumanIterate(
 		glVertex3f(x, hl, (y - 0.1f));
 		glVertex3f(x, hl, y);
 		glVertex3f(x, 0.0f, y);
+
+		glNormal3f(-1.0f, 0.0f, 0.0f);
+		glVertex3f(x, 0.0f, (y - 0.1f));
+		glVertex3f(x, 0.0f, y);
+		glVertex3f(x, hl, y);
+		glVertex3f(x, hl, (y - 0.1f));
 	    }
 	    glEnd();
 	}
@@ -486,14 +529,14 @@ void SARDrawHumanIterate(
 	/* Torso. */
 	glPushMatrix();
 	{
-	    /* Check if on streatcher, if so translate up. */
-	    if(flags & SAR_HUMAN_FLAG_ON_STREATCHER)  
+	    /* Check if on stretcher, if so translate up. */
+	    if(flags & SAR_HUMAN_FLAG_ON_STRETCHER)
 	    {
 		/* Push on extra matrix and move up (matrix poped later). */
 		glPushMatrix();
 		glTranslatef(
 		    0.0f,
-		    streatcher_height,
+		    stretcher_height,
 		    -(base_to_torso + 0.2f)
 		);
 	    }
@@ -513,31 +556,144 @@ void SARDrawHumanIterate(
 		SET_BODY_COLOR
 		glBegin(GL_QUADS);
 		{
-	            SARDrawBoxBaseNS(
-			0.45f * torso_len,
-			0.25f * torso_len,
+		    SARDrawBoxBaseNS(
+			0.45f * torso_len * width_coef,
+			0.25f * torso_len * thick_coef,
 			0.10f * torso_len,
 			True
 		    );
 		}
 		glEnd();
 
-
-		glTranslatef(0.0f, 0.10f * torso_len, 0.0f);
-
-		/* Upper torso. */
-		c = &palette[SAR_HUMAN_COLOR_TORSO];
-		SET_BODY_COLOR
-		glBegin(GL_QUADS);
+		if( !(flags & SAR_HUMAN_FLAG_GENDER_FEMALE) )
 		{
-		    SARDrawBoxBaseNS(
-			0.45f * torso_len,
-			0.25f * torso_len,
-			0.90f * torso_len,
-			False
-		    );
+		    /* Male upper torso (default torso). */
+		    glTranslatef(0.0f, 0.10f * torso_len, 0.0f);
+
+		    c = &palette[SAR_HUMAN_COLOR_TORSO];
+		    SET_BODY_COLOR
+		    glBegin(GL_QUADS);
+		    {
+			SARDrawBoxBaseNS(
+			    0.45f * torso_len * width_coef,
+			    0.25f * torso_len * thick_coef,
+			    0.90f * torso_len,
+			    False
+			);
+		    }
+		    glEnd();
 		}
-		glEnd();
+		else
+		{
+		    /* Female upper torso. */
+		    glTranslatef(0.0f, 0.10f * torso_len, 0.0f);
+
+		    float half_thick = (0.25f * torso_len * thick_coef) / 2.0f;
+		    float half_width = 0.45f * torso_len * width_coef / 2.0f;
+		    float torso_z0 = 0.0f;
+		    float torso_z4 = 0.90f * torso_len;
+		    float torso_z1 = torso_z4 - 0.25f * height_coef;
+		    float torso_z2 = torso_z4 - 0.19f * height_coef;
+		    float torso_y2 = -half_thick - 0.08f * thick_coef;
+		    float torso_z3 = torso_z4 - 0.10f * height_coef;
+
+		    c = &palette[SAR_HUMAN_COLOR_TORSO];
+		    SET_BODY_COLOR
+		    glBegin(GL_TRIANGLES);
+		    glNormal3f(0.518700, 0.173200, -0.837200);
+		    glVertex3f(-half_width, torso_z3,-half_thick);
+		    glNormal3f(0.754400, -0.069900, -0.652600);
+		    glVertex3f(-half_width, torso_z2, torso_y2);
+		    glNormal3f(0.503600, -0.157200, -0.849500);
+		    glVertex3f(-half_width, torso_z1,-half_thick);
+		    glEnd();
+		    glBegin(GL_POLYGON);
+		    glNormal3f(0.444300, 0.011200, -0.895800);
+		    glVertex3f(-half_width, -torso_z0,-half_thick);
+		    glNormal3f(-0.372500, 0.082900, -0.924300);
+		    glVertex3f(-half_width, torso_z0, half_thick);
+		    glNormal3f(-0.322800, 0.427900, -0.844200);
+		    glVertex3f(-half_width, torso_z4, half_thick);
+		    glNormal3f(0.381800, 0.424900, -0.820800);
+		    glVertex3f(-half_width, torso_z4,-half_thick);
+		    glNormal3f(0.513300, 0.187400, -0.837500);
+		    glVertex3f(-half_width, torso_z3,-half_thick);
+		    glNormal3f(0.497900, -0.169600, -0.850500);
+		    glVertex3f(-half_width, torso_z1,-half_thick);
+		    glEnd();
+		    glBegin(GL_TRIANGLES);
+		    glNormal3f(0.754400, -0.069900, 0.652600);
+		    glVertex3f(half_width, torso_z2, torso_y2);
+		    glNormal3f(0.518700, 0.173200, 0.837200);
+		    glVertex3f(half_width, torso_z3,-half_thick);
+		    glNormal3f(0.503600, -0.157200, 0.849500);
+		    glVertex3f(half_width, torso_z1,-half_thick);
+		    glEnd();
+		    glBegin(GL_POLYGON);
+		    glNormal3f(0.513300, 0.187300, 0.837500);
+		    glVertex3f(half_width, torso_z3,-half_thick);
+		    glNormal3f(0.381800, 0.424900, 0.820800);
+		    glVertex3f(half_width, torso_z4,-half_thick);
+		    glNormal3f(-0.322700, 0.427900, 0.844200);
+		    glVertex3f(half_width, torso_z4, half_thick);
+		    glNormal3f(-0.372500, 0.082900, 0.924300);
+		    glVertex3f(half_width, torso_z0, half_thick);
+		    glNormal3f(0.444300, 0.011200, 0.895800);
+		    glVertex3f(half_width, -torso_z0,-half_thick);
+		    glNormal3f(0.497900, -0.169600, 0.850500);
+		    glVertex3f(half_width, torso_z1,-half_thick);
+		    glEnd();
+		    glBegin(GL_QUADS);
+		    glNormal3f(-0.334300, 0.736800, -0.587600);
+		    glVertex3f(-half_width, torso_z4, half_thick);
+		    glNormal3f(-0.334300, 0.736800, 0.587600);
+		    glVertex3f(half_width, torso_z4, half_thick);
+		    glNormal3f(0.391200, 0.731400, 0.558500);
+		    glVertex3f(half_width, torso_z4,-half_thick);
+		    glNormal3f(0.391200, 0.731400, -0.558500);
+		    glVertex3f(-half_width, torso_z4,-half_thick);
+		    glNormal3f(0.697400, 0.439900, -0.565900);
+		    glVertex3f(-half_width, torso_z4,-half_thick);
+		    glNormal3f(0.697400, 0.439900, 0.565900);
+		    glVertex3f(half_width, torso_z4,-half_thick);
+		    glNormal3f(0.800600, 0.188700, 0.568800);
+		    glVertex3f(half_width, torso_z3,-half_thick);
+		    glNormal3f(0.800600, 0.188800, -0.568700);
+		    glVertex3f(-half_width, torso_z3,-half_thick);
+		    glNormal3f(0.737800, 0.360800, -0.570500);
+		    glVertex3f(-half_width, torso_z3,-half_thick);
+		    glNormal3f(0.737800, 0.360800, 0.570500);
+		    glVertex3f(half_width, torso_z3,-half_thick);
+		    glNormal3f(0.937200, 0.101800, 0.333500);
+		    glVertex3f(half_width, torso_z2, torso_y2);
+		    glNormal3f(0.937200, 0.101800, -0.333500);
+		    glVertex3f(-half_width, torso_z2, torso_y2);
+		    glNormal3f(0.901200, -0.275700, -0.334300);
+		    glVertex3f(-half_width, torso_z2, torso_y2);
+		    glNormal3f(0.901200, -0.275700, 0.334300);
+		    glVertex3f(half_width, torso_z2, torso_y2);
+		    glNormal3f(0.696600, -0.396100, 0.598200);
+		    glVertex3f(half_width, torso_z1,-half_thick);
+		    glNormal3f(0.696600, -0.396100, -0.598200);
+		    glVertex3f(-half_width, torso_z1,-half_thick);
+		    glNormal3f(0.791000, -0.173400, -0.586700);
+		    glVertex3f(-half_width, torso_z1,-half_thick);
+		    glNormal3f(0.791000, -0.173400, 0.586700);
+		    glVertex3f(half_width, torso_z1,-half_thick);
+		    glNormal3f(0.753300, 0.011400, 0.657600);
+		    glVertex3f(half_width, -torso_z0,-half_thick);
+		    glNormal3f(0.753300, 0.011400, -0.657600);
+		    glVertex3f(-half_width, -torso_z0,-half_thick);
+		    glNormal3f(-0.699600, 0.086600, -0.709300);
+		    glVertex3f(-half_width, torso_z0, half_thick);
+		    glNormal3f(-0.699600, 0.086600, 0.709300);
+		    glVertex3f(half_width, torso_z0, half_thick);
+		    glNormal3f(-0.652000, 0.454400, 0.606900);
+		    glVertex3f(half_width, torso_z4, half_thick);
+		    glNormal3f(-0.652000, 0.454400, -0.606900);
+		    glVertex3f(-half_width, torso_z4, half_thick);
+		    glEnd();
+		}
 	    }
 	    glPopMatrix();
 	    /* Back to base of torso. */
@@ -550,7 +706,7 @@ void SARDrawHumanIterate(
 		    (GLfloat)-SFMRadiansToDegrees(left_hip_to_thigh_angle),
 		    1.0f, 0.0f, 0.0f
 		);
-		glTranslatef(-0.16f * torso_len, 0.0f, 0.0f);
+		glTranslatef(-0.16f * torso_len * width_coef, 0.0f, 0.0f);
 
 		c = &palette[SAR_HUMAN_COLOR_LEGS];
 		SET_BODY_COLOR
@@ -558,8 +714,8 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.5f * thigh_len,
-			0.5f * thigh_len,
+			0.5f * thigh_len * width_coef,
+			0.5f * thigh_len * thick_coef,
 			-thigh_len,
 			True
 		    );
@@ -578,16 +734,16 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.3f * calv_len,
-			0.3f * calv_len,
-			-calv_len,
+			0.3f * calf_len * width_coef,
+			0.3f * calf_len * thick_coef,
+			-calf_len,
 			True
 		    );
 		}
 		glEnd();
 
 		/* Feet. */
-		glTranslatef(0.0f, -calv_len, -0.05f);
+		glTranslatef(0.0f, -calf_len, -0.05f);
 
 		c = &palette[SAR_HUMAN_COLOR_FEET];
 		SET_BODY_COLOR
@@ -595,9 +751,9 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.1f,
-			0.2f,
-			-0.1f,
+			0.1f * width_coef,
+			foot_length,
+			-foot_height * height_coef,
 			True
 		    );
 		}
@@ -614,7 +770,7 @@ void SARDrawHumanIterate(
 		    (GLfloat)-SFMRadiansToDegrees(right_hip_to_thigh_angle),
 		    1.0f, 0.0f, 0.0f
 		);
-		glTranslatef(0.16f * torso_len, 0.0f, 0.0f);
+		glTranslatef(0.16f * torso_len * width_coef, 0.0f, 0.0f);
 
 		c = &palette[SAR_HUMAN_COLOR_LEGS];
 		SET_BODY_COLOR
@@ -622,14 +778,14 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.5f * thigh_len,
-			0.5f * thigh_len,
+			0.5f * thigh_len * width_coef,
+			0.5f * thigh_len * thick_coef,
 			-thigh_len,
 			True
-		    );  
+		    );
 		}
-		glEnd();   
-		
+		glEnd();
+
 		/* Calv. */
 		glTranslatef(0.0f, -thigh_len, 0.0f);
 		glRotatef(
@@ -642,16 +798,16 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.3f * calv_len,
-			0.3f * calv_len,
-			-calv_len,
+			0.3f * calf_len * width_coef,
+			0.3f * calf_len * thick_coef,
+			-calf_len,
 			True
 		    );
 		}
 		glEnd();
 
 		/* Feet. */
-		glTranslatef(0.0f, -calv_len, -0.05f);
+		glTranslatef(0.0f, -calf_len, -0.05f);
 
 		c = &palette[SAR_HUMAN_COLOR_FEET];
 		SET_BODY_COLOR
@@ -659,9 +815,9 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.1f,
-			0.2f,
-			-0.1f,
+			0.1f * width_coef,
+			foot_length,
+			-foot_height * height_coef,
 			True
 		    );
 		}
@@ -678,7 +834,7 @@ void SARDrawHumanIterate(
 	    {
 		/* Bisep and shoulder. */
 		glTranslatef(
-		    (-0.225f * torso_len) + (-0.25f * bisep_len),
+		    (-0.225f * torso_len + -0.25f * bisep_len) * width_coef,
 		    0.0f,
 		    0.0f
 		);
@@ -697,8 +853,8 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.5f * bisep_len,
-			0.5f * bisep_len,
+			0.5f * bisep_len * width_coef,
+			0.5f * bisep_len * thick_coef,
 			-bisep_len,
 			True
 		    );
@@ -715,8 +871,8 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.28f * trisep_len,
-			0.28f * trisep_len,
+			0.28f * trisep_len * width_coef,
+			0.28f * trisep_len * thick_coef,
 			-trisep_len,
 			True
 		    );
@@ -732,7 +888,7 @@ void SARDrawHumanIterate(
 
 		glBegin(GL_QUADS);
 		{
-		    SARDrawBoxBaseNS(0.2f, 0.1f, -0.2f, True);
+		    SARDrawBoxBaseNS((0.28f * trisep_len + 0.06f) * width_coef, 0.06f * thick_coef, -0.50f * trisep_len, True);
 		}
 		glEnd();
 	    }
@@ -744,7 +900,7 @@ void SARDrawHumanIterate(
 	    {
 		/* Bisep. */
 		glTranslatef(
-		    (0.225f * torso_len) + (0.25f * bisep_len),
+		    (0.225f * torso_len + 0.25f * bisep_len) * width_coef,
 		    0.0f,
 		    0.0f
 		);
@@ -763,8 +919,8 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.5f * bisep_len,
-			0.5f * bisep_len,
+			0.5f * bisep_len * width_coef,
+			0.5f * bisep_len * thick_coef,
 			-bisep_len,
 			True
 		    );
@@ -781,8 +937,8 @@ void SARDrawHumanIterate(
 		glBegin(GL_QUADS);
 		{
 		    SARDrawBoxBaseNS(
-			0.28f * trisep_len,
-			0.28f * trisep_len,
+			0.28f * trisep_len * width_coef,
+			0.28f * trisep_len * thick_coef,
 			-trisep_len,
 			True
 		    );
@@ -798,7 +954,7 @@ void SARDrawHumanIterate(
 
 		glBegin(GL_QUADS);
 		{
-		    SARDrawBoxBaseNS(0.2f, 0.1f, -0.2f, True);
+		    SARDrawBoxBaseNS((0.28f * trisep_len + 0.06f) * width_coef, 0.06f * thick_coef, -0.50f * trisep_len, True);
 		}
 		glEnd();
 	    }
@@ -806,51 +962,79 @@ void SARDrawHumanIterate(
 	    /* Back to shoulders. */
 
 
-	    /* Head. */
-	    glTranslatef(0.0f, 0.05f * torso_len, 0.0f);
+	    /* Head and hair. */
+	    float head_height = 0.22f * height_coef;
+	    head_height = (head_height >= 0.13) ? (head_height) : (0.13f);
+	    float hairs_height = 0.1f * height_coef;
+	    /* Do not apply whole thick coefficient to head */
+	    float head_thick = 0.18f * (thick_coef / 1.5f);
 
-	    c = &palette[SAR_HUMAN_COLOR_FACE];
-	    SET_BODY_COLOR
-
-	    glBegin(GL_QUADS);
+	    /* Check if hair color is transparent. If true, human is bald (has no head hair). */
+	    if ((&palette[SAR_HUMAN_COLOR_HAIR])->a == 0.0f)
 	    {
-		SARDrawBoxBaseNS(0.18f, 0.18f, 0.25f, False);
-	    }
-	    glEnd();
+		head_height += hairs_height / 3.0f;
 
-
-	    /* Hair. */
-	    glPushMatrix();
-	    {
-		glTranslatef(0.0f, 0.25f, 0.0f);
-
-		c = &palette[SAR_HUMAN_COLOR_HAIR];
+		/* Head */
+		c = &palette[SAR_HUMAN_COLOR_FACE];
 		SET_BODY_COLOR
 
+		glTranslatef(0.0f, 0.05f * torso_len * height_coef, 0.0f);
 		glBegin(GL_QUADS);
 		{
-		    SARDrawBoxBaseNS(0.18f, 0.18f, 0.1f, False);
+		    SARDrawBoxBaseNS(0.18f * width_coef, head_thick, head_height, True);
 		}
 		glEnd();
+
+		/* Dont' draw hair. */
 	    }
-	    glPopMatrix();
-	    /* Back of head hair. */
-	    glPushMatrix();
+	    else
 	    {
-		glTranslatef(0.0f, 0.05f, -(-0.09f - 0.03f));
+		/* Head */
+		c = &palette[SAR_HUMAN_COLOR_FACE];
+		SET_BODY_COLOR
+
+		glTranslatef(0.0f, 0.05f * torso_len * height_coef, 0.0f);
 		glBegin(GL_QUADS);
 		{
-		    SARDrawBoxBaseNS(0.18f, 0.06f, 0.25f, True);
+		    SARDrawBoxBaseNS(0.18f * width_coef, head_thick, head_height, True);
 		}
 		glEnd();
+
+		/* Hair. */
+		glPushMatrix();
+		{
+		    /* Move to head top */
+		    glTranslatef(0.0f, head_height, 0.0f);
+
+		    c = &palette[SAR_HUMAN_COLOR_HAIR];
+		    SET_BODY_COLOR
+
+		    glBegin(GL_QUADS);
+		    {
+			SARDrawBoxBaseNS(0.18f * width_coef,  head_thick,  hairs_height, False);
+		    }
+		    glEnd();
+		}
+		glPopMatrix();
+
+		/* Back of head hair. */
+		glPushMatrix();
+		{
+		    glTranslatef(0.0f,  0.05f * height_coef,  (head_thick / 2.0f) + 0.05f / 2.0f);
+		    glBegin(GL_QUADS);
+		    {
+			SARDrawBoxBaseNS(0.18f * width_coef,  0.05f,  head_height, True);
+		    }
+		    glEnd();
+		}
+		glPopMatrix();
 	    }
-	    glPopMatrix();
 
 
-	    /* Check if on streatcher, if so we need to pop one matrix
-	     * level that was added for translation up on to streatcher.
+	    /* Check if on stretcher, if so we need to pop one matrix
+	     * level that was added for translation up on to stretcher.
 	     */
-	    if(flags & SAR_HUMAN_FLAG_ON_STREATCHER)
+	    if(flags & SAR_HUMAN_FLAG_ON_STRETCHER)
 	    {
 		glPopMatrix();
 	    }
@@ -967,26 +1151,35 @@ void SARDrawHuman(
 	{
 	    int i;
 	    sar_obj_flags_t flags;
-	    float s = 0.8f;	/* Left/right spacing. */
+	    float slr = 0.8f;	/* Left/right spacing. */
+	    float sfr;	/* Front/rear spacing, from stretcher center. */
+	    const sar_human_data_entry_struct *assisting_human;
 
-	    /* Draw all assisting human objects, left and right. */
+	    if(human->assisting_humans <= 2)
+		/* Shitf a bit behind stretcher center. */
+		sfr = 0.2f;
+	    else
+		/* Shift to stretcher rear end. */
+		sfr = 0.9f;
+
+	    /* Draw one to four assisting human objects */
 	    for(i = 0; i < human->assisting_humans; i++)
 	    {
 		glPushMatrix();
 		{
-		    /* Translate to the side and a bit behind. */
-		    glTranslatef(s, 0.0f, 0.2f);
+		    /* Translate to assistant position. */
+		    glTranslatef(slr, 0.0f, sfr);
 
 		    /* Set up `filtered' human flags that will be
 		     * passed to the human draw itteration function.
-		     * This is so that we don't pass all the flags, 
+		     * This is so that we don't pass all the flags,
 		     * because in some situations the human may be
-		     * lying on a streatcher and the assisting humans
+		     * lying on a stretcher and the assisting humans
 		     * need to be running.
 		     */
 		    flags = 0;
 		    if(human->flags & SAR_HUMAN_FLAG_ALERT)
-		        flags |= SAR_HUMAN_FLAG_ALERT;
+			flags |= SAR_HUMAN_FLAG_ALERT;
 		    if(human->flags & SAR_HUMAN_FLAG_AWARE)
 			flags |= SAR_HUMAN_FLAG_AWARE;
 		    if(human->flags & SAR_HUMAN_FLAG_IN_WATER)
@@ -996,22 +1189,40 @@ void SARDrawHuman(
 		    if(human->flags & SAR_HUMAN_FLAG_PUSHING)
 			flags |= SAR_HUMAN_FLAG_PUSHING;
 
-		    /* Draw our human object as an assisting human,
-		     * using the filtered human flags and the 
-		     * assisting_human_color color palette
-		     */
-		    SARDrawHumanIterate(
-			dc,
-			human->height, human->mass,
-			flags, human->assisting_human_color,
-			human->water_ripple_tex_num,
-			human->anim_pos
+		    assisting_human = SARHumanMatchEntryByName(
+			dc->core_ptr->human_data, human->assisting_human_preset_name[i]
 		    );
+		    /* Human preset name not found? */
+		    if(assisting_human == NULL)
+			/* Use default assisting human preset. */
+			assisting_human = SARHumanMatchEntryByName(
+			    dc->core_ptr->human_data, SAR_HUMAN_PRESET_NAME_ASSISTING_HUMAN
+			);
+
+		    if(assisting_human != NULL)
+		    {
+			/* Propagate assisting human gender to flags. */
+			if(assisting_human->preset_entry_flags & SAR_HUMAN_FLAG_GENDER_FEMALE)
+			    flags |= SAR_HUMAN_FLAG_GENDER_FEMALE;
+
+		    /* Draw assisting human. */
+			SARDrawHumanIterate(
+			    dc,
+			    assisting_human->height, assisting_human->mass,
+			    flags, assisting_human->color,
+			    human->water_ripple_tex_num,
+			    human->anim_pos
+			);
+		    }
 		}
 		glPopMatrix();
 
-		/* Shift spacing to other side. */
-		s *= -1.0;
+		/* Shift left/right spacing to other side. */
+		slr *= -1.0;
+
+		/* When second assistant has been drawn, shift to stretcher front end. */
+		if(i == 1)
+		    sfr *= -1.0;
 	    }
 	}
 }

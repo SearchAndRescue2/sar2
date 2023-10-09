@@ -16,7 +16,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <sys/types.h> 
+#include <sys/types.h>
 
 #include "../include/string.h"
 
@@ -36,7 +36,7 @@ sar_human_data_struct *SARHumanPresetsInit(void *core_ptr);
 void SARHumanPresetsShutdown(sar_human_data_struct *hd);
 
 void SARHumanEntryDelete(
-        sar_human_data_struct *hd, sar_human_data_entry_struct *entry
+	sar_human_data_struct *hd, sar_human_data_entry_struct *entry
 );
 
 int SARHumanCreate(
@@ -44,12 +44,14 @@ int SARHumanCreate(
 	sar_scene_struct *scene,
 	sar_object_struct ***object, int *total_objects,
 	sar_obj_flags_t human_flags,
+	int assisting_humans,
+	const char *assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX],
 	const char *name
 );
 void SARHumanSetObjectPreset(
-        sar_human_data_struct *hd,
-        sar_object_struct *obj_ptr,
-        const char *name
+	sar_human_data_struct *hd,
+	sar_object_struct *obj_ptr,
+	const char *name
 );
 
 
@@ -75,7 +77,7 @@ void SARHumanSetObjectPreset(
  *	Can return NULL on failed match or error.
  */
 sar_human_data_entry_struct *SARHumanMatchEntryByName(
-        sar_human_data_struct *hd, const char *name
+	sar_human_data_struct *hd, const char *name
 )
 {
 	int i;
@@ -152,7 +154,7 @@ void SARHumanPresetsShutdown(sar_human_data_struct *hd)
  *	resources.
  */
 void SARHumanEntryDelete(
-        sar_human_data_struct *hd, sar_human_data_entry_struct *entry  
+	sar_human_data_struct *hd, sar_human_data_entry_struct *entry
 )
 {
 	if(entry == NULL)
@@ -174,10 +176,12 @@ void SARHumanEntryDelete(
  */
 int SARHumanCreate(
 	sar_human_data_struct *hd,
-        sar_scene_struct *scene,
-        sar_object_struct ***object, int *total_objects,
+	sar_scene_struct *scene,
+	sar_object_struct ***object, int *total_objects,
 	sar_obj_flags_t human_flags,
-        const char *name
+	int assisting_humans,
+	const char *assisting_human_preset_name[SAR_ASSISTING_HUMANS_MAX],
+	const char *name
 )
 {
 	int obj_num;
@@ -237,7 +241,14 @@ int SARHumanCreate(
 	    human->intercepting_object_distance3d = 0.0;
 
 	/* Number of assisting humans */
-	human->assisting_humans = 0;
+	human->assisting_humans = assisting_humans;
+
+	/* Assisting humans preset(s) */
+	if (human->assisting_humans)
+	{
+	    for(int i = 0; i < human->assisting_humans; i++)
+		human->assisting_human_preset_name[i] = assisting_human_preset_name[i];
+	}
 
 	/* Model human object values to preset values from the human
 	 * data presets.
@@ -259,9 +270,9 @@ int SARHumanCreate(
  *	then no operation will be performed.
  */
 void SARHumanSetObjectPreset(
-        sar_human_data_struct *hd,
-        sar_object_struct *obj_ptr,
-        const char *name
+	sar_human_data_struct *hd,
+	sar_object_struct *obj_ptr,
+	const char *name
 )
 {
 	sar_object_human_struct *human;
@@ -295,15 +306,23 @@ void SARHumanSetObjectPreset(
 	/* Weight in kg */
 	human->mass = entry->mass;
 
-	/* Number of assisting humans */
-	human->assisting_humans = entry->assisting_humans;
+	/* Gender */
+	if(entry->preset_entry_flags & SAR_HUMAN_FLAG_GENDER_FEMALE)
+	    human->flags |= SAR_HUMAN_FLAG_GENDER_FEMALE;
 
-        /* Color palette for assisting humans */
-        memcpy(
-            &human->assisting_human_color[0],
-            &entry->assisting_human_color[0],
-            SAR_HUMAN_COLORS_MAX * sizeof(sar_color_struct)
-        );
+	/* Number of assisting humans. Do not overwrite if assisting_humans
+	 * number has been defined earlier by a create_human parameter.
+	 */
+	if(human->assisting_humans == 0)
+	    human->assisting_humans = entry->assisting_humans;
+
+	/* Color palette for assisting humans */
+	memcpy(
+	    &human->assisting_human_color[0],
+	    &entry->assisting_human_color[0],
+	    SAR_HUMAN_COLORS_MAX * sizeof(sar_color_struct)
+	);
+
 
 
 	/* Add support for other things that need to be coppied here */

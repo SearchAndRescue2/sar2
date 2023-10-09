@@ -632,6 +632,16 @@ static int SARParmSaveToFileAnyIterate(
                 fprintf(fp, " aware");
             if(pv->flags & SAR_HUMAN_FLAG_IN_WATER)
                 fprintf(fp, " in_water");
+	    if(pv->flags & SAR_HUMAN_FLAG_ON_STRETCHER)
+                fprintf(fp, " on_stretcher");
+	    if(pv->assisting_humans > 0)
+	    {
+		/* Assisting humans number */
+		fprintf(fp, " assisted %d", pv->assisting_humans);
+		/* Assisting humans preset name(s) */
+		for(int i = 0; i < pv->assisting_humans; i++)
+		    fprintf(fp, " %s", pv->assisting_human_preset_name[i]);
+	    }
 	    fputc('\n', fp);
             parms_saved++;
 #undef PARM_TYPE

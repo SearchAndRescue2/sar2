@@ -1962,7 +1962,7 @@ static void SARDrawHoistDeployment(
 		SARDrawHumanIterate(
 		    dc,
 		    1.9f,		/* Height in meters */
-		    54.0f,		/* Mass in kg */
+		    90.0f,		/* Mass in kg */
 		    SAR_HUMAN_FLAG_ALERT | SAR_HUMAN_FLAG_AWARE |
 		    SAR_HUMAN_FLAG_GRIPPED | SAR_HUMAN_FLAG_DIVER_CATCHER,
 		    hoist->diver_color,
