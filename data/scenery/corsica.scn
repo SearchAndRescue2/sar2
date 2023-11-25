@@ -28,7 +28,7 @@ scene_ground_flags is_water
 # Ground base tile
 #			rgb 8 bits :       44       80       116
 #                 tilew tileh closerng   color r  color g  color b  color a    texture
-scene_ground_tile 1000  1000  10000     0.172549 0.313725 0.454902    1.0    water01_tex
+scene_ground_tile 1000  1000  10000     0.172549 0.313725 0.454902    1.0    water02_tex
 
 # Map representing entire scene for briefing/log map
 #         width  height  texture_file
