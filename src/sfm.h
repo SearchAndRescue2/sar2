@@ -42,6 +42,18 @@
  */
 #define SFMDefaultGravity	9.80665
 
+
+/*
+ *	Effective transactional lift speed value in m/s.
+ */
+#define SFMETLSpeed 12.35  // 24 knots
+
+/*
+ *	Transverse Flow Effect (TF) values in m/s.
+ */
+#define SFMTFStart 2.57 // 5 knots
+#define SFMTFEnd 12.86  // 25 knots
+
 /*
  *	Core structure:
  */
@@ -61,7 +73,11 @@ typedef struct {
 	SFMPositionStruct       actual_wind_vector;	/* In meters per Cycle */    
 	unsigned long		wind_flags;
 	SFMBoolean		wind_enabled;
-	/* Callbacks, typical inputs are; realm pointer,
+
+	/* Realism setting */
+	SFMFlightPhysicsLevel	flight_physics_level;
+
+        /* Callbacks, typical inputs are; realm pointer,
 	 * model pointer, client data
 	 */
 

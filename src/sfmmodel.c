@@ -297,6 +297,10 @@ SFMBoolean SFMModelChangeValues(
 	{
 	    model->wingspan = value->wingspan;
 	}
+	if(flags & SFMFlagRotorDiameter)
+	{
+	    model->rotor_diameter = value->rotor_diameter;
+	}
 	if(flags & SFMFlagGearState)
 	{
 	    model->gear_state = value->gear_state;

@@ -1110,6 +1110,32 @@ void SARSimSetSFMValues(
 	    TAR_PTR->belly_height = SRC_PTR->belly_height;
 	    TAR_PTR->length = SRC_PTR->length;
 	    TAR_PTR->wingspan = SRC_PTR->wingspan;
+	    {
+		double rotor_diameter = 0.0;
+		int main_rotor_count = 0;
+		// Calculate effective rotor diameter
+		for (i = 0; i<SRC_PTR->total_rotors; i++) {
+		    sar_obj_rotor_struct *rotor = SRC_PTR->rotor[i];
+
+		    // Identify main rotors as rotors with blades that follow
+		    // controls or can pitch.
+		    if (rotor->total_blades > 0 &&
+			(rotor->flags & SAR_ROTOR_FLAG_FOLLOW_CONTROLS ||
+			 rotor->flags & SAR_ROTOR_FLAG_CAN_PITCH)
+			) {
+			main_rotor_count++;
+			// Effective diameter will come from the biggest rotor.
+			rotor_diameter = MAX(rotor_diameter, rotor->radius*2);
+			}
+		}
+		if (rotor_diameter > 0) {
+		    TAR_PTR->rotor_diameter = rotor_diameter;
+		    TAR_PTR->flags |= SFMFlagRotorDiameter;
+		}
+		if (main_rotor_count == 1)
+		    TAR_PTR->flags |= SFMFlagSingleMainRotor;
+	    }
+
 	    TAR_PTR->ground_elevation_msl = obj_ptr->ground_elevation_msl;
 	    TAR_PTR->gear_state = (SFMBoolean)((lgear_ptr != NULL) ?
 		(lgear_ptr->flags & SAR_OBJ_PART_FLAG_STATE) : False
@@ -1288,6 +1314,8 @@ void SARSimGetSFMValues(sar_scene_struct *scene, sar_object_struct *obj_ptr)
 
 	    TAR_PTR->center_to_ground_height =
 		(float)SRC_PTR->center_to_ground_height;
+
+	    TAR_PTR->torque_velocity = (float)SRC_PTR->torque_velocity;
 
 	    /* Get z acceleration before updating velocity */
 	    TAR_PTR->z_accel = (float)SRC_PTR->velocity_vector.z -

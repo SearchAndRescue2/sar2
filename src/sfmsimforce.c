@@ -183,7 +183,7 @@ static SFMBoolean SFMForceCollisionCheck(
 	    model2 = realm->model[i];
 	    if(model2 == NULL)
 		continue;
-		 
+
 	    if(!(model2->flags & (SFMFlagPosition | SFMFlagCanCauseCrash |
 				  SFMFlagCrashContactShape |
 				  SFMFlagCrashableSizeRadius)
@@ -195,7 +195,7 @@ static SFMBoolean SFMForceCollisionCheck(
 	    if(model2 == model)	/* Skip itself */
 		continue;
 
-	    /* Calculate distance in meters */  
+	    /* Calculate distance in meters */
 	    r = SFMHypot2(
 		model2->position.x - pos->x,
 		model2->position.y - pos->y
@@ -230,7 +230,7 @@ static SFMBoolean SFMForceCollisionCheck(
 
 			/* Callback deleted model? */
 			if(SFMModelInRealm(realm, model) < 0)
-			    return(status);  
+			    return(status);
 		    }
 		}
 		else if((model2->crash_contact_shape == SFMCrashContactShapeCylendrical) &&
@@ -320,7 +320,7 @@ static SFMBoolean SFMForceCollisionCheck(
 		}
 	    }
 	}
-		
+
 	return(status);
 }
 #endif
@@ -378,8 +378,8 @@ static int SFMForceApplySlew(
 		time_compensation * time_compression;
 	    a[2] = 0.0;
 
-	    /* Rotate position change so that it is relative to world 
-	     * cooridnates.
+	    /* Rotate position change so that it is relative to world
+	     * coordinates.
 	     */
 	    MatrixRotateHeading3(a, dir->heading, r);
 
@@ -716,7 +716,7 @@ int SFMForceApplyNatural(
 			else
 			{
 			    /* Pitched down so need to pitch up */
-			    dir->pitch -= pitch_leveling_rate * 
+			    dir->pitch -= pitch_leveling_rate *
 				time_compensation * time_compression;
 			    if(dir->pitch < pitch_down_max)
 				dir->pitch = pitch_down_max;
@@ -738,43 +738,92 @@ int SFMForceApplyNatural(
 			/* Pitched down so need to pitch up */
 			dir->pitch -= pitch_leveling_rate *
 			    time_compensation * time_compression;
-			if(dir->pitch < (0.0 * PI))  
+			if(dir->pitch < (0.0 * PI))
 			    dir->pitch = (0.0 * PI);
 		    }
 		}
-		/* Helicopter flight model in flight pitch attitude
-	         * leveling (bank leveling will be applied later).
-		 */
-		else if(flags & SFMFlagAttitudeLevelingRate)
+		/* Helicopter flight model in flight */
+		else
 		{
-		    double leveling_coeff;
+		    /* pitch attitude leveling (bank leveling will be applied later). */
+		    if(flags & SFMFlagAttitudeLevelingRate)
+		    {
+			double leveling_coeff;
 
-		    if(dir->pitch > (1.5 * PI))
-		    {
-			leveling_coeff = MIN(
-			    (dir->pitch - (1.5 * PI)) / (0.5 * PI),
-			    1.0
-			);
-			dir->pitch = MIN(
-			    dir->pitch + (leveling_coeff *
-			    model->attitude_leveling_rate.pitch *
-				time_compensation * time_compression),
-			    2.0 * PI
-			);
+			if(dir->pitch > (1.5 * PI))
+			{
+			    leveling_coeff = MIN(
+				(dir->pitch - (1.5 * PI)) / (0.5 * PI),
+				1.0
+				);
+			    dir->pitch = MIN(
+				dir->pitch + (leveling_coeff *
+					      model->attitude_leveling_rate.pitch *
+					      time_compensation * time_compression),
+				2.0 * PI
+				);
+			}
+			else if(dir->pitch < (0.5 * PI))
+			{
+			    leveling_coeff = MAX(
+				((0.5 * PI) - dir->pitch) / (0.5 * PI),
+				0.0
+				);
+			    dir->pitch = MAX(
+				dir->pitch - (leveling_coeff *
+					      model->attitude_leveling_rate.pitch *
+					      time_compensation * time_compression),
+				0.0 * PI
+				);
+			}
 		    }
-		    else if(dir->pitch < (0.5 * PI))
-		    {
-			leveling_coeff = MAX(
-			    ((0.5 * PI) - dir->pitch) / (0.5 * PI),
-			    0.0
+
+		    /* The source of the next chunk of code is a sar2 fork by
+		     * @metiscus that was manually ported and adapted:
+		     * https://github.com/metiscus/sar2/commit/7e94bf4649791d0baa8b9cb5eb5593169be2fbee
+		     *
+		     * It improves upon the original code doing this, which
+		     * has been removed:
+
+			if(!model->landed_state)
+			    dir->heading = SFMSanitizeRadians(
+			    dir->heading + (sin_pitch * sin_bank *
+				(0.2 * PI) *
+				time_compensation * time_compression)
+
+		     *
+		     * When the helicopter pitches forward and banks, the
+		     * heading will then change.
+		     *
+		     * atan2() becomes smaller if significant Z speed (up or
+		     * down) compared to the total airspeed (essentially
+		     * hovering, since Z speeds are never too high). In such
+		     * case, the helicopter yaws a little less when
+		     * rolling. Other than that atan is usually around 0.8.
+		     *
+		     * The aircraft changes heading depending on the pitch +
+		     * compensation from the atan2 above and the bank angle value.
+		     *
+		     * Original comment by @metiscus in this calculation was that:
+		     *
+		     * "relative_pitch is the actual helicopter pitch plus the
+		     * inflow component of the airspeed. This ensures the
+		     * helicopter will turn at a standard rate (15 degree bank 100
+		     * knots 3 degrees a second)"
+		     *
+		     * We have however reduced the PI multiplier to 0.15
+		     * instead of 0.2.
+		     */
+
+		    // Originally this was part of ArtificialForces, but
+		    // now it is here (i don't remember the reason). It is a
+		    // thrust-independent effect after all.
+		    double airspeed_3d = SFMHypot3(airspeed->x, airspeed->y, airspeed->z);
+		    double relative_pitch = sin(dir->pitch) + 0.5f * atan2(ABS(vel->x)+ABS(vel->y), airspeed_3d);
+		    dir->heading = SFMSanitizeRadians(
+			dir->heading + (relative_pitch * sin(dir->bank) *
+					(0.15 * PI) * time_compensation * time_compression)
 			);
-			dir->pitch = MAX(
-			    dir->pitch - (leveling_coeff *
-			    model->attitude_leveling_rate.pitch *
-				time_compensation * time_compression),
-			    0.0 * PI
-			);
-		    }
 		}
 	    }
 	    break;
@@ -824,7 +873,7 @@ int SFMForceApplyNatural(
 		    else
 		    {
 			vel->x -= x_vel_ground_drag;
-			if(vel->x < 0.0) 
+			if(vel->x < 0.0)
 			    vel->x = 0.0;
 		    }
 
@@ -836,7 +885,7 @@ int SFMForceApplyNatural(
 			    vel->y = 0.0;
 		    }
 		    else
-		    {   
+		    {
 			vel->y -= x_vel_ground_drag;
 			if(vel->y < 0.0)
 			    vel->y = 0.0;
@@ -932,7 +981,7 @@ int SFMForceApplyNatural(
 			    1.0 - (((2.0 * PI) - dir->bank) / (0.5 * PI)),
 			    0.0
 			);
-		        dir->bank = dir->bank + (leveling_coeff * 
+		        dir->bank = dir->bank + (leveling_coeff *
 			    model->attitude_leveling_rate.bank *
 			    time_compensation * time_compression
 		        );
@@ -1185,11 +1234,10 @@ int SFMForceApplyArtificial(
 	double	net_weight	      = 0.0;	/* net_mass * SAR_GRAVITY */
 	double	ground_elevation_msl  = model->ground_elevation_msl,
 		center_to_gear_height = 0.0;
-	double  airspeed_3d;
+	double  airspeed_3d, airspeed_2d;
 
 	double	tc_min		  = MIN(realm->time_compensation, 1.0);
-	double	time_compensation = realm->time_compensation;
-	double	time_compression  = realm->time_compression;
+	double  time_compx        = realm->time_compensation * realm->time_compression;
 
 	SFMFlags		 flags		   = model->flags;
 	SFMDirectionStruct      *dir		   = &model->direction;
@@ -1269,13 +1317,17 @@ int SFMForceApplyArtificial(
 	    }
 	}
 
+	if(flags & SFMFlagAirspeedVector)
+	{
+	    airspeed_3d = SFMHypot3(airspeed->x, airspeed->y, airspeed->z);
+	    airspeed_2d = SFMHypot2(airspeed->x, airspeed->y);
+	}
+
 	/* Check if current speed is exceeding its maximum expected
 	 * speed (overspeed).
 	 */
 	if(flags & (SFMFlagSpeedMax | SFMFlagAirspeedVector))
 	{
-	    /* Use all airspeeds. */
-	    airspeed_3d = SFMHypot3(airspeed->x, airspeed->y, airspeed->z);
 	    /* Current speed greater than expected overspeed? */
 	    if(airspeed_3d > model->overspeed_expected)
 	    {
@@ -1385,8 +1437,7 @@ int SFMForceApplyArtificial(
 		if(!model->landed_state)
 		    dir->heading = SFMSanitizeRadians(
 			dir->heading + (sin_bank * speed_coeff *
-			(0.03 * PI) * time_compensation *
-		        time_compression)
+			(0.03 * PI) * time_compx)
 		    );
 
 		/* Calculate new thrust vector in meters per cycle, include
@@ -1444,8 +1495,8 @@ int SFMForceApplyArtificial(
 		/* Calculate new x y position: rotate speed to match scene
 		 * heading.
 		 */
-		dic = vel->x * time_compensation * time_compression;
-		djc = vel->y * time_compensation * time_compression;
+		dic = vel->x * time_compx;
+		djc = vel->y * time_compx;
 		SFMOrthoRotate2D(dir->heading, &dic, &djc);
 		pos->x += dic;
 		pos->y += djc;
@@ -1453,7 +1504,7 @@ int SFMForceApplyArtificial(
 		/* Calculate new z position (but it will actually be
 		 * set farther below).
 		 */
-		dkc = vel->z * time_compensation * time_compression;
+		dkc = vel->z * time_compx;
 	    }
 	    break;
 
@@ -1463,13 +1514,182 @@ int SFMForceApplyArtificial(
 	    if(flags & (SFMFlagPosition | SFMFlagDirection |
 			SFMFlagVelocityVector | SFMFlagAirspeedVector |
 			SFMFlagSpeedStall | SFMFlagSpeedMax |
-			SFMFlagAccelResponsiveness | SFMFlagLandedState)
+			SFMFlagAccelResponsiveness | SFMFlagLandedState |
+			SFMFlagBellyHeight
+		   )
 	    )
 	    {
 		double	sin_pitch = sin(dir->pitch),
 			cos_pitch = cos(dir->pitch),
 			sin_bank = sin(dir->bank),
 			cos_bank = cos(dir->bank);
+
+		/* Rotor effects */
+
+		/* IGE effect (In-Ground-Effect) adds more lift force when close to the ground.
+		 * We effectively give thrust_output a maximum of 28% bonus in that region.
+		 *
+		 * Effect starts at a rotor height of 1.25 rotor diameter.
+		 * http://www.copters.com/aero/ground_effect.html
+		 */
+		if(flags & SFMFlagRotorDiameter &&
+		    realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_MODERATE)
+		{
+		    // Twin-rotor aircrafts note:
+		    //   - Coaxial are assumed to experience normal IGE since its a single
+		    //     engine after all.
+		    //   - Transverse (V22 Ospray): the model engine is already sized at 2x
+		    //     I think, so we should be good.
+
+		    // horizontallity_coeff dampens IGE based on how horizontal to the
+		    // ground the aircraft is. It can be played with.
+		    double horizontallity_coeff = POW(ABS(cos_pitch) * ABS(cos_bank),2);
+		    double ige_height = 1.25 * model->rotor_diameter;
+		    // The rotor is as high as the center of the aircraft plus
+		    // the belly_height (assume distance from center to belly
+		    // is the same as from center to rotor. This saves having
+		    // to carry exact rotor elevation to the FSM model,
+		    // although that could be done.
+		    double rotor_height = ABS(pos->z - model->ground_elevation_msl + model->belly_height);
+		    // Increases towards 1 when ground_elevation is lower. Non
+		    // linear, approximate by the square.
+		    double ige_coeff = (1 - POW(CLIP(rotor_height, 0, ige_height) / ige_height, 2));
+		    // Increase thrust output 28% at most.
+		    // It is always assumed that the ground is horizontal and effect happens
+		    // when we are parallel to ground.
+		    thrust_output = (1 + 0.28 * ige_coeff * horizontallity_coeff) * thrust_output;
+		    // fprintf(stderr, "IGE. hor_coeff: %.2f, coeff: %.2f, thrust_bonus: %.2f\n", horizontallity_coeff, ige_coeff, 1 + 0.28 * ige_coeff);
+		}
+
+		/* This is the speed vector relative to the rotor blades.
+		   Used to calculate pitch and bank changes. It should match
+		   airspeed vector when aircraft horizontal */
+		SFMPositionStruct	airspeed_rotor;
+		// Set rotor speed vector by rotating airspeeds according to
+		// pitch/bank/heading.  Airspeed is already relative to the
+		// heading of the aircraft so we don't need to rotate
+		// heading. A rotor moving forward will just see y_speed and
+		// z_speed (because pitched).
+		// FIXME: rotor follows control so it may not be perpendicular to
+		// aircraft as assumed here, but close enough.
+		double a[3 *1], r[3 * 1];
+		a[0] = airspeed->x;
+		a[1] = airspeed->y;
+		a[2] = airspeed->z;
+		MatrixRotateBank3(a, -dir->bank, r);
+		MatrixRotatePitch3(r, dir->pitch, a); // re-use variable a
+		airspeed_rotor.x = a[0];
+		airspeed_rotor.y = a[1];
+		airspeed_rotor.z = a[2];
+
+		double airspeed_rotor_2d = SFMHypot2(airspeed_rotor.x, airspeed_rotor.y);
+		// fprintf(stderr, "airspeed_rotor. b: %.2f, p: %.2f, h: %.2f x: %.2f, y: %.2f, z: %.2f, 2d: %.2f\n", dir->bank, dir->pitch, dir->heading, a[0], a[1], a[2], airspeed_rotor_2d);
+
+
+
+		/* Transverse Flow Effect (TF) happens from around 5 knots,
+		 * reaches max magnitude at 15 knots and dissapears by 25
+		 * knots. When moving forward, the blades at the front work on
+		 * clean air while the back work on downwards-accelerated air.
+		 * It causes a roll to the right when moving forward due to
+		 * ~90 degree phase shift.
+		 * https://en.wikipedia.org/wiki/Transverse_flow_effect
+		 */
+
+		if (flags & SFMFlagSingleMainRotor && // does not affect twin as they compensate.
+		    realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_REALISTIC &&
+		    !model->landed_state &&
+		    airspeed_rotor_2d > 0
+		    ) {
+		    // The effect starts at SFMTFStart and follows a sin wave
+		    // incidence until it is 0 again at SFMTFEnd. Otherwise 0.
+		    // sin((speed-effect_start)*PI / effect_speed_range)
+		    double tf_coeff = sin(
+			(CLIP(airspeed_rotor_2d, SFMTFStart, SFMTFEnd) - SFMTFStart) * PI / (SFMTFEnd - SFMTFStart));
+
+		    double tf_coeff_bank = (airspeed_rotor.y / airspeed_rotor_2d) * tf_coeff;
+		    double tf_coeff_pitch = -(airspeed_rotor.x / airspeed_rotor_2d) * tf_coeff;
+		    dir->pitch = SFMSanitizeRadians(dir->pitch + tf_coeff_pitch * 0.08 * PI * time_compx);
+		    dir->bank = SFMSanitizeRadians(dir->bank + tf_coeff_bank * 0.08 * PI * time_compx);
+		    // fprintf(stderr, "TF. coeff: %.2f, coeff_bank: %.2f, coeff_pitch: %.2f\n", tf_coeff, tf_coeff_bank, tf_coeff_pitch);
+		}
+
+		/* Effective Transactional Lift (ETL): as airspeed increases, air
+		 * vortexes at the tip of the rotor blades dissappear,
+		 * providing a bonus lift effect. Fully effective at
+		 * SFMETLSpeed (24 knots). Without ETL, we suffer a thrust
+		 * penalty of up to 25%.
+		 *
+		 * ETL effect on the advancing side vs retreating side
+		 * of the rotor, plus phase shift results in an additional
+		 * pitch increase which needs to be compensated by the pilot,
+		 * when flying forward. This would need calculating pitch/bank
+		 * adjustments based on speed direction.
+		 *
+		 * https://en.wikipedia.org/wiki/Translational_lift
+		 */
+
+		// ETL Thrust penalty
+		// Goes from 1 (full penalty) to 0 when it reaches SFMETLSpeed
+		// Square progression so that it goes a bit slower close to 0.
+		if (realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_MODERATE) {
+		    double etl_thrust_coeff = 1 - POW(CLIP(airspeed_rotor_2d / SFMETLSpeed, 0, 1),2);
+		    thrust_output = (1 - 0.25 * etl_thrust_coeff) * thrust_output;
+		}
+		// ETL pitch
+		if (realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_REALISTIC &&
+		    !model->landed_state &&
+		    airspeed_rotor_2d > 0
+		    ) {
+		    // Similar to TF, we add some pitch/bank changes while
+		    // entering ETL. The difference here is that nose rises
+		    // when going forward, rather than causing a roll.  By end
+		    // of ETL we assume tail has compensated effect and
+		    // dissappears.
+		    double etl_pitch_bank_coeff = sin(MIN(airspeed_rotor_2d, SFMETLSpeed) * PI / SFMETLSpeed);
+		    double etl_bank_coeff = -(airspeed_rotor.x / airspeed_rotor_2d) * etl_pitch_bank_coeff;
+		    double etl_pitch_coeff = -(airspeed_rotor.y / airspeed_rotor_2d) * etl_pitch_bank_coeff;
+		    dir->pitch = SFMSanitizeRadians(
+			dir->pitch + etl_pitch_coeff * 0.03 * PI * time_compx);
+		    dir->bank = SFMSanitizeRadians(
+			dir->bank + etl_bank_coeff * 0.03 * PI * time_compx);
+		    // fprintf(stderr, "ETL: speed: %.2f, thrust_coeff: %.2f, pb_coeff: %.2f, coeff_bank: %.2f, coeff_pitch: %.2f\n", airspeed_rotor_2d, etl_thrust_coeff, etl_pitch_bank_coeff, etl_bank_coeff, etl_pitch_coeff);
+		}
+
+		/* Torque: as the motor pushes the rotor Counter-Clock-Wise,
+		 * the aircraft is pushed Clock-Wise. At higher speeds the
+		 * tail counteracts this but otherwise the pilot should use
+		 * the tail rotor. We introduce a heading change to the
+		 * right. The effect depends onn thottle and is maximum at 0
+		 * speed, reduces up to SFMETLEnd and is counteracted from
+		 * there.
+		 */
+
+		if(flags & SFMFlagSingleMainRotor && // does not affect twin rotors
+		   realm->flight_physics_level >= SFM_FLIGHT_PHYSICS_REALISTIC &&
+		   !model->landed_state
+		    ) {
+		    // torque_coeff: 1 at 0-speed, 0 at SFMETLEnd and negative
+		    // above that so that torque acceleration dissappears.
+		    double torque_coeff = 1 - airspeed_2d / SFMETLSpeed;
+		    double torque_accel;
+		    // Remove effect faster than it appears.
+		    if (torque_coeff > 0) {
+			torque_accel = torque_coeff * 0.2;
+		    } else {
+			torque_accel = torque_coeff * 0.5;
+		    }
+
+		    model->torque_velocity += torque_accel * time_compx;
+		    if (model->torque_velocity<0) {
+			model->torque_velocity = 0.0;
+		    }
+		    double dir_change = atan(model->torque_velocity) * 0.1 * model->throttle_coeff * time_compx;
+		    dir->heading += dir_change;
+		    // fprintf(stderr, "torque accel: %f, torque_vel: %f, atan: %f, throttle_coeff: %f, dir_change: %f\n", torque_accel, model->torque_velocity, atan(model->torque_velocity), model->throttle_coeff, dir_change);
+		} else {
+		    model->torque_velocity = 0.0;
+		}
 
 		/* To calculate movement offset, use the equation:
 		 *
@@ -1482,32 +1702,20 @@ int SFMForceApplyArtificial(
 		 * applied, lower values increase the responsiveness.
 		 */
 
-		/* Heading by pitch and bank caused by thrust direction.
-		 * When the helicopter pitches forward and banks, the
-		 * heading will then change.
-		 */
-		if(!model->landed_state)
-		    dir->heading = SFMSanitizeRadians(
-			dir->heading + (sin_pitch * sin_bank *
-			    (0.2 * PI) *
-			    time_compensation * time_compression)
-		    );
-
-
 	        /* XY Plane: Pitch and bank applied force */
 
 	        /* Calculate i force compoent (obj relative) */
 	        di = (vel->x / 1.00) +
 		    (thrust_output * sin_bank * cos_pitch *
 		    tc_min / MAX(ar->x, 1.0));
-		dic = di * time_compensation * time_compression;
+		dic = di * time_compx;
 		vel->x = di;
 
 		/* Calculate j force compoent (obj relative) */
 		dj = (vel->y / 1.00) +
 		    (thrust_output * sin_pitch * cos_bank *
 		    tc_min / MAX(ar->y, 1.0));
-		djc = dj * time_compensation * time_compression;
+		djc = dj * time_compx;
 		vel->y = dj;
 
 		/* Set new positions after rotating the speeds to match
@@ -1516,7 +1724,6 @@ int SFMForceApplyArtificial(
 		SFMOrthoRotate2D(dir->heading, &dic, &djc);
 		pos->x += dic;
 		pos->y += djc;
-
 
 		/* Vertical velocity */
 /*
@@ -1547,7 +1754,7 @@ int SFMForceApplyArtificial(
 		    dk_dv = dk_new - dk_prev;
 
 		    /* Add the previous velocit to the new delta change
-		     * in velocity multiplied by the time compensation 
+		     * in velocity multiplied by the time compensation
 		     * min. Make sure tc_min stays about 0.01 to ensure
 		     * that as this function cycles that it will converge
 		     * to dk.
@@ -1558,7 +1765,7 @@ int SFMForceApplyArtificial(
 		if((dk < 0.0) && model->landed_state)
 		    dk = 0.0;
 
-		dkc = dk * time_compensation * time_compression;
+		dkc = dk * time_compx;
 		vel->z = dk;
 	    }
 	    break;
@@ -1677,7 +1884,7 @@ int SFMForceApplyArtificial(
 		    if(vel->y < 0)
 		    {
 			vel->y += wheel_brakes_power;
-			if(vel->y > 0) 
+			if(vel->y > 0)
 			    vel->y = 0;
 		    }
 		    else
@@ -1830,7 +2037,7 @@ int SFMForceApplyControl(
 		    dir->bank = SFMSanitizeRadians(dir->bank + PI);
 		    if(dir->pitch > (1.0 * PI))
 			dir->pitch = SFMSanitizeRadians(
-			    (2.0 * PI) - dir->pitch + PI 
+			    (2.0 * PI) - dir->pitch + PI
 			);
 		    else
 			dir->pitch = SFMSanitizeRadians(
@@ -1939,7 +2146,7 @@ int SFMForceApplyControl(
 		    dir->bank = SFMSanitizeRadians(dir->bank + PI);
 		    if(dir->pitch > (1.0 * PI))
 			dir->pitch = SFMSanitizeRadians(
-			    (2.0 * PI) - dir->pitch + PI 
+			    (2.0 * PI) - dir->pitch + PI
 			);
 		    else
 			dir->pitch = SFMSanitizeRadians(
@@ -1952,7 +2159,7 @@ int SFMForceApplyControl(
 		    dir->heading + (sin(dir->bank) * p_con_coeff *
 		    acr->pitch * -1 * time_compensation * time_compression)
 		);
-
+		//printf("h_con_coeff: %f\n", h_con_coeff);
 
 		/* Check if engines are on */
 		if(1)

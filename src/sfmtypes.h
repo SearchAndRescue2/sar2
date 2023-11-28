@@ -79,6 +79,11 @@ typedef struct {
 } SFMDirectionStruct;
 
 
+typedef enum {
+	SFM_FLIGHT_PHYSICS_EASY,
+	SFM_FLIGHT_PHYSICS_MODERATE,
+	SFM_FLIGHT_PHYSICS_REALISTIC
+} SFMFlightPhysicsLevel;
 
 
 

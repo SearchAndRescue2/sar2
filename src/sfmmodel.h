@@ -78,6 +78,8 @@
 #define SFMFlagStopped			((SFMFlags)1 << 41)
 #define SFMFlagLength			((SFMFlags)1 << 42)
 #define SFMFlagWingspan			((SFMFlags)1 << 43)
+#define SFMFlagRotorDiameter		((SFMFlags)1 << 44)
+#define SFMFlagSingleMainRotor		((SFMFlags)1 << 45)
 
 /*
  *	Flight model types:
@@ -148,6 +150,7 @@ typedef struct {
 	double			service_ceiling;	/* Meters. */
 	double			length;		/* Meters */
 	double			wingspan;	/* Meters */
+	double			rotor_diameter;	/* Meters */
 	double			belly_height;	/* Undercarrage to center, meters. */
 	SFMBoolean		gear_state;	/* True when down. */
 	int			gear_type;	/* One of SFMGearType*. */
@@ -165,6 +168,7 @@ typedef struct {
 								 * ground height,
 								 * in meters.
 								 */
+	double			torque_velocity;	/* Radians/cycle internal */
 	double			heading_control_coeff;	/* -1.0 to 1.0. */
 	double			pitch_control_coeff;	/* -1.0 to 1.0. */
 	double			bank_control_coeff;	/* -1.0 to 1.0. */

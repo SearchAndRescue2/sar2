@@ -690,6 +690,7 @@ int SARSimUpdateSceneObjects(
 	    if(scene->realm != NULL)
 	    {
 		scene->realm->wind_enabled = core_ptr->option.wind;
+		scene->realm->flight_physics_level = (SFMFlightPhysicsLevel)(core_ptr->option.flight_physics_level);
 
 		/* Handle by object type */
 		switch(obj_ptr->type)
