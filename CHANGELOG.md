@@ -1,11 +1,17 @@
 # SEARCH AND RESCUE II - CHANGELOG
 
-## Version NEXT
+## Version 2.7.0
 
 * Model improvements for as350 and ec145 helicopters.
 * Upgrades to Corsica scenery with high-res textures, 3d objects, new missions and more than 40 new water bodies.
 * Better water detection for altitude lakes.
 * Updates to Aircraft and Scenery guides and other improvements for level developers in the docs.
+* Workaround to reduce ghosting issues seen on Intel graphics
+* v3dconverter: a command line to convert .obj and .ac files to/from .3d format. It is in "tools/"
+* Humans enhancements: gender, more realistic body shape, up to 4 assistants per victim. More documentation.
+* Test world update to add 3 more terrain plots and a "humans test" location.
+* v22-Osprey: fix that both rotors rotate counter-clock-wise, when only one rotor should.
+* Add more realistic rotor effects: improved heading changes, In-Ground-Effect, Transverse Flow Effect, Effective Tranlational Lift and Torque effect are now enabled for helicopters when using maximum realism settings.
 
 ## Version 2.6.0
 
