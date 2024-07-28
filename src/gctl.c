@@ -549,7 +549,7 @@ void GCtlUpdate(
 		continue;
 
 	    sdljoystick = gc->sdljoystick[i];
-	    	    if(sdljoystick == NULL)
+	    if(sdljoystick == NULL)
 		continue;
 
 	    /* Update defined joystick operations for this joystick.
