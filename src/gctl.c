@@ -549,6 +549,9 @@ void GCtlUpdate(
 		continue;
 
 	    sdljoystick = gc->sdljoystick[i];
+	    	    if(sdljoystick == NULL)
+		continue;
+
 	    /* Update defined joystick operations for this joystick.
 	     * This is to tabulate a list of functions that were
 	     * handled/controlled by any of the joystick(s) so the
