@@ -804,10 +804,16 @@ void SARMissionHoistInNotify(
 	   * instant all humans have been picked up.
 	   */
 	  case SAR_MISSION_OBJECTIVE_PICK_UP:
-	    /* Reduce number of humans that still need rescue, note that
+	    /* Original comment:
+	     * Reduce number of humans that still need rescue, note that
 	     * we do not care which object hoisted in these humans.
+	     *
+	     * New comment:
+	     * Do not reduce number of humans that still need rescue
+	     * because that has be done earlier by
+	     * SARMissionPassengersEnterNotify().
 	     */
-	    objective->humans_need_rescue -= hoisted_in;
+	    /* objective->humans_need_rescue -= hoisted_in; */
 
 	    /* All humans picked up? */
 	    if(objective->humans_need_rescue <= 0)
