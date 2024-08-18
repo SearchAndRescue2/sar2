@@ -53,24 +53,24 @@ long file_size(const char *filename)
 
 
 /* Parse a full file and fill path, baseName, and extention strings.
- * 
+ *
  * Examples:
- * 
+ *
  * fullFileName = "./a/such/full/name.txt" returns:
  * path = "./a/such/full/"
  * baseName = "name"
  * extension = ".txt"
- * 
+ *
  * fullFileName = "a/such/path/" returns:
  * path = "a/such/path/"
  * baseName = ""
  * extension = ""
- * 
+ *
  */
 void scanFileName( const char *fullFileName, char **path, char **baseName, char **extension )
 {
     int cnt0 = 0, fullFileNameLength = 0, lastSlashPos = 0, fullPathLength = 0, lastDotPos = 0;
-    
+
     if ( *path != NULL )
     {
 	free( *path );
@@ -86,7 +86,7 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	free( *extension );
 	*extension = NULL;
     }
-    
+
     /* full file name length */
     fullFileNameLength = strlen( fullFileName );
 
@@ -96,17 +96,17 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	if ( ( *( fullFileName + lastSlashPos ) == '/' ) || ( *( fullFileName + lastSlashPos ) == '\\' ) )
 	    break;
     }
-    
+
     /*  path length */
     fullPathLength = lastSlashPos + 1;
-    
+
     /*  last dot position */
     for ( lastDotPos = fullFileNameLength; lastDotPos > fullPathLength; lastDotPos-- )
     {
 	if ( *( fullFileName + lastDotPos ) == '.' )
 	    break;
     }
-    
+
     /* extract base name, path, and extension */
     if ( lastSlashPos < 0 && lastDotPos == 0) // full file name has NO path and NO extension
     {
@@ -120,7 +120,7 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	for ( cnt0 = 0; cnt0 < fullFileNameLength; cnt0++ )
 	    *( *baseName + cnt0 ) = *( fullFileName + cnt0 );
 	*( *baseName + cnt0 ) = '\0'; // close string
-	
+
 	/* no path */
 	*path = malloc ( sizeof (char) );
 	if ( *path == NULL )
@@ -129,7 +129,7 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	    exit (EXIT_FAILURE);
 	}
 	**path = '\0'; // close string
-	
+
 	/* no extension */
 	*extension = malloc ( sizeof (char) );
 	if ( *extension == NULL )
@@ -138,7 +138,7 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	    exit (EXIT_FAILURE);
 	}
 	**extension = '\0'; // close string
-	
+
     }
     else if ( lastDotPos == fullPathLength ) // full file name has NO extension
     {
@@ -149,13 +149,13 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	    fprintf(stderr, "Memory allocation error.\n");
 	    exit (EXIT_FAILURE);
 	}
-	
+
 	for ( cnt0 = fullPathLength; cnt0 < fullFileNameLength; cnt0++ )
 	{
 	    *( *baseName - fullPathLength + cnt0 ) = *( fullFileName + cnt0 );
 	}
 	*( *baseName - fullPathLength + cnt0 ) = '\0'; // close string
-	
+
 	/* extract path */
 	*path = malloc ( ( lastSlashPos + 2 ) * sizeof (char) );
 	if ( *path == NULL )
@@ -168,7 +168,7 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	    *( *path + cnt0 ) = *( fullFileName + cnt0 );
 	}
 	*( *path + cnt0 ) = '\0'; // close string
-	
+
 	/* no extension */
 	*extension = malloc ( sizeof (char) );
 	if ( *extension == NULL )
@@ -190,7 +190,7 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	for ( cnt0 = fullPathLength; cnt0 < lastDotPos; cnt0++ )
 	    *( *baseName - fullPathLength + cnt0 ) = *( fullFileName + cnt0 );
 	*( *baseName - fullPathLength + cnt0 ) = '\0'; // close string
-	
+
 	/* extract path */
 	*path = malloc ( ( lastSlashPos + 2 ) * sizeof (char) );
 	if ( *path == NULL )
@@ -203,7 +203,7 @@ void scanFileName( const char *fullFileName, char **path, char **baseName, char 
 	    *( *path + cnt0 ) = *( fullFileName + cnt0 );
 	}
 	*( *path + cnt0 ) = '\0'; // close string
-	
+
 	/* extract extension */
 	*extension = malloc ( ( fullFileNameLength - lastDotPos + 1 ) * sizeof (char) );
 	if ( *extension == NULL )
@@ -224,7 +224,7 @@ int calculateSurfaceNormal ( Vcoord *v, int verticies, Vnormal *vn )
 {
     // Newell's method, from: https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal pseudo-code
     // Returns EXIT_FAILURE (0) in case of div by zero error
-    
+
     Vcoord vCurrent, vNext;
     int cnt1 = 0;
 
@@ -232,27 +232,27 @@ int calculateSurfaceNormal ( Vcoord *v, int verticies, Vnormal *vn )
     vn->i = 0;
     vn->j = 0;
     vn->k = 0;
-    
+
     for ( int cnt0 = 0; cnt0 < verticies; cnt0++ )
     {
 	vCurrent.x = v[ cnt0 ].x;
 	vCurrent.y = v[ cnt0 ].y;
 	vCurrent.z = v[ cnt0 ].z;
-	
+
 	if ( ( cnt0 + 1 ) >= verticies )
 	    cnt1 = 0;
 	else
 	    cnt1 = cnt0 + 1;
-	
+
 	vNext.x = v[ cnt1 ].x;
 	vNext.y = v[ cnt1 ].y;
 	vNext.z = v[ cnt1 ].z;
-	
+
 	vn->i += ( vCurrent.y + vNext.y ) * ( vCurrent.z - vNext.z );
 	vn->j += ( vCurrent.z + vNext.z ) * ( vCurrent.x - vNext.x );
 	vn->k += ( vCurrent.x + vNext.x ) * ( vCurrent.y - vNext.y );
     }
-    
+
     // normalize
     double vecLength = sqrt( vn->i * vn->i + vn->j * vn->j + vn->k * vn->k );
     if ( vecLength == 0 )
@@ -277,15 +277,15 @@ char *timeStamp() // returns a YYYYMMDDHHMMSS timestamp
   time(&now);
   // Convert to local time
   struct tm *local = localtime(&now);
-  h = local->tm_hour;        
-  min = local->tm_min;       
-  s = local->tm_sec;       
-  day = local->tm_mday;          
-  month = local->tm_mon + 1;     
-  year = local->tm_year + 1900;  
+  h = local->tm_hour;
+  min = local->tm_min;
+  s = local->tm_sec;
+  day = local->tm_mday;
+  month = local->tm_mon + 1;
+  year = local->tm_year + 1900;
 
   timeStampString = strdup("YYYYMMDDHHMMSS");
-  sprintf(timeStampString, "%02d%02d%d%02d%02d%02d", year, month, day, h, min, s);
+  sprintf(timeStampString, "%04d%02d%02d%02d%02d%02d", year, month, day, h, min, s);
 
   return(timeStampString);
 }
@@ -294,9 +294,9 @@ char *timeStamp() // returns a YYYYMMDDHHMMSS timestamp
 bool isTex ( const char *fullFileName ) // returns 'true' if file baseName contains '.tex'
 {
     char *path = NULL, *baseName = NULL, *extension = NULL;
-    
+
     scanFileName( fullFileName, &path, &baseName, &extension );
-    
+
     if ( strstr( baseName, ".tex" ) )
 	return true;
     else
@@ -307,9 +307,9 @@ bool isTex ( const char *fullFileName ) // returns 'true' if file baseName conta
 bool isHf ( const char *fullFileName ) // returns 'true' if file baseName contains '.hf'
 {
     char *path = NULL, *baseName = NULL, *extension = NULL;
-    
+
     scanFileName( fullFileName, &path, &baseName, &extension );
-    
+
     if ( strstr( baseName, ".hf" ) )
 	return true;
     else
