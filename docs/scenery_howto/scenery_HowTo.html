@@ -25,13 +25,18 @@
     Terrain elevation map (*.hf file, you can name it as *.hf.tga) is an 8 bits gray, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#heightfield_load">heightfield_load</a>. <del>Its dimensions (image width and height) must be a power of 2</del>.
     </li>
     <li>
-    Terrain texture (*.tex file, you can name it as *.tex.tga) is a 4*8 bits rgba, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#texture_load">texture_load</a>. Its dimensions (image width and height) must be a power of 2.
+    Terrain texture (*.tex file, you can name it as *.tex.tga) is a 4*8 bits rgba, top left origin, without Run Length Encoding *.tga file. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#texture_load">texture_load</a>. If you don't need semi-transparency, you can use a 3*8 bits rgb image instead of a 4*8 bits rgba one. Image dimensions (image width and height) must be a power of 2.
     </li>
     <li>
-    A full black (0x000000) pixel on an object texture will be fully transparent, thus use 0x010101 if you want a black color.
+    A full black (0x000000) pixel on any texture (object or terrain) will be fully transparent, thus use 0x010101 if you want a black color.
     </li>
+    <li>
+    If <a href= "../sar2ParmsBook/sar2ParmsBook.html#scene_ground_tile">scene_ground_tile</a> is water and if you don't have any "altitude" waterbodies, preferably use a 3*8 bits rgb ground texture and set water areas to full black color.
+    If you have "altitude" waterbodies, you must use a 4*8 bits rgba ground texture: all texture area with at least 1% transparency will be detected as water. If you set an area with 100% transparency (or with a full black color), it will be detected as water too, but you will see down up to the <a href= "../sar2ParmsBook/sar2ParmsBook.html#scene_ground_tile">scene_ground_tile</a>s.
+    </li>
+
     <br>
-    
+
     <li>
     If you want to place objects on a scenery, you can easily determine object coordinates and rotation whith this tip:
 	<ul>
@@ -75,14 +80,14 @@
 	</ul>
     </li>
     <br>
-    
+
     <li>
     There is a <b>very</b> cool tool to generate height fields: <a href= "https://tangrams.github.io/heightmapper/">https://tangrams.github.io/heightmapper/</a>. It can export *.png 8 bits gray images, which can easily be converted to *.tga format with <a href= "https://imagemagick.org/">ImageMagick</a> as this: "convert tangrams_export.png -type Grayscale -depth 8 tga:image-origin=TopLeft myHeightField.tga".
     </li>
     <br>
-    
+
     <li>
-    It is possible to edit a height field ("elevation map") with <a href= "https://github.com/SearchAndRescue2/sar2/tree/v3dconverter/tools/v3dconverter" >v3dconverter</a> and <a href= "https://www.blender.org/" >Blender</a>. Below is an example with mesa01.3d terrain from Desert scenery.
+    It is possible to edit a height field ("elevation map") with <a href= "https://github.com/SearchAndRescue2/sar2/tree/master/tools/v3dconverter" >v3dconverter</a> and <a href= "https://www.blender.org/" >Blender</a>. Below is an example with mesa01.3d terrain from Desert scenery.
     <ol>
 	<img src="./images/mesa01_before.jpg"><br>
 	<li>
@@ -121,7 +126,7 @@
 	<code>
 	<b>You should modify the heightfield_load 4th argument (altitude) value to 2594.018 in the *.3d terrain file.</b>
 	</code>
-	Do do this, first do a backup of mesa01.3d:
+	To do this, first do a backup of mesa01.3d:
 	<code>
 	cp sar2_base_directory/data/objects/desert/mesa01.3d sar2_base_directory/data/objects/desert/mesa01.3d.bak
 	</code>
