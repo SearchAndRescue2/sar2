@@ -3722,8 +3722,9 @@ rotor_new 3       -7.0 0.3 0.6  0.0 0.0 180.0  5.7  1          0        1     1 
 #                r   g   b   a
 rotor_blur_color 0.1 0.1 0.1 0.75
 begin_model rotor
-#$model_flags 
-translate -7.000000 0.300000 0.600000
+#$model_flags
+# Note that Z must be set to 5.2 and not to 0.6 as it should be usually (5.2 = -blades_offset * 2 + 0.6).
+translate -7.000000 0.300000 5.200000
 color 0.050000 0.050000 0.050000 1.000000 1.000000 1.000000 1.000000 0.200000 0.000000
 # Blades
 begin_quads
