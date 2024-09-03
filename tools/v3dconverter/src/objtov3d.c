@@ -63,7 +63,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
     double XYZradius, maxXYZradius = 0; // object spherical bound (maxXYZradius)
     char lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1];
     char previousV3dParam[ 40 + 1 ] = "";
-    
+
     #define V3DMODELTYPES 18+1
     #define V3DMODELTYPEMAXLENGTH 14
     char v3dModelType[ V3DMODELTYPES ][ V3DMODELTYPEMAXLENGTH + 1 ] = {
@@ -88,7 +88,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	{ "" }
     };
     char currentV3dModelType[ V3DMODELTYPEMAXLENGTH + 1 ] = "";
-    
+
     /* Input and output files ok ? */
     if ( ( fpIn = fopen(source, "r" ) ) == NULL ) {
 	perror(source);
@@ -96,10 +96,11 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
     }
     if ( ( fpOut = fopen( dest, "w+" ) ) == NULL ) {
 	fclose( fpIn );
+	fpIn = NULL;
 	perror( dest );
 	return -1;
     }
-    
+
     /* Prepare structures */
     Vcoord *v = malloc ( sizeof ( Vcoord ) );
     if ( v == NULL )
@@ -107,7 +108,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	fprintf( stderr, "Can't allocate memory for Vcoord.\n");
 	return EXIT_FAILURE;
     }
-    
+
     Vnormal *vn = malloc ( sizeof ( Vnormal ) );
     if ( vn == NULL )
     {
@@ -115,7 +116,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	free( v );
 	return EXIT_FAILURE;
     }
-    
+
     Tcoord *vt = malloc ( sizeof ( Tcoord ) );
     if ( vt == NULL )
     {
@@ -136,7 +137,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
     }
 
     struct Color currentColor = { -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0 };
-    
+
     /* Read and process each *.obj file line */
     while ( fgets(lineBuffer, MAX_LENGTH, fpIn) ) {
 	if ( lineBuffer[ 0 ] == '\n' || lineBuffer[ 0 ] == '\r' || ( sscanf( lineBuffer, " %s[\n]", objTag ) ) == 0 ) // blank line or objTag == ""
@@ -151,9 +152,9 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		strcpy( previousV3dParam, "" );
 	    }
-	    
+
 	    vertices++; // add a vertex coord. v[0] is never used (as in *.obj file format description).
-	    
+
 	    Vcoord *tmp = realloc( v, ( vertices + 1 ) * sizeof( Vcoord ) );
 	    if (tmp == NULL)
 	    {
@@ -168,7 +169,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    double foo = 0; // rotateZ waits for a 'w' value
 	    RotateX ( &vx, &vy, &vz, &foo, -90 ); // rotate vertex arround X axis. Angle given in degrees.
 	    RotateZ ( &vx, &vy, &vz, &foo, 90 ); // rotate vertex arround Z axis. Angle given in degrees.
-	    
+
 	    /* apply user modifiers. Apply order is: X rotation, then Y rotation, then Z rotation, then scale, then translations. */
 	    if ( userModifier->rx != 0.0 )
 	    {
@@ -182,14 +183,14 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    {
 		RotateZ ( &vx, &vy, &vz, &foo, userModifier->rz );
 	    }
-	    
+
 	    if ( userModifier->scale != 1.0 )
 	    {
 		vx *= userModifier->scale;
 		vy *= userModifier->scale;
 		vz *= userModifier->scale;
 	    }
-	    
+
 	    if ( userModifier->tx != 0.0 )
 	    {
 		vx += userModifier->tx;
@@ -202,12 +203,12 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    {
 		vz += userModifier->tz;
 	    }
-	    
+
 	    /* store coords */
 	    v[vertices].x = vx;
 	    v[vertices].y = vy;
 	    v[vertices].z = vz;
-	    
+
 	    /* easy way to compute object rectangular bounds */
 	    if ( vx <  Xmin )
 		Xmin = vx;
@@ -221,7 +222,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		Zmin = vz;
 	    if ( vz >  Zmax )
 		Zmax = vz;
-	    
+
 	    /* cylindrical bounds */
 	    XYradius = sqrt( pow( vx, 2 ) + pow( vy, 2 ) );
 	    if ( XYradius > maxXYradius )
@@ -239,9 +240,9 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		strcpy( previousV3dParam, "" );
 	    }
-	    
+
 	    normals++; // add a vertex normal. vn[0] is not used.
-	    
+
 	    Vnormal *tmp = realloc( vn, ( normals + 1 ) * sizeof( Vnormal ) );
 	    if (tmp == NULL)
 	    {
@@ -250,15 +251,15 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		return EXIT_FAILURE;
 	    }
 	    vn = tmp;
-	    
+
 	    /* read vertex normal coordinates and re-orient them because obj coords system is different from v3d coords system */
 	    sscanf( lineBuffer, " vn %lf %lf %lf", &vni, &vnj, &vnk );
 	    double foo = 0; // rotateZ waits for a 'w' value
 	    RotateX ( &vni, &vnj, &vnk, &foo, -90 ); // rotate vertex arround X axis. Angle given in degrees.
 	    RotateZ ( &vni, &vnj, &vnk, &foo, 90 ); // rotate vertex arround Z axis. Angle given in degrees.
-	    
+
 	    /* it's a normal, no need to apply user modifiers. */
-	    
+
 	    /* store coords */
 	    vn[normals].i = vni;
 	    vn[normals].j = vnj;
@@ -271,9 +272,9 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		strcpy( previousV3dParam, "" );
 	    }
-	    
+
 	    textCoords++; // add a vertex texture coord. vt[0] is not used.
-	    
+
 	    Tcoord *tmp = realloc( vt, ( textCoords + 1 ) * sizeof( Tcoord ) );
 	    if (tmp == NULL)
 	    {
@@ -282,7 +283,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		return EXIT_FAILURE;
 	    }
 	    vt = tmp;
-	    
+
 	    sscanf( lineBuffer, " vt %lf %lf %lf", &vt[textCoords].u, &vt[textCoords].v, &vt[textCoords].w );
 	}
 	else if ( !strcmp( objTag, "p" ) ) // point
@@ -293,10 +294,10 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		else
 		    fprintf( fpOut, "begin_points\n" );
-		
+
 		strcpy( previousV3dParam, "points" );
 	    }
-	    
+
 	    const char delim[2] = " ";
 	    char *token;
 	    int vNum = 0;
@@ -304,7 +305,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    token = strtok(NULL, delim); // second token contains first point vertex
 	    while( token != NULL ) {
 		sscanf( token, " %d", &vNum ); // read vertex number
-		
+
 		/* write point coord
 		 * Info: an obj point don't have a normal, but a v3d point seems to have one (which is always 0.0 0.0 1.0 ?).
 		 * FIXME: is it necessary to add a normal, and if yes, how to compute this normal? This point is not on a surface!
@@ -322,7 +323,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    int vNum = 0, vtNum = 0;
 	    const char delim[2] = " ";
 	    char *token;
-	    
+
 	    for ( int cnt = 0; cnt < strlen( lineBuffer ); cnt++ ) {
 		if ( lineBuffer[ cnt ] == ' ' ||  lineBuffer[ cnt ] == '\t' )
 		{
@@ -331,20 +332,20 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    lastStatementPos = cnt - 1;
 		}
 	    }
-	    
+
 	    char lastToken[MAX_LENGTH + 1];
 	    for ( int cnt = lastStatementPos; lineBuffer[ cnt ] != '\0'; cnt++ )
 		lastToken[ cnt - lastStatementPos ] = lineBuffer[ cnt + 1 ];
 	    sscanf( lastToken, " %d", &lastVertexNr );
 	    sscanf( lineBuffer, " l %d", &firstVertexNr );
-	    
+
 	    if ( lineVerticies == 2 ) // it's a single line
 	    {
 		if ( strcmp( previousV3dParam, "lines" ) ) // if previous type was not "lines"
 		{
 		    fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		    fprintf( fpOut, "begin_lines\n" );
-		    
+
 		    strcpy( previousV3dParam, "lines" );
 		}
 	    }
@@ -353,30 +354,30 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		// always only one loop per v3d "begin_line_loop" statement: no need to check previous type, just "end_" it.
 		if ( previousV3dParam[0] != '\0' )
 		    fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
-		
+
 		fprintf( fpOut, "begin_line_loop\n" );
 		strcpy( previousV3dParam, "line_loop" );
 
 		lineVerticies--; // will be used when writing datas to avoid last vertex print in case of line loop
-		
+
 	    }
 	    else // there are more than 2 vertices, and it's a line strip
 	    {
 		// always only one strip per v3d "begin_line_strip" statement: no need to check previous type, just "end_" it.
 		if ( previousV3dParam[0] != '\0' )
 		    fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
-		
+
 		fprintf( fpOut, "begin_line_strip\n" );
 		strcpy( previousV3dParam, "line_strip" );
 	    }
-	    
+
 	    // write datas
 	    token = strtok( lineBuffer, delim ); // first token contains "l" (line)
 	    token = strtok( NULL, delim ); // second token contains first v/vt reference numbers
 	    while( token != NULL ) {
 		vNum = 0; vtNum = 0;
 		sscanf( token, " %d/%d", &vNum, &vtNum );
-		
+
 		if ( lineVerticies > 0 ) // check lineVerticies value to avoid last vertex print in case of line loop
 		{
 		    if ( textureOn == true )
@@ -387,14 +388,14 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 			else if ( vtNum < 0 )
 			    fprintf( fpOut, " texcoord %f %f\n", vt[textCoords + vtNum].u, vt[textCoords + vtNum].v );
 		    }
-		    
+
 		    // write vertex coord
 		    if ( vNum > 0 )
 			fprintf( fpOut, " %f %f %f\n", v[vNum].x, v[vNum].y, v[vNum].z );
 		    else
 			fprintf( fpOut, " %f %f %f\n", v[vertices + vNum].x, v[vertices + vNum].y, v[vertices + vNum].z );
 		}
-		
+
 		lineVerticies--;
 		token = strtok( NULL, delim ); // next token
 	    }
@@ -404,7 +405,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    char *token;
 	    long vNum = 0, vtNum = 0, vnNum = 0;
 	    int faceVerticies = 0;
-	    
+
 	    faces++;
 
 	    /* count face vertices in order to determine face type (triangle, quad, polygon) */
@@ -422,14 +423,14 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		if ( cnt < bufLength )
 		    faceVerticies++;
 	    }
-	    
+
 	    if ( faceVerticies == 3 ) // triangle
 	    {
 		if ( strcmp( previousV3dParam, "triangles" ) ) // previous surface type was not triangles ?
 		{
 		    if ( previousV3dParam[0] != '\0' )
 			fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
-		    
+
 		    fprintf( fpOut, "begin_triangles\n" );
 		    strcpy( previousV3dParam, "triangles" );
 		}
@@ -440,7 +441,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		{
 		    if ( previousV3dParam[0] != '\0' )
 			fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
-		    
+
 		    fprintf( fpOut, "begin_quads\n" );
 		    strcpy( previousV3dParam, "quads" );
 		}
@@ -451,14 +452,14 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		if ( previousV3dParam[0] != '\0' )
 		    fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		fprintf( fpOut, "begin_polygon\n" );
-		
+
 		strcpy( previousV3dParam, "polygon" );
 	    }
 	    else  // faceVerticies < 3 : should never happen !!!
 	    {
 		fprintf( stderr, " Warning in *.obj file, line #%ld: face with only %d vertices detected and removed.\n", lineNr, faceVerticies );
 	    }
-	    
+
 	    /* alloc memory */
 	    Vertex *tmpVertex = calloc ( faceVerticies, sizeof ( Vertex ) );
 	    if ( tmpVertex == NULL )
@@ -467,7 +468,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		FREE_AND_CLOSE_ALL_OBJTOV3D
 		return EXIT_FAILURE;
 	    }
-	    
+
 	    Vcoord *tmpVertex2 = calloc ( faceVerticies, sizeof ( Vcoord ) ); // for surface normal calculation (when necessary)
 	    if ( tmpVertex2 == NULL )
 	    {
@@ -475,25 +476,25 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		FREE_AND_CLOSE_ALL_OBJTOV3D
 		return EXIT_FAILURE;
 	    }
-	    
+
 	    /* face type (triangle, quad, polygon) has been determined. Now, read input line until end and write face vertices. */
 	    token = strtok( lineBuffer, " " ); // first token contains "f" (face)
 	    token = strtok( NULL, " " ); // second token contains first v/vt/vn reference numbers
 	    long tabCounter;
 	    double first_i, first_j, first_k;
 	    bool faceNormal = true;
-	    
+
 	    if ( userModifier->invertFaces == 0 ) // default case: faces MUST be re-oriented
 	    {
 		tabCounter = faceVerticies;
-		
+
 		while( token != NULL ) {
 		    tabCounter--;
-		    
+
 		    if ( !( sscanf( token, " */%ld/*", &tmpVertex[tabCounter].vt ) ) ) // 'v' / no 'vt' / 'vn' case : sscanf will stop reading after 'v'
 			sscanf( token, " %ld//%ld", &tmpVertex[tabCounter].v, &tmpVertex[tabCounter].vn );
 		    sscanf( token, " %ld/%ld/%ld", &tmpVertex[tabCounter].v, &tmpVertex[tabCounter].vt, &tmpVertex[tabCounter].vn );
-		    
+
 		    token = strtok( NULL, " " ); // next token
 		}
 
@@ -511,9 +512,9 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    if ( !( sscanf( token, " */%ld/*", &tmpVertex[tabCounter].vt ) ) ) // 'v' / no 'vt' / 'vn' case : sscanf will stop reading after 'v'
 			sscanf( token, " %ld//%ld", &tmpVertex[tabCounter].v, &tmpVertex[tabCounter].vn ); // read v and vn
 		    sscanf( token, " %ld/%ld/%ld", &tmpVertex[tabCounter].v, &tmpVertex[tabCounter].vt, &tmpVertex[tabCounter].vn ); // read v, vt, and vn if any
-		    
+
 		    token = strtok( NULL, " " ); // next token
-		    
+
 		    tabCounter++;
 		}
 		for ( int cnt0 = 0; cnt0 < faceVerticies; cnt0++ )
@@ -523,7 +524,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    tmpVertex2[ cnt0 ].z = v[ faceVerticies - cnt0 ].z;
 		}
 	    }
-	    
+
 	    /* check faces has identical vertices */
 	    bool faceHasIdenticalVertexIndicies = false;
 	    for ( int cnt0 = 0; cnt0 < faceVerticies - 1; cnt0++ )
@@ -538,7 +539,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		if ( faceHasIdenticalVertexIndicies == true )
 		    break;
 	    }
-	    
+
 	    if ( faceHasIdenticalVertexIndicies == true )
 	    {
 		fprintf( stderr, " Warning in *.obj file, line #%ld: identical vertex indicies found in the same face. Face ignored.\n", lineNr );
@@ -557,7 +558,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    ; // DIV BY ZERO ERROR when calculating normal
 	    }
 	    else
-	    { // check if normal is a face normal (i.e. not a vertex one). If all vertices on a face have the same normal, then normal is a face normal. 
+	    { // check if normal is a face normal (i.e. not a vertex one). If all vertices on a face have the same normal, then normal is a face normal.
 		vnNum = tmpVertex[0].vn;
 		if ( vnNum > 0 )
 		{
@@ -571,13 +572,13 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    first_j = vn[normals + vnNum].j;
 		    first_k = vn[normals + vnNum].k;
 		}
-		
+
 		for ( tabCounter = 1; tabCounter < faceVerticies; tabCounter++ )
 		{
 		    vnNum = tmpVertex[tabCounter].vn;
 		    if ( vnNum > 0 )
 		    {
-			if ( ( vn[vnNum].i != first_i ) || ( vn[vnNum].j != first_j ) || ( vn[vnNum].k != first_k ) ) 
+			if ( ( vn[vnNum].i != first_i ) || ( vn[vnNum].j != first_j ) || ( vn[vnNum].k != first_k ) )
 			{
 			    faceNormal = false;
 			    break;
@@ -585,7 +586,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    }
 		    else // vnNum is negative (a *.obj vertex number can't be null)
 		    {
-			if ( ( vn[normals + vnNum].i != first_i ) || ( vn[normals + vnNum].j != first_j ) || ( vn[normals + vnNum].k != first_k ) ) 
+			if ( ( vn[normals + vnNum].i != first_i ) || ( vn[normals + vnNum].j != first_j ) || ( vn[normals + vnNum].k != first_k ) )
 			{
 			    faceNormal = false;
 			    break;
@@ -598,7 +599,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		}
 	    }
 	    free( tmpVertex2 );
-	    
+
 	    for ( tabCounter = 0; tabCounter < faceVerticies; tabCounter++ )
 	    {
 		vnNum = tmpVertex[tabCounter].vn;
@@ -612,7 +613,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    else // vnNum < 0
 			fprintf( fpOut, " normal %f %f %f\n", vn[normals + vnNum].i, vn[normals + vnNum].j, vn[normals + vnNum].k );
 		}
-		
+
 		vtNum = tmpVertex[tabCounter].vt;
 		// write texture coord only if vtNum is not equal to 0 and texture is on.
 		// "textureOn" test is not mandatory because texcoord statement is automatically ignored by v3d if texture is off,
@@ -623,7 +624,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    fprintf( fpOut, " texcoord %f %f\n", vt[vtNum].u, vt[vtNum].v );
 		else // vtNum < 0
 		    fprintf( fpOut, " texcoord %f %f\n", vt[textCoords + vtNum].u, vt[textCoords + vtNum].v );
-		
+
 		vNum = tmpVertex[tabCounter].v;
 		// write vertex coord
 		if ( vNum > 0 )
@@ -631,7 +632,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		else // vNum < 0
 		    fprintf( fpOut, " %f %f %f\n", v[vertices + vNum].x, v[vertices + vNum].y, v[vertices + vNum].z );
 	    }
-	    
+
 	    free( tmpVertex );
 	}
 	else if ( !strcmp( objTag, "mtllib" ) ) // material file
@@ -641,7 +642,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    */
 	    char mtlSourceTmp[ MAX_LENGTH + 1 ];
 	    char mtlSource[ 2 * MAX_LENGTH + 2 ];
-	    
+
 	    char *path = NULL;
 	    char *textureBaseName = NULL;
 	    char *modelBaseName = NULL;
@@ -663,7 +664,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    for ( originPos = start; originPos < strlen ( lineBuffer ); originPos++ )
 		tempBuffer[ copyPos++ ] = lineBuffer[ originPos ];
 	    tempBuffer[ copyPos ] = '\0';
-	    
+
 	    int mtllibFileStart[MAX_MTLLIB_FILENAMES], mtllibFileNr = 0;
 	    mtllibFileStart[mtllibFileNr++] = 0;
 
@@ -691,9 +692,9 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		for ( int cnt1 = mtllibFileStart[ cnt ]; cnt1 < mtllibFileStart[ cnt + 1 ]; cnt1++ )
 		    mtlSourceTmp[ copyPos++ ] = tempBuffer[ cnt1 ];
 		mtlSourceTmp[ copyPos ] = '\0';
-		
+
 		sprintf( mtlSource, "%s%s", path, mtlSourceTmp ); // put *.obj file path before mtl file name
-		
+
 		int result = readMtlFile( mtlSource, &mat, &materials );
 		if ( result == -1 )
 		{
@@ -708,10 +709,10 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    return EXIT_FAILURE;
 		}
 	    }
-	    
+
 	    fprintf( fpOut, "begin_header\n" );
 	    fprintf( fpOut, "creator v3dconverter\n" );
-	    
+
 	    if ( materials > 0 )
 	    {
 		if ( path != NULL )
@@ -744,19 +745,19 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 			    if ( modelBaseName[ cnt ] == ' ')
 				modelBaseName[ cnt ] = '_';
 			}
-			
+
 			// Use model base name as texture sub-directory name
 			fprintf( fpOut, "texture_load %s textures/%s/", mat[ cnt ].name, modelBaseName );
-			
+
 			char *fullFileName = strdup( mat[ cnt ].texName );
-			
+
 			scanFileName( fullFileName, &path, &textureBaseName, &extension ); // scan material texName to extract texture name
 			if ( fullFileName != NULL )
 			{
 			    free( fullFileName );
 			    fullFileName = NULL;
 			}
-			
+
 			// Use texture base name as *.tex texture file name
 			fprintf( fpOut, "%s.tex 0.8\n", textureBaseName );
 		    }
@@ -782,16 +783,16 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    extension = NULL;
 		}
 	    }
-	    
+
 	    fprintf( fpOut, "end_header\n\n" );
-	    
+
 	    /* Considering that 'mtllib' is the first statement of an *.obj file, once all texture_load lines are written,
 	     * we can write some generic statements.
 	     */
 	    fprintf( fpOut, "# Generic statements for making this object visible:\n" );
 	    //fprintf( fpOut, "type 1\n" ); // deprecated
 	    fprintf( fpOut, "range 2000\n\n" );
-	    
+
 	    fprintf( fpOut, "# Generic statement to add object smoothing. Generally, buildings do not need to be smoothed:\n" );
 	    fprintf( fpOut, "shade_model_smooth\n\n" );
 	}
@@ -802,7 +803,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		strcpy( previousV3dParam, "" );
 	    }
-	    
+
 	    char mtlName[MAX_LENGTH + 1];
 	    int cnt0 = 0, cnt1 = 0;
 	    while ( lineBuffer[cnt0++] != ' ' ); // discard "usemtl "
@@ -815,7 +816,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		mtlName[cnt1++] = lineBuffer[cnt0++];
 	    }
 	    mtlName[cnt1] = '\0'; // close string
-	    
+
 	    int mtlNr = 0;
 	    while ( mtlNr < materials ) // look for material number
 	    {
@@ -833,9 +834,9 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		double new_r = 0.2, new_g = 0.2, new_b = 0.2, new_a = 1.0, new_amb = 1.0, new_dif = 1.0, new_spe = 0.1, new_shi = 0.0, new_emi = 0.1; // init and default values
 		int counter = 0;
 		double KTotal = 0;
-		
+
 		// *** Remember that readMtlFile() initialized unread values to -1.0 ***
-		
+
 		/* Color */
 		if ( mat[ mtlNr ].KdR >= 0 )
 		    new_r = mat[ mtlNr ].KdR; // use mtl diffuse red color as v3d base color
@@ -849,19 +850,19 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    new_b = mat[ mtlNr ].KdB; // use mtl diffuse blue color as v3d base color
 		else
 		    ; // use default new_b value
-		
+
 		/* Transparency */
 		if ( mat[ mtlNr ].d >= 0 )
 		    new_a = mat[ mtlNr ].d; // transparency ( mtl "dissolve" coefficient )
 		else
 		    ; // use default new_a value
-		
+
 		/* Ambient coefficient */
 		new_amb = 1.0; // FIXME force ambient coefficient to 1.0 (as Blender seems to do).
-		
+
 		/* Diffuse coefficient */
 		new_dif = 1.0; // mtl Kd diffuse color was used as v3d base color, then Kd(r,g,b) / new_(r,g,b) = 1.0
-		
+
 		/* Specularity coefficent. FIXME Is this calculation right ??? */
 		counter = 0;
 		KTotal = 0.0;
@@ -884,13 +885,13 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    new_spe = KTotal / counter;
 		else
 		    ; // use default new_spe value
-		
+
 		/* Shininess coefficient */
 		if ( mat[ mtlNr ].Ns >= 0 )
 		    new_shi = mat[ mtlNr ].Ns / 1000; // Ns range is 0 to 1000
 		else
 		    ; // use default value
-		
+
 		/* Emission coefficient. FIXME Is this calculation right ??? */
 		counter = 0;
 		KTotal = 0.0;
@@ -913,14 +914,14 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    new_emi = KTotal / counter;
 		else
 		    ; // use default new_emi value
-		
+
 		if ( mat[ mtlNr ].texName != NULL ) // if material is a texture, force color to white
 		{
 		    new_r = 1.0;
 		    new_g = 1.0;
 		    new_b = 1.0;
 		}
-		
+
 		/* check if current color is same as new one */
 		if (	 currentColor.r == new_r
 		    &&   currentColor.g == new_g
@@ -947,7 +948,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    currentColor.spe = new_spe;
 		    currentColor.shi = new_shi;
 		    currentColor.emi = new_emi;
-		    
+
 		    if ( mat[ mtlNr ].texName == NULL ) // if material has no texture ...
 		    {
 			if ( textureOn == true ) // ... and if previous material was a textured one
@@ -956,19 +957,19 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 			    textureOn = false;
 			}
 		    }
-		    
+
 		    fprintf( fpOut, "\n#OBJFILE material: %s\n", mtlName );
 		    fprintf( fpOut, "color %.6f %.6f %.6f", currentColor.r, currentColor.g, currentColor.b ); // v3d base color
 		    fprintf( fpOut, " %.6f", currentColor.a  ); // transparency
 		    fprintf( fpOut, " %.6f %.6f %.6f %.6f %.6f\n", currentColor.amb, currentColor.dif, currentColor.spe, currentColor.shi, currentColor.emi ); // coefficients
 		}
-		
+
 		if ( mat[ mtlNr ].texName != NULL ) // if material is a texture, print it
 		{
 		    fprintf( fpOut, "texture_select %s\n", mat[ mtlNr ].name );
 		    textureOn = true;
 		}
-		
+
 		fprintf( fpOut, "\n" );
 	    }
 	}
@@ -979,7 +980,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    int cnt = 0;
 	    while ( lineBuffer[ cnt ] != '\n' && lineBuffer[ cnt++ ] != '\r' );
 	    lineBuffer[ cnt ] = '\0';
-	    
+
 	    fprintf( fpOut, "#OBJFILE group: %s\n", lineBuffer );
 	}
 	*/
@@ -990,7 +991,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		strcpy( previousV3dParam, "" );
 	    }
-	    
+
 	    // Don't convert obj 's' statement into v3d 'shade_model_*' because only one 'shade_model_*' per V3d object.
 	    /*
 	    int foo = -1;
@@ -1017,26 +1018,26 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "texture_off\n" );
 		textureOn = false;
 	    }
-	    
+
 	    /* check if object name is known as a v3d model type */
 	    char objectName[MAX_LENGTH + 1];
 	    int cnt = 0;
 	    sscanf( lineBuffer, " %*s %[^\n]", objectName ); // read object name
-	    
+
 	    while ( cnt < V3DMODELTYPES )
 	    {
 		if ( !strcmp( objectName, v3dModelType[ cnt ] ) ) // if object name found in v3dModelType[] array
 		    break;
 		cnt++;
 	    }
-	    
+
 	    if ( cnt != V3DMODELTYPES ) // if object name is a v3d model type
 	    {
 		if ( currentV3dModelType[0] != '\0' )
 		{
 		    fprintf( fpOut, "end_model %s\n", currentV3dModelType );
 		}
-		
+
 		fprintf( fpOut, "begin_model %s\n", objectName );
 		strcpy( currentV3dModelType, objectName );
 	    }
@@ -1051,7 +1052,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		    fprintf( fpOut, "#OBJFILE object:  %s\n", objectName );
 		else
 		    fprintf( fpOut, "#OBJFILE group:  %s\n", objectName );
-		
+
 		if ( firstObject )
 		{
 		    strcpy( currentV3dModelType, "standard" );
@@ -1066,7 +1067,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 	    int cnt = 0;
 	    while ( lineBuffer[ cnt ] != '\n' && lineBuffer[ cnt++ ] != '\r' );
 	    lineBuffer[ cnt ] = '\0';
-	    
+
 	    fprintf( fpOut, "#OBJFILE comment: %s\n", lineBuffer );
 	}
 	else if ( !strcmp( objTag, "curv" ) || !strcmp( objTag, "curv2" ) || !strcmp( objTag, "surf" ) )
@@ -1080,20 +1081,20 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 		fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (if any)
 		strcpy( previousV3dParam, "" );
 	    }
-	    
+
 	    fprintf( stderr, " Warning in *.obj file, line #%ld: unknown tag \"%s\".\n", lineNr, objTag );
 	}
 
 	lineNr++;
-	
+
     } // end of main file read/write loop
-	
+
     if ( previousV3dParam[0] != '\0' )
 	fprintf( fpOut, "end_%s\n", previousV3dParam ); // write end of previous parameter type (triangle, quad, line, ...), if any.
-    
+
     if ( currentV3dModelType[0] != '\0' )
 	fprintf( fpOut, "end_model %s\n", currentV3dModelType ); // write end of previous model type (if any)
-    
+
     // print some usefull information at start of v3d output file and on console
     FILE* tmp = tmpfile();
     int c;
@@ -1116,11 +1117,12 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
     while ( ( c = fgetc( tmp ) ) != EOF )
         fputc( c, fpOut );
     fclose( tmp );
+    tmp = NULL;
 
     //fprintf( stderr, "Number of\n  vertices: %ld\n    normals: %ld\n textCoords: %ld\n      faces: %ld\n", vertices, normals, textCoords, faces );
-    
+
     FREE_AND_CLOSE_ALL_OBJTOV3D
-     
+
     return EXIT_SUCCESS;
 }
 
@@ -1130,12 +1132,12 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mt
     char lineBuffer[MAX_LENGTH + 1], fileName[MAX_LENGTH + 1] = "", mtlLibTag[MAX_LENGTH + 1];
     long mtlLibLineNr = 1;
     Material *tmpMat = NULL, *localMat = NULL;
-    
+
     if ( ( fpIn = fopen( mtllibSource, "r" ) ) == NULL)
     {
 	return -1;
     }
-    
+
     tmpMat = realloc( *mat, (*mtl + 1) * sizeof( Material ) );
     if (tmpMat == NULL)
     {
@@ -1145,7 +1147,7 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mt
     localMat = tmpMat;
 
     (*mtl)--; // because mtl will be incremented before first use
-    
+
     // Read each line of .mtl file
     while ( fgets( lineBuffer, MAX_LENGTH, fpIn ) ) {
 	if ( lineBuffer[ 0 ] == '\n' || lineBuffer[ 0 ] == '\r' || ( sscanf( lineBuffer, " %s", mtlLibTag ) ) == 0 ) // blank line or objTag == ""
@@ -1157,7 +1159,7 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mt
 	if ( !strcmp( mtlLibTag, "newmtl" ) ) // new material
 	{
 	    (*mtl)++;
-	    
+
 	    tmpMat = realloc( localMat, ( *mtl + 1 ) * sizeof( Material ) );
 	    if (tmpMat == NULL)
 	    {
@@ -1179,7 +1181,7 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mt
 	    }
 	    fileName[cnt1] = '\0'; // close string
 	    localMat[ *mtl ].name = strdup( fileName );
-	    
+
 	    // init
 	    localMat[ *mtl ].KaR = -1.0; localMat[ *mtl ].KaG = -1.0; localMat[ *mtl ].KaB = -1.0;
 	    localMat[ *mtl ].KdR = -1.0; localMat[ *mtl ].KdG = -1.0; localMat[ *mtl ].KdB = -1.0;
@@ -1246,7 +1248,7 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mt
 	{
 	    int cnt = 0;
 	    int bufLength = strlen( lineBuffer );
-	    
+
 	    /* Extract file name from buffer string, then replace file name spaces (if any) by underscores */
 	    while ( ( cnt < bufLength ) && ( isspace( lineBuffer[ cnt ] ) ) ) // look for next non-blank character
 		cnt++;
@@ -1259,11 +1261,11 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mt
 	    fileName[0] = '\0';
 	    sscanf( lineBuffer, " map_Kd_%s", fileName );
 
-	    if ( fileName[0] == '\0' ) 
+	    if ( fileName[0] == '\0' )
 	    {
 		fprintf( stderr, " Warning in file '%s' line #%ld: map_Kd has no file name.\n", mtllibSource, mtlLibLineNr );
 	    }
-	    else if ( fileName[0] != '-' ) 
+	    else if ( fileName[0] != '-' )
 	    {
 		localMat[ *mtl ].texName = strdup( fileName );
 	    }
@@ -1315,7 +1317,8 @@ int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mt
 	*mat = localMat;
     }
     fclose( fpIn );
-    
+    fpIn = NULL;
+
     (*mtl)++; // because mtl was decremented before entering main reading loop
 
     return EXIT_SUCCESS;

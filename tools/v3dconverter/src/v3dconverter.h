@@ -15,9 +15,10 @@
 ***********************************************************************/
 
 
-#define VERSION "0.3.2"
+#define VERSION "0.3.3"
 
 #include <linux/limits.h> // for PATH_MAX
+#include <stdbool.h>
 #define MAXPATHLENGTH PATH_MAX
 
 #define MAX_LENGTH 2048
@@ -25,6 +26,12 @@
 
 #define OBJ_OBJECT_NAME_TERRAIN "Terrain"
 #define OBJ_OBJECT_NAME_V3DCONVERTER_DATA "v3dConverter_data_DO_NOT_REMOVE"
+
+// TGA image descriptor, bits 5 & 4
+#define TGA_BOTTOM_LEFT_MASK  0b00000000
+#define TGA_BOTTOM_RIGHT_MASK 0b00010000
+#define TGA_TOP_LEFT_MASK     0b00100000
+#define TGA_TOP_RIGHT_MASK    0b00110000
 
 typedef struct UserModifier UserModifier;
 struct UserModifier {
@@ -35,7 +42,8 @@ struct UserModifier {
     double ty;
     double tz;
     double scale;
-    unsigned short invertFaces;
+    bool invertFaces;
+    bool doNotTransformModels;
 };
 
 // vertex geometric coords

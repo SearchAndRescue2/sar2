@@ -43,7 +43,7 @@ int main( int argc, char *argv[] )
     char *scaleString;
     char lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1];
     FILE *fp;
-    
+
     struct UserModifier userModifier;
     userModifier.rx = 0;
     userModifier.ry = 0;
@@ -53,7 +53,8 @@ int main( int argc, char *argv[] )
     userModifier.tz = 0;
     userModifier.scale = 1.0;
     userModifier.invertFaces = false;
-    
+    userModifier.doNotTransformModels = false;
+
     if ( argc == 1 )
     {
 	fprintf( stdout, "Try \"%s -h\" for help.\n", argv[0] );
@@ -67,6 +68,8 @@ int main( int argc, char *argv[] )
         fprintf( stdout, "   OPTIONS:\n");
         fprintf( stdout, "     -if\n");
         fprintf( stdout, "        Invert faces visibility (flip winding).\n");
+	fprintf( stdout, "     -do-not-transform\n");
+        fprintf( stdout, "        Do not apply any translation and/or rotation when converting a *.3d model or *.hf terrain to an other file format: usefull  to center a terrain tile in Blender or to understand how to create rotors, gears, ailerons, and other moving parts.\n");
 	fprintf( stdout, "     -ro x y z\n");
         fprintf( stdout, "        Rotate object of x, y, and z degrees around respectives axes.\n" );
 	fprintf( stdout, "     -sc scale\n");
@@ -95,10 +98,10 @@ int main( int argc, char *argv[] )
 	fprintf( stdout, "        .   : Not planned.\n" );
 	fprintf( stdout, "     For other formats, try assimp: https://www.assimp.org/\n" );
         fprintf( stdout, "     \n" );
-	
+
         return 0;
     }
-    
+
     /* Read command line arguments */
     for ( unsigned short counter = 1; counter < argc; counter++ )
     {
@@ -126,6 +129,10 @@ int main( int argc, char *argv[] )
 	{
             userModifier.invertFaces = true;
         }
+	else if ( !strcmp(argv[counter], "-do-not-transform") ) // do not apply rotate / translate during *.3d to *.obj conversion
+	{
+	    userModifier.doNotTransformModels = true;
+        }
         else if ( !strcmp(argv[counter], "-sc") ) // scale model
 	{
             if ( counter < argc )
@@ -135,7 +142,7 @@ int main( int argc, char *argv[] )
 		fprintf( stderr, "Error while reading scale.\n" );
 		return 0;
 	    }
-	    
+
             if ( memchr( scaleString, '/', strlen(scaleString) ) != NULL )
 	    {
                 long dividend = 1, divider = 1;
@@ -144,7 +151,7 @@ int main( int argc, char *argv[] )
             }
             else
                 sscanf( scaleString, "%lf", &userModifier.scale );
-	    
+
             if ( userModifier.scale < 0 )
 	    {
 		fprintf( stdout, "\033[7mNegative scale will produce strange results. You've been warned!\033[0m\n" );
@@ -206,7 +213,7 @@ int main( int argc, char *argv[] )
 	    return 0;
 	}
     }
-    
+
     /* Convert */
     if ( !strcmp( extOf( source ), ".3d") && !strcmp( extOf( destination ), ".obj" ) )
     {
@@ -239,7 +246,7 @@ int main( int argc, char *argv[] )
 		;
 	}
 	fclose( fp );
-	
+
 	/* Select the right function, depending of *.3d file type ("object" or "terrain") */
 	if ( !hasHeightfield )
 	{ // it is *.3d object file
@@ -301,6 +308,11 @@ int main( int argc, char *argv[] )
 		userModifier.tx = 0;
 		userModifier.ty = 0;
 		userModifier.tz = 0;
+	}
+	if ( userModifier.invertFaces == true )
+	{
+	    fprintf( stdout, "[ INFO ] -do-not-transform (do not apply any translation and/or rotation) option currently not available in *.ac to *.3d conversion.\n" );
+	    userModifier.doNotTransformModels = false;
 	}
         ac3dToV3d( source, destination, &userModifier );
     }
