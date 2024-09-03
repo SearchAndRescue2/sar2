@@ -1201,29 +1201,49 @@ static void SARDrawPart(
 	    /* Begin drawing by part type */
 	    switch(part->type)
 	    {
-#define DO_DRAW_CONTROL_PART {			\
- glTranslatef(					\
-  pos_cen->x, pos_cen->z, -pos_cen->y		\
- );						\
- theta = dir_cen->heading + heading_mod;	\
- if(theta != 0.0f)				\
-  glRotatef(					\
-   (GLfloat)-SFMRadiansToDegrees(theta),	\
-   0.0f, 1.0f, 0.0f				\
-  );						\
- theta = dir_cen->pitch + pitch_mod;		\
- if(theta != 0.0f)				\
-  glRotatef(					\
-   (GLfloat)-SFMRadiansToDegrees(theta),	\
-   1.0f, 0.0f, 0.0f				\
-  );						\
- theta = dir_cen->bank + bank_mod;		\
- if(theta != 0.0f)				\
-  glRotatef(					\
-   (GLfloat)-SFMRadiansToDegrees(theta),	\
-   0.0f, 0.0f, 1.0f				\
-  );						\
- SARVisualModelCallList(vmodel);		\
+#define DO_DRAW_CONTROL_PART {				\
+ /* First, move control part to the right place */	\
+  glTranslatef(						\
+   pos_cen->x, pos_cen->z, -pos_cen->y			\
+  );							\
+  theta = dir_cen->heading;				\
+  if(theta != 0.0f)					\
+   glRotatef(						\
+    (GLfloat)-SFMRadiansToDegrees(theta),		\
+    0.0f, 1.0f, 0.0f					\
+   );							\
+  theta = dir_cen->pitch;				\
+  if(theta != 0.0f)					\
+   glRotatef(						\
+    (GLfloat)-SFMRadiansToDegrees(theta),		\
+    1.0f, 0.0f, 0.0f					\
+   );							\
+  theta = dir_cen->bank;				\
+  if(theta != 0.0f)					\
+   glRotatef(						\
+    (GLfloat)-SFMRadiansToDegrees(theta),		\
+    0.0f, 0.0f, 1.0f					\
+   );							\
+ /* Then, apply modification angle */			\
+ theta = heading_mod;					\
+ if(theta != 0.0f)					\
+  glRotatef(						\
+   (GLfloat)-SFMRadiansToDegrees(theta),		\
+   0.0f, 1.0f, 0.0f					\
+  );							\
+ theta = pitch_mod;					\
+ if(theta != 0.0f)					\
+  glRotatef(						\
+   (GLfloat)-SFMRadiansToDegrees(theta),		\
+   1.0f, 0.0f, 0.0f					\
+  );							\
+ theta = bank_mod;					\
+ if(theta != 0.0f)					\
+  glRotatef(						\
+   (GLfloat)-SFMRadiansToDegrees(theta),		\
+   0.0f, 0.0f, 1.0f					\
+  );							\
+ SARVisualModelCallList(vmodel);			\
 }
 
 	      case SAR_OBJ_PART_TYPE_AILERON_LEFT:
