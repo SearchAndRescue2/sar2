@@ -20,7 +20,7 @@
 //
 // Key words:
 // NAME : parameter name, without any space.
-// SYNOPSIS : first word is parameter name and will be automatically bolded, following words are arguments. For optional arguments, space before and after brackets ('[' ']') are mandatory. Example: 'parameterName arg1 arg2 [ opt_arg ] [ ... ]'. 
+// SYNOPSIS : first word is parameter name and will be automatically bolded, following words are arguments. For optional arguments, space before and after brackets ('[' ']') are mandatory. Example: 'parameterName arg1 arg2 [ opt_arg ] [ ... ]'.
 // DESCRIPTION : what the parameter do.
 // ARGUMENTS : parameter arguments. One argument per line. First word must be argument name, all following words are argument description. Arguments will be drawn in a HTML table. Use '(none)' as argument name if parameter has no argument.
 // CONTEXT values: use 'mis' for mission (*.mis file), '3d' for model (*.3d file) and 'scn' for scenery (*.scn file). At least one context is mandatory. Space is mandatory between two context names.
@@ -159,7 +159,7 @@ __dep_dheading deployed air brake heading direction.\
 __dep_dpitch deployed air brake pitch direction.\
 __dep_dbank deployed air brake bank direction.\
 __deployed? air brake initially deployed ?\
-__anim_rate animation rate\
+__anim_rate animation rate (speed of air brake movement). Animation rate should be set in accordance to air brake sound duration (see ##sound_source_new air_brake_*).\
 __visible_when_retracted? is air brake visible when retracted ?\
 __CONTEXT\
 __3d\
@@ -344,14 +344,14 @@ __ standard_dusk : optional model to display at dusk.\
 __ standard_far : optional model to display from far away. See ##range_far .\
 __ standard_night : optional model to display at night.\
 __ rotor : (if any). Begins the model block of an aircraft main or tail rotor. See ##rotor_new for rotor settings.\
-__ aileron_left : (if any). Begins the model block of the left aileron. See ##aileron_left_new for aileron_left settings.\
-__ aileron_right : (if any). Begins the model block of the right aileron. See ##aileron_right_new for aileron_right settings.\
-__ rudder_top : (if any). Begins the model block of the top rudder. See ##rudder_top_new for rudder_top settings.\
-__ rudder_bottom : (if any). Begins the model block of the bottom rudder. See ##rudder_bottom_new for rudder_bottom settings.\
+__ aileron_left : (if any). Begins the model block of a (wing) left aileron. See ##aileron_left_new for aileron_left settings.\
+__ aileron_elevator_left : (if any). Begins the model block of a (tail) left elevator aileron. See ##aileron_elevator_left_new for aileron_elevator_left settings.\
+__ aileron_right : (if any). Begins the model block of a (wing) right aileron. See ##aileron_right_new for aileron_right settings.\
+__ aileron_elevator_right : (if any). Begins the model block of a (tail) right elevator aileron. See ##aileron_elevator_right_new for aileron_elevator_right settings.\
+__ rudder_top : (if any). Begins the model block of a top rudder. See ##rudder_top_new for rudder_top settings.\
+__ rudder_bottom : (if any). Begins the model block of a bottom rudder. See ##rudder_bottom_new for rudder_bottom settings.\
 __ elevator : (if any). Begins the model block of an elevator. See ##elevator_new for elevator settings.\
 __ cannard : (if any). Begins the model block of a cannard. See ##cannard_new for cannard settings.\
-__ aileron_elevator_left : (if any). Begins the model block of a left elevator aileron. See ##aileron_elevator_left_new for aileron_elevator_left settings.\
-__ aileron_elevator_right : (if any). Begins the model block of a right elevator aileron. See ##aileron_elevator_right_new for aileron_elevator_right settings.\
 __ flap : (if any). Begins the model block of a flap. See ##flap_new for flap settings.\
 __ air_brake : (if any). Begins the model block of an air brake. See ##air_brake_new for air_brake settings.\
 __ landing_gear : (if any). Begins the model block of a landing gear. See ##landing_gear_new for landing gear settings.\
@@ -496,9 +496,9 @@ __belly_height\
 __SYNOPSIS\
 __belly_height height\
 __DESCRIPTION\
-__Belly height.\
+__Belly to aircraft center height.\
 __ARGUMENTS\
-__height belly height, in meters.\
+__height height, in meters. See ##gear_height for belly to gear height. \
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -600,7 +600,7 @@ __contact_cylendrical\
 __SYNOPSIS\
 __contact_cylendrical radius height_min height_max\
 __DESCRIPTION\
-__Defines cylendricals contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter. Only one contact_* supported per object.\
+__Defines cylendricals contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter. Only one contact_* supported per object.<br>Note: contact bound pitch and bank are never rotated, even if corresponding object is.\
 __ARGUMENTS\
 __radius radius of the cylinder, in meters.\
 __height_min min height of the cylinder, in meters. Must be lower than height_max.\
@@ -620,7 +620,7 @@ __contact_rectangular\
 __SYNOPSIS\
 __contact_rectangular x_min x_max y_min y_max z_min z_max\
 __DESCRIPTION\
-__Defines rectangulars contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter. Only one contact_* supported per object.\
+__Defines rectangulars contact bounds for interaction with other objects. Must be used in conjunction with the ##crash_flags parameter. Only one contact_* supported per object.<br>Note 1: only contact bound heading is rotated, pitch and bank are never, even if corresponding object is.<br>Note 2: collision between two objetcs with rectangular contact bounds is not yet available (look for \"/* Rectangular to Rectangular  */\" in simcontact.c).\
 __ARGUMENTS\
 __x_min min value in X direction, in meters. Must be lower than x_max.\
 __x_max max value in X direction, in meters. Must be greater than x_min.\
@@ -661,11 +661,11 @@ __control_panel\
 __SYNOPSIS\
 __control_panel x y z heading pitch bank width height path\
 __DESCRIPTION\
-__Control panel position and dimension. //FIXME: control panel is not fully implemented (not drawn).\
+__Control panel position and dimension. <b>Control panel is not yet fully implemented</b> (not drawn).\
 __ARGUMENTS\
-__x control panel X position, in centimeters.\
-__y control panel Y position, in centimeters.\
-__z control panel Z position, in centimeters.\
+__x control panel X position from center of cockpit, in centimeters.\
+__y control panel Y position from center of cockpit, in centimeters.\
+__z control panel Z position from center of cockpit, in centimeters.\
 __heading control panel heading, in degrees.\
 __pitch control panel pitch, in degrees.\
 __bank control panel bank, in degrees.\
@@ -861,7 +861,6 @@ __SYNOPSIS\
 __create_premodeled type range height hazard_lights\
 __create_premodeled type range length width height walls_texture roof_texture\
 __create_premodeled type range length width height walls_texture walls_texture_night roof_texture\
-__create_premodeled type range length width height roof_slopes is_lighted? walls_texture roof_texture [ floor_texture ]\
 __DESCRIPTION\
 __Creates a pre-modeled object.\
 __ARGUMENTS\
@@ -888,16 +887,6 @@ __walls_texture name of the walls texture to use when it is day. See ##texture_l
 __walls_texture_night name of the walls texture to use when it is night. See ##texture_load .\
 __roof_texture name of the roof texture. See ##texture_load .\
 __ <hr>\
-__<b>type</b> if <b>hangar</b> (warning: <b>SaR II > 2.5.0 only!</b>), then arguments are:\
-__range visible range, in meters.\
-__length length, in meters.\
-__width width, in meters.\
-__height side walls height, in feet.\
-__roof_slopes roof slopes. Can be 2 (one left, one right) or 4 (two left, two right).\
-__is_lighted? Is hangar lighted at night? Can be y (yes) or n (no).\
-__walls_texture name of the walls texture. This texture must include day and night texture in the same image file. See ##texture_load .\
-__roof_texture name of the roof texture. See ##texture_load .\
-__floor_texture name of the floor texture. If not specified, floor will be painted to grey. See ##texture_load .\
 __CONTEXT\
 __mis scn\
 __EXAMPLES\
@@ -1375,6 +1364,7 @@ __rudder_top_new x y z heading pitch bank t_min t_max\
 __rudder_bottom_new x y z heading pitch bank t_min t_max\
 __elevator_new x y z heading pitch bank t_min t_max\
 __cannard_new x y z heading pitch bank t_min t_max\
+## x y z heading pitch bank t_min t_max\
 __aileron_elevator_left_new x y z heading pitch bank t_min t_max\
 __aileron_elevator_right_new x y z heading pitch bank t_min t_max\
 __flap_new x y z heading pitch bank t_min t_max\
@@ -1384,15 +1374,30 @@ __ARGUMENTS\
 __x flight control surface X position.\
 __y flight control surface Y position.\
 __z flight control surface Z position.\
-__heading flight control surface heading direction.\
-__pitch flight control surface pitch direction.\
-__bank flight control surface bank direction.\
+__heading flight control surface heading rotation.\
+__pitch flight control surface pitch rotation. Important: pitch rotation is applied after part heading rotation.\
+__bank flight control surface bank rotation. Important: bank rotation is applied after part pitch rotation.\
 __t_min flight control surface minimum 'toe' (stop) angle, in degrees.\
 __t_max flight control surface maximum 'toe' (stop) angle, in degrees.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
-__#\
+__# Left wing aileron\
+__# Note that for a <b>tail</b> left aileron & elevator we would use <b>aileron_elevator_left_new</b> instead of <b>aileron_left_new</b>.\
+__#aileron_left_new&nbsp;&lt;x>&nbsp;&lt;y>&nbsp;&lt;z>&nbsp;&lt;heading>&nbsp;&lt;pitch>&nbsp;&lt;bank>&nbsp;&lt;t_min>&nbsp;&lt;t_max>\
+__aileron_left_new  -2.8 -3.47 0.0  19.95 0.0 0.0  -22.5 22.5\
+__<br>\
+__##begin_model aileron_left\
+__##color 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 0.500000 0.300000 0.000000\
+__##texture_select yf22_wing_left_top\
+__<br>\
+__# Next two lignes should match to flight control surface x, y, z and h, p, b values. Warning: because aircraft viewer don't use 'in game' routines, you should always check the result of these two lines in \"Free Flight -> Aircraft -> Details...\".\
+__##translate -2.8 -3.47 0.0\
+__##rotate 19.95 0.0 0.0\
+__<br>\
+__... (some primitives)\
+__<br>\
+__##end_model aileron_left\
 \
 __-----\
 \
@@ -1421,7 +1426,7 @@ __fuel&nbsp;(*.scn)\
 __SYNOPSIS\
 __fuel current max\
 __DESCRIPTION\
-__//FIXME: Defines the current fuel level and max fuel capacity of the helipad / runway refueling station ? Found in sarfioopen.c and sceneio.c .\
+__//FIXME: Defines the current fuel level and max fuel capacity of the aircraft (look for \"case SAR_PARM_FUEL\" in sceneio.c). Seems to have no effect.\
 __ARGUMENTS\
 __current current fuel quantity, in kg. Must be positive or null, and lower or equal to max_fuel.\
 __max max fuel quantity, in kg. //FIXME: Can be positive or null, or negative. Negative to indicate illimited quantity ?\
@@ -1438,14 +1443,14 @@ __fuel_tank_new x y z radius btc_h dry_mass fuel fuel_max droppable?\
 __DESCRIPTION\
 __New external fuel tank.\
 __ARGUMENTS\
-__x fuel tank X position.\
-__y fuel tank Y position.\
-__z fuel tank Z position.\
+__x fuel tank X position, relative to aircraft center, in meters.\
+__y fuel tank Y position, relative to aircraft center, in meters.\
+__z fuel tank Z position, relative to aircraft center, in meters.\
 __radius fuel tank radius. Must be positive or null.\
-__btc_h belly to center height distance.\
-__dry_mass fuel tank dry mass. Must be positive or null.\
-__fuel quantity of fuel in fuel tank. Must be positive or null.\
-__fuel_max maximum quantity of fuel in fuel tank. Must be greater or equal to 'fuel'.\
+__btc_h belly to center height distance, in meters.\
+__dry_mass fuel tank dry mass, in kg. Must be positive or null.\
+__fuel quantity of fuel in fuel tank, in kg. Must be positive or null.\
+__fuel_max maximum quantity of fuel in fuel tank, in kg. Must be greater or equal to 'fuel'.\
 __droppable? is this fuel tank droppable (0 if No, 1 if Yes) ?\
 __CONTEXT\
 __3d\
@@ -1468,9 +1473,9 @@ __gear_height\
 __SYNOPSIS\
 __gear_height height\
 __DESCRIPTION\
-__Gear height.\
+__Gear (down position) to belly height. See ##belly_height for belly to aircraft center height.\
 __ARGUMENTS\
-__height must be positive or null.\
+__height height, in meters. Must be positive or null.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -1683,7 +1688,7 @@ __z landing gear Z position.\
 __heading landing gear heading direction.\
 __pitch landing gear pitch direction.\
 __bank landing gear bank direction.\
-__anim_rate landing gear animation rate.\
+__anim_rate landing gear animation rate (speed of gear movement). Animation rate should be set in accordance to gear sound duration (see ##sound_source_new gear_*).\
 __up? landing gear initially up ?\
 __fixed? is landing gear fixed? If not, landing gear is retractable. 1 for yes, 0 for no.\
 __skis? has landing gear skis ? 1 for yes, 0 for no.\
@@ -1712,8 +1717,8 @@ __a alpha (transparency) value for light color.\
 __radius light radius, in pixels. Must be positive. Use 0 for default radius.\
 __init_on? if positive, light will be on. If 0, light will be off.\
 __type type of light. Can be: 0 for standard light, 1 for strobe light, or 2 for spot light.\
-__&nbsp;&nbsp;int_on interval ON, in milliseconds. Applies only to strobes, otherwise leave as 0. Time on for strobe light: total time for light to go from 50% to 100% then from 100% to 50% of its radius. Must be a positive or null integer.\
-__&nbsp;&nbsp;int_off interval OFF, in milliseconds. Applies only to strobes, otherwise leave as 0. Time off for strobe light: total time for light to go from 50% to 0% then from 0% to 50% of its radius. Must be a positive or null integer.\
+__&nbsp;&nbsp;int_on light ON delay, in milliseconds. Applies only to strobes, otherwise leave as 0. Total time for light to go from 50% to 100% then from 100% to 50% of its radius. Must be a positive or null integer.\
+__&nbsp;&nbsp;int_off light OFF delay, in milliseconds. Applies only to strobes, otherwise leave as 0. Total time for light to go from 50% to 0% then from 0% to 50% of its radius. Must be a positive or null integer.\
 __&nbsp;&nbsp;int_on_delay in milliseconds. Applies only to strobes, otherwise leave as 0. \"Additional interval to wait before turning light on when timer is reset\". Must be a positive or null integer. //FIXME: seems to have no effect.\
 __CONTEXT\
 __3d\
@@ -2351,7 +2356,7 @@ __b_opened door opened bank.\
 __x_thres X position of the center of the door frame on the fuselage. X/Y/Z threshold defines the position at which one a human boards.\
 __y_thres Y position of the center of the door frame on the fuselage.\
 __z_thres Z position of the center of the door frame on the fuselage.\
-__anim_rate door animation rate (speed of door movement).\
+__anim_rate door animation rate (speed of door movement). Animation rate should be set in accordance to door sound duration (see ##sound_source_new door_*).\
 __opened? is this door opened by default at model generation? Can be y (yes) or n (no).\
 __CONTEXT\
 __3d\
@@ -2455,8 +2460,8 @@ __follow_controls? follow controls for pitch and bank? 0 if no, 1 if yes.\
 __blur_criteria can be: 0 (never blur), 1 (blur when spinning fast), 2 (blur always). Defines when blur effect must be applied. See ##rotor_blade_blur_texture and ##rotor_blur_color .\
 __can_pitch? can pitch? 0 if no, 1 if yes. If 1 (yes), rotor can be rocked around its X axis with in game \"Y\" key. Example: Boeing V-22 Ospray. See ##engine 'can_pitch?' argument too. \
 __no_pitch_landed? no pitching of rotors when landed? 0 if no, 1 if yes.\
-__no_rotate? no rotate?\
-__blades_offset blades offset in rotor axis direction, in meter.\
+__no_rotate? no rotor blades animation at engine startup? If 1 (yes), rotor blades will not rotate around rotor axis at startup. Default is 0.\
+__blades_offset rotor blades blur offset in rotor axis direction, in meter.\
 __CONTEXT\
 __3d\
 __EXAMPLE\
@@ -2465,6 +2470,7 @@ __rotor_new 4&nbsp; 0.0&nbsp; 0.0&nbsp; 0.8&nbsp; 0.0&nbsp; 0.0&nbsp; 0.0&nbsp; 
 __##rotor_blur_color 0.2&nbsp; 0.2&nbsp; 0.2&nbsp; 0.75\
 __##rotor_blade_blur_texture rotor_blade_blur_tex\
 __##begin_model rotor\
+__# Next 2 lignes must report rotor_new x, y, z and h, p, b values (necessary for Free Flight->Aircraft->Details... viewer).\
 __##translate 0.0 0.0 0.8\
 __##rotate 0.0 0.0 0.0\
 __...\
