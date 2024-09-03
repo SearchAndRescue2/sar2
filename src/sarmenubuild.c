@@ -2351,58 +2351,24 @@ int btn_width_map = 32, btn_height_map = 32;
 	    SARBuildMenusAddToList(core_ptr, menu);
 	menu->always_full_redraw = opt->menu_always_full_redraw;
 
-	/* First joystick (js0) axis roles */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.50f, 0.26f, 0.9f, 0.0f,
-	    "Joystick #1 Axises", SAR_MENU_ID_OPT_JS0_AXISES,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "Off");
-	    SARMenuSpinAddValue(menu, spin_num, "2D");
-	    SARMenuSpinAddValue(menu, spin_num, "2D with throttle");
-	    SARMenuSpinAddValue(menu, spin_num, "2D with hat");
-	    SARMenuSpinAddValue(menu, spin_num, "2D with throttle & hat");
-	    SARMenuSpinAddValue(menu, spin_num, "3D");
-	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle");
-	    SARMenuSpinAddValue(menu, spin_num, "3D with hat");
-	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
-	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
-	    SARMenuSpinAddValue(menu, spin_num, "As rudder & wheel brakes");
-	}
-
-	/* Second joystick (js1) axis roles */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.50f, 0.55f, 0.9f, 0.0f,
-	    "Joystick #2 Axises", SAR_MENU_ID_OPT_JS1_AXISES,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "Off");
-	    SARMenuSpinAddValue(menu, spin_num, "2D");
-	    SARMenuSpinAddValue(menu, spin_num, "2D with throttle");
-	    SARMenuSpinAddValue(menu, spin_num, "2D with hat");
-	    SARMenuSpinAddValue(menu, spin_num, "2D with throttle & hat");
-	    SARMenuSpinAddValue(menu, spin_num, "3D");
-	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle");
-	    SARMenuSpinAddValue(menu, spin_num, "3D with hat");
-	    SARMenuSpinAddValue(menu, spin_num, "3D with throttle & hat");
-	    SARMenuSpinAddValue(menu, spin_num, "As throttle & rudder");
-	    SARMenuSpinAddValue(menu, spin_num, "As rudder & wheel brakes");
-
-	}
-
-	/* Test Joystick Button */
+	/* Go to Joystick test and mapping */
 	btn_num = SARMenuBuildStandardButton(
-	    core_ptr, menu, 0.75f, 0.74f, btn_width_std, btn_height_std,
+	    core_ptr, menu, 0.28f, 0.20f, btn_width_opt, btn_height_opt,
 	    True,
-	    "Test...", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_TEST
+	    " Joystick... ", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JOYSTICK
+	);
+
+	/* Go to Keyboard mapping */
+	/* This button is set to not sensitive because this option is
+	 * not yet available.
+	 * Current sar2 QWERTY layout can cause some problems, especially for
+	 * wheel brakes keys (period and shift+period, i.e. '.' and '>'), which
+	 * positions are radically different on (at least) an AZERTY keyboard.
+	 */
+	btn_num = SARMenuBuildStandardButton(
+	    core_ptr, menu, 0.28f, 0.33f, btn_width_opt, btn_height_opt,
+	    False,
+	    " Keyboard... ", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_KB_MAPPING
 	);
 
 	/* Back Button */
@@ -2412,7 +2378,7 @@ int btn_width_map = 32, btn_height_map = 32;
 #if defined(PROG_LANGUAGE_SPANISH)
 "Espalda"
 #elif defined(PROG_LANGUAGE_FRENCH)
-"Dos"
+"Retour"
 #elif defined(PROG_LANGUAGE_GERMAN)
 "Zurück"
 #elif defined(PROG_LANGUAGE_ITALIAN)
@@ -2429,20 +2395,13 @@ int btn_width_map = 32, btn_height_map = 32;
 	    , SAR_MENU_ID_GOTO_OPTIONS
 	);
 
-	/* Joystick Button Mapping Button */
-	btn_num = SARMenuBuildStandardButton(
-	    core_ptr, menu, 0.75f, 0.92f, btn_width_std, btn_height_std,
-	    True,
-	    "Buttons", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JS_BTN
-	);
-
 
 	/* ****************************************************** */
-	/* Menu: Options->Controller->Buttons */
+	/* Menu: Options->Controller->Joystick */
 	img_path = SARMenuBuildGetFullPath(SAR_DEF_MENU_BGIMG_STANDARD_FILE);
 	menu = SARMenuNew(
 	    SAR_MENU_TYPE_STANDARD,
-	    SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_BTN,
+	    SAR_MENU_NAME_OPTIONS_CONTROLLER_JOYSTICK,
 	    img_path
 	);
 	if(menu == NULL)
@@ -2451,145 +2410,106 @@ int btn_width_map = 32, btn_height_map = 32;
 	    SARBuildMenusAddToList(core_ptr, menu);
 	menu->always_full_redraw = opt->menu_always_full_redraw;
 
-	/* Joystick 1 (js0) button action spin */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.5f, 0.14f, 0.9f, 0.0f,
-	    "Joystick #1 Action", SAR_MENU_ID_OPT_JS0_BUTTON_ACTION,
-	    SARMenuOptionsSpinCB
+	/* Joystick Output Display */
+	SARMenuMDisplayNew(
+	    menu, 0.50f, 0.40f, 0.95f, 0.72f,
+	    (const sar_image_struct **)core_ptr->menu_list_bg_img,
+	    core_ptr, SAR_MENU_ID_OPT_JS_TEST_UPDATE,
+	    SARMenuOptionsJoystickTestDrawCB
 	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "Rotate Modifier");
-	    SARMenuSpinAddValue(menu, spin_num, "Air Brakes");
-	    SARMenuSpinAddValue(menu, spin_num, "Wheel Brakes");
-	    SARMenuSpinAddValue(menu, spin_num, "Zoom In");
-	    SARMenuSpinAddValue(menu, spin_num, "Zoom Out");
-	    SARMenuSpinAddValue(menu, spin_num, "Hoist Up");
-	    SARMenuSpinAddValue(menu, spin_num, "Hoist Down");
-	}
 
-	/* Joystick 1 (js0) button number spin */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.5f, 0.26f, 0.9f, 0.0f,
-	    "Button Number", SAR_MENU_ID_OPT_JS0_BUTTON_NUMBER,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    /* Button values start from spin value - 1, since spin
-	     * value 0 really means button -1 (none)
-	     */
-	    SARMenuSpinAddValue(menu, spin_num, "None");
-	    SARMenuSpinAddValue(menu, spin_num, "1");
-	    SARMenuSpinAddValue(menu, spin_num, "2");
-	    SARMenuSpinAddValue(menu, spin_num, "3");
-	    SARMenuSpinAddValue(menu, spin_num, "4");
-	    SARMenuSpinAddValue(menu, spin_num, "5");
-	    SARMenuSpinAddValue(menu, spin_num, "6");
-	    SARMenuSpinAddValue(menu, spin_num, "7");
-	    SARMenuSpinAddValue(menu, spin_num, "8");
-	    SARMenuSpinAddValue(menu, spin_num, "9");
-	    SARMenuSpinAddValue(menu, spin_num, "10");
-	    SARMenuSpinAddValue(menu, spin_num, "11");
-	    SARMenuSpinAddValue(menu, spin_num, "12");
-	    SARMenuSpinAddValue(menu, spin_num, "13");
-	    SARMenuSpinAddValue(menu, spin_num, "14");
-	    SARMenuSpinAddValue(menu, spin_num, "15");
-	    SARMenuSpinAddValue(menu, spin_num, "16");
-	}
-
-
-	/* Joystick 2 (js1) button action spin */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.5f, 0.43f, 0.9f, 0.0f,
-	    "Joystick #2 Action", SAR_MENU_ID_OPT_JS1_BUTTON_ACTION,
-	    SARMenuOptionsSpinCB
-	);
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "Rotate Modifier");
-	    SARMenuSpinAddValue(menu, spin_num, "Air Brakes");
-	    SARMenuSpinAddValue(menu, spin_num, "Wheel Brakes");
-	    SARMenuSpinAddValue(menu, spin_num, "Zoom In");
-	    SARMenuSpinAddValue(menu, spin_num, "Zoom Out");
-	    SARMenuSpinAddValue(menu, spin_num, "Hoist Up");
-	    SARMenuSpinAddValue(menu, spin_num, "Hoist Down");
-	}
-
-	/* Joystick 2 (js1) button number spin */
-	spin_num = SARMenuBuildStandardSpin(
-	    core_ptr, menu, 0.5f, 0.55f, 0.9f, 0.0f,
-	    "Button Number", SAR_MENU_ID_OPT_JS1_BUTTON_NUMBER,
-	    SARMenuOptionsSpinCB
-	);
-	/* Button values start from spin value - 1, since spin
-	 * value 0 really means button -1 (none)
-	 */
-	if(spin_num > -1)
-	{
-	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
-	    spin->allow_warp = False;
-	    SARMenuSpinAddValue(menu, spin_num, "None");
-	    SARMenuSpinAddValue(menu, spin_num, "1");
-	    SARMenuSpinAddValue(menu, spin_num, "2");
-	    SARMenuSpinAddValue(menu, spin_num, "3");
-	    SARMenuSpinAddValue(menu, spin_num, "4");
-	    SARMenuSpinAddValue(menu, spin_num, "5");
-	    SARMenuSpinAddValue(menu, spin_num, "6");
-	    SARMenuSpinAddValue(menu, spin_num, "7");
-	    SARMenuSpinAddValue(menu, spin_num, "8");
-	    SARMenuSpinAddValue(menu, spin_num, "9");
-	    SARMenuSpinAddValue(menu, spin_num, "10");
-	    SARMenuSpinAddValue(menu, spin_num, "11");
-	    SARMenuSpinAddValue(menu, spin_num, "12");
-	    SARMenuSpinAddValue(menu, spin_num, "13");
-	    SARMenuSpinAddValue(menu, spin_num, "14");
-	    SARMenuSpinAddValue(menu, spin_num, "15");
-	    SARMenuSpinAddValue(menu, spin_num, "16");
-	}
-
-	/* Label */
-	label_num = SARMenuLabelNew(
-	    menu, 0.25f, 0.74f, 0, 0,
+	/* Joystick Mapping Button */
+	SARMenuBuildStandardButton(
+	    core_ptr, menu, 0.75f, 0.92f, btn_width_std, btn_height_std,
+	    True,
 #if defined(PROG_LANGUAGE_SPANISH)
-"El botón de palanca de\n\
-mando de prensa para\n\
-trazar el número del\n\
-botón"
+"Mapping"
 #elif defined(PROG_LANGUAGE_FRENCH)
-"Appuie sur manche à\n\
-balai le bouton pour\n\
-faire la carte du\n\
-numéro de bouton"
+"Mapping"
 #elif defined(PROG_LANGUAGE_GERMAN)
-"Presse Steuerknüppel\n\
-Knopf, Knopf Zahl\n\
-aufzuzeichnen"
+"Mapping"
 #elif defined(PROG_LANGUAGE_ITALIAN)
-"Premere il bottone\n\
-di leva di comando al\n\
-numero di bottone di\n\
-mappa"
+"Mapping"
 #elif defined(PROG_LANGUAGE_DUTCH)
-"Pers knuppel knoop\n\
-in kaart knoop nummer\n\
-te brengen"
+"Mapping"
 #elif defined(PROG_LANGUAGE_PORTUGUESE)
-"Apertam botão de\n\
-joystick a número de\n\
-botão de mapa"
+"Mapping"
 #elif defined(PROG_LANGUAGE_NORWEGIAN)
-"Press joystick button\n\
-to set button number"
+"Mapping"
 #else
-"Press joystick button\n\
-to set button number"
+"Mapping"
+#endif
+	    , SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JS_MAPPING
+	);
+
+	/* Back Button */
+	SARMenuBuildStandardButton(
+	    core_ptr, menu, 0.25f, 0.92f, btn_width_std, btn_height_std,
+	    True,
+#if defined(PROG_LANGUAGE_SPANISH)
+"Espalda"
+#elif defined(PROG_LANGUAGE_FRENCH)
+"Retour"
+#elif defined(PROG_LANGUAGE_GERMAN)
+"Zurück"
+#elif defined(PROG_LANGUAGE_ITALIAN)
+"Dorso"
+#elif defined(PROG_LANGUAGE_DUTCH)
+"Rug"
+#elif defined(PROG_LANGUAGE_PORTUGUESE)
+"Costas"
+#elif defined(PROG_LANGUAGE_NORWEGIAN)
+"Frem"
+#else
+"Back"
+#endif
+	    , SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER
+	);
+
+
+	/* ****************************************************** */
+	/* Menu: Options->Controller->Joystick->Mapping */
+	img_path = SARMenuBuildGetFullPath(SAR_DEF_MENU_BGIMG_STANDARD_FILE);
+	menu = SARMenuNew(
+	    SAR_MENU_TYPE_STANDARD,
+	    SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_MAPPING,
+	    img_path
+	);
+	if(menu == NULL)
+	    return(-1);
+	else
+	    SARBuildMenusAddToList(core_ptr, menu);
+	menu->always_full_redraw = opt->menu_always_full_redraw;
+
+	/* Help label #1
+	 * This label text must start with "1) " because this is used to
+	 * detect this label on the joystick mapping menu in order to change
+	 * label color. Look for '!strstr(label->label, "1) "'
+	 * in SARMenuManageOptionsControllerJSMapping().
+	 * This restriction is necessary only for this menu and, of course,
+	 * no other label text on this menu shouldn't start with "1) ".
+	 *
+	 * Note that labels are always center aligned thus label text width
+	 * and number of lines are important.
+	 */
+	label_num = SARMenuLabelNew(
+	    menu, 0.50f, 0.03f, 0, 0,
+#if defined(PROG_LANGUAGE_SPANISH)
+"1) Haga clic en un cuadro de funcion para seleccionar la funcion a asignar. "
+#elif defined(PROG_LANGUAGE_FRENCH)
+"1) Cliquez sur une boite de role pour selectionner le role a definir.       "
+#elif defined(PROG_LANGUAGE_GERMAN)
+"1) Klicken Sie auf ein Rollenfeld, um die zuzuordnende Rolle auszuwahlen.   "
+#elif defined(PROG_LANGUAGE_ITALIAN)
+"1) Fare clic su una casella di ruolo per selezionare il ruolo da mappare.   "
+#elif defined(PROG_LANGUAGE_DUTCH)
+"1) Klik op een rolvak om de rol te selecteren die u wilt toewijzen.         "
+#elif defined(PROG_LANGUAGE_PORTUGUESE)
+"1) Clique numa caixa de funcao para selecionar a funçao a mapear.           "
+#elif defined(PROG_LANGUAGE_NORWEGIAN)
+"1) Klik op een rolvak om de rol te selecteren die u wilt toewijzen.         "
+#else
+"1) Click on a role box to select the role to map.                           "
 #endif
 	    , &label_color, font,
 	    NULL        /* No background image */
@@ -2602,11 +2522,634 @@ to set button number"
 	    label->align = SAR_MENU_LABEL_ALIGN_LEFT;
 	}
 
-	/* Test Joystick Button */
-	btn_num = SARMenuBuildStandardButton(
-	    core_ptr, menu, 0.75f, 0.74f, btn_width_std, btn_height_std,
-	    True, "Test...", SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_TEST
+	/* Help label #2
+	 * This label text must start with "2) " because this is used to
+	 * detect this label on the joystick mapping menu in order to change
+	 * label color and text. Look for '!strstr(label->label, "2) "'
+	 * in SARMenuManageOptionsControllerJSMapping().
+	 * This restriction is necessary only for this menu and, of course,
+	 * no other label text on this menu shouldn't start with "2) ".
+	 *
+	 * Note that this label text and label color will be modified by
+	 * SARMenuManageOptionsControllerJSMapping() thus only the 3 first
+	 * characters are set here in order to allow future label detection.
+	 */
+	label_num = SARMenuLabelNew(
+	    menu, 0.50f, 0.09f, 0, 0,
+	    "2) ",
+	    &label_color, font,
+	    NULL        /* No background image */
 	);
+	if(label_num > -1)
+	{
+	    sar_menu_label_struct *label = SAR_MENU_LABEL(
+		menu->object[label_num]
+	    );
+	    label->align = SAR_MENU_LABEL_ALIGN_LEFT;
+	}
+
+	/* Joystick axes mapping */
+	/* Axes values start from spin value - 1, since spin
+	 * value 0 really means axis -1 (none)
+	 */
+#define JS_AXIS_MAPPING_SPIN_VALUES \
+SARMenuSpinAddValue(menu, spin_num, "None");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 1");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 2");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 3");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 4");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 5");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 6");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 7");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Axis 8");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 1");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 2");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 3");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 4");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 5");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 6");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 7");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Axis 8");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 1");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 2");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 3");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 4");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 5");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 6");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 7");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Axis 8");
+
+#define MAPPING_SPIN_WIDTH 0.455f
+#define XPOS 0.23f
+	float ypos = 0.20f;
+#define LASTYPOS ypos
+#define NEXTYPOS ypos+=0.07f
+
+	/* Joystick axes spins column label */
+	label_num = SARMenuLabelNew(
+	    menu, XPOS, 0.15f, 0, 0,
+#if defined(PROG_LANGUAGE_SPANISH)
+"Eje"
+#elif defined(PROG_LANGUAGE_FRENCH)
+"Axes"
+#elif defined(PROG_LANGUAGE_GERMAN)
+"Achse"
+#elif defined(PROG_LANGUAGE_ITALIAN)
+"Asse"
+#elif defined(PROG_LANGUAGE_DUTCH)
+"Assen"
+#elif defined(PROG_LANGUAGE_PORTUGUESE)
+"Eixo"
+#elif defined(PROG_LANGUAGE_NORWEGIAN)
+"Akse"
+#else
+"Axes"
+#endif
+	    , &label_color, font,
+	    NULL        /* No background image */
+	);
+	if(label_num > -1)
+	{
+	    sar_menu_label_struct *label = SAR_MENU_LABEL(
+		menu->object[label_num]
+	    );
+	    label->align = SAR_MENU_LABEL_ALIGN_LEFT;
+	}
+
+
+	/* Axes inversion switches column label */
+	label_num = SARMenuLabelNew(
+	    menu, XPOS + 0.24f, 0.15f, 0, 0,
+#if defined(PROG_LANGUAGE_SPANISH)
+"Recambiar"
+#elif defined(PROG_LANGUAGE_FRENCH)
+"Inverser"
+#elif defined(PROG_LANGUAGE_GERMAN)
+"Invertieren"
+#elif defined(PROG_LANGUAGE_ITALIAN)
+"Invertire"
+#elif defined(PROG_LANGUAGE_DUTCH)
+"Omkeren"
+#elif defined(PROG_LANGUAGE_PORTUGUESE)
+"Invertido"
+#elif defined(PROG_LANGUAGE_NORWEGIAN)
+"Invertere"
+#else
+"Invert"
+#endif
+	    , &label_color, font,
+	    NULL        /* No background image */
+	);
+	if(label_num > -1)
+	{
+	    sar_menu_label_struct *label = SAR_MENU_LABEL(
+		menu->object[label_num]
+	    );
+	    label->align = SAR_MENU_LABEL_ALIGN_LEFT;
+	}
+
+	/* Heading axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, ypos, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Heading    ", SAR_MENU_ID_OPT_HEADING_AXIS,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Heading axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_HEADING_AXIS_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Pitch axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Pitch      ", SAR_MENU_ID_OPT_PITCH_AXIS,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Pitch axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_PITCH_AXIS_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Bank axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Bank       ", SAR_MENU_ID_OPT_BANK_AXIS,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Bank axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_BANK_AXIS_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Throttle axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Throttle   ", SAR_MENU_ID_OPT_THROTTLE_AXIS,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Throttle axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_THROTTLE_AXIS_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Brake left axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Left Brake ", SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Brake Left axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Brake right axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Right Brake", SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Brake Right axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Joystick POV Hat mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "POV Hat    ", SAR_MENU_ID_OPT_POV_HAT,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    SARMenuSpinAddValue(menu, spin_num, "None");
+	    SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Hat 1");
+	    SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Hat 2");
+	    SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Hat 1");
+	    SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Hat 2");
+	    SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Hat 1");
+	    SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Hat 2");
+	}
+
+	/* Joystick POV Hat inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_POV_HAT_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Joystick POV X axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "POV X Axis ", SAR_MENU_ID_OPT_POV_HAT_X,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Joystick POV X axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032f,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_POV_HAT_X_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+	/* Joystick POV Y axis mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "POV Y Axis ", SAR_MENU_ID_OPT_POV_HAT_Y,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_AXIS_MAPPING_SPIN_VALUES
+	}
+
+	/* Joystick POV Y axis inversion Switch */
+	SARMenuBuildStandardSwitch(
+	    core_ptr, menu,
+	    XPOS + 0.235f, ypos - 0.032,
+	    1, 1,
+	    NULL,        /* No text */
+	    False, SAR_MENU_ID_OPT_POV_HAT_Y_INV,
+	    SARMenuOptionsSwitchCB
+	);
+
+#undef JS_AXIS_MAPPING_SPIN_VALUES
+
+#undef MAPPING_SPIN_WIDTH
+#define MAPPING_SPIN_WIDTH 0.495f
+#undef XPOS
+#define XPOS 0.747f
+	/* Joystick buttons column label */
+	label_num = SARMenuLabelNew(
+	    menu, XPOS, 0.15f, 0, 0,
+#if defined(PROG_LANGUAGE_SPANISH)
+"Botones"
+#elif defined(PROG_LANGUAGE_FRENCH)
+"Boutons"
+#elif defined(PROG_LANGUAGE_GERMAN)
+"Tasten"
+#elif defined(PROG_LANGUAGE_ITALIAN)
+"Pulsanti"
+#elif defined(PROG_LANGUAGE_DUTCH)
+"Toetsen"
+#elif defined(PROG_LANGUAGE_PORTUGUESE)
+"Botões"
+#elif defined(PROG_LANGUAGE_NORWEGIAN)
+"Knapper"
+#else
+"Buttons"
+#endif
+	    , &label_color, font,
+	    NULL        /* No background image */
+	);
+	if(label_num > -1)
+	{
+	    sar_menu_label_struct *label = SAR_MENU_LABEL(
+		menu->object[label_num]
+	    );
+	    label->align = SAR_MENU_LABEL_ALIGN_LEFT;
+	}
+
+	/* Joystick buttons mapping */
+	/* Button values start from spin value - 1, since spin
+	 * value 0 really means button -1 (none)
+	 */
+#define JS_BUTTON_MAPPING_SPIN_VALUES \
+SARMenuSpinAddValue(menu, spin_num, "None");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 1");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 2");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 3");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 4");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 5");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 6");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 7");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 8");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 9");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 10");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 11");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 12");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 13");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 14");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 15");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 1 - Button 16");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 1");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 2");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 3");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 4");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 5");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 6");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 7");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 8");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 9");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 10");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 11");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 12");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 13");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 14");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 15");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 2 - Button 16");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 1");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 2");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 3");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 4");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 5");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 6");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 7");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 8");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 9");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 10");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 11");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 12");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 13");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 14");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 15");\
+SARMenuSpinAddValue(menu, spin_num, "Joystick 3 - Button 16");
+
+	ypos = 0.20f;
+
+	/* Zoom in button mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, ypos, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Zoom In    ", SAR_MENU_ID_OPT_ZOOM_IN_BUTTON,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_BUTTON_MAPPING_SPIN_VALUES
+	}
+
+	/* Zoom out button mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Zoom Out   ", SAR_MENU_ID_OPT_ZOOM_OUT_BUTTON,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_BUTTON_MAPPING_SPIN_VALUES
+	}
+
+	/* Hoist up button mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Hoist Up   ", SAR_MENU_ID_OPT_HOIST_UP_BUTTON,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_BUTTON_MAPPING_SPIN_VALUES
+	}
+
+	/* Hoist down button mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Hoist Down ", SAR_MENU_ID_OPT_HOIST_DOWN_BUTTON,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_BUTTON_MAPPING_SPIN_VALUES
+	}
+
+	/* Wheel brake button mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Wheel Brake", SAR_MENU_ID_OPT_WHEEL_BRAKES_BUTTON,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_BUTTON_MAPPING_SPIN_VALUES
+	}
+
+	/* Air brake button mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Air Brake  ", SAR_MENU_ID_OPT_AIR_BRAKES_BUTTON,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_BUTTON_MAPPING_SPIN_VALUES
+	}
+
+	/* Rotate button mapping spin */
+	spin_num = SARMenuBuildStandardSpin(
+	    core_ptr, menu, XPOS, NEXTYPOS, MAPPING_SPIN_WIDTH, 0.0f,
+	    "Rotate*    ", SAR_MENU_ID_OPT_ROTATE_BUTTON,
+	    SARMenuOptionsSpinCB
+	);
+	if(spin_num > -1)
+	{
+	    spin = SAR_MENU_SPIN(menu->object[spin_num]);
+	    spin->allow_warp = False;
+	    JS_BUTTON_MAPPING_SPIN_VALUES
+	}
+#undef MAPPING_MAPPING_SPIN_WIDTH
+#undef JS_BUTTON_MAPPING_SPIN_VALUES
+
+	/* Rotate button help label */
+	label_num = SARMenuLabelNew(
+	    menu, XPOS, NEXTYPOS - 0.013, 0, 0,
+#if defined(PROG_LANGUAGE_SPANISH)
+"* Trata el banco con el eje de rumbo. "
+#elif defined(PROG_LANGUAGE_FRENCH)
+"* Traite le roulis en tant que lacet. "
+#elif defined(PROG_LANGUAGE_GERMAN)
+"* Behandelt die Querneigung zur       \n\
+   Kursachse."
+#elif defined(PROG_LANGUAGE_ITALIAN)
+"* Considera la sponda rispetto all    \n\
+   all asse della rotta."
+#elif defined(PROG_LANGUAGE_DUTCH)
+"* Behandelt de oever naar de koersas. "
+#elif defined(PROG_LANGUAGE_PORTUGUESE)
+"* Trata a margem como eixo de direção."
+#elif defined(PROG_LANGUAGE_NORWEGIAN)
+"* Behandler bank til kursakse.        "
+#else
+"* Treats bank to heading axis.        "
+#endif
+	    , &label_color, font,
+	    NULL        /* No background image */
+	);
+	if(label_num > -1)
+	{
+	    sar_menu_label_struct *label = SAR_MENU_LABEL(
+		menu->object[label_num]
+	    );
+	    label->align = SAR_MENU_LABEL_ALIGN_LEFT;
+	}
+#undef NEXTYPOS
+#undef LASTYPOS
+#undef XPOS
+#undef MAPPING_SPIN_WIDTH
+
+#define XPOS 0.63f
+#define YPOS 0.76f
+
+	/* Clear Js# Mapping label */
+	label_num = SARMenuLabelNew(
+	    menu, XPOS, YPOS, 0, 0,
+#if defined(PROG_LANGUAGE_SPANISH)
+"  Borrar Js# Mapping "
+#elif defined(PROG_LANGUAGE_FRENCH)
+"  Efface Js# Mapping "
+#elif defined(PROG_LANGUAGE_GERMAN)
+" Loschen Js# Mapping "
+#elif defined(PROG_LANGUAGE_ITALIAN)
+" Cancella Js# Mapping"
+#elif defined(PROG_LANGUAGE_DUTCH)
+"Verwijder Js# Mapping"
+#elif defined(PROG_LANGUAGE_PORTUGUESE)
+"  Apagar Js# Mapping "
+#elif defined(PROG_LANGUAGE_NORWEGIAN)
+"  Slett Js# Mapping  "
+#else
+"  Clear Js# Mapping  "
+#endif
+	    , &label_color, font,
+	    NULL        /* No background image */
+	);
+	if(label_num > -1)
+	{
+	    sar_menu_label_struct *label = SAR_MENU_LABEL(
+		menu->object[label_num]
+	    );
+	    label->align = SAR_MENU_LABEL_ALIGN_LEFT;
+	}
+#undef XPOS
+#define XPOS 0.63f + 0.166f
+#define BTN_WIDTH 50
+	/* Joystick 0 Mappings Reset Button */
+	SARMenuBuildStandardButton(
+	    core_ptr, menu, XPOS, YPOS, BTN_WIDTH, btn_height_std,
+	    True,
+	    "1",
+	    SAR_MENU_ID_RESET_CONTROLLER_JS0_MAPPING
+	);
+
+#undef XPOS
+#define XPOS 0.63f + 0.165f + 0.07f
+	/* Joystick 1 Mappings Reset Button */
+	SARMenuBuildStandardButton(
+	    core_ptr, menu, XPOS, YPOS, BTN_WIDTH, btn_height_std,
+	    True,
+	    "2",
+	    SAR_MENU_ID_RESET_CONTROLLER_JS1_MAPPING
+	);
+
+#undef XPOS
+#define XPOS 0.63f + 0.165f + 2 * 0.07f
+	/* Joystick 2 Mappings Reset Button */
+	SARMenuBuildStandardButton(
+	    core_ptr, menu, XPOS, YPOS, BTN_WIDTH, btn_height_std,
+	    True,
+	    "3",
+	    SAR_MENU_ID_RESET_CONTROLLER_JS2_MAPPING
+	);
+#undef YPOS
+#undef BTN_WIDTH
 
 	/* Back Button */
 	SARMenuBuildStandardButton(
@@ -2615,7 +3158,7 @@ to set button number"
 #if defined(PROG_LANGUAGE_SPANISH)
 "Espalda"
 #elif defined(PROG_LANGUAGE_FRENCH)
-"Dos"
+"Retour"
 #elif defined(PROG_LANGUAGE_GERMAN)
 "Zurück"
 #elif defined(PROG_LANGUAGE_ITALIAN)
@@ -2629,60 +3172,7 @@ to set button number"
 #else
 "Back"
 #endif
-	    , SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER
-	);
-
-
-	/* ****************************************************** */
-	/* Menu: Options->Controller->Test */
-	img_path = SARMenuBuildGetFullPath(SAR_DEF_MENU_BGIMG_STANDARD_FILE);
-	menu = SARMenuNew(
-	    SAR_MENU_TYPE_STANDARD,
-	    SAR_MENU_NAME_OPTIONS_CONTROLLER_TEST,
-	    img_path
-	);
-	if(menu == NULL)
-	    return(-1);
-	else
-	    SARBuildMenusAddToList(core_ptr, menu);
-	menu->always_full_redraw = opt->menu_always_full_redraw;
-
-	/* Joystick Output Display */
-	SARMenuMDisplayNew(
-	    menu, 0.50f, 0.36f, 0.95f, 0.60f,
-	    (const sar_image_struct **)core_ptr->menu_list_bg_img,
-	    core_ptr, SAR_MENU_ID_OPT_JS_TEST_UPDATE,
-	    SARMenuOptionsJoystickTestDrawCB
-	);
-
-	/* Refresh Controllers Button */
-	SARMenuBuildOptionsButton(
-	    core_ptr, menu, 0.25f, 0.74f, btn_width_std, btn_height_std,
-	    True, "Refresh", SAR_MENU_ID_OPT_CONTROLLER_REFRESH
-	);
-
-	/* Back Button */
-	SARMenuBuildStandardButton(
-	    core_ptr, menu, 0.25f, 0.92f, btn_width_std, btn_height_std,
-	    True,
-#if defined(PROG_LANGUAGE_SPANISH)
-"Espalda"
-#elif defined(PROG_LANGUAGE_FRENCH)
-"Dos"
-#elif defined(PROG_LANGUAGE_GERMAN)
-"Zurück"
-#elif defined(PROG_LANGUAGE_ITALIAN)
-"Dorso"
-#elif defined(PROG_LANGUAGE_DUTCH)
-"Rug"
-#elif defined(PROG_LANGUAGE_PORTUGUESE)
-"Costas"
-#elif defined(PROG_LANGUAGE_NORWEGIAN)
-"Frem"
-#else
-"Back"
-#endif
-	    , SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER
+	    , SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JOYSTICK
 	);
 
 

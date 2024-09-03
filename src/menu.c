@@ -61,6 +61,12 @@ int SARMenuLabelNew(
 	sar_menu_color_struct *fg_color, GWFont *font,
 	const sar_image_struct *image
 );
+int SARMenuLabelSetLabel(
+	gw_display_struct *display, sar_menu_struct *m, int n,
+	const char *label,
+	sar_menu_color_struct *fg_color,
+	Boolean redraw
+);
 
 /* Button */
 int SARMenuButtonNew(
@@ -741,6 +747,59 @@ int SARMenuLabelNew(
 	    m->selected_object = 0;
 
 	return(n);
+}
+
+/*
+ *	Sets a new label label and/or label foreground color
+ *	 for label n on menu m.
+ *
+ * 	- Sets label label if *label is not NULL.
+ * 	- Sets label foreground color if *fg_color is not NULL.
+ * 	- Redraws label if redraw is True.
+ *
+ * 	Returns a negative value on error.
+ */
+int SARMenuLabelSetLabel(
+	gw_display_struct *display, sar_menu_struct *m, int n,
+	const char *label,
+	sar_menu_color_struct *fg_color,
+	Boolean redraw
+)
+{
+	sar_menu_label_struct *label_ptr;
+
+	if(m == NULL)
+	    return -1;
+	if(m->total_objects < n)
+	    return -2;
+
+	label_ptr = SARMenuGetObject(m, n);
+	if(label_ptr == NULL || label_ptr->type != SAR_MENU_OBJECT_TYPE_LABEL)
+	    return -3;
+
+	/* Set new label label */
+
+	if(label != NULL){
+	    free(label_ptr->label);
+	    label_ptr->label = STRDUP(label);
+	}
+
+	/* Set new label forground color */
+
+	if(fg_color != NULL)
+	    memcpy(&label_ptr->color, fg_color, sizeof(sar_menu_color_struct));
+
+	/* Redraw label */
+
+	if(redraw){
+	    if(display != NULL){
+		DO_REDRAW_OBJECT(display, m, n);
+	    }
+	    else
+		return -4;
+	}
+
+	return 0;
 }
 
 /*
@@ -1908,7 +1967,7 @@ void SARMenuSpinDoInc(
 }
 
 /*
- *	Spin increment procedure.
+ *	Spin decrement procedure.
  */
 void SARMenuSpinDoDec(
 	gw_display_struct *display, sar_menu_struct *m, int n,

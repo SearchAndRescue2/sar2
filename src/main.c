@@ -63,6 +63,7 @@
 #include "sarmenubuild.h"
 #include "sarmenumanage.h"
 #include "sarmenucodes.h"
+#include "sarmenuoptions.h"
 #include "sarsimend.h"
 #include "config.h"
 
@@ -187,10 +188,12 @@ void SARHandleSignal(int s)
  */
 int SARInitGCTL(sar_core_struct *core_ptr)
 {
-	int i, total_joysticks;
+//fprintf(stderr, "%s:%d : Entering SARInitGCTL()\n", __FILE__, __LINE__);
+	int i;
 	void *w, *rc;
 	gctl_struct *gctl;
 	gctl_values_struct *v;
+	gctl_values_js_struct *js_v;
 	gw_display_struct *display = core_ptr->display;
 	const sar_option_struct *opt = &core_ptr->option;
 
@@ -208,19 +211,6 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 	))
 	    return(-1);
 
-	/* Check how many joysticks are specified by the options by
-	 * checking if axis roles defined for each joystick in question
-	 *
-	 * Any joystick with one or more axis roles set means the stick
-	 * is enabled
-	 */
-	total_joysticks = 0;
-	if(opt->gctl_js0_axis_roles != 0)
-	    total_joysticks++;
-	if(opt->gctl_js1_axis_roles != 0)
-	    total_joysticks++;
-
-
 	/* Set up Game Controller Values */
 	v = GCTL_VALUES(calloc(1, sizeof(gctl_values_struct)));
 
@@ -230,46 +220,98 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 	/* Options (none at this time) */
 	v->options = opt->gctl_options;
 
-	/* Set up Game Controller Joystick Values for each joystick
-	 * that is enabled
-	 */
-	v->total_joysticks = total_joysticks;
-	if(total_joysticks > 0)
-	    v->joystick = (gctl_values_js_struct *)calloc(
-		total_joysticks, sizeof(gctl_values_js_struct)
-	    );
-	else
-	    v->joystick = NULL;
+	/* Set up Game Controller Joystick Values for each joystick */
+	v->total_joysticks = MAX_JOYSTICKS;
+	v->joystick = (gctl_values_js_struct *)calloc(
+	    MAX_JOYSTICKS, sizeof(gctl_values_js_struct)
+	);
+
 	/* Joystick #1 */
 	i = 0;
-	if((total_joysticks > i) && (opt->gctl_js0_axis_roles != 0))
-	{
-	    gctl_values_js_struct *js_v = &v->joystick[i];
-	    js_v->window = w;
-	    js_v->axis_role = opt->gctl_js0_axis_roles;
-	    js_v->button_rotate = opt->js0_btn_rotate;
-	    js_v->button_air_brakes = opt->js0_btn_air_brakes;
-	    js_v->button_wheel_brakes = opt->js0_btn_wheel_brakes;
-	    js_v->button_zoom_in = opt->js0_btn_zoom_in;
-	    js_v->button_zoom_out = opt->js0_btn_zoom_out;
-	    js_v->button_hoist_up = opt->js0_btn_hoist_up;
-	    js_v->button_hoist_down = opt->js0_btn_hoist_down;
-	}
+	js_v = &v->joystick[i];
+
+	js_v->window = w;
+
+	strcpy(js_v->sdl_guid_s, opt->js0_sdl_guid_s);
+	/* Do not copy opt->js0_sdl_name */
+
+	js_v->button_rotate = opt->js0_btn_rotate;
+	js_v->button_air_brakes = opt->js0_btn_air_brakes;
+	js_v->button_wheel_brakes = opt->js0_btn_wheel_brakes;
+	js_v->button_zoom_in = opt->js0_btn_zoom_in;
+	js_v->button_zoom_out = opt->js0_btn_zoom_out;
+	js_v->button_hoist_up = opt->js0_btn_hoist_up;
+	js_v->button_hoist_down = opt->js0_btn_hoist_down;
+
+	js_v->axis_heading = opt->js0_axis_heading;
+	js_v->axis_bank = opt->js0_axis_bank;
+	js_v->axis_pitch = opt->js0_axis_pitch;
+	js_v->axis_throttle = opt->js0_axis_throttle;
+	js_v->axis_hat_x = opt->js0_axis_hat_x;
+	js_v->axis_hat_y = opt->js0_axis_hat_y;
+	js_v->pov_hat = opt->js0_pov_hat;
+	js_v->axis_brake_left = opt->js0_axis_brake_left;
+	js_v->axis_brake_right = opt->js0_axis_brake_right;
+
+	js_v->js_axes_inversion_bits = opt->js_axes_inversion_bits;
+
 	/* Joystick #2 */
 	i = 1;
-	if((total_joysticks > i) && (opt->gctl_js1_axis_roles != 0))
-	{
-	    gctl_values_js_struct *js_v = &v->joystick[i];
-	    js_v->window = w;
-	    js_v->axis_role = opt->gctl_js1_axis_roles;
-	    js_v->button_rotate = opt->js1_btn_rotate;
-	    js_v->button_air_brakes = opt->js1_btn_air_brakes;
-	    js_v->button_wheel_brakes = opt->js1_btn_wheel_brakes;
-	    js_v->button_zoom_in = opt->js1_btn_zoom_in;
-	    js_v->button_zoom_out = opt->js1_btn_zoom_out;
-	    js_v->button_hoist_up = opt->js1_btn_hoist_up;
-	    js_v->button_hoist_down = opt->js1_btn_hoist_down;
-	}
+	js_v = &v->joystick[i];
+
+	js_v->window = w;
+
+	strcpy(js_v->sdl_guid_s, opt->js1_sdl_guid_s);
+	/* Do not copy opt->js1_sdl_name */
+
+	js_v->button_rotate = opt->js1_btn_rotate;
+	js_v->button_air_brakes = opt->js1_btn_air_brakes;
+	js_v->button_wheel_brakes = opt->js1_btn_wheel_brakes;
+	js_v->button_zoom_in = opt->js1_btn_zoom_in;
+	js_v->button_zoom_out = opt->js1_btn_zoom_out;
+	js_v->button_hoist_up = opt->js1_btn_hoist_up;
+	js_v->button_hoist_down = opt->js1_btn_hoist_down;
+
+	js_v->axis_heading = opt->js1_axis_heading;
+	js_v->axis_bank = opt->js1_axis_bank;
+	js_v->axis_pitch = opt->js1_axis_pitch;
+	js_v->axis_throttle = opt->js1_axis_throttle;
+	js_v->axis_hat_x = opt->js1_axis_hat_x;
+	js_v->axis_hat_y = opt->js1_axis_hat_y;
+	js_v->pov_hat = opt->js1_pov_hat;
+	js_v->axis_brake_left = opt->js1_axis_brake_left;
+	js_v->axis_brake_right = opt->js1_axis_brake_right;
+
+	js_v->js_axes_inversion_bits = opt->js_axes_inversion_bits;
+
+	/* Joystick #3 */
+	i = 2;
+	js_v = &v->joystick[i];
+
+	js_v->window = w;
+
+	strcpy(js_v->sdl_guid_s, opt->js2_sdl_guid_s);
+	/* Do not copy opt->js2_sdl_name */
+
+	js_v->button_rotate = opt->js2_btn_rotate;
+	js_v->button_air_brakes = opt->js2_btn_air_brakes;
+	js_v->button_wheel_brakes = opt->js2_btn_wheel_brakes;
+	js_v->button_zoom_in = opt->js2_btn_zoom_in;
+	js_v->button_zoom_out = opt->js2_btn_zoom_out;
+	js_v->button_hoist_up = opt->js2_btn_hoist_up;
+	js_v->button_hoist_down = opt->js2_btn_hoist_down;
+
+	js_v->axis_heading = opt->js2_axis_heading;
+	js_v->axis_bank = opt->js2_axis_bank;
+	js_v->axis_pitch = opt->js2_axis_pitch;
+	js_v->axis_throttle = opt->js2_axis_throttle;
+	js_v->axis_hat_x = opt->js2_axis_hat_x;
+	js_v->axis_hat_y = opt->js2_axis_hat_y;
+	js_v->pov_hat = opt->js2_pov_hat;
+	js_v->axis_brake_left = opt->js2_axis_brake_left;
+	js_v->axis_brake_right = opt->js2_axis_brake_right;
+
+	js_v->js_axes_inversion_bits = opt->js_axes_inversion_bits;
 
 
 	/* Initialize the Game Controller */
@@ -278,6 +320,7 @@ int SARInitGCTL(sar_core_struct *core_ptr)
 	free(v->joystick);
 	free(v);
 
+//fprintf(stderr, "%s:%d : Exiting SARInitGCTL()\n", __FILE__, __LINE__);
 
 	/* Error initializing the Game Controller? */
 	if(gctl == NULL)
@@ -1370,31 +1413,70 @@ sar_core_struct *SARInit(int argc, char **argv)
 	    GCTL_CONTROLLER_POINTER;
 	opt->gctl_options = 0;
 
-	opt->js0_btn_rotate = 3;
-	opt->js0_btn_air_brakes = 6;
-	opt->js0_btn_wheel_brakes = 0;
-	opt->js0_btn_zoom_in = 2;
-	opt->js0_btn_zoom_out = 1;
-	opt->js0_btn_hoist_up = 5;
-	opt->js0_btn_hoist_down = 4;
+	/* No need to initialize
+	 * opt->js0_sdl_name
+	 */
+	strcpy(opt->js0_sdl_guid_s, "");
+	opt->js0_btn_rotate = -1;
+	opt->js0_btn_air_brakes = -1;
+	opt->js0_btn_wheel_brakes = -1;
+	opt->js0_btn_zoom_in = -1;
+	opt->js0_btn_zoom_out = -1;
+	opt->js0_btn_hoist_up = -1;
+	opt->js0_btn_hoist_down = -1;
+	opt->js0_axis_heading = -1;
+	opt->js0_axis_pitch = -1;
+	opt->js0_axis_bank = -1;
+	opt->js0_axis_throttle = -1;
+	opt->js0_axis_hat_x = -1;
+	opt->js0_axis_hat_y = -1;
+	opt->js0_pov_hat = 0;
+	opt->js0_axis_brake_left = -1;
+	opt->js0_axis_brake_right = -1;
 
-	opt->js1_btn_rotate = 3;
-	opt->js1_btn_air_brakes = 6;
-	opt->js1_btn_wheel_brakes = 0;
-	opt->js1_btn_zoom_in = 2;
-	opt->js1_btn_zoom_out = 1;
-	opt->js1_btn_hoist_up = 5;
-	opt->js1_btn_hoist_down = 4;
-/*
-	opt->gctl_js0_axis_roles = GCTL_JS_AXIS_ROLE_PITCH |
-	    GCTL_JS_AXIS_ROLE_BANK;
- */
-	opt->gctl_js0_axis_roles = 0;
-	opt->gctl_js1_axis_roles = 0;
-/*
-	opt->gctl_js1_axis_roles =
-GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
- */
+	/* No need to initialize
+	 * opt->js1_sdl_name
+	 */
+	strcpy(opt->js1_sdl_guid_s, "");
+	opt->js1_btn_rotate = -1;
+	opt->js1_btn_air_brakes = -1;
+	opt->js1_btn_wheel_brakes = -1;
+	opt->js1_btn_zoom_in = -1;
+	opt->js1_btn_zoom_out = -1;
+	opt->js1_btn_hoist_up = -1;
+	opt->js1_btn_hoist_down = -1;
+	opt->js1_axis_heading = -1;
+	opt->js1_axis_pitch = -1;
+	opt->js1_axis_bank = -1;
+	opt->js1_axis_throttle = -1;
+	opt->js1_axis_hat_x = -1;
+	opt->js1_axis_hat_y = -1;
+	opt->js1_pov_hat = -1;
+	opt->js1_axis_brake_left = -1;
+	opt->js1_axis_brake_right = -1;
+
+	/* No need to initialize
+	 * opt->js2_sdl_name
+	 */
+	strcpy(opt->js2_sdl_guid_s, "");
+	opt->js2_btn_rotate = -1;
+	opt->js2_btn_air_brakes = -1;
+	opt->js2_btn_wheel_brakes = -1;
+	opt->js2_btn_zoom_in = -1;
+	opt->js2_btn_zoom_out = -1;
+	opt->js2_btn_hoist_up = -1;
+	opt->js2_btn_hoist_down = -1;
+	opt->js2_axis_heading = -1;
+	opt->js2_axis_pitch = -1;
+	opt->js2_axis_bank = -1;
+	opt->js2_axis_throttle = -1;
+	opt->js2_axis_hat_x = -1;
+	opt->js2_axis_hat_y = -1;
+	opt->js2_pov_hat = -1;
+	opt->js2_axis_brake_left = -1;
+	opt->js2_axis_brake_right = -1;
+
+	opt->js_axes_inversion_bits = 0;
 
 	opt->hoist_contact_expansion_coeff = 1.0f;
 	opt->damage_resistance_coeff = 1.0f;
@@ -2381,6 +2463,12 @@ void SARShutdown(sar_core_struct *core_ptr)
 		    s
 		);
 	}
+	if(opt->js0_sdl_name != NULL)
+	    free(opt->js0_sdl_name);
+	if(opt->js1_sdl_name != NULL)
+	    free(opt->js1_sdl_name);
+	if(opt->js2_sdl_name != NULL)
+	    free(opt->js2_sdl_name);
 	/* Save players list */
 	s = fname.players;
 	if(!STRISEMPTY(s))
@@ -2582,6 +2670,7 @@ void SARShutdown(sar_core_struct *core_ptr)
 	/* Game Controller */
 	GCtlDelete(core_ptr->gctl);
 	core_ptr->gctl = NULL;
+	SDL_Quit();
 
 	/* Music List */
 	SARMusicListDeleteAll(&core_ptr->music_ref, &core_ptr->total_music_refs);
