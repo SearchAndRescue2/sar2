@@ -32,10 +32,10 @@ if prefix is None:
 env = Environment(PREFIX = prefix, DESTDIR = destdir)
 debug = ARGUMENTS.get('debug', 0)
 
-
+debug = 1
 # Build flags in normal or debug mode
 if bool(debug):
-    env.Append(CPPFLAGS = ['-g', '-Wall', '-O0', '-finline-functions'])
+    env.Append(CPPFLAGS = ['-g', '-Wall', '-Wno-unused-but-set-variable', '-O0', '-finline-functions'])
 else:
     env.Append(CPPFLAGS = ['-O6', '-funroll-loops',
                            '-fomit-frame-pointer',
@@ -67,6 +67,8 @@ env.Append(LIBS = ['m', 'SDL2', 'SM', 'ICE',
                    'GL', 'GLU', 'pthread', 'alut',
                    'vorbisfile', 'openal'])
 
+# env.ParseConfig('pkg-config --libs --cflags gtk+-3.0')
+env.ParseConfig('pkg-config --libs --cflags gtk4')
 
 sources = Split("""
 v3dfio.c
@@ -174,6 +176,7 @@ gww.cpp
 disk.cpp
 tgadither.cpp
 fio.cpp
+cmdscnedit.c
 """)
 
 object_list = env.Object(source = sources)

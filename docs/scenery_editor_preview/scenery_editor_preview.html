@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        UL { padding-left: 10px; }
+        LI { display: block; }
+        .classname.code1 { background-color: #eee; border-radius: 3px; font-family: courier, monospace; padding: 0 3px; }
+        .classname.code2 { display: block; background-color: #eee; border-radius: 3px; font-family: courier, monospace; padding: 0 3px; }
+        H2 { text-align: center; }
+        IMG { padding: -30px; }
+    </style>
+  </head>
+  <body>
+    <header>
+        <h2>Search And Rescue II documentation :<br>
+        scenery editor preview in 10 <i>short</i> lessons.</h2>
+    </header>
+    <main>
+    <b>General notes:</b><br>
+    <ul>
+    This is a preview: this editor is maybe (certainly?) buggy, and features can change.<br>
+    Tip: on my computer and even if it is 'num locked', the numeric pad works as expected in Sar2 only when I press the [Shift] key. If not, it works as the direction keys.
+    </ul>
+    <ul>
+        <h3><li>Lesson 1: how to enter edit mode</h3>
+            <p>Download the scenery_editor_preview branch, compile it (<code class="classname code1">scons</code>) -you don't need to install it-, then start Sar2 from command line (<code class="classname code1">./sar2.sh</code>) and go to <i>Free Flight</i>.<br>
+            Choose the <b>Test world</b> theater and the <b>CG Cutter</b> location, then go to the <i>Aircraft</i> choice.<br>
+            Choose the <b>Object placer</b> aircraft, then <i>Begin</i> simulation.<br>
+            Once simulation loaded, press the slash ( [/] ) key on your keyboard then type <code class="classname code1">scnedit on</code> as command name :<br>
+            <img src="./images/editor_demo_03.png"><br>
+            Press the [Enter] key : you should see a 1m x 1m x 1m triedron. Red arrow (X axis) points right, green arrow (Y axis) points front, and blue arrow (Z axis) points up :<br>
+            <img src="./images/editor_demo_04.png"><br>
+            The [EDIT MODE ON] red text at the top left corner of the screen confirm that editing mode is active.<br>
+            Note that all usual SarII keyboard commands remain available: [m] for map view, [F3] for spot view, [-] / [+] to zoom in/out, and so on...
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 2: how to move the triedron</h3>
+            <p>Use your joystick to move and rotate the triedron on the horizontal plane, press [Home] or [End] keys to move it up or down (25ft ~ 7.62m step). Note that you can't move under ground.
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 3: how to get information about an object</h3>
+            <p>Move the triedron near the middle of the CG Cutter helipad, then type /<code class="classname code1">info</code> and press the [Enter] key. Note that the information window title bar gives you the object 'internal' number and the distance between the triedron center and the object center :<br>
+            <img src="./images/editor_demo_05.png"><br>
+            You can obtain information about the 5 closest objects by typing /<code class="classname code1">info next</code> instead of /<code class="classname code1">info</code>.
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 4: how to modify an object</h3>
+            <p>Stay in the middle of the CG Cutter helipad and rotate the triedron 90° to left in order to see the <b>USCG</b> text painted on the helipad ground.<br>
+            Now, type /<code class="classname code1">modify</code> and press [Enter], then replace the <code class="classname code1">USCG</code> text by <code class="classname code1">Hello_World!</code>. Don't forget the underscore character between 'Hello' and 'World!' :<br>
+            <img src="./images/editor_demo_08.png"><br>
+            Press [Enter] to validate your modification :<br>
+            <img src="./images/editor_demo_09.png"><br>
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 5: how to move an object</h3>
+            <p>Rotate the triedron 90° right then go near the human with the white pant (remember, you can move up or down by pressing [Home] or [End] keys). Once close to the human, type /<code class="classname code1">mv</code> (or /<code class="classname code1">move</code>)<br>
+            <img src="./images/editor_demo_10.png"><br>
+	    Then, press [Enter]. The human is now 'sticked' to the triedron: move him in front of the turquoise cap boy (hurry up, he needs help!), then enter /<code class="classname code1">set</code> to place the human at his new position :
+            <img src="./images/editor_demo_11.png"><br>
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 6: how to copy an object</h3>
+            <p>Move the triedron near the jetski, then enter /<code class="classname code1">cp</code> (or /<code class="classname code1">copy</code>) to copy the jetski. Move the copied jetski to the right of the first one, then enter /<code class="classname code1">set</code>. Note that the copied jetski is always sticked to the triedron: move it a little bit to right, then /<code class="classname code1">set</code> it an other time, then set it a third time :<br>
+            <img src="./images/editor_demo_17.png"><br>
+            Ok, that's funny, but the jetski is really... sticky! Hopefully, we can 'unstick' it with the /<code class="classname code1">ul</code> (or /<code class="classname code1">unload</code>) command :
+            <img src="./images/editor_demo_19.png"><br>
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 7: how to remove an object</h3>
+            <p>Move the triedron near the first left jetski, then, enter /<code class="classname code1">rm</code> (or /<code class="classname code1">remove</code>) :<br>
+            <img src="./images/editor_demo_21.png"><br>
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 8: how to create or load a new object</h3>
+            <p>Let's begin by entering /<code class="classname code1">cfi 0.5 5.0</code> (or /<code class="classname code1">create_fire 0.5 5.0</code>). Well done! You have created a 0.5m radius and 5.0ft tall fire :<br>
+	    <img src="./images/editor_demo_23.png"><br>
+	    Set (/<code class="classname code1">set</code>) a fire at the rear of <b>each</b> jetski, then unload the fire :<br>
+            <img src="./images/editor_demo_27.png"><br>
+	    Now, let's try with a *.3d model which is stored on disk: enter /<code class="classname code1">lob automobiles/cuda.3d</code> (or /<code class="classname code1">load_object automobiles/cuda.3d</code>), then set and unload it.<br>
+	    Note that characters case is important: for example /<code class="classname code1">lob automobiles/cuda.3D</code> will not work.<br>
+	    <img src="./images/editor_demo_28.png"><br>
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 9: how to print the list of changes made</h3>
+            <p>Easy! Enter /<code class="classname code1">print</code> :<br>
+            <img src="./images/editor_demo_29.png"><br>
+            Look at the console, you should see something like this:<br>
+            <br>
+<code class="classname code2">
+<b>#_EOBJ#00004</b> <b>definition</b> <b>changed</b>:<br>
+<b>From</b>:<br>
+create_helipad vehicle 29.000 18.000 3.200 USCG y y y y y uscg378_01 0.000 -58.500 36.000 0.000 0.000 0.000<br>
+<b>To</b>:<br>
+create_helipad vehicle 29.000 18.000 3.200 Hello_World! y y y y y uscg378_01 0.000 -58.500 36.000 0.000 0.000 0.000<br>
+<br>
+<b>#_EOBJ#00013</b> <b>changed</b>:<br>
+<b>From</b>:<br>
+create_object 3<br>
+model_file vessels/jetski.3d<br>
+translate 36.000 -193.000 0.000<br>
+rotate 200.000 0.000 0.000<br>
+<b>To</b>:<br>
+create_fire 0.500 5.000<br>
+translate 28.728 -189.884 0.000<br>
+<br>
+<b>#_EOBJ#00014</b> <b>position</b> <b>changed</b>:<br>
+<b>From</b>:<br>
+translate 48.000 -190.000 0.000<br>
+rotate 0.000 0.000 0.000<br>
+<b>To</b>:<br>
+translate 35.196 -198.483 0.000<br>
+rotate 169.066 0.000 0.000<br>
+<br>
+<b>#_EOBJ#00032</b> <b>added</b>:<br>
+create_object 3<br>
+model_file vessels/jetski.3d<br>
+translate 32.349 -191.121 0.000<br>
+rotate 173.256 0.000 0.000<br>
+<br>
+<b>#_EOBJ#00033</b> <b>added</b>:<br>
+create_object 3<br>
+model_file vessels/jetski.3d<br>
+translate 30.824 -191.184 0.000<br>
+rotate 174.345 0.000 0.000<br>
+<br>
+<b>#_EOBJ#00034</b> <b>added</b>:<br>
+create_object 3<br>
+model_file vessels/jetski.3d<br>
+translate 29.124 -191.252 0.000<br>
+rotate 175.470 0.000 0.000<br>
+<br>
+<b>#_EOBJ#00035</b> <b>added</b>:<br>
+create_fire 0.500 5.000<br>
+translate 30.952 -189.732 0.000<br>
+<br>
+<b>#_EOBJ#00036</b> <b>added</b>:<br>
+create_fire 0.500 5.000<br>
+translate 32.396 -189.258 0.000<br>
+<br>
+<b>#_EOBJ#00037</b> <b>added</b>:<br>
+create_object 2<br>
+model_file automobiles/cuda.3d<br>
+translate 40.859 -190.438 0.000<br>
+rotate 205.049 0.000 0.000<br>
+</code>
+<br>
+	    Note that the first fire we've created has for object number the number #13, wich was the number of the jetski we have deleted before to create this fire (look at the <i>Lesson 7</i> screen capture and the <i>#_EOBJ#00013 changed:</i> section of the modification list).<br>
+	    Note too that fires have no <i>rotate</i> parameter because, as for smoke, it is not necessary.<br>
+	    <br>
+	    To help you to update your scenery file, you will find in your $HOME directory a scenery file copy with a <code class="classname code1">#_EOBJ#nnnnn</code> tag added before each object definition. Be careful, this file is updated and overwritten each time you invoque the <code class="classname code1">/print</code> command, thus if you modify it, don't forget to rename and save it!<br>
+	    FYI, the (not so) mysterious #_EOBJ#nnnnn tag means: 'Editor OBJect number nnnnn' where 'nnnnn' is the SarII object internal number.<br><br>
+	    Hereunder is an example of what you will see for object #14 (the human we moved at lesson 5) in the ~/<b>test_world.scn_with_obj_num.txt</b> file:<br>
+	    <br>
+<code class="classname code2">
+<br>
+# Human      type_name	flags<br>
+#create_human default	need_rescue alert aware lying on_streatcher<br>
+#_EOBJ#00014&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<mark>&lt= added tag is here</mark><br>
+create_human default    need_rescue alert aware in_water<br>
+translation 48 -190 0<br>
+set_human_mesg_enter Thanks for saving me!<br>
+<br>
+</code>
+            </p>
+        </li>
+        <br>
+        <h3><li>Lesson 10: how to quit <i>cleanly</i> editor mode</h3>
+	    <p>
+            /<code class="classname code1">scnedit off</code><br>
+            <br>
+            Note that it is <b>very important</b> to quit editor mode cleanly, because if not</mark>, scenery editor memory will NOT be freed until you reboot your computer! :<br>
+	    <img src="./images/editor_demo_31.png"><br>
+	    Then, press the [ESC] key, answer [y], and press [Enter] to go back to menu.
+            </p>
+        </li>
+        <br>
+        <h3><li>Annex: available commands list</h3>
+	    <i>Don't forget to press the </i>[<code class="classname code1">/</code>]<i> key to enter command mode before entering any command name.</i><br>
+            </p>
+	    <h4>Editor management :</h4>
+	    <p>
+            <code class="classname code1">scnedit on</code> : Activate scenery editor mode.<br>
+            <code class="classname code1">scnedit off</code> : Shut off editor mode and return to game mode.<br>
+            <code class="classname code1">print</code> : Print scenery changes to console.<br>
+            </p>
+            <h4>Object creation :</h4>
+            <p>
+            <code class="classname code1">create_fire ...</code> <i>or</i> <code class="classname code1">cfi ...</code> <i>or</i> <code class="classname code1">create fire ...</code> : Create a fire. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_fire">create_fire</a> for the <code class="classname code1">...</code> parameters list.<br>
+            <code class="classname code1">create_helipad ...</code> <i>or</i> <code class="classname code1">che ...</code> <i>or</i> <code class="classname code1">create helipad ...</code> : Create a helipad. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_helipad">create_helipad</a> for the <code class="classname code1">...</code> parameters list.<br>
+            <code class="classname code1">create_human ...</code> <i>or</i> <code class="classname code1">chu ...</code> <i>or</i> <code class="classname code1">create human ...</code> : Create a human. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> for the <code class="classname code1">...</code> parameters list.<br>
+            <code class="classname code1">create_premodeled ...</code> <i>or</i> <code class="classname code1">cpr ...</code> <i>or</i> <code class="classname code1">create premodeled ...</code> : Create a premodeled object. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_premodeled">create_premodeled</a> for the <code class="classname code1">...</code> parameters list.<br>
+            <code class="classname code1">create_runway ...</code> <i>or</i> <code class="classname code1">cru ...</code> <i>or</i> <code class="classname code1">create runway ...</code> : Create a runway. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_runway">create_runway</a> for the <code class="classname code1">...</code> parameters list.<br>
+            <code class="classname code1">create_smoke ...</code> <i>or</i> <code class="classname code1">csm ...</code> <i>or</i> <code class="classname code1">create smoke ...</code> : Create a smoke trail. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_smoke">create_smoke</a> for the <code class="classname code1">...</code> parameters list.<br>
+            <code class="classname code1">load_object ...</code> <i>or</i> <code class="classname code1">lob ...</code> <i>or</i> <code class="classname code1">load object ...</code> : Load a V3D (*.3d) model from disk. See <a href= "../sar2ParmsBook/sar2ParmsBook.html#model_file">model_file</a> for the <code class="classname code1">...</code> parameter.<br>
+            </p>
+            <h4>Closer object actions :</h4>
+            <p>
+            <code class="classname code1">move</code> <i>or</i> <code class="classname code1">mv</code> : Get the closer object as current object in order to move it.<br>
+            <code class="classname code1">modify</code> <i>or</i> <code class="classname code1">mod</code> : Modify the closer object parameters.<br>
+            <code class="classname code1">info</code> : Give information about the closer object.<br>
+            <code class="classname code1">info next</code> <i>or</i> <code class="classname code1">ifn</code> : Give information about the ‘next’ closer object.<br>
+            </i> <code class="classname code1">remove</code> <i>or</i> <code class="classname code1">rm</code> <i>or</i> <code class="classname code1">delete</code> <i>or</i> <code class="classname code1">del</code>: Remove (delete) the closer object.<br>
+            <code class="classname code1">copy</code> <i>or</i> <code class="classname code1">cp</code> : Copy the closer object as current object.<br>
+            </p>
+            <h4>Current object actions :</h4>
+            <p>
+            <code class="classname code1">set</code> : Set the current object to scenery.<br>
+            <code class="classname code1">set_to_ground</code> <i>or</i> <code class="classname code1">stg</code> : Set the current object to ground even if don't touch it. Useful for helipads and runways because they can't be moved down by pressing the [End] key.<br>
+            <code class="classname code1">unload</code> <i>or</i> <code class="classname code1">ul</code> : Unload the current object (let the triedron alone).<br>
+            <br>
+            </p>
+        </li>
+    </ul>
+    </main>
+    <footer></footer>
+  </body>
+</html>

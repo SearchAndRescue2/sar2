@@ -21,6 +21,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <gtk/gtk.h>
 
 #ifdef __MSW__
 # include <windows.h>
@@ -65,6 +66,7 @@
 #include "sarmenucodes.h"
 #include "sarsimend.h"
 #include "config.h"
+#include "cmdscnedit.h"
 
 #include "fonts/6x10.fnt"
 #include "fonts/7x14.fnt"
@@ -2224,6 +2226,12 @@ to exist before."
 	    );
 	}
 
+	/* In-game editor off */
+	core_ptr->editor_mode_on = False;
+
+	/* Init in-game editor structure pointer */
+	core_ptr->in_game_editor = NULL;
+
 	return(core_ptr);
 }
 
@@ -2354,6 +2362,39 @@ void SARManage(void *ptr)
 	 * changes the music as needed.
 	 */
 	SARMusicUpdate(core_ptr);
+
+	sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+	if(scn_ed != NULL)
+	{
+	    GMainContext *context = scn_ed->gtk_context;
+	    if(context != NULL)
+	    {
+		if(scn_ed->gtk_app_running )
+		{
+		    /* Run a single GTK context non-blocking iteration */
+		    g_main_context_iteration(context, FALSE);
+		}
+		/* Gtk application has been set to stop */
+		else
+		{
+		    GtkApplication *app = scn_ed->gtk_application;
+
+		    g_settings_sync();
+
+		    /* Clear pending events */
+		    while(g_main_context_iteration(context, FALSE))
+			;
+
+		    g_object_unref(app);
+		    scn_ed->gtk_application = NULL;
+
+		    g_main_context_release(context);
+		    scn_ed->gtk_context = NULL;
+
+fprintf(stderr, "%s: Gtk application terminated.\n", __FILE__);
+		}
+	    }
+	}
 
 }
 

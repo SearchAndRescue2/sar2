@@ -36,6 +36,7 @@
 #include "simop.h"
 #include "simmanage.h"
 #include "config.h"
+#include "cmdscnedit.h"
 
 
 static void SARSimGenerateLighteningPoints(
@@ -664,6 +665,8 @@ int SARSimUpdateSceneObjects(
 	sar_object_aircraft_struct *obj_aircraft_ptr;
 	sar_contact_bounds_struct *cb;
 	SFMModelStruct *fdm;
+	sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+
 	if(scene == NULL)
 	    return(-1);
 
@@ -683,6 +686,16 @@ int SARSimUpdateSceneObjects(
 	    obj_ptr = (*obj_pa)[i];
 	    if(obj_ptr == NULL)
 		continue;
+
+	    /* Scenery editor currently edited object? */
+	    if(core_ptr->editor_mode_on == True &&
+		i == scn_ed->cur_obj_num
+	    )
+	    {
+		/* Copy player position to currently edited object position. */
+		obj_ptr->pos = scene->player_obj_ptr->pos;
+		obj_ptr->dir = scene->player_obj_ptr->dir;
+	    }
 
 	    status = 0;		/* Reset `SFM handled' value */
 

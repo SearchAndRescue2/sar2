@@ -79,6 +79,16 @@ void SARCmdTextInputCB(const char *value, void *data)
 	    return;
 
 
+	/* Scenery edit mode (object placer) activated? */
+	if(core_ptr->editor_mode_on == True)
+	{
+	    /* Command and value will be parsed by SARCmdSceneEditor()
+	     * function, thus just call it then return.
+	     */
+	    SARCmdSceneEditor(core_ptr, value, flags);
+	    return;
+	}
+
 	/* Parse command and value */
 
 	/* Get command */

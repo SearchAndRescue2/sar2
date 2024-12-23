@@ -468,6 +468,10 @@ typedef struct {
 	 */
 	sar_fps_struct	fps;
 
+	/* In-game scenery editor */
+	Boolean		editor_mode_on;		/* State */
+	void		*in_game_editor;	/* Data */
+
 } sar_core_struct;
 
 #define SAR_CORE(p)	((sar_core_struct *)(p))

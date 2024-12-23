@@ -514,6 +514,7 @@ to the fullest extent of the law."
 #define SAR_DEF_SCENERY_DIR		"scenery"
 #define SAR_DEF_SOUNDS_DIR		"sounds"
 #define SAR_DEF_TEXTURES_DIR		"textures"
+#define SAR_DEF_WATERCRAFTS_DIR		"vessels"
 
 /*
  *	Environment Variable Names:

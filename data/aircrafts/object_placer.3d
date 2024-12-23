@@ -1,0 +1,151 @@
+begin_header
+creator v3dconverter
+end_header
+
+name Object placer
+description <bold>Object placer triedron<default>\
+Manufacturer: <bold>SarII<default>\
+Height: <bold>1m<default>\
+Length: <bold>1m<default>\
+Width : <bold>1m<default>\
+Max Gross Weight: <bold>Unknown<default>\
+Empty Weight: <bold>Unknown<default>\
+Number Engines: <bold>1<default>\
+Propulsion Type: <bold>Classified<default>\
+Fuel Capacity: <bold>Unknown<default>\
+Max Endurance: <bold>At least 100 years<default>\
+Max Speed: <bold>Pilot dependant<default>\
+Never Exceed Speed (VNE): <bold>300000km/s<default>\
+Cruising Speed: <bold>Pilot dependant<default>\
+Max Range: <bold>Coffee cup size dependant<default>\
+Service Ceiling: <bold>Unlimited<default>\
+Rate of climb: <bold>Unknown<default>\
+Number of Pilots: <bold>1<default>\
+Number of Flight Crew: <bold>0<default>\
+Number of passengers (max): <bold>0<default>
+
+type 4
+range 20000
+crash_flags 1  0  0
+contact_cylendrical 1.0 -1.0 1.0
+dry_mass 1000.0
+fuel 0.0001 1000.0 1000.0
+engine n 0 100 1.0
+
+begin_model standard
+#OBJFILE material: White
+color 0.800000 0.800000 0.800000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000
+begin_triangles
+ normal 0.000000 -1.000000 0.000000
+ 0.050000 -0.050000 -0.050000
+ -0.050000 -0.050000 -0.050000
+ 0.050000 -0.050000 0.050000
+ normal -0.000000 -0.000000 -1.000000
+ -0.050000 0.050000 -0.050000
+ -0.050000 -0.050000 -0.050000
+ 0.050000 0.050000 -0.050000
+ normal -1.000000 -0.000000 0.000000
+ -0.050000 -0.050000 -0.050000
+ -0.050000 0.050000 -0.050000
+ -0.050000 -0.050000 0.050000
+ normal 0.000000 -1.000000 0.000000
+ -0.050000 -0.050000 -0.050000
+ -0.050000 -0.050000 0.050000
+ 0.050000 -0.050000 0.050000
+ normal -0.000000 -0.000000 -1.000000
+ -0.050000 -0.050000 -0.050000
+ 0.050000 -0.050000 -0.050000
+ 0.050000 0.050000 -0.050000
+ normal -1.000000 -0.000000 0.000000
+ -0.050000 0.050000 -0.050000
+ -0.050000 0.050000 0.050000
+ -0.050000 -0.050000 0.050000
+end_triangles
+#OBJFILE material: Green
+color 0.000000 1.000000 0.000000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000
+begin_triangles
+ normal 0.000000 0.052600 0.998600
+ -0.050000 0.050000 0.050000
+ -0.000000 1.000000 0.000000
+ 0.050000 0.050000 0.050000
+ normal -0.998600 0.052600 0.000000
+ -0.000000 1.000000 0.000000
+ -0.050000 0.050000 0.050000
+ -0.050000 0.050000 -0.050000
+ normal 0.998600 0.052600 -0.000000
+ 0.050000 0.050000 0.050000
+ -0.000000 1.000000 0.000000
+ 0.050000 0.050000 -0.050000
+ normal -0.000000 0.052600 -0.998600
+ 0.050000 0.050000 -0.050000
+ -0.000000 1.000000 0.000000
+ -0.050000 0.050000 -0.050000
+end_triangles
+#OBJFILE material: Red
+color 1.000000 0.000000 0.000000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000
+begin_triangles
+ normal 0.052600 -0.998600 -0.000000
+ 0.050000 -0.050000 0.050000
+ 1.000000 0.000000 -0.000000
+ 0.050000 -0.050000 -0.050000
+ normal 0.052600 0.000000 0.998600
+ 0.050000 0.050000 0.050000
+ 1.000000 0.000000 -0.000000
+ 0.050000 -0.050000 0.050000
+ normal 0.052600 0.998600 -0.000000
+ 0.050000 0.050000 -0.050000
+ 1.000000 0.000000 -0.000000
+ 0.050000 0.050000 0.050000
+ normal 0.052600 0.000000 -0.998600
+ 0.050000 -0.050000 -0.050000
+ 1.000000 0.000000 -0.000000
+ 0.050000 0.050000 -0.050000
+end_triangles
+#OBJFILE material: Blue
+color 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000
+begin_triangles
+ normal 0.998600 0.000000 0.052600
+ 0.000000 0.000000 1.000000
+ 0.050000 0.050000 0.050000
+ 0.050000 -0.050000 0.050000
+ normal 0.000000 -0.998600 0.052600
+ -0.050000 -0.050000 0.050000
+ 0.000000 0.000000 1.000000
+ 0.050000 -0.050000 0.050000
+ normal -0.998600 -0.000000 0.052600
+ -0.050000 0.050000 0.050000
+ 0.000000 0.000000 1.000000
+ -0.050000 -0.050000 0.050000
+ normal -0.000000 0.998600 0.052600
+ 0.050000 0.050000 0.050000
+ 0.000000 0.000000 1.000000
+ -0.050000 0.050000 0.050000
+end_triangles
+end_model standard
+
+# Pilot head (eyes) position
+#                x     y    z
+cockpit_offset 0.00  0.00  2.00
+
+begin_model cockpit
+# Cockpit model declaration is mandatory for an aircraft, but
+# 3d primitives are not needed for the scenery editor "aircraft".
+end_model cockpit
+
+begin_model shadow
+begin_triangles
+ normal 0.000000 0.000000 1.000000
+ -0.050000 -0.050000 0.000000
+ -0.050000 0.050000 0.000000
+ 0.050000 0.050000 -0.000000
+ -0.000000 1.000000 0.000000
+ 0.050000 0.050000 -0.000000
+ -0.050000 0.050000 0.000000
+ 1.000000 0.000000 -0.000000
+ 0.050000 -0.050000 -0.000000
+ 0.050000 0.050000 -0.000000
+ 0.050000 -0.050000 -0.000000
+ -0.050000 -0.050000 0.000000
+ 0.050000 0.050000 -0.000000
+end_triangles
+end_model shadow
