@@ -57,7 +57,7 @@ long readV3dVerticies ( FILE *fpIn, const char * endBoundString, FILE *fpOut, ch
             lineNr++; // input file line counter
             break;
         }
-        
+
         if ( !strcmp(strtoupper( result, buffer), "") ) { // it's an empty line
             break;
         }
@@ -78,13 +78,13 @@ long readV3dVerticies ( FILE *fpIn, const char * endBoundString, FILE *fpOut, ch
 		    isAVertexNormal = 1; // new "NORMAL" statement found, first "NORMAL" statement was a vertex normal
 	    }
 	    fsetpos(fpIn, &position); // return to original in-file position
-	    
+
 	    if ( isAVertexNormal == 1 )
 	    {
 		vn++;
 		sscanf( lineBuffer, "%*s %lf %lf %lf", &nx, &ny, &nz );
 		fprintf( fpOut, "vn ");
-		
+
 		// apply v3d rotation and position modifiers
 		if ( modifier.rh ) RotateZ ( &nx, &ny, &nz, &pw, modifier.rh );
 		if ( modifier.rp ) RotateX ( &nx, &ny, &nz, &pw, modifier.rp );
@@ -92,7 +92,7 @@ long readV3dVerticies ( FILE *fpIn, const char * endBoundString, FILE *fpOut, ch
 		nx += modifier.tx;
 		ny += modifier.ty;
 		nz += modifier.tz;
-	    
+
 		/* TODO apply user modifiers. Apply order is: X rotation, then Y rotation, then Z rotation, then scale, then translations. */
 		/*
 		if ( userModifier->rx != 0.0 )
@@ -108,11 +108,11 @@ long readV3dVerticies ( FILE *fpIn, const char * endBoundString, FILE *fpOut, ch
 		    RotateZ ( &nx, &ny, &nz, &pw, userModifier->rz );
 		}
 		*/
-	    
+
 		/* re-orient normal them because v3d coords system is different from obj coords system */
 		RotateZ ( &nx, &ny, &nz, &pw, -90 ); // rotate normal arround Z axis. Angle given in degrees.
 		RotateX ( &nx, &ny, &nz, &pw, 90 ); // rotate normal arround X axis. Angle given in degrees.
-	    
+
 		// write vertex normal
 		fprintf( fpOut, "%lf %lf %lf\n", nx, ny, nz );
 	    }
@@ -121,7 +121,7 @@ long readV3dVerticies ( FILE *fpIn, const char * endBoundString, FILE *fpOut, ch
             vt++;
             fprintf( fpOut, "vt ");
 	    sscanf( lineBuffer, "%*s %lf %lf", &tu, &tv ); // u, v
-	    
+
             // write texture coords
             fprintf( fpOut, "%lf %lf\n", tu, tv ); // u, v
         }
@@ -131,11 +131,11 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
             vt++;
             fprintf( fpOut, "vt ");
             sscanf( lineBuffer, "%*s %lf %lf %lf", &x, &y, &z ); // u, v, w
-        
+
             //if ( modifier.rh ) RotateZ ( &x, &y, &z, &pw, modifier.rh );
             //if ( modifier.rp ) RotateX ( &x, &y, &z, &pw, modifier.rp );
             //if ( modifier.rb ) RotateY ( &x, &y, &z, &pw, modifier.rb );
-        
+
             //x += modifier.tx;
             //y += modifier.ty;
             //z += modifier.tz;
@@ -146,7 +146,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
             v++;
             fprintf( fpOut, "v ");
             sscanf( lineBuffer, "%lf %lf %lf", &vx, &vy, &vz );
-            
+
             if ( textureOrient[0] != '\0' ) { // if there is a running "texture_orient_" command, then create a texture vertex
                 vt++;
                 sscanf( textureOrient, "%*s %lf %lf %lf %lf", &ta, &tb, &tda, &tdb ); // "texture_orient_" command parameters
@@ -170,9 +170,9 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
                     if ( vz > tb ) tv = ( vz - tb ) / tdb;
                     else tv = ( tb - vz ) / tdb;
                 }
-                
+
             }
-	    
+
             // apply v3d rotation and position modifiers
             if ( modifier.rh ) RotateZ ( &vx, &vy, &vz, &pw, modifier.rh );
             if ( modifier.rp ) RotateX ( &vx, &vy, &vz, &pw, modifier.rp );
@@ -180,7 +180,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
             vx += modifier.tx;
             vy += modifier.ty;
             vz += modifier.tz;
-	    
+
 	    /* TODO apply user modifiers. Apply order is: X rotation, then Y rotation, then Z rotation, then scale, then translations. */
 	    /*
 	    if ( userModifier->rx != 0.0 )
@@ -196,11 +196,11 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
 		RotateZ ( &vx, &vy, &vz, &pw, userModifier->rz );
 	    }
 	    */
-	    
+
             /* re-orient vertex because v3d coords system is different from obj coords system */
 	    RotateZ ( &vx, &vy, &vz, &pw, -90 ); // rotate vertex arround Z axis. Angle given in degrees.
 	    RotateX ( &vx, &vy, &vz, &pw, 90 ); // rotate vertex arround X axis. Angle given in degrees.
-	    
+
             fprintf( fpOut, "%lf %lf %lf\n", vx, vy, vz ); // write geometric vertex
             if ( textureOrient[0] != '\0' ) { // write texture vertex
                 fprintf( fpOut, "vt %lf %lf\n", tu, tv );
@@ -341,7 +341,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
             fprintf(fpOut, " %d/%d/%d", v3, v3, v3 );
         }
         fprintf(fpOut, "\n");
-            
+
         // next triangles
         for ( int cnt0 = primitives - 1; cnt0 > 0; cnt0 = cnt0 - 2 ) {
             v1 = v1 + 1;
@@ -368,7 +368,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
                 fprintf(fpOut, " %d/%d/%d", v3, v3, v3 );
             }
             fprintf(fpOut, "\n");
-            
+
             v1 = v1 + 1;
             if ( v1 < 0 ) {
                 v2 = v2 + 2;
@@ -485,7 +485,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
             fprintf(fpOut, " %d/%d/%d", -primitives * 2 + 1, -primitives * 2 + 1, -primitives * 2 + 1 );
         }
         fprintf(fpOut, "\n");
-        
+
         // next quads
         for ( int cnt0 = primitives - 1; cnt0 > 0; cnt0-- ) {
             int offset = -cnt0 * 2;
@@ -539,10 +539,10 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
         primitives = 1; // for printf output
     }
     ////////////////////////////////////////////////////printf("%d %s with %d v, %d vt, %d vn\n", primitives, endBoundString, v, vt, vn);
-    
-    
-    
-    
+
+
+
+
     /*
     fprintf( fpOut, "****************\n");
     fseek(fpIn, startPosition, SEEK_SET);
@@ -552,7 +552,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
     }
     fprintf( fpOut, "****************\n");
     */
-    
+
     return primitives;
 }
 
@@ -564,43 +564,43 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
     char modelType[22 + 1]; // longest model type: 'aileron_elevator_right'
     long fileSize = 0;
     unsigned int points = 0, lines = 0, line_strip = 0, line_loop = 0, triangle = 0, triangle_strip = 0, triangle_fan = 0, quads = 0, quad_strip = 0, polygon = 0, color = 0, texture = 0, objectNr = 0;
-    
+
     modifier.tx = 0;
     modifier.ty = 0;
     modifier.tz = 0;
     modifier.rh = 0;
     modifier.rp = 0;
     modifier.rb = 0;
-    
+
     textureName[0] = '\0'; // no texture at startup
     textureOrient[0] = '\0'; // no texture at startup
-    
+
     fileSize = file_size(source);
     printf("*.3d file size: %ld bytes.\n", fileSize);
-    
+
     if ((fpIn = fopen(source, "r")) == NULL) {
         perror(source);
         return -1;
     }
-    
+
     // Generate output file name
     scanFileName( dest, &path, &baseName, &extension );
-    
+
     if ( path[0] == '\0' ) // if no path
 	sprintf( buffer, "%s.obj", baseName );
     else
 	sprintf( buffer, "%s/%s.obj", path, baseName );
-    
+
     if ((fpOut = fopen(buffer, "w")) == NULL) {
         perror(buffer);
         return -1;
     }
-    
+
     if ( path[0] == '\0' ) // if no path
 	sprintf( buffer, "%s.mtl", baseName );
     else
 	sprintf( buffer, "%s/%s.mtl", path, baseName );
-    
+
     if ((fpMtl = fopen(buffer, "w")) == NULL) {
         perror(buffer);
         return -1;
@@ -610,7 +610,7 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
     }
 
     /////////////////////////////fprintf(fpOut, "g %s\n", baseName); // create a group and give it 3d model name FIXME: can be an issue if model name contains one ore more spaces!
-    
+
     /*
     // count file lines, then create as many verticies as lines number (not efficient but easier way to do the job...)
     long counter = 0;
@@ -624,7 +624,7 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
     struct Vertex vertex[counter];
     rewind(fpIn);
     */
-    
+
     while ( fgets(lineBuffer, MAX_LENGTH, fpIn) ) {
 	strcpy( buffer, ""); // clear buffer
         sscanf( lineBuffer, "%s %s", buffer, parameter1 );
@@ -687,10 +687,10 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
             // create material in *.mtl file
             //char red[20], green[20], blue[20], transparency[20], ambient[20], diffuse[20], specular[20], shininess[20], emission[20];
             double red = 0, green = 0, blue = 0, transparency = 0, ambient = 1, diffuse = 1, specular = 1, shininess = 1, emission = 1;
-            
+
 	    // TODO FIXME check if material already exists before creating a new one !!! If not, a VERY big quantity of materials can be generated and Blender don't like it!!!
             fprintf(fpMtl, "newmtl color_%d\n", color);
-	    
+
             if ( sscanf( lineBuffer, " %*s %lf %lf %lf %lf %lf %lf %lf %lf %lf", &red, &green, &blue, &transparency, &ambient, &diffuse, &specular, &shininess, &emission ) ) {
 		/*
                 fprintf(fpMtl, "Ka %lf %lf %lf\n", red * ambient, green * ambient, blue * ambient);
@@ -699,11 +699,11 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
 		fprintf(fpMtl, "Ka 0.200000 0.200000 0.200000\n");
                 fprintf(fpMtl, "Ks 1.000000 1.000000 1.000000\n");
 		fprintf(fpMtl, "Kd %lf %lf %lf\n", red * diffuse, green * diffuse, blue * diffuse);
-                
+
                 // Ka r g b : The Ka statement specifies the ambient reflectivity using RGB values.
                 // Kd r g b : The Kd statement specifies the diffuse reflectivity using RGB values.
                 // Ks r g b : The Ks statement specifies the specular reflectivity using RGB values.
-                // Illumination    Properties that are turned on in the 
+                // Illumination    Properties that are turned on in the
                 // model           Property Editor
                 //  0		Color on and Ambient off
                 //  1		Color on and Ambient on
@@ -727,7 +727,7 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
                 fprintf(fpMtl, "Kd 0.5 0.5 0.5\n"); // grey
             }
             fprintf(fpMtl, "illum 1\n");
-            
+
             // specify material in *.obj file
             fprintf(fpOut, "usemtl color_%d\n", color);
             textureName[0] = '\0';
@@ -745,6 +745,7 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
             sscanf( lineBuffer, "%*s %s", modelType );
             // We can't use only the model type as object name because a *.3d file can contain more than one "begin_model" statement with the same model type (example: begin_model rotor)
             fprintf( fpOut, "o obj%d_%s\n", objectNr++, modelType );
+	    strtoupper( modelType, (const char *) modelType );
             fprintf(fpOut, "usemtl color_%d\n", color);
             textureName[0] = '\0';
             textureOrient[0] = '\0';
@@ -754,6 +755,7 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
             sscanf( lineBuffer, "%*s %s", modelType );
             // We can't use only the model type as object name because a *.3d file can contain more than one "begin_model" statement with the same model type (example: begin_model rotor)
             fprintf( fpOut, "o obj%d_%s\n", objectNr++, modelType );
+	    strtoupper( modelType, (const char *) modelType );
         }
         else if ( !strcmp(tagName, "END_MODEL") ) {
             modifier.tx = 0;
@@ -764,9 +766,11 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
             modifier.rb = 0;
             textureName[0] = '\0';
             textureOrient[0] = '\0';
+            strcpy(modelType, "");
         }
         else if ( !strcmp(tagName, "TRANSLATE") ) {
-            sscanf( lineBuffer, "%*s %lf %lf %lf", &modifier.tx, &modifier.ty, &modifier.tz );
+	    if ( userModifier->doNotTransformModels != true )
+		sscanf( lineBuffer, "%*s %lf %lf %lf", &modifier.tx, &modifier.ty, &modifier.tz );
         }
         else if ( !strcmp(tagName, "UNTRANSLATE") || !strcmp(tagName, "END_MODEL") ) {
             modifier.tx = 0;
@@ -774,7 +778,8 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
             modifier.tz = 0;
         }
         else if ( !strcmp(tagName, "ROTATE") ) {
-            sscanf( lineBuffer, "%*s %lf %lf %lf", &modifier.rh, &modifier.rp, &modifier.rb );
+	    if ( userModifier->doNotTransformModels != true )
+		sscanf( lineBuffer, "%*s %lf %lf %lf", &modifier.rh, &modifier.rp, &modifier.rb );
         }
         else if ( !strcmp(tagName, "UNROTATE") || !strcmp(tagName, "END_MODEL") ) {
             modifier.rh = 0;
@@ -786,13 +791,13 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
             sscanf( lineBuffer, "%*s %s %s %s", textureName, texturePath, priority );
             fprintf(fpMtl, "newmtl %s\n", textureName);
             fprintf(fpMtl, "Kd 1.000000 1.000000 1.000000\n");
-	    
+
 	    /* fast but dirty way to modify extension */
 	    int extensionPosition = strlen( texturePath ) - 3;
 	    texturePath[ extensionPosition++ ] = 't';
 	    texturePath[ extensionPosition++ ] = 'g';
 	    texturePath[ extensionPosition ] = 'a';
-	    
+
             fprintf(fpMtl, "map_Kd %s\n", texturePath);
             textureName[0] = '\0';
             textureOrient[0] = '\0';
@@ -801,7 +806,7 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
         else if ( !strcmp(tagName, "TEXTURE_SELECT") ) {
             sscanf( lineBuffer, "%*s %s", textureName );
             fprintf( fpOut, "usemtl %s\n", textureName );
-            
+
             textureOrient[0] = '\0';
         }
         else if ( !strcmp(tagName, "TEXTURE_ORIENT_XY") ||  !strcmp(tagName, "TEXTURE_ORIENT_XZ") || !strcmp(tagName, "TEXTURE_ORIENT_YZ")) {
@@ -820,15 +825,15 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
                 fprintf(fpOut, "\n");
             }
             //while ( (c = fgetc(fpIn)) != '\n') fprintf(fpOut, "%c", c);
-            
+
         }
-        
+
         lineNr++; // input file line counter
     }
     printf("%s contains:\n %d points, %d lines, %d line_strip, %d line_loop, %d triangle, %d triangle_strip, %d triangle_fan, %d quads, %d quad_strip, %d polygon, and %d color statements.\n", source, points, lines, line_strip, line_loop, triangle, triangle_strip, triangle_fan, quads, quad_strip, polygon, color);
-    
+
     printf("Files %s.obj and %s.mtl written to: %s directory.\n", baseName, baseName, path);
-    
+
     if ( path != NULL )
     {
 	free( path );
@@ -844,7 +849,7 @@ int v3dToObj( const char *source, const char *dest, UserModifier *userModifier )
 	free( extension );
 	extension = NULL;
     }
-    
+
     fclose(fpMtl);
     fclose(fpOut);
     fclose(fpIn);

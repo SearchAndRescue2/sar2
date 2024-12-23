@@ -20,7 +20,7 @@
 //
 // Key words:
 // NAME : parameter name, without any space.
-// SYNOPSIS : first word is parameter name and will be automatically bolded, following words are arguments. For optional arguments, space before and after brackets ('[' ']') are mandatory. Example: 'parameterName arg1 arg2 [ opt_arg ] [ ... ]'. 
+// SYNOPSIS : first word is parameter name and will be automatically bolded, following words are arguments. For optional arguments, space before and after brackets ('[' ']') are mandatory. Example: 'parameterName arg1 arg2 [ opt_arg ] [ ... ]'.
 // DESCRIPTION : what the parameter do.
 // ARGUMENTS : parameter arguments. One argument per line. First word must be argument name, all following words are argument description. Arguments will be drawn in a HTML table. Use '(none)' as argument name if parameter has no argument.
 // CONTEXT values: use 'mis' for mission (*.mis file), '3d' for model (*.3d file) and 'scn' for scenery (*.scn file). At least one context is mandatory. Space is mandatory between two context names.

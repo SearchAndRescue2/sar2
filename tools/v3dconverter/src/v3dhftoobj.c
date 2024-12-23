@@ -39,7 +39,7 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     long lineNr = 1;
     unsigned int triangles = 0;
     bool hasHeightfield = false, hasTexture = false;
-    
+
     struct Terrain {
 	char path[ MAX_LENGTH + 1 ];	// texture path
 	double sizeX;			// "width", in meters
@@ -52,23 +52,23 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	double p;			// pitch rotation, in degrees
 	double b;			// bank rotation, in degrees
     };
-    
+
     struct TexLoad {
 	char name[MAX_LENGTH + 1]; // texture name
 	char path[MAX_LENGTH + 1]; // texture path
 	double priority;
     };
-    
+
     struct TgaMinimalHeader {
 	uint8_t idFieldLength;		// Byte 0: image ID field length
 	uint8_t colorMapType;
 	uint8_t imageType;
-	
+
 	/* Color Map Specification */
 	uint16_t colorMapIndex;		// Byte 3 (LSB), byte 4 (MSB)
 	uint16_t colorMapLength;
 	uint8_t colorMapSize;
-	
+
 	/* Image specification */
 	uint16_t xOrigin;		// Byte 8 (LSB), byte 9 (MSB)
 	uint16_t yOrigin;
@@ -77,20 +77,20 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	uint8_t pixelDepth;		// Byte 16
 	uint8_t imageDescriptor;
     };
-    
+
     struct Terrain terrain;
-    
+
     struct TexLoad texLoad;
     strcpy( texLoad.name, "" );
     strcpy( texLoad.path, "" );
-    
+
     /*
      * Generate a time stamp string. This string will be used to name material and to name
      * the file which will be used to store terrain data for later *.obj to *.hf conversion.
      */
     char *timeStampString = timeStamp();
-    
-    
+
+
     /*
      * Create and open "timeStampString" file to store terrain data
      * for later *.obj to *.hf conversion.
@@ -99,40 +99,23 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     char v3dConverterPath[] = "/.local/share/v3dconverter/";
     int dirLength = strlen( v3dConverterPath );
     int fileNameLength = strlen( timeStampString );
-    
-    char *name = malloc( homeLength + dirLength + fileNameLength + 1 );
+
+    char *name = calloc( homeLength + dirLength + fileNameLength + 1, sizeof(char) );
     if ( name == NULL )
     {
 	fprintf( stderr, "v3dhftoobj.c: can't allocate memory for name.\n" );
         return -1;
     }
-    
+
     strcat( name, getenv("HOME") );
     strcat( name, v3dConverterPath );
-    
+
     errno = 0;
-    if ( ( mkdir(name, S_IRWXU) ) == -1 ) {
-        switch ( errno ) {
-	    case EEXIST:
-                //fprintf( stderr, "v3dhftoobj.c: pathname already exists.\n");
-		break;
-            case EACCES :
-                fprintf( stderr, "v3dhftoobj.c: the parent directory does not allow write.\n");
-                //exit(EXIT_FAILURE);
-		break;
-            case ENAMETOOLONG:
-                fprintf( stderr, "v3dhftoobj.c: pathname is too long.\n");
-                //exit(EXIT_FAILURE);
-		break;
-            default:
-                fprintf( stderr, "v3dhftoobj.c: mkdir error.\n");
-                //exit(EXIT_FAILURE);
-		break;
-        }
-    }
-    
+    if ( mkdir(name, S_IRWXU) == -1 && errno != EEXIST )
+	fprintf( stderr, "v3dhftoobj.c: %s : %s\n", name, strerror(errno));
+
     strcat( name, timeStampString );
-    
+
     if ( ( fpTerrainDataOut = fopen( name, "w" ) ) == NULL ) {
 	perror( name );
 	return -1;
@@ -141,8 +124,8 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     {
 	free( name );
     }
-    
-    
+
+
     /*
      * Open *.3d file, then look for heightfield and texture names.
      */
@@ -161,49 +144,68 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	{
 	    hasHeightfield = true;
 	    int sscanfResult = 0;
-	    sscanfResult = sscanf( lineBuffer, "%*s %s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+	    char additionalParameter[MAX_LENGTH];
+	    sscanfResult = sscanf( lineBuffer, "%*s %s %lf %lf %lf %lf %lf %lf %lf %lf %lf %s",
 		    terrain.path,
 		    &terrain.sizeX, &terrain.sizeY, &terrain.maxAltitude,
 		    &terrain.xPos, &terrain.yPos, &terrain.zPos,
-		    &terrain.h, &terrain.p, &terrain.b
+		    &terrain.h, &terrain.p, &terrain.b,
+		    additionalParameter
   		);
 	    if ( sscanfResult != 10 )
 	    {
 		int cnt = 0;
 		while ( lineBuffer[ cnt++ ] != '\n' );
 		lineBuffer[ --cnt ] = '\0';
-		fprintf( stderr, "v3dhftoobj.c: Error while scanning line #%ld (\"%s\").\n", lineNr, lineBuffer );
+		if ( sscanfResult < 10 )
+		    fprintf( stderr, "v3dhftoobj.c: Error while scanning line #%ld \"%s\": %d parameter(s) missing.\n", lineNr, lineBuffer, 10 - sscanfResult );
+		else
+		    fprintf( stderr, "v3dhftoobj.c: Warning while scanning line #%ld \"%s\": too much parameters.\n", lineNr, lineBuffer);
+	    }
+
+	    /* Wants user to not apply *.3d terrain translations? */
+	    if ( userModifier->doNotTransformModels == true )
+	    {
+		terrain.xPos = 0;
+		terrain.yPos = 0;
+		terrain.zPos = 0;
+		//printf( "Info: -do-not-transform option activated.\n);
 	    }
 	}
 	else if ( !strcmp( objTag, "texture_load" ) )
 	{
 	    hasTexture = true;
 	    int sscanfResult = 0;
-	    sscanfResult = sscanf( lineBuffer, "%*s %s %s %lf",
+	    char additionalParameter[MAX_LENGTH];
+	    sscanfResult = sscanf( lineBuffer, "%*s %s %s %lf %s",
 		    texLoad.name,
 		    texLoad.path,
-		    &texLoad.priority
+		    &texLoad.priority,
+		    additionalParameter
   		);
 	    if ( sscanfResult != 3 )
 	    {
 		int cnt = 0;
 		while ( lineBuffer[ cnt++ ] != '\n' );
 		lineBuffer[ --cnt ] = '\0';
-		fprintf( stderr, "v3dhftoobj.c: Error while scanning line #%ld (\"%s\").\n", lineNr, lineBuffer );
+		if ( sscanfResult < 3 )
+		    fprintf( stderr, "v3dhftoobj.c: Error while scanning line #%ld \"%s\": %d parameter(s) missing.\n", lineNr, lineBuffer, 3 - sscanfResult );
+		else
+		    fprintf( stderr, "v3dhftoobj.c: Warning while scanning line #%ld \"%s\": too much parameters.\n", lineNr, lineBuffer);
 	    }
 	}
 	else
 	    ;
-	
+
 	if ( hasHeightfield && hasTexture )
 	    break;
-	
+
 	lineNr++;
     }
     fclose( fp3dFileIn );
     fp3dFileIn = NULL;
-    
-    
+
+
     /*
      * Read *.hf image header.
      */
@@ -214,17 +216,34 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     if ( header == NULL )
     {
 	fprintf( stderr, "Can't allocate memory for TGA image header.\n" );
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
         return -1;
     }
+
+    /* Try to extract texture full path */
+    char * str_tmp_0 = strdup( source );
+    char * found = strstr( str_tmp_0, "/data/objects/" );
+    /* String found? */
+    if ( found != NULL ) {
+	char * str_tmp_1 = strdup( source );
+
+	str_tmp_0[strlen(source) - strlen(found) + 1] = '\0';
+	sprintf( str_tmp_1, "%sdata/%s", str_tmp_0, terrain.path );
+
+	strcpy( terrain.path, str_tmp_1 );
+
+	free(str_tmp_1);
+    }
+    free(str_tmp_0);
+
     if ( (fpHfIn = fopen( terrain.path, "rb") ) == NULL ) {
         perror( terrain.path );
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
         return -1;
     }
-    
+
     /* Warning: sizeof( hfHeader ) don't work for image reading because of memory alignment. */
     int tgaImageHeaderLength = 18;
     fread( header, 1, tgaImageHeaderLength, fpHfIn );
@@ -240,7 +259,7 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     hfHeader.height = header[14] + header[15] * 256;
     hfHeader.pixelDepth = header[16];
     hfHeader.imageDescriptor= header[17];
-    /*
+/*
     long fileSize = 0;
     fileSize = file_size( terrain.path );
     fprintf( stderr, "------ *.hf image: %s, %ld bytes ------\n", terrain.path, fileSize );
@@ -255,8 +274,8 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     fprintf( stderr, "          width = %d ( %d + %d * 256 )\n", hfHeader.width, header[12], header[13] );
     fprintf( stderr, "         height = %d ( %d + %d * 256 )\n", hfHeader.height, header[14], header[15] );
     fprintf( stderr, "     pixelDepth = %d\n", hfHeader.pixelDepth );
-    fprintf( stderr, "imageDescriptor = %d\n\n", hfHeader.imageDescriptor );
-    */
+    fprintf( stderr, "imageDescriptor = %08b\n\n", hfHeader.imageDescriptor );
+*/
     if ( hfHeader.imageType != 3 )
     {
 	fprintf( stderr, "Warning: *.hf TGA image should preferably be of type 3 (ie an uncompressed grayscale image).\n" );
@@ -265,31 +284,30 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     {
 	fprintf( stderr, "Warning: *.hf TGA image should preferably have 8 bits per pixel (%d bits found).\n", hfHeader.pixelDepth );
     }
-    
+
     imageOrigin = hfHeader.imageDescriptor & 0b00110000;
-    imageOrigin = imageOrigin >> 4;
-    if ( imageOrigin == 2 )
+    if ( imageOrigin == TGA_TOP_LEFT_MASK )
 	; // top left origin, okay.
-    else if ( imageOrigin == 0 )
+    else if ( imageOrigin == TGA_BOTTOM_LEFT_MASK )
     {
 	fprintf( stderr, "Warning: *.hf TGA image should preferably be top left origin (bottom left found and accepted).\n" );
     }
-    else if ( imageOrigin == 1 )
+    else if ( imageOrigin == TGA_BOTTOM_RIGHT_MASK )
     {
 	fprintf( stderr, "Error: *.hf TGA image should preferably be top left origin (bottom right found).\n" );
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
 	return -1;
     }
-    else // imageOrigin == 3
+    else // imageOrigin == TGA_TOP_RIGHT_MASK
     {
 	fprintf( stderr, "Error: *.hf TGA image should preferably be top left origin (top right found).\n" );
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
 	return -1;
     }
-    
-    
+
+
     /*
      * Read ID field (if any). We don't need it, but this will increment file data pointer.
      */
@@ -299,8 +317,8 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	fread( imageID, 1, hfHeader.idFieldLength, fpHfIn );
 	free( imageID );
     }
-    
-    
+
+
     /*
      * Read color map field (if any). We don't need it, but this will increment file data pointer.
      */
@@ -311,14 +329,14 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	fread( colorMap, 1, colorMapBytes, fpHfIn );
 	free( colorMap );
 	fprintf( stderr, "Error: *.hf TGA image shouldn't have any color map (%d length color map found).\n", hfHeader.colorMapLength);
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
 	return -1;
     }
     free( header );
     header = NULL;
-    
-    
+
+
     /*
      * Generate output (*.obj and *.mtl) file names.
      */
@@ -327,37 +345,37 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	sprintf( buffer, "%s.obj", baseName );
     else
 	sprintf( buffer, "%s/%s.obj", path, baseName );
-    
+
     if ( ( fpObjOut = fopen(buffer, "w" ) ) == NULL) {
         perror(buffer);
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
         return -1;
     }
-    
+
     if ( path[0] == '\0' ) // if no path
 	sprintf( buffer, "%s.mtl", baseName );
     else
 	sprintf( buffer, "%s/%s.mtl", path, baseName );
-    
+
     if ( ( fpMtlOut = fopen( buffer, "w") ) == NULL ) {
         perror( buffer );
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
         return -1;
     }
-    
-    
+
+
     /*
      * Write *.mtl file name in *.obj file and write material in *.mtl file.
      */
     if ( fpMtlOut != NULL ) {
 	/* Write terrain object name in *obj file */
         //fprintf( fpObjOut, "o Terrain\n\n" );
-	
+
 	/* Write material file name in *obj file, and add texture file name (if any) */
         fprintf( fpObjOut, "mtllib ./%s.mtl\n\n", baseName );
-	
+
 	/* Create material in *.mtl file */
 	fprintf( fpMtlOut, "newmtl %s\n", timeStampString );
 	fprintf( fpMtlOut, "Ns 127.999985\n" );
@@ -368,14 +386,14 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	fprintf( fpMtlOut, "Ni 1.450000\n" );
 	fprintf( fpMtlOut, "d 1.000000\n" );
 	fprintf( fpMtlOut, "illum 2\n" );
-	if ( texLoad.path != NULL )
+	if ( strlen(texLoad.path) != 0 )
 	    fprintf( fpMtlOut, "map_Kd %s\n", texLoad.path );
-	
+
 	fclose( fpMtlOut );
 	fpMtlOut = NULL;
     }
-    
-    
+
+
     /*
      * Read *.hf altitudes.
      */
@@ -384,12 +402,12 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     if ( altitudeData == NULL )
     {
 	fprintf( stderr, "Can't allocate memory for altitudeData.\n" );
-	
+
 	FREE_AND_CLOSE_ALL_V3DHFTOOBJ
         return -1;
     }
-    
-    if ( imageOrigin == 0 )
+
+    if ( imageOrigin == TGA_BOTTOM_LEFT_MASK )
     {
 	/* Image is bottom left origin: rows order must be inverted in order to obtain a top left origin image. */
 	unsigned long bytesPerRow = hfHeader.width * bytesPerPixel;
@@ -397,7 +415,7 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	if ( tempRow == NULL )
 	{
 	    fprintf( stderr, "Can't allocate memory for tempRow.\n" );
-	    
+
 	    FREE_AND_CLOSE_ALL_V3DHFTOOBJ
 	    return -1;
 	}
@@ -408,7 +426,7 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	}
 	free( tempRow );
     }
-    else if ( imageOrigin == 2)
+    else if ( imageOrigin == TGA_TOP_LEFT_MASK)
     {
 	/* Image is top left origin: we just have to read data. */
 	fread( altitudeData, 1, hfHeader.width * hfHeader.height * bytesPerPixel, fpHfIn );
@@ -417,17 +435,17 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     {
 	; /* Other cases (imageOrigin == 1 or imageOrigin == 2) have been detected and have generated an error earlier */
     }
-    
-    
+
+
     /*
      * Write terrain vertices.
      */
     long offset = 0;
-    double perPixelXDistance = terrain.sizeX / (double)hfHeader.width;
-    double perPixelYDistance = terrain.sizeY / (double)hfHeader.height;
+    double perPixelXDistance = terrain.sizeX / (double)( hfHeader.width - 1 );
+    double perPixelYDistance = terrain.sizeY / (double)( hfHeader.height - 1 );
     double perPixelZDistance = terrain.maxAltitude / 255; // altitude is always an 8 bits value
-    double halfXSize = terrain.sizeX / 2 - perPixelXDistance / 2;
-    double halfYSize = terrain.sizeY / 2 - perPixelYDistance / 2;
+    double halfXSize = terrain.sizeX / 2;
+    double halfYSize = terrain.sizeY / 2;
     for ( int line = hfHeader.height - 1; line >= 0; line-- )
     {
 	for ( int col = 0; col < hfHeader.width; col++ )
@@ -436,60 +454,60 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	    double y = (double)line * perPixelYDistance - halfYSize;
 	    double z = (double)altitudeData[ offset ] * perPixelZDistance;
 	    offset += bytesPerPixel;
-	    
+
 	    /* Apply *.3d terrain translations */
 	    x += terrain.xPos;
 	    y += terrain.yPos;
 	    z += terrain.zPos;
-	    
+
 	    /* Apply user translations */
 	    x += userModifier->tx;
 	    y += userModifier->ty;
 	    z += userModifier->tz;
-	    
+
 	    /* Apply user scale */
 	    x *= userModifier->scale;
 	    y *= userModifier->scale;
 	    z *= userModifier->scale;
-	    
+
 	    /* Write vertex to *.obj file */
-	    fprintf( fpObjOut, "v %.3f %.3f %.3f\n", x, z, -y );
+	    fprintf( fpObjOut, "v %.6f %.6f %.6f\n", x, z, -y );
 	}
     }
     free( altitudeData );
-    
-    
+
+
     /*
      * Write texture vertices, if any.
      */
     bool isTextured = true;
-    if ( texLoad.path == NULL )
+    if ( strlen(texLoad.path) == 0 )
     {
 	isTextured = false;
     }
     else /* There is a texture to apply */
     {
 	/* Write texture vertices in *.obj file */
-	for ( int cnt0 = hfHeader.height; cnt0 >= 0; cnt0-- )
+	for ( int line = hfHeader.height - 1; line >= 0; line-- )
 	{
-	    for ( int cnt1 = 0; cnt1 < hfHeader.width; cnt1++ )
+	    for ( int col = 0; col < hfHeader.width; col++ )
 	    {
-		fprintf( fpObjOut, "vt %.6f %.6f\n", (double)cnt1 / (double)hfHeader.width, (double)cnt0 / (double)hfHeader.height );
+		fprintf( fpObjOut, "vt %.6f %.6f\n", (double)col / (double)(hfHeader.width - 1), (double)line / (double)(hfHeader.height - 1) );
 	    }
 	}
     }
-    
+
     /*
      * Write material name.
      */
 	fprintf( fpObjOut, "usemtl %s\n", timeStampString );
-    
+
     /*
      * Set smooth rendering.
      */
     fprintf( fpObjOut, "s 1\n" );
-    
-    
+
+
     /*
      * Write terrain faces.
      */
@@ -509,7 +527,7 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 			hOffset + 1, hOffset + 1,
 			hOffset, hOffset
 		);
-		
+
 		/* second triangle */
 		fprintf(fpObjOut, "f %d/%d %d/%d %d/%d\n", hOffset, hOffset,
 			hOffset + hfHeader.width, hOffset + hfHeader.width,
@@ -520,15 +538,15 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	    {
 		/* first triangle */
 		fprintf(fpObjOut, "f %d %d %d\n", hOffset + 1 + hfHeader.width, hOffset + 1, hOffset );
-		
+
 		/* second triangle */
 		fprintf(fpObjOut, "f %d %d %d\n", hOffset, hOffset + hfHeader.width, hOffset + 1 + hfHeader.width );
 	    }
 	    triangles += 2;
 	}
     }
-    
-    
+
+
     /*
      * Store *.3d terrain data for later *.obj to *.hf conversion.
      */
@@ -546,8 +564,8 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
     fprintf( fpTerrainDataOut,"terrain_bitsHeight=%d\n", hfHeader.height );
     fclose( fpTerrainDataOut );
     fpTerrainDataOut = NULL;
-    
-    
+
+
     /*
      * Print some info to console.
      */
@@ -557,8 +575,8 @@ int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier
 	printf( "./ directory.\n" );
     else
 	printf( "%s directory.\n", path );
-    
-    
+
+
     FREE_AND_CLOSE_ALL_V3DHFTOOBJ
     return 0;
 }
