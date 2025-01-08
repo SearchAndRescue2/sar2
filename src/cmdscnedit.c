@@ -2247,21 +2247,33 @@ static int EditorObjectDataStructFill(
 
 	    if(runway->flags & SAR_RUNWAY_FLAG_THRESHOLDS)
 		editor_obj_data->has_thresholds_s = strdup("thresholds");
+	    else
+		editor_obj_data->has_thresholds_s = NULL;
 
 	    if(runway->flags & SAR_RUNWAY_FLAG_BORDERS)
 		editor_obj_data->has_borders_s = strdup("borders");
+	    else
+		editor_obj_data->has_borders_s = NULL;
 
 	    if(runway->flags & SAR_RUNWAY_FLAG_TD_MARKERS)
-		editor_obj_data->has_td_markers_s = "td_markers";
+		editor_obj_data->has_td_markers_s = strdup("td_markers");
+	    else
+		editor_obj_data->has_td_markers_s = NULL;
 
 	    if(runway->flags & SAR_RUNWAY_FLAG_MIDWAY_MARKERS)
-		editor_obj_data->has_midway_markers_s = "midway_markers";
+		editor_obj_data->has_midway_markers_s = strdup("midway_markers");
+	    else
+		editor_obj_data->has_midway_markers_s = NULL;
 
 	    if(runway->flags & SAR_RUNWAY_FLAG_NORTH_GS)
-		editor_obj_data->has_north_gs_s = "north_gs";
+		editor_obj_data->has_north_gs_s = strdup("north_gs");
+	    else
+		editor_obj_data->has_north_gs_s = NULL;
 
 	    if(runway->flags & SAR_RUNWAY_FLAG_SOUTH_GS)
-		editor_obj_data->has_south_gs_s = "south_gs";
+		editor_obj_data->has_south_gs_s = strdup("south_gs");
+	    else
+		editor_obj_data->has_south_gs_s = NULL;
 
 	    break;
 
@@ -2395,30 +2407,48 @@ static int EditorObjectDataStructFill(
 
 		if(human->flags & SAR_HUMAN_FLAG_NEED_RESCUE)
 		    editor_obj_data->need_rescue_s = strdup("need_rescue");
+		else
+		    editor_obj_data->need_rescue_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_SIT_UP)
 		    editor_obj_data->sit_up_s = strdup("sit_up");
+		else
+		    editor_obj_data->sit_up_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_SIT_DOWN)
 		    editor_obj_data->sit_down_s = strdup("sit_down");
+		else
+		    editor_obj_data->sit_down_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_SIT)
 		    editor_obj_data->sitting_s = strdup("sitting");
+		else
+		    editor_obj_data->sitting_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_LYING)
 		    editor_obj_data->lying_s = strdup("lying");
+		else
+		    editor_obj_data->lying_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_ALERT)
 		    editor_obj_data->alert_s = strdup("alert");
+		else
+		    editor_obj_data->alert_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_AWARE)
 		    editor_obj_data->aware_s = strdup("aware");
+		else
+		    editor_obj_data->aware_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_IN_WATER)
 		    editor_obj_data->in_water_s = strdup("in_water");
+		else
+		    editor_obj_data->in_water_s = NULL;
 
 		if(human->flags & SAR_HUMAN_FLAG_ON_STRETCHER)
 		    editor_obj_data->on_stretcher_s = strdup("on_stretcher");
+		else
+		    editor_obj_data->on_stretcher_s = NULL;
 
 		editor_obj_data->assistants = human->assisting_humans;
 
