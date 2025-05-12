@@ -37,6 +37,10 @@
       <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar5.jpg</image>
       <caption>Fighter jet</caption>
     </screenshot>
+    <screenshot>
+      <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar6.jpg</image>
+      <caption>Rescue basket</caption>
+    </screenshot>
   </screenshots>
   <releases>
     <release version="v2.6.0" date="2023-08-11" type="stable">
