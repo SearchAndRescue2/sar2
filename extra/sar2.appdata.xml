@@ -5,6 +5,9 @@
   <project_license>GPL-2.0</project_license>
   <name>Search and Rescue II</name>
   <summary>Rescue Helicopter Simulator</summary>
+  <developer id="io.github.searchandrescue2">
+    <name>SAR2 developers</name>
+  </developer>
   <description>
     <p>
       Search and Rescue II is a rescue helicopter simulator for Linux.
