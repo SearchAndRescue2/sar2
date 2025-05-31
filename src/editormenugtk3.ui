@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <!-- interface-name editormenugtk3.ui -->
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkWindow" id="window">
+    <property name="focus-on-click">False</property>
+    <property name="focus-on-map">False</property>
+    <property name="focus-visible">False</property>
+    <property name="opacity">0.75</property>
+    <property name="title">Scenery editor menu</property>
+    <child>
+      <object class="GtkGrid" id="grid">
+        <property name="column-homogeneous">True</property>
+        <property name="double-buffered">False</property>
+        <property name="focus-on-click">False</property>
+        <property name="row-homogeneous">True</property>
+        <property name="tooltip-text" translatable="yes">Unload the current object
+(let the triedron alone)</property>
+        <child>
+          <object class="GtkButton" id="button_object_new">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="has-tooltip">True</property>
+            <property name="label">New</property>
+            <property name="margin-end">5</property>
+            <property name="margin-start">5</property>
+            <property name="name">obj_new</property>
+            <property name="tooltip-text">Create a new object and
+make it the current object</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="height">2</property>
+            <property name="left-attach">1</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_info">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="label">Info</property>
+            <property name="name">obj_closer</property>
+            <property name="tooltip-text">Give information about
+the closer object</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">4</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_set">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="has-tooltip">True</property>
+            <property name="label">Set</property>
+            <property name="margin-end">5</property>
+            <property name="name">obj_current</property>
+            <property name="tooltip-text">Set the current object to scenery</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_modify">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="has-tooltip">True</property>
+            <property name="label">Modify</property>
+            <property name="name">obj_closer</property>
+            <property name="tooltip-text">Modify the closer object</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_unload">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="label">Unload</property>
+            <property name="margin-end">5</property>
+            <property name="name">obj_current</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_move">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="has-tooltip">True</property>
+            <property name="label">Move</property>
+            <property name="name">obj_closer</property>
+            <property name="tooltip-text">Get the closer object
+to move it</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">4</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_print">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="has-tooltip">True</property>
+            <property name="label">Print</property>
+            <property name="tooltip-text">Print scenery modifications
+to the console</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_quit">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="has-tooltip">True</property>
+            <property name="label">Quit</property>
+            <property name="tooltip-text">Quit the scenery editor</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_remove">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="label">Remove</property>
+            <property name="name">obj_closer</property>
+            <property name="tooltip-text">Remove (delete) the
+closer object</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">5</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_copy">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="has-tooltip">True</property>
+            <property name="label">Copy</property>
+            <property name="name">obj_closer</property>
+            <property name="tooltip-text">Copy the closer object</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_object_info_next">
+            <property name="can-focus">False</property>
+            <property name="double-buffered">False</property>
+            <property name="focus-on-click">False</property>
+            <property name="label">Info next</property>
+            <property name="name">obj_closer</property>
+            <property name="tooltip-markup">Give information about
+the &lt;i&gt;next&lt;/i&gt; closer object</property>
+            <property name="use-action-appearance">False</property>
+          </object>
+          <packing>
+            <property name="left-attach">5</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

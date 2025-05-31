@@ -39,7 +39,8 @@
 #include "explosion.h"
 #include "smoke.h"
 #include "config.h"
-
+#include "config.h"
+#include "cmdscnedit.h"
 
 static float SARSimLandingGearDragCoeff(
 	sar_scene_struct *scene, sar_object_struct *obj_ptr,
@@ -55,6 +56,7 @@ static float SARSimHoistDragCoeff(
 );
 
 float SARSimFindGround(
+	const sar_core_struct *core_ptr,
 	sar_scene_struct *scene,
 	sar_object_struct **ptr, int total,
 	const sar_position_struct *pos
@@ -221,21 +223,38 @@ static float SARSimHoistDragCoeff(
  *      an object who's contact bounds specify the crash flag
  *      SAR_CRASH_FLAG_SUPPORT_SURFACE or else they will keep being
  *      supported on themselves.
+ *
+ *      If editing mode is ON, currently edited object will not be checked.
  */
 float SARSimFindGround(
+	const sar_core_struct *core_ptr,
 	sar_scene_struct *scene,
 	sar_object_struct **ptr, int total,
 	const sar_position_struct *pos 
 )
 { 
-	int i;
+	int i, editor_cur_obj_num;
 	sar_object_struct *tar_obj_ptr;
 	float new_height, cur_height = 0.0f;
 	const sar_contact_bounds_struct *cb_tar;
 	const sar_position_struct *pos_src = pos;
+	sar_scenery_editor_struct *scn_ed;
 
 	if((scene == NULL) || (pos_src == NULL))
 	    return(cur_height);
+
+	/* Editor mode on? */
+	if(core_ptr != NULL && core_ptr->editor_mode_on == True)
+	{
+	    /* No need to check if scn_ed != NULL if
+	     * core_ptr->editor_mode_on is True.
+	     */
+
+	    scn_ed = core_ptr->in_game_editor;
+	    editor_cur_obj_num = scn_ed->cur_obj_num;
+	}
+	else
+	    editor_cur_obj_num = -1;
 
 	/* Iterate from last object to first */
 	for(i = total - 1; i >= 0; i--)
@@ -244,6 +263,10 @@ float SARSimFindGround(
 	    if(tar_obj_ptr == NULL)
 		continue;
  
+	    /* Scenery editor currently edited object? */
+	    if(i == editor_cur_obj_num)
+		continue;
+
 	    /* Check if target object specifies a landable surface */
 	    cb_tar = tar_obj_ptr->contact_bounds;
 	    if(cb_tar != NULL)
@@ -2030,6 +2053,7 @@ int SARSimApplyArtificialForce(
 		 * be "hollow".
 		 */
 		ground_elevation += SARSimFindGround(
+		    core_ptr,
 		    scene,
 		    core_ptr->object, core_ptr->total_objects,
 		    pos			/* Position of our object */

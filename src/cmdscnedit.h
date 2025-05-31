@@ -1,4 +1,12 @@
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
+#if GTK_MAJOR_VERSION == 3
+#include <gdk/gdkx.h>
+#endif
+#if GTK_MAJOR_VERSION == 4
+#include <gdk/x11/gdkx.h>
+#endif
+#include "editorgtkui.h"
 
 /* Object type names (as string) */
 #define SAR_OBJ_TYPE_GARBAGE_S "garbage"
@@ -47,6 +55,162 @@
 #define SAR_SMOKE_COLOR_3_S "orange"
 
 /*
+ * Object placer (triedron) *.3d file data.
+ * If it doesn't exists, a $TMPDIR/object_placer.3d file will be created then
+ * the hereunder string will be written to it. Then, this file will be loaded
+ * as needed.
+ */
+#define EDITOR_OBJECT_PLACER_DATA "\
+begin_header\n\
+creator v3dconverter\n\
+end_header\n\
+\n\
+type 4\n\
+range 20000\n\
+crash_flags 1  0  0\n\
+contact_cylendrical 1.0 -1.0 1.0\n\
+dry_mass 1000.0\n\
+fuel 0.0001 1000.0 1000.0\n\
+engine n 0 100 1.0\n\
+\n\
+begin_model standard\n\
+#OBJFILE material: White\n\
+color 0.800000 0.800000 0.800000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000\n\
+begin_triangles\n\
+ normal 0.000000 -1.000000 0.000000\n\
+ 0.050000 -0.050000 -0.050000\n\
+ -0.050000 -0.050000 -0.050000\n\
+ 0.050000 -0.050000 0.050000\n\
+ normal -0.000000 -0.000000 -1.000000\n\
+ -0.050000 0.050000 -0.050000\n\
+ -0.050000 -0.050000 -0.050000\n\
+ 0.050000 0.050000 -0.050000\n\
+ normal -1.000000 -0.000000 0.000000\n\
+ -0.050000 -0.050000 -0.050000\n\
+ -0.050000 0.050000 -0.050000\n\
+ -0.050000 -0.050000 0.050000\n\
+ normal 0.000000 -1.000000 0.000000\n\
+ -0.050000 -0.050000 -0.050000\n\
+ -0.050000 -0.050000 0.050000\n\
+ 0.050000 -0.050000 0.050000\n\
+ normal -0.000000 -0.000000 -1.000000\n\
+ -0.050000 -0.050000 -0.050000\n\
+ 0.050000 -0.050000 -0.050000\n\
+ 0.050000 0.050000 -0.050000\n\
+ normal -1.000000 -0.000000 0.000000\n\
+ -0.050000 0.050000 -0.050000\n\
+ -0.050000 0.050000 0.050000\n\
+ -0.050000 -0.050000 0.050000\n\
+end_triangles\n\
+#OBJFILE material: Green\n\
+color 0.000000 1.000000 0.000000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000\n\
+begin_triangles\n\
+ normal 0.000000 0.052600 0.998600\n\
+ -0.050000 0.050000 0.050000\n\
+ -0.000000 1.000000 0.000000\n\
+ 0.050000 0.050000 0.050000\n\
+ normal -0.998600 0.052600 0.000000\n\
+ -0.000000 1.000000 0.000000\n\
+ -0.050000 0.050000 0.050000\n\
+ -0.050000 0.050000 -0.050000\n\
+ normal 0.998600 0.052600 -0.000000\n\
+ 0.050000 0.050000 0.050000\n\
+ -0.000000 1.000000 0.000000\n\
+ 0.050000 0.050000 -0.050000\n\
+ normal -0.000000 0.052600 -0.998600\n\
+ 0.050000 0.050000 -0.050000\n\
+ -0.000000 1.000000 0.000000\n\
+ -0.050000 0.050000 -0.050000\n\
+end_triangles\n\
+#OBJFILE material: Red\n\
+color 1.000000 0.000000 0.000000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000\n\
+begin_triangles\n\
+ normal 0.052600 -0.998600 -0.000000\n\
+ 0.050000 -0.050000 0.050000\n\
+ 1.000000 0.000000 -0.000000\n\
+ 0.050000 -0.050000 -0.050000\n\
+ normal 0.052600 0.000000 0.998600\n\
+ 0.050000 0.050000 0.050000\n\
+ 1.000000 0.000000 -0.000000\n\
+ 0.050000 -0.050000 0.050000\n\
+ normal 0.052600 0.998600 -0.000000\n\
+ 0.050000 0.050000 -0.050000\n\
+ 1.000000 0.000000 -0.000000\n\
+ 0.050000 0.050000 0.050000\n\
+ normal 0.052600 0.000000 -0.998600\n\
+ 0.050000 -0.050000 -0.050000\n\
+ 1.000000 0.000000 -0.000000\n\
+ 0.050000 0.050000 -0.050000\n\
+end_triangles\n\
+#OBJFILE material: Blue\n\
+color 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 0.500000 0.250000 0.000000\n\
+begin_triangles\n\
+ normal 0.998600 0.000000 0.052600\n\
+ 0.000000 0.000000 1.000000\n\
+ 0.050000 0.050000 0.050000\n\
+ 0.050000 -0.050000 0.050000\n\
+ normal 0.000000 -0.998600 0.052600\n\
+ -0.050000 -0.050000 0.050000\n\
+ 0.000000 0.000000 1.000000\n\
+ 0.050000 -0.050000 0.050000\n\
+ normal -0.998600 -0.000000 0.052600\n\
+ -0.050000 0.050000 0.050000\n\
+ 0.000000 0.000000 1.000000\n\
+ -0.050000 -0.050000 0.050000\n\
+ normal -0.000000 0.998600 0.052600\n\
+ 0.050000 0.050000 0.050000\n\
+ 0.000000 0.000000 1.000000\n\
+ -0.050000 0.050000 0.050000\n\
+end_triangles\n\
+end_model standard\n\
+\n\
+# Pilot head (eyes) position\n\
+#                x     y    z\n\
+cockpit_offset 0.00  0.00  2.00\n\
+\n\
+begin_model cockpit\n\
+# Cockpit model declaration is mandatory for an aircraft, but\n\
+# 3d primitives are not needed for the scenery editor \"aircraft\".\n\
+end_model cockpit\n\
+\n\
+begin_model shadow\n\
+begin_triangles\n\
+ normal 0.000000 0.000000 1.000000\n\
+ -0.050000 -0.050000 0.000000\n\
+ -0.050000 0.050000 0.000000\n\
+ 0.050000 0.050000 -0.000000\n\
+ -0.000000 1.000000 0.000000\n\
+ 0.050000 0.050000 -0.000000\n\
+ -0.050000 0.050000 0.000000\n\
+ 1.000000 0.000000 -0.000000\n\
+ 0.050000 -0.050000 -0.000000\n\
+ 0.050000 0.050000 -0.000000\n\
+ 0.050000 -0.050000 -0.000000\n\
+ -0.050000 -0.050000 0.000000\n\
+ 0.050000 0.050000 -0.000000\n\
+end_triangles\n\
+end_model shadow\n\
+"
+
+/* Editor action types */
+typedef enum {
+	EDITOR_ACTION_NONE,
+	EDITOR_ACTION_QUIT,		// quit from SARCmdSceneEditor()
+	EDITOR_ACTION_QUIT_FROM_GTK,	// quit from GTK UI
+	EDITOR_ACTION_QUIT_WITHOUT_PRINT,
+	EDITOR_ACTION_PRINT,
+	EDITOR_ACTION_NEW,
+	EDITOR_ACTION_SET,
+	EDITOR_ACTION_UNLOAD,
+	EDITOR_ACTION_COPY,
+	EDITOR_ACTION_MODIFY,
+	EDITOR_ACTION_INFO,
+	EDITOR_ACTION_INFO_NEXT,
+	EDITOR_ACTION_MOVE,
+	EDITOR_ACTION_REMOVE
+} editor_action_type;
+
+/*
  * Editor object data structure.
  *
  * This structure groups all necessary data to generate an object, regardless
@@ -86,7 +250,7 @@ typedef struct {
 				height;		/* feet */
 
 	int			ref_obj_num;
-	char 			*ref_obj_name;	/* reference object name */
+	char 			*ref_obj_name;	/* Reference object name */
 	sar_position_struct	ref_obj_pos;	/* Reference object position */
 	sar_direction_struct	ref_obj_dir;	/* Reference object direction */
 	sar_position_struct	offset_pos;	/* Relative to ref_object */
@@ -182,7 +346,7 @@ typedef struct {
 
 	float			radius_start,		/* meters */
 				radius_max,		/* meters */
-				radius_rate,		/* meters */
+				radius_rate,		/* meters per second */
 				hide_at_max;		/* meters (not feet) */
 	time_t			respawn_int;
 	int			total_units;
@@ -202,22 +366,23 @@ typedef struct {
 	editor_object_data_struct	*obj_data_original,	/* at scenery opening */
 					*obj_data_new;		/* new data */
 
+	Boolean				is_landable;
 } editor_modified_object_struct;
-
-
-/*
-typedef struct {
-	char	*val_original,		// at scenery opening /
-		*val_new;		// new data /
-
-} editor_modified_value_struct;
-*/
 
 
 /*
  * In-game scenery editor:
  */
 typedef struct {
+
+#define YES_NO_QUERY_NONE		0
+#define QUERY_YES_NO_QUIT_WITHOUT_PRINT	1
+
+/* Max. number of objects in the pick list for the "info next" command */
+#define PICKSKIPMAX 5
+
+	/* Object placer file name */
+	char			*object_placer_file_name;
 
 	/* Sceney work file name and pointer.
 	 * Work file is a read/write copy of game current scenery file.
@@ -232,26 +397,26 @@ typedef struct {
 	sar_position_struct 	cur_obj_pos;		/* Position */
 	sar_direction_struct 	cur_obj_dir;		/* Direction */
 
+
 	Boolean			in_move_state,		/* True if the current object
-							* is an existing object being
-							* moved.
-							*/
+							 * is an existing object being
+							 * moved.
+							 */
 				in_modif_state;		/* True if the current object
-							* is an existing object being
-							* modified.
-							*/
+							 * is an existing object being
+							 * modified.
+							 */
+
+	int			current_action;		/* One of EDITOR_ACTION_* */
+
+	float			altitude_increment;
 
 
 	Boolean			gtk_mode_on;		/* True if GTK UI is ON */
-	GMainContext		*gtk_context;		/* For running GTK application
-							* without blocking the sar2
-							* main loop.
-							*/
-	GtkApplication		*gtk_application;
-	gboolean		gtk_app_running;	/* True when GTK app is running */
+	editor_gtk_ui_struct	*editor_gtk_ui;
 
 
-	int			pick_skip_list[5];
+	int			pick_skip_list[PICKSKIPMAX];
 	int			pick_skip_list_index;
 
 	/* Previously edited object */
@@ -260,9 +425,23 @@ typedef struct {
 	char			*prev_obj_arg;		/* Command arguments */
 
 	int			mod_obj_num;		/* Currently modified object number */
-
-	int				total_original_objects,
-					total_objects;
+	int			total_original_objects,
+				total_objects;
 	editor_modified_object_struct	**modification_list;
+	int			total_printed;	/* Modifications printed during
+						 * current editing session
+						 */
+	int			yes_no_query;
+
+	/* Previous player model (before entering scenery editor) */
+	char			*old_player_model_file;
+	sar_position_struct	old_pos;
+	sar_direction_struct	old_dir;
 
 } sar_scenery_editor_struct;
+
+/* editorgtkui.c - xxxxx */
+extern int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags);
+extern void gtkAppStop(sar_core_struct *core_ptr);
+extern void EditorGtkAskToQuitWithoutPrint();
+extern void GwSetWindowFocusToSar2Window(const gw_display_struct *display);

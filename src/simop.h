@@ -28,6 +28,7 @@
 #include "sar.h"
 
 extern float SARSimFindGround(
+	const sar_core_struct *core_ptr,
 	sar_scene_struct *scene,
 	sar_object_struct **ptr, int total,
 	const sar_position_struct *pos  

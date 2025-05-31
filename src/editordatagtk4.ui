@@ -1,0 +1,2277 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Created with Cambalache 0.94.1 -->
+<interface>
+  <!-- interface-name editorgtk4.ui -->
+  <requires lib="gtk" version="4.10"/>
+  <object class="GtkAdjustment" id="adjust_int_0_to_4">
+    <property name="page-increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="upper">4</property>
+  </object>
+  <object class="GtkWindow" id="window">
+    <property name="child">
+      <object class="GtkScrolledWindow" id="scrolled_window">
+        <property name="child">
+          <object class="GtkViewport">
+            <property name="child">
+              <object class="GtkBox" id="main_box">
+                <property name="baseline-position">top</property>
+                <property name="halign">center</property>
+                <property name="orientation">vertical</property>
+                <property name="valign">start</property>
+                <child>
+                  <object class="GtkFrame" id="general_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="general_frame_grid">
+                        <property name="column-spacing">6</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Type</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="general_object_name_label">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Object name</property>
+                            <property name="name">general_data</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="general_pos_label">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Position (m|m|ft)</property>
+                            <property name="name">general_data</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="general_dir_label">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Direction (deg)</property>
+                            <property name="name">general_data</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="general_object_name">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">alpha</property>
+                            <property name="name">general_data</property>
+                            <property name="tooltip-text" translatable="yes">This name can be used as a reference name for this object.
+Leave it blank to use the model name value (if any).
+No space characters are allowed.</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="general_pos_x">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="name">general_data</property>
+                            <property name="placeholder-text">x</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="general_pos_y">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="name">general_data</property>
+                            <property name="placeholder-text">y</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">2</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="general_pos_z">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="name">general_data</property>
+                            <property name="placeholder-text">z</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">3</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="general_dir_heading">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="name">general_data</property>
+                            <property name="placeholder-text">heading</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="general_dir_pitch">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="name">general_data</property>
+                            <property name="placeholder-text">pitch</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">2</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="general_dir_bank">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="name">general_data</property>
+                            <property name="placeholder-text">bank</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">3</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="general_type">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">Automobile</item>
+                                  <item translatable="yes">Fire</item>
+                                  <item translatable="yes">Helipad</item>
+                                  <item translatable="yes">Human</item>
+                                  <item translatable="yes">Premodeled</item>
+                                  <item translatable="yes">Smoke</item>
+                                  <item translatable="yes">Static</item>
+                                  <item translatable="yes">Runway</item>
+                                  <item translatable="yes">Watercraft</item>
+                                </items>
+                              </object>
+                            </property>
+                            <property name="selected">4294967295</property>
+                            <property name="tooltip-markup">&lt;b&gt;Automobile&lt;/b&gt; : an automobile model defined in a SarII *.3d file.
+&lt;b&gt;Fire&lt;/b&gt; : a parametric fire animation.
+&lt;b&gt;Helipad&lt;/b&gt; : a parametric helicopter landing and takeoff area.
+&lt;b&gt;Human&lt;/b&gt; : a parametric animated human.
+&lt;b&gt;Premodeled&lt;/b&gt; : a parametric building, a parametric
+				control tower, or a parametric steel lattice
+				power transmission tower, radio tower or
+				generic tower.
+&lt;b&gt;Smoke&lt;/b&gt; : a parametric smoke animation.
+&lt;b&gt;Static&lt;/b&gt; : Any static model defined in a SarII *.3d file.
+&lt;b&gt;Runway&lt;/b&gt; : a parametric aircraft landing and takeoff area.
+&lt;b&gt;Watercraft&lt;/b&gt; : a watercraft model defined in a SarII *.3d file.</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">0</property>
+                              <property name="row-span">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Object general data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="fire_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="fire_frame_grid">
+                        <property name="column-spacing">6</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Radius (m)</property>
+                            <property name="width-chars">10</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="fire_radius">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0.5</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Height (ft)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="fire_height">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">5.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Fire specific data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="helipad_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="helipad_frame_grid">
+                        <property name="column-spacing">6</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Style</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Length (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_length">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">10.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Width (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_width">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">10.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Recession (ft)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_recession">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0.0</property>
+                            <property name="tooltip-text">Recession height. Recession is a supporting wall which is drawn below the landing surface.</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Label</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_label">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">alpha</property>
+                            <property name="text">Heli_label</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has edge lighting</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="helipad_has_lighting">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has fuel</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="helipad_has_fuel">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has repair</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="helipad_has_repair">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has drop off</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="helipad_has_drop_off">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Is a restarting point</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">9</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="helipad_is_restarting">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">9</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Is referenced</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">10</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="helipad_is_referenced">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">10</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="helipad_offset_pos_label">
+                            <property name="label" translatable="yes">Offset position (m|m|ft)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_offset_pos_x">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">x</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">8</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_offset_pos_y">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">y</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">8</property>
+                            <layout>
+                              <property name="column">2</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_offset_pos_z">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">z</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">8</property>
+                            <layout>
+                              <property name="column">3</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="helipad_offset_dir_label">
+                            <property name="label" translatable="yes">Offset direction (deg)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_offset_dir_heading">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">heading</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">8</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_offset_dir_pitch">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">pitch</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">8</property>
+                            <layout>
+                              <property name="column">2</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="helipad_offset_dir_bank">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">bank</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">8</property>
+                            <layout>
+                              <property name="column">3</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="helipad_ref_obj_label">
+                            <property name="label" translatable="yes">Ref. object name</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">11</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="ref_object_frame">
+                            <property name="child">
+                              <object class="GtkGrid">
+                                <property name="column-spacing">6</property>
+                                <property name="margin-bottom">10</property>
+                                <property name="margin-end">5</property>
+                                <property name="margin-start">5</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="label" translatable="yes">Position (m|m|ft)</property>
+                                    <property name="xalign">0</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="row">0</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ref_object_pos_x">
+                                    <property name="focusable">1</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="placeholder-text">x</property>
+                                    <property name="text">0.0</property>
+                                    <property name="width-chars">10</property>
+                                    <layout>
+                                      <property name="column">1</property>
+                                      <property name="row">0</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ref_object_pos_y">
+                                    <property name="focusable">1</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="placeholder-text">y</property>
+                                    <property name="text">0.0</property>
+                                    <property name="width-chars">10</property>
+                                    <layout>
+                                      <property name="column">2</property>
+                                      <property name="row">0</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ref_object_pos_z">
+                                    <property name="focusable">1</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="placeholder-text">z</property>
+                                    <property name="text">0.0</property>
+                                    <property name="width-chars">10</property>
+                                    <layout>
+                                      <property name="column">3</property>
+                                      <property name="row">0</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="label" translatable="yes">Direction (deg)</property>
+                                    <property name="xalign">0</property>
+                                    <layout>
+                                      <property name="column">0</property>
+                                      <property name="row">1</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ref_object_dir_heading">
+                                    <property name="focusable">1</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="placeholder-text">heading</property>
+                                    <property name="text">0.0</property>
+                                    <property name="width-chars">10</property>
+                                    <layout>
+                                      <property name="column">1</property>
+                                      <property name="row">1</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ref_object_dir_pitch">
+                                    <property name="focusable">1</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="placeholder-text">pitch</property>
+                                    <property name="text">0.0</property>
+                                    <property name="width-chars">10</property>
+                                    <layout>
+                                      <property name="column">2</property>
+                                      <property name="row">1</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="ref_object_dir_bank">
+                                    <property name="focusable">1</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="placeholder-text">bank</property>
+                                    <property name="text">0.0</property>
+                                    <property name="width-chars">10</property>
+                                    <layout>
+                                      <property name="column">3</property>
+                                      <property name="row">1</property>
+                                    </layout>
+                                  </object>
+                                </child>
+                              </object>
+                            </property>
+                            <property name="hexpand">1</property>
+                            <property name="label-xalign">0.05</property>
+                            <property name="margin-bottom">10</property>
+                            <property name="margin-top">5</property>
+                            <property name="sensitive">0</property>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="label" translatable="yes">Reference object general data (as information)</property>
+                                <property name="margin-bottom">5</property>
+                                <property name="margin-end">10</property>
+                                <property name="margin-start">10</property>
+                                <property name="margin-top">10</property>
+                              </object>
+                            </child>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="column-span">4</property>
+                              <property name="row">14</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="helipad_style">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">ground_paved</item>
+                                  <item translatable="yes">ground_bare</item>
+                                  <item translatable="yes">building</item>
+                                  <item translatable="yes">vehicle</item>
+                                  <item translatable="yes"/>
+                                  <item translatable="yes"/>
+                                  <item translatable="yes"/>
+                                  <item translatable="yes"/>
+                                  <item translatable="yes"/>
+                                </items>
+                              </object>
+                            </property>
+                            <property name="tooltip-markup">&lt;b&gt;ground_paved&lt;/b&gt; (also known as &lt;b&gt;default&lt;/b&gt; or &lt;b&gt;standard&lt;/b&gt;) :
+	A square or rectangular paved surface,
+	recession has no effect.
+&lt;b&gt;ground_bare&lt;/b&gt; :
+	A square or rectangular bare surface,
+	recession has no effect.
+&lt;b&gt;building&lt;/b&gt; :
+	A round or oval surface, recession has effect.
+&lt;b&gt;vehicle&lt;/b&gt; :
+	A square or rectangular helipad, with a recession and
+	a lifeline netting on both 'length' sides.</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="helipad_ref_obj_name">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">(none)</item>
+                                  <item translatable="yes">ref_obj_titi</item>
+                                  <item translatable="yes">ref_obj_toto</item>
+                                  <item translatable="yes">ref_obj_tata</item>
+                                  <item translatable="yes">ref_obj_tutu</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">3</property>
+                              <property name="row">11</property>
+                              <property name="row-span">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Helipad specific data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="human_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="human_frame_grid">
+                        <property name="column-spacing">6</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Type name</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Need rescue</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_need_rescue">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Sit up</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_sit_up">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Sit down</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_sit_down">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_sitting">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Sitting</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Lying</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_lying">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Alert</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_alert">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Aware</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_aware">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">In water</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_in_water">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">On stretcher</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">9</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_on_stretcher">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">9</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Assistants</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">10</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="human_assistants">
+                            <property name="adjustment">adjust_int_0_to_4</property>
+                            <property name="focusable">1</property>
+                            <property name="max-width-chars">1</property>
+                            <property name="numeric">1</property>
+                            <property name="text" translatable="yes">0</property>
+                            <property name="width-chars">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">10</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="human_assist_1_name_label">
+                            <property name="label" translatable="yes">Assistant #1 type name</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">11</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="human_assist_2_name_label">
+                            <property name="label" translatable="yes">Assistant #2 type name</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="human_assist_3_name_label">
+                            <property name="label" translatable="yes">Assistant #3 type name</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="human_assist_4_name_label">
+                            <property name="label" translatable="yes">Assistant #4 type name</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">14</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has relative displacement</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">15</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="human_has_displacement">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">15</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="human_ref_obj_name_label">
+                            <property name="label" translatable="yes">Ref. object name</property>
+                            <property name="sensitive">0</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">16</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="human_displacement_label">
+                            <property name="label" translatable="yes">Displacement direction</property>
+                            <property name="sensitive">0</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">17</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="human_type_name">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">default</item>
+                                  <item translatable="yes">tataman</item>
+                                  <item translatable="yes">titiman</item>
+                                  <item translatable="yes">totoman</item>
+                                  <item translatable="yes">tutuman</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">1</property>
+                              <property name="row">0</property>
+                              <property name="row-span">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="human_assist_1_name">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">default</item>
+                                  <item translatable="yes">tataman</item>
+                                  <item translatable="yes">titiman</item>
+                                  <item translatable="yes">totoman</item>
+                                  <item translatable="yes">tutuman</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">1</property>
+                              <property name="row">11</property>
+                              <property name="row-span">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="human_assist_2_name">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">default</item>
+                                  <item translatable="yes">tataman</item>
+                                  <item translatable="yes">titiman</item>
+                                  <item translatable="yes">totoman</item>
+                                  <item translatable="yes">tutuman</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="human_assist_3_name">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">default</item>
+                                  <item translatable="yes">tataman</item>
+                                  <item translatable="yes">titiman</item>
+                                  <item translatable="yes">totoman</item>
+                                  <item translatable="yes">tutuman</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="human_assist_4_name">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">default</item>
+                                  <item translatable="yes">tataman</item>
+                                  <item translatable="yes">titiman</item>
+                                  <item translatable="yes">totoman</item>
+                                  <item translatable="yes">tutuman</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">14</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="human_ref_obj_name">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">Player</item>
+                                  <item translatable="yes">Titi</item>
+                                  <item translatable="yes">Toto</item>
+                                  <item translatable="yes">Tata</item>
+                                  <item translatable="yes">Tutu</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">16</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="human_displacement">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">run_towards</item>
+                                  <item translatable="yes">run_away</item>
+                                </items>
+                              </object>
+                            </property>
+                            <property name="tooltip-markup">For now, can only be &lt;b&gt;run_towards&lt;/b&gt;.</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">17</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Human specific data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="model_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="model_frame_grid">
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">File</property>
+                            <property name="margin-end">5</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Model name</property>
+                            <property name="margin-end">5</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="model_name">
+                            <property name="editable">0</property>
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text" translatable="yes">No 'name' parameter found in model file</property>
+                            <property name="sensitive">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="model_file_name_btn">
+                            <property name="child">
+                              <object class="GtkBox">
+                                <child>
+                                  <object class="GtkLabel" id="model_file_name_hidden">
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="visible">False</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="model_file_name_label">
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkImage">
+                                    <property name="halign">end</property>
+                                    <property name="icon-name">document-open-symbolic</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="column-span">1</property>
+                              <property name="row">0</property>
+                              <property name="row-span">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Model specific data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="premodeled_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="premodeled_frame_grid">
+                        <property name="column-spacing">6</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Type</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="premod_walls_tex_label">
+                            <property name="label" translatable="yes">Walls texture</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="premod_roof_tex_label">
+                            <property name="label" translatable="yes">Roof texture</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Range (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="premod_range">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">3000.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="premod_hazard_label">
+                            <property name="label" translatable="yes">Hazard lights</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="premod_walls_tex_night_label">
+                            <property name="label" translatable="yes">Walls tex. night</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="premod_length_label">
+                            <property name="label" translatable="yes">Length (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="premod_length">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">20.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Height (ft)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="premod_height">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">39.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="premod_width_label">
+                            <property name="label" translatable="yes">Width (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="premod_width">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">10.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="premod_type">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">building</item>
+                                  <item translatable="yes">control_tower</item>
+                                  <item translatable="yes">power_transmission_tower</item>
+                                  <item translatable="yes">radio_tower</item>
+                                  <item translatable="yes">tower</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="premod_roof_tex">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">Titi</item>
+                                  <item translatable="yes">Toto</item>
+                                  <item translatable="yes">Tata</item>
+                                  <item translatable="yes">Tutu</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="premod_walls_tex">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">Titi</item>
+                                  <item translatable="yes">Toto</item>
+                                  <item translatable="yes">Tata</item>
+                                  <item translatable="yes">Tutu</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="premod_walls_tex_night">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">Titi</item>
+                                  <item translatable="yes">Toto</item>
+                                  <item translatable="yes">Tata</item>
+                                  <item translatable="yes">Tutu</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="premod_hazard">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Premodeled specific data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="runway_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="runway_frame_grid">
+                        <property name="column-spacing">6</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Range (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_range">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">5000.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Length (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_length">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">122.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Width (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_width">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">6.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Surface type</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Middle dashes number</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_dashes_num">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">digits</property>
+                            <property name="text">0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">North label</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_north_label">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">alpha</property>
+                            <property name="text">North_Label</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">South label</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_south_label">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">alpha</property>
+                            <property name="text">South_Label</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_n_disp_thresh">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">North disp. thresholds length (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">8</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">South disp. thresholds length (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">9</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_s_disp_thresh">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">9</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has thresholds</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">10</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="runway_has_thresholds">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">10</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has borders</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">11</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="runway_has_borders">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">11</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has  touch down markers</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="runway_has_td_markers">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">12</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has midway markers</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="runway_has_mid_markers">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">13</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has northern glide slope</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">14</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="runway_has_north_gs">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">14</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Has southern glide slope</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">15</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="runway_has_south_gs">
+                            <property name="focusable">1</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">15</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="label" translatable="yes">Edge light spacing (m)</property>
+                            <property name="xalign">0</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="runway_edge_light_spacing">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0.0</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="runway_surface_type">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">concrete</item>
+                                  <item translatable="yes">gravel</item>
+                                  <item translatable="yes">grooved</item>
+                                  <item translatable="yes">paved</item>
+                                </items>
+                              </object>
+                            </property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Runway specific data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="smoke_frame">
+                    <property name="child">
+                      <object class="GtkGrid" id="smoke_frame_grid">
+                        <property name="column-spacing">6</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <child>
+                          <object class="GtkEntry" id="smoke_offset_pos_x">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">x</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_offset_pos_y">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">y</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">2</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_offset_pos_z">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="placeholder-text">z</property>
+                            <property name="text">0.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">3</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Offset position (m|m|&lt;u&gt;m&lt;/u&gt;)</property>
+                            <property name="use-markup">True</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">0</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Start radius (m)</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Maximum radius (m)</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Growing rate (m/s)</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Hide at max altitude (m)</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Respawn interval (ms)</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Number of clouds</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="halign">start</property>
+                            <property name="label" translatable="yes">Color code</property>
+                            <layout>
+                              <property name="column">0</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_radius_start">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0.5</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">1</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_radius_max">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">10.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">2</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_radius_rate">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">0.2</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">3</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_hide_at_max">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">number</property>
+                            <property name="text">100.0</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">4</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_respawn_int">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">digits</property>
+                            <property name="text">500</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">5</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smoke_total_units">
+                            <property name="focusable">1</property>
+                            <property name="input-purpose">digits</property>
+                            <property name="text">25</property>
+                            <property name="width-chars">10</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">6</property>
+                            </layout>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkDropDown" id="smoke_color_code">
+                            <property name="model">
+                              <object class="GtkStringList">
+                                <items>
+                                  <item translatable="yes">0</item>
+                                  <item translatable="yes">1</item>
+                                  <item translatable="yes">2</item>
+                                  <item translatable="yes">3</item>
+                                </items>
+                              </object>
+                            </property>
+                            <property name="tooltip-markup" translatable="yes">&lt;b&gt;0&lt;/b&gt; : grey / white
+&lt;b&gt;1&lt;/b&gt; : medium grey
+&lt;b&gt;2&lt;/b&gt; : dark / black
+&lt;b&gt;3&lt;/b&gt; : orange</property>
+                            <layout>
+                              <property name="column">1</property>
+                              <property name="row">7</property>
+                            </layout>
+                          </object>
+                        </child>
+                      </object>
+                    </property>
+                    <property name="hexpand">1</property>
+                    <property name="label-xalign">0.05</property>
+                    <property name="margin-bottom">5</property>
+                    <property name="margin-end">10</property>
+                    <property name="margin-start">10</property>
+                    <property name="margin-top">5</property>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="label" translatable="yes">Smoke specific data</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">10</property>
+                        <property name="margin-start">10</property>
+                        <property name="margin-top">5</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox" id="buttons_box">
+                    <property name="halign">center</property>
+                    <property name="margin-bottom">5</property>
+                    <child>
+                      <object class="GtkButton" id="button_ok">
+                        <property name="focusable">1</property>
+                        <property name="label">Ok</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <property name="margin-top">5</property>
+                        <property name="receives-default">1</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_apply">
+                        <property name="focusable">1</property>
+                        <property name="label">Apply</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <property name="margin-top">5</property>
+                        <property name="receives-default">1</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_cancel">
+                        <property name="focusable">1</property>
+                        <property name="label">Cancel</property>
+                        <property name="margin-bottom">5</property>
+                        <property name="margin-end">5</property>
+                        <property name="margin-start">5</property>
+                        <property name="margin-top">5</property>
+                        <property name="receives-default">1</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
+          </object>
+        </property>
+        <property name="propagate-natural-height">1</property>
+      </object>
+    </property>
+    <property name="default-height">230</property>
+    <property name="default-width">450</property>
+    <property name="title">Scenery editor</property>
+    <property name="visible">1</property>
+  </object>
+</interface>

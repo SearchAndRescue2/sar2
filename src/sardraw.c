@@ -1053,7 +1053,7 @@ static void SARDrawSpotLightCast(
 	     */
 	    light_pos2.z = light_pos.z;
 	    light_pos2.z = SARSimFindGround(
-		scene, dc->object, dc->total_objects,
+		dc->core_ptr, scene, dc->object, dc->total_objects,
 		&light_pos2
 	    );
 	    /* Update the spot light source to the ground distance */

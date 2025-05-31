@@ -36,6 +36,7 @@
 #include "sardraw.h"
 #include "sardrawdefs.h"
 #include "config.h"
+#include "cmdscnedit.h"
 
 
 void SARDrawHelp(sar_dc_struct *dc);
@@ -620,14 +621,25 @@ static void SARDrawSlewCoordinates(
 	    /* Edit mode ON? */
 	    else
 	    {
+		sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+		char z_inc;
+
+		if(scn_ed->altitude_increment == 0.0)
+		    z_inc = '=';
+		else if(scn_ed->altitude_increment > 0.0)
+		    z_inc = '+';
+		else
+		    z_inc = '-';
+
 		sprintf(
 		    text,
- "Object: (hpb) %.0f %.0f %.0f  (xyz) %.2f %.2f %.2f(%.2f feet)\n",
+ "Object: (hpb) %.0f %.0f %.0f  (xyz) %.2f %.2f %.2f(%.2f feet)%c\n",
 		    SFMRadiansToDegrees(dir->heading),
 		    SFMRadiansToDegrees(dir->pitch),
 		    SFMRadiansToDegrees(dir->bank),
 		    pos->x, pos->y, pos->z,
-		    SFMMetersToFeet(pos->z)
+		    SFMMetersToFeet(pos->z),
+		    z_inc
 		);
 		GWDrawString(
 		    display,
