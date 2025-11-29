@@ -18,7 +18,7 @@
         <child>
           <object class="GtkLabel" id="label">
             <property name="label">Scenery modifications are not yet be printed.
-Do you really want to quit?</property>
+Do you want to print them before quit?</property>
             <property name="margin">6</property>
             <property name="use-markup">True</property>
           </object>

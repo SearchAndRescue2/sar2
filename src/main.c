@@ -21,7 +21,10 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+/* COMPILE_EDITOR_WITH_GTK_UI is defined (or not) in SConscript */
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
 #include <gtk/gtk.h>
+#endif
 
 #ifdef __MSW__
 # include <windows.h>
@@ -67,6 +70,7 @@
 #include "sarsimend.h"
 #include "config.h"
 #include "cmdscnedit.h"
+#include "simutils.h"	/* For SARSimWarpObject() */
 
 #include "fonts/6x10.fnt"
 #include "fonts/7x14.fnt"
@@ -1015,13 +1019,26 @@ void SARCloseCB(int ctx_num, void *ptr, void *data)
 		}
 		else
 		{
-		    SARTextInputMap(
-			core_ptr->text_input,
-			"Are you sure you want to quit simulation?",
-			NULL,
-			SARTextInputCBQuitSimulation,
-			core_ptr
-		    );
+		    if(core_ptr->editor_mode_on)
+		    {
+			SARTextInputMap(
+			    core_ptr->text_input,
+			    "Are you sure you want to quit scenery editor and simulation?",
+			    NULL,
+			    SARTextInputCBQuitSimulation,
+			    core_ptr
+			);
+		    }
+		    else
+		    {
+			SARTextInputMap(
+			    core_ptr->text_input,
+			    "Are you sure you want to quit simulation?",
+			    NULL,
+			    SARTextInputCBQuitSimulation,
+			    core_ptr
+			);
+		    }
 		}
 	    }
 	}
@@ -2361,6 +2378,7 @@ void SARManage(void *ptr)
 	 */
 	SARMusicUpdate(core_ptr);
 
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
 	/* Run a scenery editor GTK main loop */
 	if(core_ptr->gtk_main_loop_on)
 	{
@@ -2389,6 +2407,7 @@ void SARManage(void *ptr)
 		SARCmdSceneEditor((void *)core_ptr, "scnedit off", editor_gtk_ui->cmd_flags);
 	    }
 	}
+#endif
 
 	/* FIXME: not sure that this is the right place to do that...
 	 * This code will certainly be moved to another place once the

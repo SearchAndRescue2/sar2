@@ -38,10 +38,12 @@
 #include <stdio.h>
 
 
+#ifndef SAR_CMD_PROTOTYPE
 /*
  *	Prototype for all SARCmd*() function input parameters.
  */
 #define SAR_CMD_PROTOTYPE	void *data, const char *arg, unsigned long flags
+#endif /* SAR_CMD_PROTOTYPE */
 
 /*
  *	Flags for SARCmd*() flags input.

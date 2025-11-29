@@ -72,7 +72,8 @@
             </code>
             </li>
             <br>
-            <li>Now, it's time to complement our scenery with some objects as humans, cars, vessels, fire, smoke, ..., i.e. everything that can be mission specific. Hereunder, we will add several objects: the US Coast Guard vessel with its onboard helipad, an injured sailor lying on a stretcher, a car, a car accident victim, and the car driver. Note that the object name (see <a href= "../sar2ParmsBook/sar2ParmsBook.html#object_name">object_name</a>) is mandatory only if this name is used later. Don't hesitate to click on links for more information about parameters and their possible values.<br>
+            <li>Now, it's time to complement our scenery with some objects as humans, cars, vessels, fire, smoke, ..., i.e. everything that can be mission specific.<br>
+            Hereunder, we will add several objects: the US Coast Guard vessel with its onboard helipad, an injured sailor lying on a stretcher, a car, a car accident victim, and the car driver. Note that the object name (see <a href= "../sar2ParmsBook/sar2ParmsBook.html#object_name">object_name</a>) is mandatory only if this name is used later. Don't hesitate to click on links for more information about parameters and their possible values.<br>
                 <code>
                 # Mission specific objects to add to scenery<br>
                 <br>
@@ -82,7 +83,7 @@
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#object_name">object_name</a> uscg378_01<br>
                 </code>
                 <br>
-                Here comes object position. Mission designer tip: to define position and rotation for your object, start your helicopter engine, then toggle to slew mode (<b>CTRL</b>+<b>A</b>) and move to wanted position. Your position will be displayed at left top of screen (use <b>H</b> or <b>SHIFT</b>+<b>H</b> to brighten or darken display).<br>
+                Here comes object position<br>
                 <code>
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -12402.0 41157.0 0.0<br>
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#rotate">rotate</a> 0 0 0<br>
@@ -104,7 +105,7 @@
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -12379.0 41145.5 -4.0<br>
                 </code>
                 <br>
-                Now, let's define injured sailor. An important <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> parameter value is "need_rescue", which tells to game engine that this human has to be rescued. Note that this human will board "himself" because of <a href= "../sar2ParmsBook/sar2ParmsBook.html#human_reference">human_reference</a> parameter use, and do not need to be oriented because he will automatically face to player position while his run. Cool stuff: we can add a message wich will be displayed once human on board.<br>
+                Now, let's define injured sailor. An important <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> parameter value is "need_rescue", which tells to game engine that this human has to be rescued. Note that this human will board "himself" because of <a href= "../sar2ParmsBook/sar2ParmsBook.html#human_reference">human_reference</a> parameter use, and do not need to be oriented because he will automatically face to player position while his run. Cool stuff: we can add a message which will be displayed once human on board.<br>
                 <code>
                 # Injured sailor<br>
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> victim_streatcher_assisted need_rescue lying on_streatcher<br>
@@ -136,6 +137,8 @@
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#create_human">create_human</a> default alert<br>
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> -7962 37993.5 1.0<br>
                 </code>
+                <br>
+                <i>Note that you can use the game embedded <a href= "../scenery_editor/scenery_editor.html">scenery editor</a> to visually place object and easily get their position.</i><br>
             </li>
             <br>
             <li>We almost finish mission header: let's indicate to game engine where player will start the mission. Begin place can be a named landable object (whether it was named in scene file or in mission file), or any other landable position. Here, we decide to start at an object that was named in mission file (look at "object_name helipad_uscg" at earlier step). As this object is not defined in scenery file, we first have to specify its position to game engine. Note that mission starts at helipad_uscg, which stays on USCG vessel, and not at uscg378_01 itself.<br>
@@ -146,7 +149,7 @@
                 </code>
             </li>
             <br>
-            <li>Last, don't forget to specify when mission begins. In addition to having an impact on the light, time will impact too objects drawing is they have a "night" texture.<br>
+            <li>Last, don't forget to specify when mission begins. In addition to having an impact on the light, time will impact too objects drawing if they have a "night" texture.<br>
                 <code>
                 # Time of day<br>
                 <a href= "../sar2ParmsBook/sar2ParmsBook.html#time_of_day">time_of_day</a> 10:00<br>

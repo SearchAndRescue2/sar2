@@ -196,6 +196,16 @@ void SARSimEnd(sar_core_struct *core_ptr)
 	display = core_ptr->display;
 	opt = &core_ptr->option;
 
+	/* Shut off scenery editor as needed */
+	if(core_ptr->editor_mode_on)
+	{
+	    if(opt->runtime_debug)
+		printf("SARSimEnd(): Turning scenery editor off...\n");
+
+	    EditorOff(core_ptr);
+	    return;
+	}
+
 	if(opt->runtime_debug)
 	    printf("SARSimEnd(): Ending simulation...\n");
 
@@ -234,15 +244,6 @@ void SARSimEnd(sar_core_struct *core_ptr)
 	     * the simulation
 	     */
 	    switch_to_menu_name = SAR_MENU_NAME_FREE_FLIGHT;
-	}
-
-	/* Scenery editor on? */
-	if(core_ptr->editor_mode_on)
-	{
-	    if(opt->runtime_debug)
-		printf("SARSimEnd(): Turning scenery editor off...\n");
-
-	    EditorOff(core_ptr);
 	}
 
 	/* Delete scene */

@@ -94,7 +94,7 @@ to move it</property>
             <property name="has-tooltip">True</property>
             <property name="label">Print</property>
             <property name="tooltip-text">Print scenery modifications
-to the console</property>
+to report file</property>
             <layout>
               <property name="column">0</property>
               <property name="row">0</property>

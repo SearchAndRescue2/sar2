@@ -28,4 +28,7 @@
 
 extern void SARSimEnd(sar_core_struct *core_ptr);
 
+/* In cmdscnedit.c */
+extern void EditorOff(sar_core_struct *core_ptr);
+
 #endif	/* SARSIMEND_H */

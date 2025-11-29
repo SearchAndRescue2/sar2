@@ -1980,9 +1980,9 @@ __name\
 __SYNOPSIS\
 __name string\
 __DESCRIPTION\
-__Defines a name for the mission / scenery / model.\
+__Defines a name for the mission / scenery / model.<br>This is not the ##object_name, even if when it is used in a model *.3d file, SarII will automatically set the first token of this name as the object name.\
 __ARGUMENTS\
-__string mission / scenery / model name. Space characters are allowed.\
+__string the name of the mission, scenery, or model. Space characters are allowed.\
 __CONTEXT\
 __mis 3d scn\
 __EXAMPLE\
@@ -2143,9 +2143,9 @@ __object_name\
 __SYNOPSIS\
 __object_name name\
 __DESCRIPTION\
-__Defines object name. This name can be used later as argument for some parameters (for example for a ##mission_begin_at parameter). Tip: if used AFTER model_file declaration, then model will be renamed.\
+__Defines the object name. This name can be used later as argument for some parameters (for example for a ##mission_begin_at parameter).<br>Important: as SarII always check objects by order of appearance in the scenery and mission files, note that if two (or more) objects have the same name, only the first one will be considered as the name matching object.\
 __ARGUMENTS\
-__name name_of_the_object (without spaces!).\
+__name name_of_the_object, without any space character.\
 __CONTEXT\
 __mis scn\
 __EXAMPLES\
@@ -2167,7 +2167,7 @@ __create_object 1\
 __model_file automobiles/cuda.3d\
 __# Object name is defined in cuda.3d as 'Cuda'. Let's rename it:\
 __object_name What_a_cool_car\
-__# From now, this object is refered as 'What_a_cool_car'\
+__# From now, this object can be refered as 'What_a_cool_car'\
 \
 __-----\
 \

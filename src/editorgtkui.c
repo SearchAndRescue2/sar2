@@ -33,13 +33,13 @@
  * if you want to test it.
  *
  * Programming note:
- * All the hereunder code is only used to manage the User Interface: the
- * 'real job' is done by calling the SARCmdSceneEditor() function.
+ * All the hereunder code is only used to manage the GTK User Interface: the
+ * 'real job' is always done by calling the SARCmdSceneEditor() function.
  * It means that for example when user clicks on the 'New' button, then selects
- * the object type as 'Fire', sets the fire radius and height values, then
- * clicks on the 'Ok' button, the result of all these actions is only a string
- * which will be sent to SARCmdSceneEditor() exactly as if user had entered
- * '/create_fire radius height' on the keyboard.
+ * the 'Fire' object type, then sets the fire radius and height values, then
+ * finally clicks on the 'Ok' button, the result of all these actions is only a
+ * string which will be sent to SARCmdSceneEditor() exactly as if user had
+ * entered '/create_fire radius height' on keyboard.
  */
 
 
@@ -50,14 +50,15 @@ int X11GetWindowDecorationHeight(Display *display, Window window);
 void GwGetSar2WindowTopRightCornerPos(const gw_display_struct *display,
 				      int *x, int *y
 );
-void GwSetWindowFocusToSar2Window(const gw_display_struct *display);
 int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags);
 void gtkAppStop(sar_core_struct *core_ptr);
 void EditorGtkSetAcceptFocus(GtkWidget *window, gboolean state);
 void EditorGtkItemChooserSetHumansNameList(const sar_core_struct *core_ptr);
 void EditorGtkItemChooserSetTexturesNameList(const sar_core_struct *core_ptr);
 void EditorGtkItemChooserSetRefObjsNameList(const sar_core_struct *core_ptr);
-gboolean EditorGtkItemChooserSetItemsList(GtkWidget *widget, const char* const* strings);
+gboolean EditorGtkItemChooserSetItemsList(GtkWidget *widget,
+					  const char* const* strings
+);
 char *EditorGtkItemChooserGetSelectedString(void *widget);
 int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text);
 int EditorGtkItemChooserGetItemIndexFromString(void *widget, const char *text);
@@ -70,17 +71,33 @@ double EditorGktEntryToDouble(void *widget);
 void EditorGtkEntrySetText(void *widget, const char *text);
 void EditorGtkEntrySetTextFromInt(void *widget, double value);
 void EditorGtkEntrySetTextFromDouble(void *widget, double value);
-void EditorGtkAskToQuitWithoutPrint();
+void EditorGtkAskToPrintBeforeQuit(gpointer user_data);
 void set_children_sensitive_by_name(
 	GtkWidget* parent,
 	const gchar* name,
 	gboolean sensitive
 );
-
-
 char *GetModelNameFromModelFileName(const char *file_name);
 char **GetTextureNameListFromSceneryFileName(const char *file_name);
 
+editor_object_data_struct *EditorObjectDataNew(void);
+int EditorObjectDataReinit(editor_object_data_struct *object_data);
+int EditorObjectDataFree(editor_object_data_struct *object_data);
+int EditorObjectDataStructSetFromGtkUi(
+    editor_object_data_struct *editor_obj_data
+);
+int EditorGtkUiSetFromObjectDataStruct(
+    const editor_object_data_struct *editor_obj_data
+);
+void EditorGtkUiShowInfoWindow(
+    const sar_core_struct *core_ptr,
+    int picked_obj_num,
+    const editor_object_data_struct *editor_obj_data
+);
+void EditorDataWindowSetDefaultSize();
+
+/* GTK callbacks */
+gboolean manage_menu_buttons_cb(gpointer user_data);
 void on_data_window_destroy(GtkWidget *widget, gpointer user_data);
 void on_dialog_window_destroy(GtkWidget *widget, gpointer user_data);
 void on_menu_window_destroy(GtkWidget *widget, gpointer user_data);
@@ -136,16 +153,15 @@ void on_human_assist_4_name_changed(void *widget, gpointer user_data);
 void on_human_has_displacement_toggled(void *widget, gpointer user_data);
 void on_human_ref_obj_changed(void *widget, gpointer user_data);
 void on_human_displacement_changed(void *widget, gpointer user_data);
-
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_model_file_name_changed(void *widget, gpointer user_data);
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+void on_model_file_name_clicked(void *widget, gpointer user_data);
 void EditorGtk4SetFileWidgetsValues(const char *full_name);
 void FileChoosed(
     GObject* source_object, GAsyncResult* res, gpointer user_data
 );
-void on_model_file_name_clicked(void *widget, gpointer user_data);
 #endif
 void on_premod_type_changed(void *widget, gpointer user_data);
 void on_range_changed(void *widget, gpointer user_data);
@@ -187,27 +203,14 @@ void on_button_unload_clicked(void *widget, gpointer user_data);
 void on_button_modify_clicked(void *widget, gpointer user_data);
 void on_button_move_clicked(void *widget, gpointer user_data);
 void on_button_remove_clicked(void *widget, gpointer user_data);
-void on_button_quit_without_print_yes_clicked(GtkButton *button, gpointer user_data);
-void on_button_quit_without_print_no_clicked(GtkButton *button, gpointer user_data);
-editor_object_data_struct *EditorObjectDataStructNew(void);
-int EditorObjectDataStructReinit(editor_object_data_struct *object_data);
-int EditorObjectDataStructFree(editor_object_data_struct *object_data);
-int EditorObjectDataStructSetFromGtkUi(
-    //sar_core_struct *core_ptr,
-    editor_object_data_struct *editor_obj_data
-);
-int EditorGtkUiSetFromObjectDataStruct(
-    //sar_core_struct *core_ptr,
-    const editor_object_data_struct *editor_obj_data
-);
-void EditorGtkUiShowInfoWindow(
-    const sar_core_struct *core_ptr,
-    int picked_obj_num,
-    const editor_object_data_struct *editor_obj_data
-);
-char *DoCmdLineFromObjectDataStruct(editor_object_data_struct *editor_obj_data);
+void on_button_print_before_quit_yes_clicked(GtkButton *button, gpointer user_data);
+void on_button_print_before_quit_no_clicked(GtkButton *button, gpointer user_data);
 
 #define STRDUP(s)       (((s) != NULL) ? strdup(s) : NULL)
+
+/*
+ * The below code is from an cool idea found at https://github.com/madmurphy/trotsky/tree/master
+ */
 
 /*
  * User Interface definition. Three windows are defined:
@@ -219,12 +222,12 @@ char *DoCmdLineFromObjectDataStruct(editor_object_data_struct *editor_obj_data);
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 #define EDITORMENUGTK_UI "editormenugtk3.ui"
 #define EDITORDATAGTK_UI "editordatagtk3.ui"
-#define EDITORUITWITHOUTPRINTGTK_UI "editorquitwithoutprintgtk3.ui"
+#define EDITORASKTOPRINTBEFOREQUITGTK_UI "editorasktoprintbeforequitgtk3.ui"
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
 #define EDITORMENUGTK_UI "editormenugtk4.ui"
 #define EDITORDATAGTK_UI "editordatagtk4.ui"
-#define EDITORUITWITHOUTPRINTGTK_UI "editorquitwithoutprintgtk4.ui"
+#define EDITORASKTOPRINTBEFOREQUITGTK_UI "editorasktoprintbeforequitgtk4.ui"
 #endif
 
 /* What follows is the list of the widgets contained in EDITORDATAGTK_UI
@@ -261,7 +264,7 @@ Whatever is present in this list will be present in the structure
      */
 #define editor_data_widgets_gtk3_LIST(_____)													\
 /* Please, make sure that each [WidgetID] is contained in editorgtk*.ui! */									\
-    _____(GtkWidget,		GTK_WIDGET,		window,	"delete_event", gtk_widget_hide_on_delete,				NULL)	\
+    _____(GtkWidget,		GTK_WIDGET,		window,			"delete_event", gtk_widget_hide_on_delete,		NULL)	\
     _____(GtkWidget,		GTK_WIDGET,		scrolled_window,	NULL,	 	NULL,					NULL)	\
     _____(GtkBox,		GTK_BOX,		main_box,		NULL,	 	NULL,					NULL)	\
     _____(GtkButton,		GTK_BUTTON,		button_ok,		"clicked", 	on_button_ok_clicked,			NULL)	\
@@ -403,12 +406,12 @@ Whatever is present in this list will be present in the structure
     /*
      * Quit without print window
      */
-#define editor_quit_without_print_widgets_gtk3_LIST(_____)											\
+#define editor_ask_to_print_before_quit_widgets_gtk3_LIST(_____)											\
 /* Please, make sure that each [WidgetID] is contained in editorquitwithoutprintgtk3.ui! */							\
     _____(GtkWidget,		GTK_WIDGET,		window,			"delete_event", gtk_widget_hide_on_delete,		NULL)	\
     _____(GtkLabel,		GTK_LABEL,		label,			NULL,	 	NULL,					NULL)	\
-    _____(GtkButton,		GTK_BUTTON,		button_yes,		"clicked", 	on_button_quit_without_print_yes_clicked,NULL)	\
-    _____(GtkButton,		GTK_BUTTON,		button_no,		"clicked", 	on_button_quit_without_print_no_clicked,NULL)
+    _____(GtkButton,		GTK_BUTTON,		button_yes,		"clicked", 	on_button_print_before_quit_yes_clicked,NULL)	\
+    _____(GtkButton,		GTK_BUTTON,		button_no,		"clicked", 	on_button_print_before_quit_no_clicked,	NULL)
 
 
 /*
@@ -437,7 +440,7 @@ Whatever is present in this list will be present in the structure
      */
 #define editor_data_widgets_gtk4_LIST(_____)													\
 /* Please, make sure that each [WidgetID] is contained in editorgtk*.ui! */									\
-    _____(GtkWidget,		GTK_WIDGET,		window,	"destroy", 	on_data_window_destroy,					NULL)	\
+    _____(GtkWidget,		GTK_WIDGET,		window,			"destroy", 	on_data_window_destroy,			NULL)	\
     _____(GtkWidget,		GTK_WIDGET,		scrolled_window,	NULL,	 	NULL,					NULL)	\
     _____(GtkBox,		GTK_BOX,		main_box,		NULL,	 	NULL,					NULL)	\
     _____(GtkButton,		GTK_BUTTON,		button_ok,		"clicked", 	on_button_ok_clicked,			NULL)	\
@@ -581,45 +584,45 @@ Whatever is present in this list will be present in the structure
     /*
      * Quit without print window
      */
-#define editor_quit_without_print_widgets_gtk4_LIST(_____)											\
-/* Please, make sure that each [WidgetID] is contained in editorquitwithoutprintgtk4.ui! */							\
+#define editor_ask_to_print_before_quit_widgets_gtk4_LIST(_____)										\
+/* Please, make sure that each [WidgetID] is contained in editorasktoprintbeforequitgtk4.ui! */							\
     _____(GtkWidget,		GTK_WIDGET,		window,			"destroy", 	on_dialog_window_destroy,		NULL)	\
     _____(GtkLabel,		GTK_LABEL,		label,			NULL,	 	NULL,					NULL)	\
-    _____(GtkButton,		GTK_BUTTON,		button_yes,		"clicked", 	on_button_quit_without_print_yes_clicked,NULL)	\
-    _____(GtkButton,		GTK_BUTTON,		button_no,		"clicked", 	on_button_quit_without_print_no_clicked,NULL)
+    _____(GtkButton,		GTK_BUTTON,		button_yes,		"clicked", 	on_button_print_before_quit_yes_clicked,NULL)	\
+    _____(GtkButton,		GTK_BUTTON,		button_no,		"clicked", 	on_button_print_before_quit_no_clicked,	NULL)
 
 
 /* Select the widgets lists according to the GTK version */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     #define editor_data_widgets_LIST editor_data_widgets_gtk3_LIST
     #define editor_menu_widgets_LIST editor_menu_widgets_gtk3_LIST
-    #define editor_quit_without_print_widgets_LIST editor_quit_without_print_widgets_gtk3_LIST
+    #define editor_ask_to_print_before_quit_widgets_LIST editor_ask_to_print_before_quit_widgets_gtk3_LIST
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
     #define editor_data_widgets_LIST editor_data_widgets_gtk4_LIST
     #define editor_menu_widgets_LIST editor_menu_widgets_gtk4_LIST
-    #define editor_quit_without_print_widgets_LIST editor_quit_without_print_widgets_gtk4_LIST
+    #define editor_ask_to_print_before_quit_widgets_LIST editor_ask_to_print_before_quit_widgets_gtk4_LIST
 #endif
 
 /* Private definitions for `editor_*_widgets` */
 #define _AS_DECLARATION_(_W_TYPE_, _W_CAST_, _W_ID_, _W_SIGNAL_, _W_CALLBACKFUNC_, _W_TOOLTIP_) _W_TYPE_ * _W_ID_;
 #define EDITOR_GTK_WIDGETS struct editor_data_widgets_t { editor_data_widgets_LIST(_AS_DECLARATION_) }
 #define EDITOR_MENU_GTK_WIDGETS struct editor_menu_widgets_t { editor_menu_widgets_LIST(_AS_DECLARATION_) }
-#define EDITOR_QUIT_WITHOUT_PRINT_GTK_WIDGETS struct editor_quit_without_print_widgets_t { editor_quit_without_print_widgets_LIST(_AS_DECLARATION_) }
+#define EDITOR_ASK_TO_PRINT_BEFORE_QUIT_GTK_WIDGETS struct editor_ask_to_print_before_quit_widgets_t { editor_ask_to_print_before_quit_widgets_LIST(_AS_DECLARATION_) }
 
 /* The structures `editor_*_widgets` are the containers of all the widgets that we need */
 EDITOR_GTK_WIDGETS editor_data_widgets;
 EDITOR_MENU_GTK_WIDGETS editor_menu_widgets;
-EDITOR_QUIT_WITHOUT_PRINT_GTK_WIDGETS editor_quit_without_print_widgets;
+EDITOR_ASK_TO_PRINT_BEFORE_QUIT_GTK_WIDGETS editor_ask_to_print_before_quit_widgets;
 
-#undef EDITOR_QUIT_WITHOUT_PRINT_GTK_WIDGETS
+#undef EDITOR_QUIT_ASK_TO_PRINT_BEFORE_QUIT_GTK_WIDGETS
 #undef EDITOR_MENU_GTK_WIDGETS
 #undef EDITOR_GTK_WIDGETS
 #undef _AS_DECLARATION_
 
 
 /*
- * Loads UI and fills the editor_menu_widgets structure.
+ * Load UI and set the editor_menu_widgets structure.
  */
 void app_startup_cb(GApplication *app, gpointer user_data)
 {
@@ -628,7 +631,7 @@ void app_startup_cb(GApplication *app, gpointer user_data)
 
 
     /***
-     * Menu window
+     * Menu buttons window
      ***/
 
     /* Get UI from file */
@@ -683,25 +686,25 @@ void app_startup_cb(GApplication *app, gpointer user_data)
 
     /* Get UI from file */
     builder = gtk_builder_new();
-    gtk_builder_add_from_resource(builder, "/./"EDITORUITWITHOUTPRINTGTK_UI, NULL);
+    gtk_builder_add_from_resource(builder, "/./"EDITORASKTOPRINTBEFOREQUITGTK_UI, NULL);
 
-    /* Populate the editor_quit_without_print_widgets struct */
+    /* Populate the editor_ask_to_print_before_quit_widgets struct */
     #define _BUILDER_OBJ_ builder
     #define _AS_ASSIGNEMENT_(_W_TYPE_, _W_CAST_, _W_ID_, _W_SIGNAL_,  _W_CALLBACKFUNC_, _W_TOOLTIP_) \
-	editor_quit_without_print_widgets._W_ID_ = _W_CAST_(gtk_builder_get_object(_BUILDER_OBJ_, #_W_ID_));\
-	if (!editor_quit_without_print_widgets._W_ID_) { g_critical ("Widget \""#_W_ID_"\" is missing in file %s.", EDITORUITWITHOUTPRINTGTK_UI); }\
+	editor_ask_to_print_before_quit_widgets._W_ID_ = _W_CAST_(gtk_builder_get_object(_BUILDER_OBJ_, #_W_ID_));\
+	if (!editor_ask_to_print_before_quit_widgets._W_ID_) { g_critical ("Widget \""#_W_ID_"\" is missing in file %s.", EDITORASKTOPRINTBEFOREQUITGTK_UI); }\
 	else {\
-	    if ((_W_SIGNAL_) && (_W_CALLBACKFUNC_ != NULL)) { g_signal_connect (editor_quit_without_print_widgets._W_ID_, _W_SIGNAL_, G_CALLBACK(_W_CALLBACKFUNC_), (gpointer)core_ptr);}\
-	    if(_W_TOOLTIP_ != NULL) { gtk_widget_set_tooltip_markup( GTK_WIDGET(editor_quit_without_print_widgets._W_ID_), _W_TOOLTIP_); }\
+	    if ((_W_SIGNAL_) && (_W_CALLBACKFUNC_ != NULL)) { g_signal_connect (editor_ask_to_print_before_quit_widgets._W_ID_, _W_SIGNAL_, G_CALLBACK(_W_CALLBACKFUNC_), (gpointer)core_ptr);}\
+	    if(_W_TOOLTIP_ != NULL) { gtk_widget_set_tooltip_markup( GTK_WIDGET(editor_ask_to_print_before_quit_widgets._W_ID_), _W_TOOLTIP_); }\
 	}
-	editor_quit_without_print_widgets_LIST(_AS_ASSIGNEMENT_);
+	editor_ask_to_print_before_quit_widgets_LIST(_AS_ASSIGNEMENT_);
     #undef _AS_ASSIGNEMENT_
     #undef _BUILDER_OBJ_
 
     /* Unreference builder: we don't need it anymore */
     g_object_unref(builder);
 }
-#undef editor_quit_without_print_widgets_LIST
+#undef editor_ask_to_print_before_quit_widgets_LIST
 #undef editor_data_widgets_LIST
 #undef editor_menu_widgets_LIST
 
@@ -715,7 +718,7 @@ void app_activate_cb(GApplication *app, gpointer user_data)
 
     menu_window = GTK_WINDOW(editor_menu_widgets.window);
     data_window = GTK_WINDOW(editor_data_widgets.window);
-    dialog_window = GTK_WINDOW(editor_quit_without_print_widgets.window);
+    dialog_window = GTK_WINDOW(editor_ask_to_print_before_quit_widgets.window);
 
     /* Get humans name from core then set them to human choice list widgets */
     EditorGtkItemChooserSetHumansNameList(core_ptr);
@@ -761,12 +764,12 @@ void app_activate_cb(GApplication *app, gpointer user_data)
 #endif
 
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    gtk_widget_hide_on_delete(editor_quit_without_print_widgets.window);
-    gtk_widget_hide(editor_quit_without_print_widgets.window);
+    gtk_widget_hide_on_delete(editor_ask_to_print_before_quit_widgets.window);
+    gtk_widget_hide(editor_ask_to_print_before_quit_widgets.window);
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
     gtk_window_set_hide_on_close(dialog_window, TRUE);
-    gtk_widget_set_visible(editor_quit_without_print_widgets.window, FALSE);
+    gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 
     /* Set menu window to non-modal (non-blocking) */
@@ -782,7 +785,6 @@ void app_activate_cb(GApplication *app, gpointer user_data)
      * work for other X11 systems desktop environments.
      */
     gtk_window_set_keep_above(menu_window, TRUE);
-
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
     gtk_window_set_hide_on_close(menu_window, TRUE);
@@ -794,14 +796,10 @@ void app_activate_cb(GApplication *app, gpointer user_data)
      */
 #endif
 
-
-
-
-    /* FIXME For now, hide the data window "Apply" button. Is this button really usefull? */
+    /* Hide the data window "Apply" button.
+     * FIXME: Is this button really usefull?
+     */
     gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.button_apply), FALSE);
-
-
-
 
     /* Remove focus. This will allow user <Home>/<End> and other key presses to
      * be transmitted to the Sar2 main window instead of the menu window.
@@ -814,11 +812,8 @@ void app_activate_cb(GApplication *app, gpointer user_data)
      */
 }
 
-
 /*
- * Returns the X11 window decoration (title bar) height.
- *
- * Returns 0 on error.
+ * Return the X11 window decoration (title bar) height, or 0 on error.
  */
 int X11GetWindowDecorationHeight(Display *display, Window window)
 {
@@ -849,7 +844,7 @@ int X11GetWindowDecorationHeight(Display *display, Window window)
 }
 
 /*
- * Gets the sar2 X11 window top right corner position
+ * Get the sar2 X11 window top right corner position
  */
 void GwGetSar2WindowTopRightCornerPos(const gw_display_struct *display,
 				      int *x, int *y
@@ -870,24 +865,9 @@ void GwGetSar2WindowTopRightCornerPos(const gw_display_struct *display,
     *y = display->toplevel_geometry->y - decoration_height;
 }
 
-/*
- * Sets the focus to the sar2 X11 window
+/* Start the GTK application.
+ * Return a non-zero value on error.
  */
-void GwSetWindowFocusToSar2Window(const gw_display_struct *display)
-{
-    Window sar2_x_window;
-    int ctx_num;
-
-    ctx_num = display->gl_context_num;
-
-    /* Get the sar2 window X11 identifier */
-    sar2_x_window = display->toplevel[ctx_num];
-
-    XSetInputFocus(display->display, sar2_x_window, RevertToNone, CurrentTime);
-}
-
-
-/* TODO comment function */
 int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags)
 {
 #define APPLICATION_ID "com.github.SearchAndRescue2.sar2"
@@ -904,12 +884,7 @@ int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags)
 
     app = gtk_application_new(APPLICATION_ID, G_APPLICATION_DEFAULT_FLAGS);
 
-    // FIXME: freeze SarII if trying to re-enter editor GTK UI without quitting
-    // then restarting SarII.
     context = g_main_context_ref_thread_default();
-    //context = g_main_context_default();
-    //context = g_main_context_get_thread_default();
-
     if(!g_main_context_acquire(context))
 	return 1;
 
@@ -917,10 +892,16 @@ int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags)
      * the g_application_register() function.
      */
     g_signal_connect(app, "startup", G_CALLBACK(app_startup_cb), (gpointer)core_ptr);
+
+    /* FIXME: g_application_register() will return "Failed to register: An
+     * object is already exported for the interface org.gtk.Application"
+     * if user tries to re-enter editor GTK UI without quitting then
+     * restarting SarII.
+     */
     if(!g_application_register(G_APPLICATION(app), NULL, &error))
     {
-	g_printerr ("Failed to register: %s\n", error->message);
-	g_error_free (error);
+	g_printerr("Failed to register: %s\n", error->message);
+	g_error_free(error);
 	return 1;
     }
 
@@ -929,16 +910,20 @@ int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags)
 
     g_signal_connect(app, "activate", G_CALLBACK(app_activate_cb), (gpointer)core_ptr);
     g_application_activate(G_APPLICATION(app));
-    //editor_gtk_ui->gtk_app_running = TRUE;
     core_ptr->gtk_main_loop_on = True;
 
+    /* Add the menu buttons enable/disable management as a timeout function */
+    g_timeout_add(100,
+		    G_SOURCE_FUNC(manage_menu_buttons_cb),
+		    (gpointer)core_ptr
+		);
 
     /*
-     * Set the menu Gtk window top right corner at the same
+     * Set the Gtk buttons window top right corner at the same
      * position than the sar2 window top right corner.
      */
 
-    /* Get the menu Gtk window size (from X11) */
+    /* Get the Gtk buttons window size (from X11) */
     int menu_x_win_width, menu_x_win_height;
     XWindowAttributes attr;
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
@@ -972,7 +957,7 @@ int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags)
 				     &sar2_x_win_top_right_y
 				);
 
-    /* Set the menu Gtk window top left position (using an X11 function) */
+    /* Set the menu Gtk window top left position using an X11 function */
     XMoveWindow(menu_x_display, menu_x_window,
 		sar2_x_win_top_right_x - menu_x_win_width,
 		sar2_x_win_top_right_y
@@ -990,7 +975,7 @@ int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags)
 }
 
 /*
- * Stops the GTK application then free the editor_gtk_ui structure.
+ * Stop the GTK application then free the editor_gtk_ui structure.
  */
 void gtkAppStop(sar_core_struct *core_ptr)
 {
@@ -1017,22 +1002,22 @@ void gtkAppStop(sar_core_struct *core_ptr)
     GwSetWindowFocusToSar2Window(display);
 
     /* Get windows list */
-    /* FIXME seems to return more objects than the opened windows!?! */
+    /* NOTE seems to return more objects than the opened windows number */
     windows_list = gtk_window_list_toplevels();
 
     /* Needed before destroying (see gtk_window_list_toplevels() doc) */
     g_list_foreach(windows_list, (GFunc)g_object_ref, NULL);
 
-    /* Destroy the GTK windows */
+    // Destroy the GTK windows
     for( ; windows_list != NULL; windows_list = g_list_next(windows_list))
     {
 	if(windows_list->data != NULL)
 	{
+	    if(GTK_IS_WINDOW(windows_list->data))
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-	    gtk_widget_destroy(windows_list->data);
+		gtk_widget_destroy(windows_list->data);
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-	    if(GTK_IS_WINDOW(windows_list->data))
 		gtk_window_destroy(GTK_WINDOW(windows_list->data));
 #endif
 	}
@@ -1048,16 +1033,16 @@ void gtkAppStop(sar_core_struct *core_ptr)
 
 	g_settings_sync();
 
-	/* Clear pending events */
+	/* Clear all pending events */
 	while(g_main_context_iteration(context, FALSE))
 	    ;
 
+	g_main_context_release(context);
+	g_main_context_unref(context);
+	editor_gtk_ui->gtk_context = NULL;
+
 	g_object_unref(app);
 	editor_gtk_ui->gtk_application = NULL;
-
-	g_main_context_release(context);
-	g_free(context);
-	editor_gtk_ui->gtk_context = NULL;
     }
 
     free(editor_gtk_ui);
@@ -1111,7 +1096,7 @@ void EditorGtkItemChooserSetHumansNameList(const sar_core_struct *core_ptr)
 
     total_presets = hd->total_presets;
 
-    /* Add one preset more because last human_array[] pointer must be NULL */
+    /* Add one preset more because the last human_array[] pointer must be NULL */
     total_presets++;
 
     /* Alloc memory and set all human_array[] pointers to NULL */
@@ -1130,14 +1115,13 @@ void EditorGtkItemChooserSetHumansNameList(const sar_core_struct *core_ptr)
 	human_array[j++] = strdup(hd_entry->name);
     }
 
-    /* Set humans type name in humans choice lists */
+    /* Set human type names in humans choice lists */
     EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.human_type_name), (const char* const*)human_array);
     EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.human_assist_1_name), (const char* const*)human_array);
     EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.human_assist_2_name), (const char* const*)human_array);
     EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.human_assist_3_name), (const char* const*)human_array);
     EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.human_assist_4_name), (const char* const*)human_array);
 
-    /* Free human_array */
     for(i = 0; i < total_presets; i++)
 	free(human_array[i]);
     free(human_array);
@@ -1153,27 +1137,21 @@ void EditorGtkItemChooserSetTexturesNameList(const sar_core_struct *core_ptr)
 
     texture_name_list = GetTextureNameListFromSceneryFileName((const char *)core_ptr->cur_scene_file);
 
-if(False)
-{
     if(texture_name_list != NULL)
     {
+	// while(texture_name_list[i] != NULL)
+	//    g_print("texture_name_list[%d]='%s'\n", i, texture_name_list[i++]);
+
+	/* Set textures name in texture choice lists */
+	EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.premod_walls_tex), (const char* const*)texture_name_list);
+	EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.premod_walls_tex_night), (const char* const*)texture_name_list);
+	EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.premod_roof_tex), (const char* const*)texture_name_list);
+
+	/* Free textures name array */
 	while(texture_name_list[i] != NULL)
-	{
-	    g_print("texture_name_list[%d]='%s'\n", i, texture_name_list[i]);
-	    i++;
-	}
+	    free(texture_name_list[i++]);
+	free(texture_name_list);
     }
-}
-
-    /* Set textures name in texture choice lists */
-    EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.premod_walls_tex), (const char* const*)texture_name_list);
-    EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.premod_walls_tex_night), (const char* const*)texture_name_list);
-    EditorGtkItemChooserSetItemsList(GTK_WIDGET(editor_data_widgets.premod_roof_tex), (const char* const*)texture_name_list);
-
-    /* Free textures name array */
-    while(texture_name_list[i] != NULL)
-	free(texture_name_list[i++]);
-    free(texture_name_list);
 }
 
 /*
@@ -1181,8 +1159,8 @@ if(False)
  */
 void EditorGtkItemChooserSetRefObjsNameList(const sar_core_struct *core_ptr)
 {
-    //const sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
-    int i, j = 0, total_name = 0;
+    int i, j = 0, k, total_name = 0;
+    Boolean found;
     sar_object_struct *obj_ptr;
     char **name_array;
 
@@ -1197,7 +1175,7 @@ void EditorGtkItemChooserSetRefObjsNameList(const sar_core_struct *core_ptr)
 	    total_name++;
     }
 
-    /* Add place for the closing NULL string */
+    /* Add space for the closing NULL string */
     total_name++;
 
     /* Alloc memory and set all name_array[] pointers to NULL */
@@ -1208,7 +1186,7 @@ void EditorGtkItemChooserSetRefObjsNameList(const sar_core_struct *core_ptr)
     /* Put 'player' as first item of array */
     name_array[j++] = strdup("player");
 
-    /* Fill */
+    /* Fill array */
     for(i = 0; i < core_ptr->total_objects; i++)
     {
 	obj_ptr = core_ptr->object[i];
@@ -1217,7 +1195,30 @@ void EditorGtkItemChooserSetRefObjsNameList(const sar_core_struct *core_ptr)
 
 	/* Name not NULL nor "player"? */
 	if(obj_ptr->name != NULL && strcmp(obj_ptr->name, "player"))
-	    name_array[j++] = strdup(obj_ptr->name);
+	{
+	    found = False;
+
+	    for(k = 0; k < j; k++)
+	    {
+		/* Name already exist? */
+		if(!strcmp(name_array[k], obj_ptr->name))
+		    break;
+	    }
+
+	    /* Name of object 'i' not yet in array? */
+	    if(k == j)
+	    {
+		/* Add it */
+		name_array[j++] = strdup(obj_ptr->name);
+	    }
+	    else
+	    {
+		/* Don't add this name twice: if there are more than one object
+		 * with the same name, the Sar2 game engine always stop at the
+		 * first object with a matching name found.
+		 */
+	    }
+	}
     }
 
     /* Close array by a NULL pointer */
@@ -1236,14 +1237,18 @@ void EditorGtkItemChooserSetRefObjsNameList(const sar_core_struct *core_ptr)
 }
 
 /*
- * Populates a choice list widget (GtkComboBox or GtkDropDown, as needed) with
+ * Populate a choice list widget (GtkComboBox or GtkDropDown, as needed) with
  * the strings contained in the given string array.
  * The last string of the array must be NULL.
  *
- * Returns FALSE if choice list is not a GtkComboBox nor a GtkDropDown.
+ * Return FALSE if choice list is not a GtkComboBox nor a GtkDropDown,
+ * or if string == NULL.
  */
 gboolean EditorGtkItemChooserSetItemsList(GtkWidget *widget, const char* const* string)
 {
+    if(string == NULL)
+	return FALSE;
+
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     if(GTK_IS_COMBO_BOX_TEXT(widget))
     {
@@ -1276,9 +1281,10 @@ gboolean EditorGtkItemChooserSetItemsList(GtkWidget *widget, const char* const* 
 }
 
 /*
- * For convenience, returns the value of a
- * Gtk(3)ComboBoxText OR Gtk(4)DropDown, as needed.
- * The value is always a NUL terminated string (never a NULL pointer),
+ * For convenience, return the value of a Gtk(3)ComboBoxText OR Gtk(4)DropDown,
+ * as needed.
+ *
+ * The returned value is always a NUL terminated string (never a NULL pointer),
  * and must be freed by the calling function.
  */
 char *EditorGtkItemChooserGetSelectedString(void *widget)
@@ -1310,16 +1316,15 @@ char *EditorGtkItemChooserGetSelectedString(void *widget)
 }
 
 /*
- * Sets the selected item of a Gtk(3)ComboBoxText OR Gtk(4)DropDown as needed.
+ * Set the selected item of a Gtk(3)ComboBoxText OR Gtk(4)DropDown as needed.
  * Item index is found by comparing the given text value to each value of the
  * Gtk(3)ComboBoxText or Gtk(4)DropDown.
  * If text is NULL, item index will be set to -1 (no active item).
  *
- * Returns a non-zero value on error.
+ * Return a non-zero value on error.
  */
 int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text)
 {
-
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 
     GtkTreeModel *tree_model;
@@ -1356,10 +1361,8 @@ int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text
 
 	valid = gtk_tree_model_iter_next(tree_model, &iter);
     }
-
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-
     GListModel *list_model;
     GObject *g_object;
     GtkTreeIter iter;
@@ -1387,7 +1390,6 @@ int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text
 	    break;
 	}
     }
-
 #endif
 
     if(found == TRUE)
@@ -1397,8 +1399,8 @@ int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text
 }
 
 /*
- * Returns the item index of a Gtk(3)ComboBoxText OR Gtk(4)DropDown as needed.
- * Item index is found by comparing the given text value to each text values
+ * Return the item index of a Gtk(3)ComboBoxText OR Gtk(4)DropDown as needed.
+ * Item index is found by comparing the given text value to each text value
  * of the the Gtk(3)ComboBoxText or Gtk(4)DropDown.
  *
  * Returns -1 if text was not found in the chooser items list.
@@ -1406,9 +1408,7 @@ int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text
 int EditorGtkItemChooserGetItemIndexFromString(void *widget, const char *text)
 {
     gint index = -1;
-
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-
     GtkTreeModel *tree_model;
     GtkTreeIter iter;
     gchar *str_data;
@@ -1438,10 +1438,8 @@ int EditorGtkItemChooserGetItemIndexFromString(void *widget, const char *text)
 
 	valid = gtk_tree_model_iter_next(tree_model, &iter);
     }
-
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-
     GListModel *list_model;
     GObject *g_object;
     GtkTreeIter iter;
@@ -1466,7 +1464,6 @@ int EditorGtkItemChooserGetItemIndexFromString(void *widget, const char *text)
 	    break;
 	}
     }
-
 #endif
 
     if(found == TRUE)
@@ -1476,7 +1473,7 @@ int EditorGtkItemChooserGetItemIndexFromString(void *widget, const char *text)
 }
 
 /*
- * Filters characters in a GtkEntry:
+ * Filter characters in a GtkEntry:
  * Allows only alphabet, digital and underscore characters.
  */
 void EditorGktEntryFilterText(void *widget)
@@ -1492,7 +1489,7 @@ void EditorGktEntryFilterText(void *widget)
 
     char_num = strlen(text);
 
-    /* Entry empty? */
+    /* Empty entry? */
     if(char_num == 0)
 	return;
 
@@ -1512,8 +1509,8 @@ void EditorGktEntryFilterText(void *widget)
 }
 
 /*
- * Filters characters in a GtkEntry:
- * Allows all printable characters except space character.
+ * Filter characters in a GtkEntry:
+ * Allows all printable characters except the space character.
  */
 void EditorGktEntryFilterTextNoSpace(void *widget)
 {
@@ -1528,7 +1525,7 @@ void EditorGktEntryFilterTextNoSpace(void *widget)
 
     char_num = strlen(text);
 
-    /* Entry empty? */
+    /* Empty entry? */
     if(char_num == 0)
 	return;
 
@@ -1548,7 +1545,7 @@ void EditorGktEntryFilterTextNoSpace(void *widget)
 }
 
 /*
- * Checks the value entered in a GtkEntry and allow it to be an integer
+ * Check the value entered in a GtkEntry and allow it to be an integer
  * number only. If non_negative is TRUE, only positive or null entries
  * will be allowed.
  */
@@ -1563,7 +1560,7 @@ void EditoGktEntryAllowInt(void *widget, gboolean non_negative)
     const char *text = gtk_editable_get_text (GTK_EDITABLE (widget));
 #endif
 
-    /* Entry empty? */
+    /* Empty entry? */
     if(strlen(text) == 0)
 	return;
 
@@ -1592,7 +1589,7 @@ void EditoGktEntryAllowInt(void *widget, gboolean non_negative)
 }
 
 /*
- * Converts a GtkEntry text buffer value to an integer. Text buffer
+ * Convert a GtkEntry text buffer value to an integer. Text buffer
  * value must have been checked by EditoGktEntryAllowInt() while entered.
  * Returns 0 if text buffer is empty.
  */
@@ -1605,7 +1602,7 @@ int EditorGktEntryToInt(void *widget)
     const char *text = gtk_editable_get_text (GTK_EDITABLE (widget));
 #endif
 
-    /* Entry empty? */
+    /* Empty entry? */
     if(strlen(text) == 0)
 	return 0;
 
@@ -1613,7 +1610,7 @@ int EditorGktEntryToInt(void *widget)
 }
 
 /*
- * Checks the value entered in a GtkEntry and allow it to be a double
+ * Check the value entered in a GtkEntry and allow it to be a double
  * number only. If non_negative is TRUE, only positive or null entries
  * will be allowed.
  */
@@ -1628,7 +1625,7 @@ void EditoGktEntryAllowDouble(void *widget, gboolean non_negative)
     const char *text = gtk_editable_get_text(GTK_EDITABLE (widget));
 #endif
 
-    /* Entry empty? */
+    /* Empty entry? */
     if(strlen(text) == 0)
 	return;
 
@@ -1657,7 +1654,7 @@ void EditoGktEntryAllowDouble(void *widget, gboolean non_negative)
 }
 
 /*
- * Converts a GtkEntry text buffer value to a double. Text buffer
+ * Convert a GtkEntry text buffer value to a double. Text buffer
  * value must have been checked by EditoGktEntryAllowDouble() while entered.
  * Returns 0 if text buffer is empty.
  */
@@ -1672,7 +1669,7 @@ double EditorGktEntryToDouble(void *widget)
     const char *text = gtk_editable_get_text(GTK_EDITABLE(widget));
 #endif
 
-    /* Entry empty? */
+    /* Empty entry? */
     if(strlen(text) == 0)
 	return 0;
 
@@ -1690,7 +1687,8 @@ double EditorGktEntryToDouble(void *widget)
 }
 
 /*
- * Sets a text value in a GtkEntry text buffer */
+ * Set a text value in a GtkEntry text buffer
+ */
 void EditorGtkEntrySetText(void *widget, const char *text)
 {
     if(text == NULL)
@@ -1705,7 +1703,7 @@ void EditorGtkEntrySetText(void *widget, const char *text)
 }
 
 /*
- * Sets an integer value in a GtkEntry text buffer */
+ * Set an integer value in a GtkEntry text buffer */
 void EditorGtkEntrySetTextFromInt(void *widget, double value)
 {
     char text[16];
@@ -1720,7 +1718,7 @@ void EditorGtkEntrySetTextFromInt(void *widget, double value)
 }
 
 /*
- * Sets a double value in a GtkEntry text buffer */
+ * Set a double value in a GtkEntry text buffer */
 void EditorGtkEntrySetTextFromDouble(void *widget, double value)
 {
     char text[16];
@@ -1748,35 +1746,40 @@ void EditorGtkEntrySetTextFromDouble(void *widget, double value)
 #endif
 }
 
-
 /*
- * TODO: add comment
+ * Show the "Do you want to print before quit?" window
  */
-void EditorGtkAskToQuitWithoutPrint()
+void EditorGtkAskToPrintBeforeQuit(gpointer user_data)
 {
-    GtkWindow *quit_without_print_window;
+    GtkWindow *ask_to_print_before_quit_window;
+    const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
 
-    quit_without_print_window = GTK_WINDOW(editor_quit_without_print_widgets.window);
+    ask_to_print_before_quit_window = GTK_WINDOW(editor_ask_to_print_before_quit_widgets.window);
 
-    gtk_window_set_modal(GTK_WINDOW(editor_quit_without_print_widgets.window), TRUE);
+    gtk_window_set_modal(GTK_WINDOW(editor_ask_to_print_before_quit_widgets.window), TRUE);
 
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     /* Show the window */
-    gtk_widget_show_all(GTK_WIDGET(quit_without_print_window));
+    gtk_widget_show_all(GTK_WIDGET(ask_to_print_before_quit_window));
 
     /* Force the menu window to always be on top.
      * Note: it works (at least) on my K Desktop Environment and I hope should
      * work for other X11 systems desktop environments.
      */
-    gtk_window_set_keep_above(quit_without_print_window, TRUE);
+    gtk_window_set_keep_above(ask_to_print_before_quit_window, TRUE);
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
     /* Show the window */
-    gtk_window_present(quit_without_print_window);
+    gtk_window_present(ask_to_print_before_quit_window);
 #endif
+
+    scn_ed->current_action = EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT;
 }
 
-
+/*
+ * Set the children of the given widget name (un)sensitive as needed.
+ */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void set_children_sensitive_by_name(
 	GtkWidget* parent,
@@ -1825,11 +1828,11 @@ void set_children_sensitive_by_name(
 }
 #endif
 
-/* Try to open the V3D (*.3d) file_name file then look for the 'name'
+/* Try to open the V3D (*.3d) file_name file then search for the 'name'
  * parameter. If found, the parameter value is returned as a string
  * which must be freed by calling function.
  *
- * Returns NULL if file can't be open or if the 'name' parameter was not found.
+ * Return NULL if file can't be open or if the 'name' parameter was not found.
  */
 char *GetModelNameFromModelFileName(const char *file_name)
 {
@@ -1851,14 +1854,14 @@ char *GetModelNameFromModelFileName(const char *file_name)
 	    exit(EXIT_FAILURE);
 	}
 
-	// Note: this allocates a lot of (too much?) memory, but is secure... //
+	/* NOTE: this allocates a lot of (too much?) memory, but is secure... */
 	file_contents = malloc(sb.st_size);
 
 	while (fscanf(fp, "%[^\n] ", file_contents) != EOF)
 	{
 	    sscanf(file_contents, "%7s %255[^\n]", cmd, model_name);
 
-	    // name parameter found? //
+	    /* name parameter found? */
 	    if(!strcasecmp(cmd, "name"))
 	    {
 		found = TRUE;
@@ -1880,11 +1883,11 @@ char *GetModelNameFromModelFileName(const char *file_name)
 	return NULL;
 }
 
-/* Tries to open the V3D (*.3d) file_name file then look for 'texture_load'
+/* Try to open the V3D (*.3d) file_name file then search for the 'texture_load'
  * parameters. If found, the texture names are returned as a NULL terminated
  * string array which must be freed by calling function.
  *
- * Returns NULL if file can't be open or if no 'texture_load' parameter was found.
+ * Return NULL if file can't be open or if no 'texture_load' parameter was found.
  */
 char **GetTextureNameListFromSceneryFileName(const char *file_name)
 {
@@ -1942,6 +1945,7 @@ char **GetTextureNameListFromSceneryFileName(const char *file_name)
     return texture_list;
 }
 
+
 /*
  * GTK callbacks.
  * Relevant callback is called when corresponding event is fired (button
@@ -1953,10 +1957,79 @@ char **GetTextureNameListFromSceneryFileName(const char *file_name)
  * only works with non-static methods
  */
 
+
+/* Manage the menu buttons buttons sensivity (grayed / not grayed buttons).
+ * This function is called every 100ms until it returns FALSE.
+ */
+gboolean manage_menu_buttons_cb(gpointer user_data)
+{
+    const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
+    const sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    editor_action_type current_action = scn_ed->current_action;
+    gboolean call_me_back_on_more_time = TRUE;
+
+    if(core_ptr->gtk_main_loop_on == False)
+	return FALSE;
+
+    switch(current_action)
+    {
+	case EDITOR_ACTION_NONE:
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
+	break;
+
+	case EDITOR_ACTION_COPY:
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", TRUE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
+	    break;
+
+	case EDITOR_ACTION_MOVE:
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
+	    gtk_widget_set_sensitive(GTK_WIDGET(editor_menu_widgets.button_object_set), TRUE);
+	    gtk_widget_set_sensitive(GTK_WIDGET(editor_menu_widgets.button_object_unload), FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
+	    break;
+
+	case EDITOR_ACTION_QUIT:
+	case EDITOR_ACTION_QUIT_FROM_GTK:
+	case EDITOR_ACTION_QUIT_WITHOUT_PRINT:
+	case EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT:
+	    call_me_back_on_more_time = FALSE;
+	    break;
+
+	case EDITOR_ACTION_PRINT:
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
+	    break;
+
+	case EDITOR_ACTION_NEW:
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", TRUE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
+	    break;
+
+	case EDITOR_ACTION_SET:
+	case EDITOR_ACTION_UNLOAD:
+	case EDITOR_ACTION_MODIFY:
+	case EDITOR_ACTION_INFO:
+	case EDITOR_ACTION_INFO_NEXT:
+	case EDITOR_ACTION_REMOVE:
+	case EDITOR_ACTION_NAME:
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
+	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
+	    break;
+    }
+
+    return call_me_back_on_more_time;
+}
+
 void on_data_window_destroy(GtkWidget *widget, gpointer user_data)
 {
     // const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
-
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_data_widgets.window));
 #endif
@@ -1968,12 +2041,11 @@ void on_data_window_destroy(GtkWidget *widget, gpointer user_data)
 void on_dialog_window_destroy(GtkWidget *widget, gpointer user_data)
 {
     // const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
-
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    gtk_widget_hide(GTK_WIDGET(editor_quit_without_print_widgets.window));
+    gtk_widget_hide(GTK_WIDGET(editor_ask_to_print_before_quit_widgets.window));
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    gtk_widget_set_visible(editor_quit_without_print_widgets.window, FALSE);
+    gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 }
 
@@ -1982,13 +2054,16 @@ void on_menu_window_destroy(GtkWidget *widget, gpointer user_data)
     on_button_quit_clicked(editor_menu_widgets.button_quit, (gpointer)user_data);
 }
 
-
+/*
+ * Set the sensitivity and visibility of frames and widgets when the type is
+ * selected in the "new object" window.
+ */
 void on_general_type_changed(void *widget, gpointer user_data)
 {
     /* WARNING FIXME: GTK4.10 seems to returns bad user_data pointer value.
      * // const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
      */
-    //const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
+    const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     char *selected_s;
 
     selected_s = EditorGtkItemChooserGetSelectedString(widget);
@@ -2033,6 +2108,14 @@ void on_general_type_changed(void *widget, gpointer user_data)
 
 	gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.helipad_frame), TRUE);
 	gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.helipad_frame_grid), TRUE);
+
+	/* Set "reference object" entry widgets sensitivity as needed */
+	on_helipad_is_referenced_toggled(editor_data_widgets.helipad_is_referenced, (gpointer)core_ptr);
+
+	/* As reference object is not yet defined, hide the reference object
+	 * general data (i.e. reference object position and direction) frame.
+	 */
+	gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.ref_object_frame), FALSE);
 
 	gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.runway_frame), FALSE);
 	gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.human_frame), FALSE);
@@ -2096,7 +2179,6 @@ void on_general_type_changed(void *widget, gpointer user_data)
 #endif
 
 	/* Define file chooser default path */
-
 	if(!strcasecmp(selected_s, SAR_OBJ_TYPE_AUTOMOBILE_S))
 	{
 	    path = COMPLETE_PATH((const char *)SAR_DEF_AUTOMOBILES_DIR);
@@ -2213,29 +2295,10 @@ void on_general_type_changed(void *widget, gpointer user_data)
     gtk_scrolled_window_set_propagate_natural_height(GTK_SCROLLED_WINDOW(editor_data_widgets.scrolled_window), TRUE);
 
     /* Resize the window */
-    gint natural_height = 0, natural_width = 0;
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    gtk_widget_get_preferred_height(GTK_WIDGET(editor_data_widgets.main_box), NULL, &natural_height);
-    gtk_widget_get_preferred_width(GTK_WIDGET(editor_data_widgets.main_box), NULL, &natural_width);
-    gtk_window_resize(GTK_WINDOW(editor_data_widgets.window), natural_width, natural_height);
-#endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    GtkRequisition minimum_size, natural_size;
-    gtk_widget_get_preferred_size(GTK_WIDGET(editor_data_widgets.main_box), &minimum_size, &natural_size);
-    natural_width = natural_size.width;
-    natural_height = natural_size.height;
-    gtk_window_set_default_size(GTK_WINDOW(editor_data_widgets.window), natural_width, natural_height);
-#endif
-
+    EditorDataWindowSetDefaultSize();
 
     return;
 }
-
-/*
-void on_name_changed (void *widget, gpointer user_data) {
-    g_print("on_name_changed: text='%s'\n", gtk_entry_get_text(widget));
-}
-*/
 
 void on_obj_name_changed(void *widget, gpointer user_data)
 {
@@ -2322,48 +2385,6 @@ void on_helipad_style_changed(void *widget, gpointer user_data)
 	gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.helipad_recession), FALSE);
     }
 
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-/*
-    GtkTreeModel *tree_model = gtk_combo_box_get_model(widget);
-    fprintf(stderr, "%s:%d: tree_model=%p\n", __FILE__, __LINE__, tree_model);
-    GtkTreeIter* iter;
-    if(gtk_tree_model_get_iter_first(tree_model, iter))
-	g_print("value='%s'\n", gtk_tree_model_get_string_from_iter(tree_model, iter));
-*/
-//    GType g_type = g_list_model_get_item_type(list_model);
-//    g_print("g_type=%d\n", g_type);
-//    GTypeQuery *query;
-#endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-/*
-    guint hash_size;
-    GHashTable *hash_table = g_hash_table_new(NULL, NULL);
-
-    g_hash_table_add(hash_table, "hello 1");
-    g_hash_table_add(hash_table, "hello 2");
-    g_hash_table_add(hash_table, "hello 3");
-    hash_size = g_hash_table_size(hash_table);
-
-
-
-
-    gpointer key_array = g_hash_table_get_keys_as_array (hash_table, &hash_size); // Get the keys, which are strings, as an array
-    GtkStringList *stringlist = gtk_string_list_new(key_array); // Create a new GtkStringList model from the array of strings.
-
-    for(int i = 0; i < 3; i++)
-	g_print("string[%d]='%s'\n", i, gtk_string_list_get_string(stringlist, i));
-
-    if(GTK_IS_DROP_DOWN(widget))
-    {
-	g_print("Widget...\n");
-	gtk_drop_down_set_model(GTK_DROP_DOWN(widget), G_LIST_MODEL(stringlist)); // Set the model as the source for the dropdown menu.
-    }
-
-    g_free(hash_table);
-*/
-
-#endif
-
     free(selected_s);
 
     return;
@@ -2445,9 +2466,7 @@ void on_helipad_is_referenced_toggled(void *widget, gpointer user_data)
 void on_helipad_ref_obj_changed(void *widget, gpointer user_data)
 {
     // const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
-
-    ////////////////////////// TODO set reference object pos and dir values
-
+    // TODO? set reference object pos and dir values
     return;
 }
 
@@ -2702,7 +2721,6 @@ void on_human_displacement_changed(void *widget, gpointer user_data)
     return;
 }
 
-
 /*
  * Model file chooser, GTK3 version.
  */
@@ -2722,7 +2740,7 @@ void on_model_file_name_changed(void *widget, gpointer user_data)
     free(model_name);
     free(file_name);
 
-/* TODO: general_object_name must be get from the scenery-loaded object data
+/* TODO? general_object_name must be get from the scenery-loaded object data
 
     int s_length = sizeof("default: ") + sizeof(name);
     char *s = malloc(s_length);
@@ -2756,6 +2774,17 @@ void on_model_file_name_changed(void *widget, gpointer user_data)
  * Model file chooser, GTK4 version.
  */
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+void on_model_file_name_clicked(void *widget, gpointer user_data)
+{
+    GtkFileDialog *file_dialog = gtk_file_dialog_new();
+
+    /* Open the file chooser window, then call FileChoosed callback once the
+     * chooser window is closed. */
+    gtk_file_dialog_open(file_dialog, NULL, NULL, FileChoosed, (gpointer)user_data);
+
+    return;
+}
+
 void
 EditorGtk4SetFileWidgetsValues(const char *full_name)
 {
@@ -2797,17 +2826,6 @@ FileChoosed(GObject* source_object, GAsyncResult* res, gpointer user_data)
     g_free(full_path);
 
     g_object_unref(g_file);
-
-    return;
-}
-
-void on_model_file_name_clicked(void *widget, gpointer user_data)
-{
-    GtkFileDialog *file_dialog = gtk_file_dialog_new();
-
-    /* Open the file chooser window, then call FileChoosed callback once the
-     * chooser window is closed. */
-    gtk_file_dialog_open(file_dialog, NULL, NULL, FileChoosed, (gpointer)user_data);
 
     return;
 }
@@ -3037,38 +3055,31 @@ void on_smoke_color_code_changed(void *widget, gpointer user_data)
 }
 
 /* Called when an "Ok" button is clicked.
- * As needed, sends a command to SARCmdSceneEditor() in order to execute it.
+ * As needed, send a command to SARCmdSceneEditor() in order to execute it.
  */
 void on_button_ok_clicked(void *widget, gpointer user_data)
 {
 #define S_LENGTH 1024
 #define REMAINING(s) (MAX(0, S_LENGTH - strlen(s) - 1))
-    ///////////////////////////////////const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
     editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
     editor_object_data_struct *editor_obj_data;
     char *cmd_args = NULL;
-    char *cmd_line = (char *)malloc((S_LENGTH + 1) * sizeof(char));
+    char *cmd_string = (char *)malloc((S_LENGTH + 1) * sizeof(char));
 
-    cmd_line[0] = '\0';
+    cmd_string[0] = '\0';
 
     switch(scn_ed->current_action)
     {
-	case EDITOR_ACTION_NONE:
-	case EDITOR_ACTION_QUIT:
-	case EDITOR_ACTION_QUIT_FROM_GTK:
-	case EDITOR_ACTION_PRINT:
-	    break;
-
 	case EDITOR_ACTION_NEW:
 	    /* Create a new temporary object data structure */
-	    editor_obj_data = EditorObjectDataStructNew();
+	    editor_obj_data = EditorObjectDataNew();
 
 	    /* Set temporary structure data by reading the Gtk widgets datas */
 	    EditorObjectDataStructSetFromGtkUi(editor_obj_data);
 
-	    /* Set the first command line token as the command name */
+	    /* Set the first command string token as the command name */
 	    switch(editor_obj_data->type)
 	    {
 		case SAR_OBJ_TYPE_GARBAGE:
@@ -3077,7 +3088,7 @@ void on_button_ok_clicked(void *widget, gpointer user_data)
 		case SAR_OBJ_TYPE_STATIC:
 		case SAR_OBJ_TYPE_AUTOMOBILE:
 		case SAR_OBJ_TYPE_WATERCRAFT:
-		    strncat(cmd_line, "load_object ", REMAINING(cmd_line));
+		    strncat(cmd_string, "load_object ", REMAINING(cmd_string));
 		    break;
 
 		case SAR_OBJ_TYPE_AIRCRAFT:
@@ -3087,23 +3098,23 @@ void on_button_ok_clicked(void *widget, gpointer user_data)
 		    break;
 
 		case SAR_OBJ_TYPE_RUNWAY:
-		    strncat(cmd_line, "create_runway ", REMAINING(cmd_line));
+		    strncat(cmd_string, "create_runway ", REMAINING(cmd_string));
 		    break;
 
 		case SAR_OBJ_TYPE_HELIPAD:
-		    strncat(cmd_line, "create_helipad ", REMAINING(cmd_line));
+		    strncat(cmd_string, "create_helipad ", REMAINING(cmd_string));
 		    break;
 
 		case SAR_OBJ_TYPE_HUMAN:
-		    strncat(cmd_line, "create_human ", REMAINING(cmd_line));
+		    strncat(cmd_string, "create_human ", REMAINING(cmd_string));
 		    break;
 
 		case SAR_OBJ_TYPE_SMOKE:
-		    strncat(cmd_line, "create_smoke ", REMAINING(cmd_line));
+		    strncat(cmd_string, "create_smoke ", REMAINING(cmd_string));
 		    break;
 
 		case SAR_OBJ_TYPE_FIRE:
-		    strncat(cmd_line, "create_fire ", REMAINING(cmd_line));
+		    strncat(cmd_string, "create_fire ", REMAINING(cmd_string));
 		    break;
 
 		case SAR_OBJ_TYPE_EXPLOSION:
@@ -3112,7 +3123,7 @@ void on_button_ok_clicked(void *widget, gpointer user_data)
 		    break;
 
 		case SAR_OBJ_TYPE_PREMODELED:
-		    strncat(cmd_line, "create_premodeled ", REMAINING(cmd_line));
+		    strncat(cmd_string, "create_premodeled ", REMAINING(cmd_string));
 		    break;
 
 		default:
@@ -3120,26 +3131,52 @@ void on_button_ok_clicked(void *widget, gpointer user_data)
 	    }
 
 	    /* Command name set? */
-	    if(cmd_line[0] != '\0')
+	    if(cmd_string[0] != '\0')
 	    {
-		/* Get the SARCmdSceneEditor() command line parameters */
-		cmd_args = DoCmdLineFromObjectDataStruct(editor_obj_data);
+		/* Get the command parameters */
+		cmd_args = DoParametersLineFromEditorObjectData(editor_obj_data);
 
 		/* Add parameter(s) to command name */
-		strncat(cmd_line, cmd_args, REMAINING(cmd_line));
+		strncat(cmd_string, cmd_args, REMAINING(cmd_string));
 
-		/* Send command line to SARCmdSceneEditor() */
-		SARCmdSceneEditor((void *)core_ptr, cmd_line, editor_gtk_ui->cmd_flags);
+		/* Send command string to SARCmdSceneEditor() */
+		SARCmdSceneEditor((void *)core_ptr, cmd_string, editor_gtk_ui->cmd_flags);
 
 		free(cmd_args);
 
-		set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
-		set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", TRUE);
-		set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
+		/* Referenced helipad? */
+		if(editor_obj_data->type == SAR_OBJ_TYPE_HELIPAD &&
+		    editor_obj_data->ref_obj_name != NULL &&
+		    editor_obj_data->ref_obj_name[0] != '\0'
+		)
+		{
+		    /* Helipad position has been set by relative coordinates */
+
+		    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
+		    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
+		    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
+
+		    scn_ed->current_action = EDITOR_ACTION_NONE;
+		}
+		else
+		{
+		    /* User must set object position, whatever type it is */
+
+		    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
+		    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", TRUE);
+		    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
+
+		    scn_ed->current_action = EDITOR_ACTION_NEW;
+		}
 	    }
 
+	    /* Update item choosers lists */
+	    EditorGtkItemChooserSetHumansNameList(core_ptr);
+	    EditorGtkItemChooserSetTexturesNameList(core_ptr);
+	    EditorGtkItemChooserSetRefObjsNameList(core_ptr);
+
 	    /* Free temporary structure */
-	    EditorObjectDataStructFree(editor_obj_data);
+	    EditorObjectDataFree(editor_obj_data);
 
 	    /* Show general frame pos and dir widgets because they
 	     * have been hidden by the on_button_new_clicked() callback.
@@ -3152,60 +3189,94 @@ void on_button_ok_clicked(void *widget, gpointer user_data)
 	    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.general_dir_heading), TRUE);
 	    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.general_dir_pitch), TRUE);
 	    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.general_dir_bank), TRUE);
-
-	    break;
-
-	case EDITOR_ACTION_SET:
-	case EDITOR_ACTION_UNLOAD:
-	case EDITOR_ACTION_COPY:
 	    break;
 
 	case EDITOR_ACTION_MODIFY:
 	    /* Create a new object data temporary structure */
-	    editor_obj_data = EditorObjectDataStructNew();
+	    editor_obj_data = EditorObjectDataNew();
 
 	    /* Set temporary structure data by reading the Gtk widgets datas */
 	    EditorObjectDataStructSetFromGtkUi(editor_obj_data);
 
-	    /* Generate the SARCmdSceneEditor() command line */
-	    cmd_args = DoCmdLineFromObjectDataStruct(editor_obj_data);
-
-	    /* editor_obj_data struture will be needed by the "modify" command,
-	     * save its pointer.
+	    /* editor_obj_data structure will be needed by the "modify"
+	     * command, save its pointer.
 	     */
 	    editor_gtk_ui->temp_obj_data = (editor_object_data_struct *)editor_obj_data;
 
-	    /* Send the new parameters to SARCmdSceneEditor().
-	     * Note that a "modify" command has been sent earlier
-	     * by on_button_modify_clicked().
+	    /* Send a "name" command, because name has maybe be modified.
+	     * Note that as the "name" command always applies to the triedron
+	     * closest object, renaming must be done before invoke any command
+	     * which can move the object.
 	     */
-	    SARCmdSceneEditor((void *)core_ptr, cmd_args, editor_gtk_ui->cmd_flags);
+	    SARCmdSceneEditor((void *)core_ptr, "name", editor_gtk_ui->cmd_flags);
+	    /* Prepare then send object name */
+	    snprintf(cmd_string, S_LENGTH, "%s", editor_obj_data->name);
+	    SARCmdSceneEditor((void *)core_ptr, cmd_string, editor_gtk_ui->cmd_flags);
+
+	    /* Send a "modify" command, because parameters has maybe be modified */
+	    SARCmdSceneEditor((void *)core_ptr, "modify", editor_gtk_ui->cmd_flags);
+	    /* Prepare then send object parameters */
+	    cmd_args = DoParametersLineFromEditorObjectData(editor_obj_data);
+	    snprintf(cmd_string, S_LENGTH, "%s", cmd_args);
+	    SARCmdSceneEditor((void *)core_ptr, cmd_string, editor_gtk_ui->cmd_flags);
+	    free(cmd_args);
+
+	    /* Referenced helipad? */
+	    if(editor_obj_data->type == SAR_OBJ_TYPE_HELIPAD &&
+		editor_obj_data->ref_obj_name != NULL &&
+		editor_obj_data->ref_obj_name[0] != '\0'
+	    )
+	    {
+		/* Do not send the "move_at" command, because helipad position
+		 * has been defined by the "modify" command parameters.
+		 */
+	    }
+	    else
+	    {
+		/* Send a "move_at" command, because position has maybe be modified */
+		SARCmdSceneEditor((void *)core_ptr, "move_at", editor_gtk_ui->cmd_flags);
+
+		/* Prepare then send object position and direction */
+		snprintf(cmd_string, S_LENGTH,
+		     "%f %f %f %f %f %f",
+		     editor_obj_data->pos.x,
+		     editor_obj_data->pos.y,
+		     editor_obj_data->pos.z,
+		     editor_obj_data->dir.heading,
+		     editor_obj_data->dir.pitch,
+		     editor_obj_data->dir.bank
+		    );
+		SARCmdSceneEditor((void *)core_ptr, cmd_string, editor_gtk_ui->cmd_flags);
+	    }
+
+	    scn_ed->current_action = EDITOR_ACTION_NONE;
+
+	    /* Update item choosers lists */
+	    EditorGtkItemChooserSetHumansNameList(core_ptr);
+	    EditorGtkItemChooserSetTexturesNameList(core_ptr);
+	    EditorGtkItemChooserSetRefObjsNameList(core_ptr);
 
 	    /* Free temporary structure */
-	    EditorObjectDataStructFree(editor_obj_data);
+	    EditorObjectDataFree(editor_obj_data);
 
 	    editor_gtk_ui->temp_obj_data = NULL;
-
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
-
 	    break;
 
 	case EDITOR_ACTION_INFO:
 	case EDITOR_ACTION_INFO_NEXT:
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
-
+	    scn_ed->current_action = EDITOR_ACTION_NONE;
 	    break;
 
-	case EDITOR_ACTION_MOVE:
-	    break;
+	/* Managed by on_button_ask_to_print_before_quit_*_clicked :
+	case EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT:
+	case EDITOR_ACTION_QUIT_WITHOUT_PRINT:
+	*/
 
-	case EDITOR_ACTION_REMOVE:
+	default:
 	    break;
     }
 
-    free(cmd_line);
+    free(cmd_string);
 
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_data_widgets.window));
@@ -3222,23 +3293,23 @@ void on_button_ok_clicked(void *widget, gpointer user_data)
      * SARCmdSceneEditor() function.
      */
 
-    scn_ed->current_action = EDITOR_ACTION_NONE;
-
     return;
 #undef S_LENGTH
 #undef REMAINING
 }
 
+/* NOTE : not used for now */
 void on_button_apply_clicked(void *widget, gpointer user_data)
 {
 g_print("button_apply_clicked\n");
     const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    editor_action_type current_action = scn_ed->current_action;
 
 
     {
-    fprintf(stderr, "%s:%d: Current action: %d\n", __FILE__, __LINE__, scn_ed->current_action);
-    switch(scn_ed->current_action)
+    fprintf(stderr, "%s:%d: Current action: %d\n", __FILE__, __LINE__, current_action);
+    switch(current_action)
     {
 	case EDITOR_ACTION_NONE:
 	    fprintf(stderr, "EDITOR_ACTION_NONE\n");
@@ -3248,6 +3319,12 @@ g_print("button_apply_clicked\n");
 	    break;
 	case EDITOR_ACTION_QUIT_FROM_GTK:
 	    fprintf(stderr, "EDITOR_ACTION_QUIT_FROM_GTK\n");
+	    break;
+	case EDITOR_ACTION_QUIT_WITHOUT_PRINT:
+	    fprintf(stderr, "EDITOR_ACTION_QUIT_WITHOUT_PRINT\n");
+	    break;
+	case EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT:
+	    fprintf(stderr, "EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT\n");
 	    break;
 	case EDITOR_ACTION_PRINT:
 	    fprintf(stderr, "EDITOR_ACTION_PRINT\n");
@@ -3279,6 +3356,9 @@ g_print("button_apply_clicked\n");
 	case EDITOR_ACTION_REMOVE:
 	    fprintf(stderr, "EDITOR_ACTION_REMOVE\n");
 	    break;
+	case EDITOR_ACTION_NAME:
+	    fprintf(stderr, "EDITOR_ACTION_NAME\n");
+	    break;
     }
     }
 
@@ -3291,12 +3371,14 @@ g_print("button_apply_clicked\n");
 	case EDITOR_ACTION_NONE:
 	case EDITOR_ACTION_QUIT:
 	case EDITOR_ACTION_QUIT_FROM_GTK:
+	case EDITOR_ACTION_QUIT_WITHOUT_PRINT:
 	case EDITOR_ACTION_PRINT:
+	case EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT:
 	    break;
 
 	case EDITOR_ACTION_NEW:
 	    EditorObjectDataStructSetFromGtkUi(editor_obj_data);
-	    DoCmdLineFromObjectDataStruct(editor_obj_data);
+	    DoParametersLineFromEditorObjectData(editor_obj_data);
 	    break;
 
 	case EDITOR_ACTION_SET:
@@ -3306,13 +3388,14 @@ g_print("button_apply_clicked\n");
 
 	case EDITOR_ACTION_MODIFY:
 	    EditorObjectDataStructSetFromGtkUi(editor_obj_data);
-	    DoCmdLineFromObjectDataStruct(editor_obj_data);
+	    DoParametersLineFromEditorObjectData(editor_obj_data);
 	    break;
 
 	case EDITOR_ACTION_INFO:
 	case EDITOR_ACTION_INFO_NEXT:
 	case EDITOR_ACTION_MOVE:
 	case EDITOR_ACTION_REMOVE:
+	case EDITOR_ACTION_NAME:
 	    break;
     }
 
@@ -3346,13 +3429,15 @@ void on_button_cancel_clicked(void *widget, gpointer user_data)
 	case EDITOR_ACTION_NONE:
 	case EDITOR_ACTION_QUIT:
 	case EDITOR_ACTION_QUIT_FROM_GTK:
+	/* Managed by on_button_print_before_quit_*_clicked
+	case EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT:
+	case EDITOR_ACTION_QUIT_WITHOUT_PRINT:
+	*/
 	case EDITOR_ACTION_PRINT:
+	    scn_ed->current_action = EDITOR_ACTION_NONE;
 	    break;
 
 	case EDITOR_ACTION_NEW:
-	    //EditorObjectDataStructSetFromGtkUi(editor_obj_data);
-	    //DoCmdLineFromObjectDataStruct(editor_obj_data);
-
 	    /* Show general frame pos and dir widgets because they
 	     * have been hidden by the on_button_new_clicked() callback.
 	     */
@@ -3364,29 +3449,19 @@ void on_button_cancel_clicked(void *widget, gpointer user_data)
 	    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.general_dir_heading), TRUE);
 	    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.general_dir_pitch), TRUE);
 	    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.general_dir_bank), TRUE);
+	    scn_ed->current_action = EDITOR_ACTION_NONE;
 	    break;
 
 	case EDITOR_ACTION_SET:
 	case EDITOR_ACTION_UNLOAD:
 	case EDITOR_ACTION_COPY:
-	    break;
-
 	case EDITOR_ACTION_MODIFY:
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
-	    break;
-
 	case EDITOR_ACTION_INFO:
 	case EDITOR_ACTION_INFO_NEXT:
-	    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
-
-	    break;
-
 	case EDITOR_ACTION_MOVE:
-	    break;
-
 	case EDITOR_ACTION_REMOVE:
+	case EDITOR_ACTION_NAME:
+	    scn_ed->current_action = EDITOR_ACTION_NONE;
 	    break;
     }
 
@@ -3398,36 +3473,35 @@ void on_button_cancel_clicked(void *widget, gpointer user_data)
      * SARCmdSceneEditor() function.
      */
 
-    scn_ed->current_action = EDITOR_ACTION_NONE;
-
     return;
 }
-
-
-/*
- * Menu window buttons
- */
 
 void on_button_quit_clicked(void *widget, gpointer user_data)
 {
     const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
-    //const gw_display_struct *display = core_ptr->display;
     //const editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
+    //const gw_display_struct *display = core_ptr->display;
 
     /* Already quitting? */
     if(scn_ed->current_action == EDITOR_ACTION_QUIT_FROM_GTK)
 	return;
 
-    /* Set action as "user asked to quit editor from the GTK UI".
-     * Note that this action will be executed from the SARManage() function by
-     * calling the SARCmdSceneEditor() "scnedit off" command. If the "scnedit
-     * off" command is called from the current on_button_quit_clicked()
-     * function, Sar2 will freeze. I suppose that it's because the
-     * on_button_quit_clicked() callback tries to return to the GTK application
-     * _after_ it had been stopped by the "scnedit off" command.
-     */
-    scn_ed->current_action = EDITOR_ACTION_QUIT_FROM_GTK;
+    /* Are some modifications to print? */
+    if(scn_ed->must_print == True)
+	EditorGtkAskToPrintBeforeQuit((gpointer)core_ptr);
+    else
+    {
+	/* Set action as "user asked to quit editor from the GTK UI".
+	 * Note that this action will be executed from the SARManage() function
+	 * by calling the SARCmdSceneEditor() "scnedit off" command. If the
+	 * "scnedit off" command is called from this on_button_quit_clicked()
+	 * function, Sar2 will freeze. I suppose that it is because the
+	 * on_button_quit_clicked() callback tries to return to the GTK app
+	 * _after_ it had been stopped by the "scnedit off" command.
+	 */
+	scn_ed->current_action = EDITOR_ACTION_QUIT_FROM_GTK;
+    }
 
     return;
 }
@@ -3443,6 +3517,8 @@ void on_button_print_clicked(void *widget, gpointer user_data)
     /* Send the "print" command to SARCmdSceneEditor() */
     SARCmdSceneEditor((void *)core_ptr, "print", editor_gtk_ui->cmd_flags);
 
+    scn_ed->current_action = EDITOR_ACTION_NONE;
+
     /* Unset menu window focus */
     EditorGtkSetAcceptFocus(editor_menu_widgets.window, FALSE);
 
@@ -3454,7 +3530,8 @@ void on_button_print_clicked(void *widget, gpointer user_data)
     return;
 }
 
-/* Shows a clean editor object data Gtk window. Once user has filled it,
+/*
+ * Show a clean editor object data Gtk window. Once user has filled it,
  * entered data will be treated by on_button_ok_clicked().
  */
 void on_button_new_clicked(void *widget, gpointer user_data)
@@ -3572,19 +3649,7 @@ void on_button_new_clicked(void *widget, gpointer user_data)
     // if(new object has a name) EditorGtkItemChooserSetRefObjsNameList(core_ptr);
 
     /* Resize the window */
-    gint natural_height = 0, natural_width = 0;
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    gtk_widget_get_preferred_height(GTK_WIDGET(editor_data_widgets.main_box), NULL, &natural_height);
-    gtk_widget_get_preferred_width(GTK_WIDGET(editor_data_widgets.main_box), NULL, &natural_width);
-    gtk_window_resize(GTK_WINDOW(editor_data_widgets.window), natural_width, natural_height);
-#endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    GtkRequisition minimum_size, natural_size;
-    gtk_widget_get_preferred_size(GTK_WIDGET(editor_data_widgets.main_box), &minimum_size, &natural_size);
-    natural_width = natural_size.width;
-    natural_height = natural_size.height;
-    gtk_window_set_default_size(GTK_WINDOW(editor_data_widgets.main_box), natural_width, natural_height);
-#endif
+    EditorDataWindowSetDefaultSize();
 
     /* Unset menu window focus */
     EditorGtkSetAcceptFocus(editor_menu_widgets.window, FALSE);
@@ -3604,25 +3669,15 @@ void on_button_set_clicked(void *widget, gpointer user_data)
     const editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
     Boolean was_in_move = False;
 
-    scn_ed->current_action = EDITOR_ACTION_SET;
+    //scn_ed->current_action = EDITOR_ACTION_SET;
 
     was_in_move = scn_ed->in_move_state;
 
     /* Send the "set" command to SARCmdSceneEditor() */
     SARCmdSceneEditor((void *)core_ptr, "set", editor_gtk_ui->cmd_flags);
 
-    if(!was_in_move)
-    {
-	set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
-	set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", TRUE);
-	set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
-    }
-    else
-    {
-	set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
-	set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
-	set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
-    }
+    if(was_in_move)
+	scn_ed->current_action = EDITOR_ACTION_NONE;
 
     /* Unset menu window focus */
     EditorGtkSetAcceptFocus(editor_menu_widgets.window, FALSE);
@@ -3646,10 +3701,6 @@ void on_button_copy_clicked(void *widget, gpointer user_data)
     /* Send the "copy" command to SARCmdSceneEditor() */
     SARCmdSceneEditor((void *)core_ptr, "copy", editor_gtk_ui->cmd_flags);
 
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", TRUE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
-
     /* Unset menu window focus */
     EditorGtkSetAcceptFocus(editor_menu_widgets.window, FALSE);
 
@@ -3672,7 +3723,7 @@ void on_button_info_clicked(void *widget, gpointer user_data)
     scn_ed->current_action = EDITOR_ACTION_INFO;
 
     /* Send an "info" command to SARCmdSceneEditor().
-     * Note that editor object data structure will be filled by
+     * Note that object editor_obj_data structure will be filled by
      * the "info" command.
      */
     SARCmdSceneEditor((void *)core_ptr, "info", editor_gtk_ui->cmd_flags);
@@ -3681,6 +3732,9 @@ void on_button_info_clicked(void *widget, gpointer user_data)
     picked_obj_num = editor_gtk_ui->picked_obj_num;
     editor_modified_object_struct *modification = scn_ed->modification_list[picked_obj_num];
     editor_obj_data = modification->obj_data_new;
+
+    /* Update reference objects list */
+    EditorGtkItemChooserSetRefObjsNameList(core_ptr);
 
     EditorGtkUiShowInfoWindow(core_ptr, picked_obj_num, (const editor_object_data_struct *)editor_obj_data);
 
@@ -3740,9 +3794,7 @@ void on_button_unload_clicked(void *widget, gpointer user_data)
     /* Send the "unload" command to SARCmdSceneEditor() */
     SARCmdSceneEditor((void *)core_ptr, "unload", editor_gtk_ui->cmd_flags);
 
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
+    scn_ed->current_action = EDITOR_ACTION_NONE;
 
     /* Unset menu window focus */
     EditorGtkSetAcceptFocus(editor_menu_widgets.window, FALSE);
@@ -3763,28 +3815,30 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
     editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
     editor_modified_object_struct *modification;
     int picked_obj_num;
+    sar_object_struct *picked_obj_ptr;
     editor_object_data_struct *editor_obj_data;
     float distance;
     char title[31+1];
 
-    scn_ed->current_action = EDITOR_ACTION_MODIFY;
-
-    /* Initiate a "modify" command to SARCmdSceneEditor().
-     * Note that:
-     *  - editor object data structure will be filled by the "modify" command
-     *  - the parameters modified from the GTK window will be sent later by
-     *    the on_button_ok_clicked() callback.
-     */
-    SARCmdSceneEditor((void *)core_ptr, "modify", editor_gtk_ui->cmd_flags);
-
-    /* Get editor_obj_data structure pointer */
-    picked_obj_num = editor_gtk_ui->picked_obj_num;
-    modification = scn_ed->modification_list[picked_obj_num];
-    editor_obj_data = modification->obj_data_new;
-
     /* Should never happen */
     if(scene == NULL)
 	return;
+
+    scn_ed->current_action = EDITOR_ACTION_MODIFY;
+
+    /* Get closer object number */
+    editor_gtk_ui->picked_obj_num = SceneObjectPick(core_ptr, scene->player_obj_num, False);
+
+    picked_obj_num = editor_gtk_ui->picked_obj_num;
+    if(picked_obj_num < 0)
+    {
+	scn_ed->current_action = EDITOR_ACTION_NONE;
+	return;
+    }
+
+    /* Get editor_obj_data structure pointer */
+    modification = scn_ed->modification_list[picked_obj_num];
+    editor_obj_data = modification->obj_data_new;
 
     /* 3D distance between triedron (i.e. player) and #obj_num object */
 	distance = (float)SFMHypot3(
@@ -3838,6 +3892,9 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
 		/* Is this object referenced to another one? */
 		if(editor_obj_data->ref_obj_name != NULL && editor_obj_data->ref_obj_name[0] != '\0')
 		{
+		    /* Show the reference object frame */
+		    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.ref_object_frame), TRUE);
+
 		    /* Set position and direction widgets unsensitive */
 		    gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.general_pos_x), FALSE);
 		    gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.general_pos_y), FALSE);
@@ -3889,6 +3946,25 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
     /* Set object specific frames visibility as needed */
     on_premod_type_changed(editor_data_widgets.premod_type, (gpointer)core_ptr);
 
+    /* Get picked object pointer */
+    picked_obj_ptr = core_ptr->object[picked_obj_num];
+
+    /* Is picked object a support surface? */
+    if(picked_obj_ptr->contact_bounds != NULL &&
+	(picked_obj_ptr->contact_bounds->crash_flags & SAR_CRASH_FLAG_SUPPORT_SURFACE)
+    )
+    {
+	/* From obj.h:
+	 * "If an object's crash flag has set SAR_CRASH_FLAG_SUPPORT_SURFACE
+	 * then the object can only have its heading rotated."
+	 */
+
+	gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.general_dir_pitch), FALSE);
+	gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.general_dir_bank), FALSE);
+
+	gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.helipad_offset_dir_pitch), FALSE);
+	gtk_widget_set_sensitive(GTK_WIDGET(editor_data_widgets.helipad_offset_dir_bank), FALSE);
+    }
 
     set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
     set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
@@ -3896,17 +3972,18 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
 
     /* Show the Okay, Apply and Cancel buttons */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
+    gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_ok));
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_apply));
-    gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_cancel));
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_cancel));
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_ok), TRUE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_apply), TRUE);
-    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_cancel), TRUE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_cancel), TRUE);
 #endif
 
-    gtk_window_set_default_size(GTK_WINDOW(editor_data_widgets.window), -1,-1);
+    /* Resize the window */
+    EditorDataWindowSetDefaultSize();
 
     /* Show object data window */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
@@ -3938,10 +4015,6 @@ void on_button_move_clicked(void *widget, gpointer user_data)
     /* Send the "move" command to SARCmdSceneEditor() */
     SARCmdSceneEditor((void *)core_ptr, "move", editor_gtk_ui->cmd_flags);
 
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", TRUE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
-
     /* Unset menu window focus */
     EditorGtkSetAcceptFocus(editor_menu_widgets.window, FALSE);
 
@@ -3964,9 +4037,7 @@ void on_button_remove_clicked(void *widget, gpointer user_data)
     /* Send the "remove" command to SARCmdSceneEditor() */
     SARCmdSceneEditor((void *)core_ptr, "remove", editor_gtk_ui->cmd_flags);
 
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", TRUE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
+    scn_ed->current_action = EDITOR_ACTION_NONE;
 
     /* Unset menu window focus */
     EditorGtkSetAcceptFocus(editor_menu_widgets.window, FALSE);
@@ -3979,74 +4050,64 @@ void on_button_remove_clicked(void *widget, gpointer user_data)
     return;
 }
 
-void on_button_quit_without_print_yes_clicked(GtkButton *button, gpointer user_data)
+void on_button_print_before_quit_no_clicked(GtkButton *button, gpointer user_data)
 {
     const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     const gw_display_struct *display = core_ptr->display;
     sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
 
-    gtk_window_set_modal(GTK_WINDOW(editor_quit_without_print_widgets.window), FALSE);
+    gtk_window_set_modal(GTK_WINDOW(editor_ask_to_print_before_quit_widgets.window), FALSE);
 
-    /* Set focus to the Sar2 main window before hiding the GTK windows */
+    /* Set focus to the Sar2 main window before hiding the GTK window */
     GwSetWindowFocusToSar2Window(display);
 
     /* Hide the GTK windows */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    gtk_widget_hide(GTK_WIDGET(editor_quit_without_print_widgets.window));
-    gtk_widget_hide(GTK_WIDGET(editor_data_widgets.window));
-    gtk_widget_hide(GTK_WIDGET(editor_menu_widgets.window));
+    gtk_widget_hide(GTK_WIDGET(editor_ask_to_print_before_quit_widgets.window));
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    gtk_widget_set_visible(editor_quit_without_print_widgets.window, FALSE);
-    gtk_widget_set_visible(editor_data_widgets.window, FALSE);
-    gtk_widget_set_visible(editor_menu_widgets.window, FALSE);
+    gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 
     scn_ed->current_action = EDITOR_ACTION_QUIT_WITHOUT_PRINT;
 
-    /* Set focus to the sar2 top level window */
-    //GwSetWindowFocusToSar2Window(display);
-
     return;
 }
 
-void on_button_quit_without_print_no_clicked(GtkButton *button, gpointer user_data)
+void on_button_print_before_quit_yes_clicked(GtkButton *button, gpointer user_data)
 {
     const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     const gw_display_struct *display = core_ptr->display;
     sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    const editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
 
-    gtk_window_set_modal(GTK_WINDOW(editor_quit_without_print_widgets.window), FALSE);
+    /* Send the print command to SARCmdSceneEditor() */
+    SARCmdSceneEditor((void *)core_ptr, "print", editor_gtk_ui->cmd_flags);
 
-    /* Set focus to the Sar2 main window before hiding the GTK windows */
+    gtk_window_set_modal(GTK_WINDOW(editor_ask_to_print_before_quit_widgets.window), FALSE);
+
+    /* Set focus to the Sar2 main window before hiding the GTK window */
     GwSetWindowFocusToSar2Window(display);
 
     /* Set windows visibility */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    gtk_widget_hide(GTK_WIDGET(editor_quit_without_print_widgets.window));
+    gtk_widget_hide(GTK_WIDGET(editor_ask_to_print_before_quit_widgets.window));
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    gtk_widget_set_visible(editor_quit_without_print_widgets.window, FALSE);
+    gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 
-    scn_ed->current_action = EDITOR_ACTION_NONE;
-
-    /* Set focus to the sar2 top level window */
-    //GwSetWindowFocusToSar2Window(display);
+    scn_ed->current_action = EDITOR_ACTION_QUIT_WITHOUT_PRINT;
 
     return;
 }
-
-
-
-
 
 
 
 /*
  * Add a new editor_object_data_struct structure
  */
-editor_object_data_struct *EditorObjectDataStructNew(void)
+editor_object_data_struct *EditorObjectDataNew(void)
 {
     editor_object_data_struct *editor_obj_data;
 
@@ -4058,16 +4119,15 @@ editor_object_data_struct *EditorObjectDataStructNew(void)
 }
 
 /*
- * Gets values from the editor GTK widgets and set the
+ * Get values from the editor GTK widgets and set the
  * given editor_object_data_struct structure values.
- * Returns a non zero value on error.
+ * Return a non zero value on error.
  *
  * Any parameter added in this function must be added
- * in the EditorObjectDataStructFree() function.
- * Please check the EditorObjectDataStructReinit() function too.
+ * in the EditorObjectDataFree() function.
+ * Please check the EditorObjectDataReinit() function too.
  */
 int EditorObjectDataStructSetFromGtkUi(
-    //sar_core_struct *core_ptr,
     editor_object_data_struct *editor_obj_data
 )
 {
@@ -4076,7 +4136,7 @@ int EditorObjectDataStructSetFromGtkUi(
     char *type_s = NULL;
 
     /* Clean structure */
-    EditorObjectDataStructReinit(editor_obj_data);
+    EditorObjectDataReinit(editor_obj_data);
 
     /* Get type from choice list */
     selected_s = EditorGtkItemChooserGetSelectedString(editor_data_widgets.general_type);
@@ -4152,10 +4212,10 @@ int EditorObjectDataStructSetFromGtkUi(
 
     /* Object name */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    editor_obj_data->obj_name = STRDUP(gtk_entry_get_text(editor_data_widgets.general_object_name));
+    editor_obj_data->name = STRDUP(gtk_entry_get_text(editor_data_widgets.general_object_name));
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    editor_obj_data->obj_name = STRDUP(gtk_editable_get_text(GTK_EDITABLE(editor_data_widgets.general_object_name)));
+    editor_obj_data->name = STRDUP(gtk_editable_get_text(GTK_EDITABLE(editor_data_widgets.general_object_name)));
 #endif
 
     /* Object position */
@@ -4338,21 +4398,24 @@ int EditorObjectDataStructSetFromGtkUi(
 	    {
 		editor_obj_data->ref_obj_name = EditorGtkItemChooserGetSelectedString(editor_data_widgets.helipad_ref_obj_name);
 
-		/* Helipad pos and dir offsets, relatives to the reference object */
-		editor_obj_data->offset_pos.x = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_pos_x);
-		editor_obj_data->offset_pos.y = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_pos_y);
-		editor_obj_data->offset_pos.z = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_pos_z);
-		editor_obj_data->offset_dir.heading = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_dir_heading);
-		editor_obj_data->offset_dir.pitch = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_dir_pitch);
-		editor_obj_data->offset_dir.bank = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_dir_bank);
+		if(editor_obj_data->ref_obj_name[0] != '\0')
+		{
+		    /* Helipad pos and dir offsets, relatives to the reference object */
+		    editor_obj_data->offset_pos.x = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_pos_x);
+		    editor_obj_data->offset_pos.y = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_pos_y);
+		    editor_obj_data->offset_pos.z = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_pos_z);
+		    editor_obj_data->offset_dir.heading = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_dir_heading);
+		    editor_obj_data->offset_dir.pitch = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_dir_pitch);
+		    editor_obj_data->offset_dir.bank = EditorGktEntryToDouble(editor_data_widgets.helipad_offset_dir_bank);
 
-		/* Helipad pos and dir of the reference object */
-		editor_obj_data->ref_obj_pos.x = EditorGktEntryToDouble(editor_data_widgets.ref_object_pos_x);
-		editor_obj_data->ref_obj_pos.y = EditorGktEntryToDouble(editor_data_widgets.ref_object_pos_y);
-		editor_obj_data->ref_obj_pos.z = EditorGktEntryToDouble(editor_data_widgets.ref_object_pos_z);
-		editor_obj_data->ref_obj_dir.heading = EditorGktEntryToDouble(editor_data_widgets.ref_object_dir_heading);
-		editor_obj_data->ref_obj_dir.pitch = EditorGktEntryToDouble(editor_data_widgets.ref_object_dir_pitch);
-		editor_obj_data->ref_obj_dir.bank = EditorGktEntryToDouble(editor_data_widgets.ref_object_dir_bank);
+		    /* Helipad pos and dir of the reference object */
+		    editor_obj_data->ref_obj_pos.x = EditorGktEntryToDouble(editor_data_widgets.ref_object_pos_x);
+		    editor_obj_data->ref_obj_pos.y = EditorGktEntryToDouble(editor_data_widgets.ref_object_pos_y);
+		    editor_obj_data->ref_obj_pos.z = EditorGktEntryToDouble(editor_data_widgets.ref_object_pos_z);
+		    editor_obj_data->ref_obj_dir.heading = EditorGktEntryToDouble(editor_data_widgets.ref_object_dir_heading);
+		    editor_obj_data->ref_obj_dir.pitch = EditorGktEntryToDouble(editor_data_widgets.ref_object_dir_pitch);
+		    editor_obj_data->ref_obj_dir.bank = EditorGktEntryToDouble(editor_data_widgets.ref_object_dir_bank);
+		}
 	    }
 	    break;
 
@@ -4405,22 +4468,26 @@ int EditorObjectDataStructSetFromGtkUi(
 		editor_obj_data->on_stretcher_s = NULL;
 
 	    editor_obj_data->assistants = (int)gtk_spin_button_get_value(editor_data_widgets.human_assistants);
-	    switch(editor_obj_data->assistants)
+	    if(editor_obj_data->assistants > 0)
 	    {
-		case 4:
-		    editor_obj_data->assist_type_name[3] =
-			EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_4_name);
-		case 3:
-		    editor_obj_data->assist_type_name[2] =
-			EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_3_name);
-		case 2:
-		    editor_obj_data->assist_type_name[1] =
-			EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_2_name);
-		case 1:
-		    editor_obj_data->assist_type_name[0] =
-			EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_1_name);
-		default:
-		    break;
+		editor_obj_data->assisted_s = strdup("assisted");
+		switch(editor_obj_data->assistants)
+		{
+		    case 4:
+			editor_obj_data->assist_type_name[3] =
+			    EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_4_name);
+		    case 3:
+			editor_obj_data->assist_type_name[2] =
+			    EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_3_name);
+		    case 2:
+			editor_obj_data->assist_type_name[1] =
+			    EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_2_name);
+		    case 1:
+			editor_obj_data->assist_type_name[0] =
+			    EditorGtkItemChooserGetSelectedString(editor_data_widgets.human_assist_1_name);
+		    default:
+			break;
+		}
 	    }
 
 	    if(GTK_CHECK_BUTTON_GET_ACTIVE(editor_data_widgets.human_has_displacement))
@@ -4492,14 +4559,13 @@ int EditorObjectDataStructSetFromGtkUi(
 
 
 /*
- * Gets values from the editor_object_data_struct structure and
+ * Get values from the editor_object_data_struct structure and
  * set them to the relevant GTK widgets.
- * Returns a non zero value on error.
+ * Return a non zero value on error.
  *
  * See EditorObjectDataStructSetFromGtkUi() too.
  */
 int EditorGtkUiSetFromObjectDataStruct(
-    //sar_core_struct *core_ptr,
     const editor_object_data_struct *editor_obj_data
 )
 {
@@ -4514,8 +4580,8 @@ int EditorGtkUiSetFromObjectDataStruct(
     EditorGtkItemChooserSetSelectedItemFromString(editor_data_widgets.general_type, editor_obj_data->type_s);
 
     /* Object name */
-    if(editor_obj_data->obj_name != NULL)
-	EditorGtkEntrySetText(editor_data_widgets.general_object_name, editor_obj_data->obj_name);
+    if(editor_obj_data->name != NULL)
+	EditorGtkEntrySetText(editor_data_widgets.general_object_name, editor_obj_data->name);
     else
 	EditorGtkEntrySetText(editor_data_widgets.general_object_name, "");
 
@@ -4744,7 +4810,7 @@ int EditorGtkUiSetFromObjectDataStruct(
 		    break;
 
 		default:
-		    /* Clean all */
+		    /* No assistants, clean all */
 		    EditorGtkItemChooserSetSelectedItemFromString(editor_data_widgets.human_assist_1_name, NULL);
 		    EditorGtkItemChooserSetSelectedItemFromString(editor_data_widgets.human_assist_2_name, NULL);
 		    EditorGtkItemChooserSetSelectedItemFromString(editor_data_widgets.human_assist_3_name, NULL);
@@ -4803,7 +4869,7 @@ int EditorGtkUiSetFromObjectDataStruct(
 	    EditorGtkEntrySetTextFromDouble(editor_data_widgets.premod_range, editor_obj_data->range);
 	    EditorGtkEntrySetTextFromDouble(editor_data_widgets.premod_length, editor_obj_data->length);
 	    EditorGtkEntrySetTextFromDouble(editor_data_widgets.premod_width, editor_obj_data->width);
-	    EditorGtkEntrySetTextFromDouble(editor_data_widgets.fire_height, editor_obj_data->height);
+	    EditorGtkEntrySetTextFromDouble(editor_data_widgets.premod_height, editor_obj_data->height);
 	    EditorGtkEntrySetTextFromInt(editor_data_widgets.premod_hazard, editor_obj_data->hazard_lights);
 
 	    EditorGtkItemChooserSetSelectedItemFromString(editor_data_widgets.premod_walls_tex, editor_obj_data->walls_texture_s);
@@ -4815,7 +4881,25 @@ int EditorGtkUiSetFromObjectDataStruct(
     return 0;
 }
 
+/* Set object data GTK window size to natural default size */
+void EditorDataWindowSetDefaultSize()
+{
+    gint natural_height = 0, natural_width = 0;
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
+    gtk_widget_get_preferred_height(GTK_WIDGET(editor_data_widgets.main_box), NULL, &natural_height);
+    gtk_widget_get_preferred_width(GTK_WIDGET(editor_data_widgets.main_box), NULL, &natural_width);
+    gtk_window_resize(GTK_WINDOW(editor_data_widgets.window), natural_width, natural_height);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+    GtkRequisition minimum_size, natural_size;
+    gtk_widget_get_preferred_size(GTK_WIDGET(editor_data_widgets.main_box), &minimum_size, &natural_size);
+    natural_width = natural_size.width;
+    natural_height = natural_size.height;
+    gtk_window_set_default_size(GTK_WINDOW(editor_data_widgets.main_box), natural_width, natural_height);
+#endif
+}
 
+/* Show the info window */
 void EditorGtkUiShowInfoWindow(
     const sar_core_struct *core_ptr,
     int picked_obj_num,
@@ -4830,7 +4914,7 @@ void EditorGtkUiShowInfoWindow(
     if(scene == NULL)
 	return;
 
-    /* 3D distance between triedron (i.e. player) and #obj_num object */
+    /* 3D distance between the triedron (the player) and the #obj_num object */
 	distance = (float)SFMHypot3(
 	    scene->player_obj_ptr->pos.x - editor_obj_data->pos.x,
 	    scene->player_obj_ptr->pos.y - editor_obj_data->pos.y,
@@ -4847,7 +4931,7 @@ void EditorGtkUiShowInfoWindow(
     /* Set the menu buttons sensitivity */
     set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_new", FALSE);
     set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_current", FALSE);
-    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", TRUE);
+    set_children_sensitive_by_name(GTK_WIDGET(editor_menu_widgets.grid), "obj_closer", FALSE);
 
     /* Set the sensitivity of the wigdets inside the general frame grid */
     set_children_sensitive_by_name(GTK_WIDGET(editor_data_widgets.general_frame_grid), "general_data", FALSE);
@@ -4870,6 +4954,9 @@ void EditorGtkUiShowInfoWindow(
     gtk_widget_set_sensitive(
 	    GTK_WIDGET(editor_data_widgets.smoke_frame_grid), FALSE);
 
+    /* Show the reference object frame */
+    gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.ref_object_frame), TRUE);
+
     /* Hide Apply and Cancel buttons, show only the Ok one */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_data_widgets.button_apply));
@@ -4882,7 +4969,8 @@ void EditorGtkUiShowInfoWindow(
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_cancel), TRUE);
 #endif
 
-    gtk_window_set_default_size(GTK_WINDOW(editor_data_widgets.window), -1,-1);
+    /* Resize the window */
+    EditorDataWindowSetDefaultSize();
 
     /* Show object data window */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
@@ -4892,237 +4980,4 @@ void EditorGtkUiShowInfoWindow(
     gtk_widget_set_visible(editor_data_widgets.window, TRUE);
 #endif
 
-}
-
-
-/* Generate an arguments list (identical as those which can be found in a *.scn
- * scenery file) from an editor_object_data_struct structure.
- * Returned string must be freed by calling function.
- */
-char *DoCmdLineFromObjectDataStruct(editor_object_data_struct *editor_obj_data)
-{
-#define S_LENGTH 1023
-#define REMAINING(s) (MAX(0, S_LENGTH - strlen(s)))
-    sar_obj_type type;
-    char *cmd_args = (char *)malloc((S_LENGTH + 1) * sizeof(char));
-    char *s = (char *)malloc((S_LENGTH + 1) * sizeof(char));
-
-    if(editor_obj_data == NULL)
-	return NULL;
-
-    cmd_args[0] = '\0';
-    s[0] = '\0';
-
-    type = editor_obj_data->type;
-
-    switch(type)
-    {
-	case SAR_OBJ_TYPE_GARBAGE:
-	    break;
-
-	case SAR_OBJ_TYPE_STATIC:
-	case SAR_OBJ_TYPE_AUTOMOBILE:
-	case SAR_OBJ_TYPE_WATERCRAFT:
-	    snprintf(cmd_args, S_LENGTH, "%s", editor_obj_data->file_name);
-	    break;
-
-	case SAR_OBJ_TYPE_AIRCRAFT:
-	    break;
-
-	case SAR_OBJ_TYPE_GROUND:
-	    break;
-
-	case SAR_OBJ_TYPE_RUNWAY:
-	    snprintf(cmd_args, S_LENGTH, "%.3f %.3f %.3f %d %d %f %s %s %.3f %.3f",
-		    editor_obj_data->range,
-		    editor_obj_data->length,
-		    editor_obj_data->width,
-		    editor_obj_data->surface_type,
-		    editor_obj_data->dashes,
-		    editor_obj_data->edge_light_spacing,
-		    editor_obj_data->north_label,
-		    editor_obj_data->south_label,
-		    editor_obj_data->north_displaced_threshold,
-		    editor_obj_data->north_displaced_threshold
-		);
-
-	    if(editor_obj_data->has_thresholds_s != NULL)
-		strcat(s, " thresholds");
-
-	    if(editor_obj_data->has_borders_s != NULL)
-		strcat(s, " borders");
-
-	    if(editor_obj_data->has_td_markers_s != NULL)
-		strcat(s, " td_markers");
-
-	    if(editor_obj_data->has_midway_markers_s != NULL)
-		strcat(s, " midway_markers");
-
-	    if(editor_obj_data->has_north_gs_s != NULL)
-		strcat(s, " north_gs");
-
-	    if(editor_obj_data->has_south_gs_s != NULL)
-		strcat(s, " south_gs");
-
-	    strncat(cmd_args, s, REMAINING(cmd_args));
-	    break;
-
-	case SAR_OBJ_TYPE_HELIPAD:
-	    snprintf(cmd_args, S_LENGTH, "%s %.3f %.3f %.3f %s %c %c %c %c %c",
-		    editor_obj_data->style_s,
-		    editor_obj_data->length,
-		    editor_obj_data->width,
-		    editor_obj_data->recession,
-		    editor_obj_data->label,
-		    editor_obj_data->edge_lighting_c,
-		    editor_obj_data->has_fuel_c,
-		    editor_obj_data->has_repair_c,
-		    editor_obj_data->has_drop_off_c,
-		    editor_obj_data->restarting_point_c
-		);
-
-	    /* Is this object referenced to another one? */
-	    if(editor_obj_data->ref_obj_name != NULL && editor_obj_data->ref_obj_name[0] != '\0')
-	    {
-		snprintf(s, S_LENGTH, " %s %.3f %.3f %.3f %.3f %.3f %.3f",
-			editor_obj_data->ref_obj_name,
-			editor_obj_data->offset_pos.x,
-			editor_obj_data->offset_pos.y,
-			editor_obj_data->offset_pos.z,
-			editor_obj_data->offset_dir.heading,
-			editor_obj_data->offset_dir.pitch,
-			editor_obj_data->offset_dir.bank
-		    );
-
-		strncat(cmd_args, s, REMAINING(cmd_args));
-	    }
-	    break;
-
-	case SAR_OBJ_TYPE_HUMAN:
-	    snprintf(cmd_args, S_LENGTH, "%s", editor_obj_data->type_name);
-
-	    if(editor_obj_data->need_rescue_s != NULL)
-		strcat(s, " need_rescue");
-
-	    if(editor_obj_data->sit_up_s != NULL)
-		strcat(s, " sit_up");
-
-	    if(editor_obj_data->sit_down_s != NULL)
-		strcat(s, " sit_down");
-
-	    if(editor_obj_data->sitting_s != NULL)
-		strcat(s, " sitting");
-
-	    if(editor_obj_data->lying_s != NULL)
-		strcat(s, " lying");
-
-	    if(editor_obj_data->alert_s != NULL)
-		strcat(s, " alert");
-
-	    if(editor_obj_data->aware_s != NULL)
-		strcat(s, " aware");
-
-	    if(editor_obj_data->in_water_s != NULL)
-		strcat(s, " in_water");
-
-	    if(editor_obj_data->on_stretcher_s != NULL)
-		strcat(s, " on_stretcher");
-
-	    strncat(cmd_args, s, REMAINING(cmd_args));
-
-	    if(editor_obj_data->assistants != 0)
-	    {
-		snprintf(s, S_LENGTH, " assisted %d", editor_obj_data->assistants);
-		strncat(cmd_args, s, REMAINING(cmd_args));
-
-		for(int i = 0; i < editor_obj_data->assistants; i++)
-		{
-		    sprintf(s, " %s", editor_obj_data->assist_type_name[i]);
-		    strncat(cmd_args, s, REMAINING(cmd_args));
-		}
-	    }
-	    break;
-
-	case SAR_OBJ_TYPE_SMOKE:
-	    snprintf(cmd_args, S_LENGTH, "%.3f %.3f %.3f %.3f %.3f %.3f %.3f %ld %d %1d",
-		    editor_obj_data->offset_pos.x,
-		    editor_obj_data->offset_pos.y,
-		    editor_obj_data->offset_pos.z,
-		    editor_obj_data->radius_start,
-		    editor_obj_data->radius_max,
-		    editor_obj_data->radius_rate,
-		    editor_obj_data->hide_at_max,
-		    editor_obj_data->respawn_int,
-		    editor_obj_data->total_units,
-		    editor_obj_data->color_code
-		);
-
-	    break;
-
-	case SAR_OBJ_TYPE_FIRE:
-	    snprintf(cmd_args, S_LENGTH, "%.3f %.3f",
-		    editor_obj_data->radius,
-		    editor_obj_data->height
-		);
-	    break;
-
-	case SAR_OBJ_TYPE_EXPLOSION:
-	case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
-	case SAR_OBJ_TYPE_FUELTANK:
-	    break;
-
-	case SAR_OBJ_TYPE_PREMODELED:
-	    switch(editor_obj_data->pm_type)
-	    {
-		case SAR_OBJ_PREMODELED_BUILDING:
-		    snprintf(cmd_args, S_LENGTH, "%s %f %.3f %.3f %.3f %s %s %s",
-			    editor_obj_data->pm_type_s,
-			    editor_obj_data->range,
-			    editor_obj_data->length,
-			    editor_obj_data->width,
-			    editor_obj_data->height,
-			    editor_obj_data->walls_texture_s,
-			    editor_obj_data->walls_texture_night_s,
-			    editor_obj_data->roof_texture_s
-			);
-		    break;
-
-		case SAR_OBJ_PREMODELED_CONTROL_TOWER:
-		    snprintf(cmd_args, S_LENGTH, "%s %f %.3f %.3f %.3f %s %s",
-			    editor_obj_data->pm_type_s,
-			    editor_obj_data->range,
-			    editor_obj_data->length,
-			    editor_obj_data->width,
-			    editor_obj_data->height,
-			    editor_obj_data->walls_texture_s,
-			    editor_obj_data->roof_texture_s
-			);
-		    break;
-
-		case SAR_OBJ_PREMODELED_HANGAR:
-		    break;
-
-		case SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER:
-		case SAR_OBJ_PREMODELED_TOWER:
-		case SAR_OBJ_PREMODELED_RADIO_TOWER:
-		    snprintf(cmd_args, S_LENGTH, "%s %f %.3f %d",
-			    editor_obj_data->pm_type_s,
-			    editor_obj_data->range,
-			    editor_obj_data->height,
-			    editor_obj_data->hazard_lights
-			);
-		    break;
-	    }
-	    break;
-
-	default:
-	    break;
-    }
-
-    free(s);
-
-    return cmd_args;
-
-#undef S_LENGTH
-#undef REMAINING
 }

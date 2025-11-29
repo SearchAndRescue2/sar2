@@ -3,6 +3,6 @@
   <gresource prefix=".">
     <file>editormenugtk4.ui</file>
     <file>editordatagtk4.ui</file>
-    <file>editorquitwithoutprintgtk4.ui</file>
+    <file>editorasktoprintbeforequitgtk4.ui</file>
   </gresource>
 </gresources>

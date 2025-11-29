@@ -34,37 +34,25 @@ typedef enum {
 
 typedef struct {
 	/* Gtk specific data variables */
-	GdkDisplay			*gdk_display;
-	GMainContext			*gtk_context;
-	GtkApplication			*gtk_application;
+	GdkDisplay		*gdk_display;
+	GMainContext		*gtk_context;
+	GtkApplication		*gtk_application;
 
-	int				picked_obj_num;
-	void				*temp_obj_data; //editor_object_data_struct
-	unsigned long			cmd_flags;		/* See SAR_CMD_PROTOTYPE */
+	int			picked_obj_num;
+	void			*temp_obj_data; //editor_object_data_struct
+	unsigned long		cmd_flags;		/* See SAR_CMD_PROTOTYPE */
 } editor_gtk_ui_struct;
 
 
-/* cmdscnedit.c - xxxxx */
-extern int SceneObjectPick(sar_core_struct *core_ptr,
+/* cmdscnedit.c */
+extern int SceneObjectPick(const sar_core_struct *core_ptr,
 			   int picker_obj_num,
 			   Boolean next
 );
-/*
-extern int EditorObjectDataStructFill(
-			    sar_core_struct *core_ptr,
-			    editor_object_data_struct *editor_obj_data,
-			    int obj_num
-);
-*/
+void GwSetWindowFocusToSar2Window(const gw_display_struct *display);
 
-/* simutils.c - xxxxx */
-extern void SARSimWarpObject(
-        sar_scene_struct *scene, sar_object_struct *obj_ptr,
-        sar_position_struct *new_pos,
-        sar_direction_struct *new_dir
-);
 
-/* objio.c - xxxxx */
+/* objio.c */
 extern char *COMPLETE_PATH(const char *path);
 
 #endif	/* EDITORGTKGUI_H */

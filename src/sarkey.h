@@ -27,4 +27,12 @@ extern void SARKey(
 	long t          /* Time stamp. */
 );
 
+#ifndef SAR_KEY_FUNC_PROTOTYPE
+/* Prototype for all SARKey*() functions */
+#define SAR_KEY_FUNC_PROTOTYPE					\
+	sar_core_struct *core_ptr, gw_display_struct *display,	\
+	sar_scene_struct *scene, Boolean state
+extern void SARKeyCommand(SAR_KEY_FUNC_PROTOTYPE);
+#endif	/* SAR_KEY_FUNC_PROTOTYPE */
+
 #endif	/* SARKEY_H */

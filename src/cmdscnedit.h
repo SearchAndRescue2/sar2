@@ -1,3 +1,5 @@
+/* COMPILE_EDITOR_WITH_GTK_UI is defined (or not) in SConscript */
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #if GTK_MAJOR_VERSION == 3
@@ -7,6 +9,7 @@
 #include <gdk/x11/gdkx.h>
 #endif
 #include "editorgtkui.h"
+#endif
 
 /* Object type names (as string) */
 #define SAR_OBJ_TYPE_GARBAGE_S "garbage"
@@ -56,9 +59,9 @@
 
 /*
  * Object placer (triedron) *.3d file data.
- * If it doesn't exists, a $TMPDIR/object_placer.3d file will be created then
- * the hereunder string will be written to it. Then, this file will be loaded
- * as needed.
+ * If it doesn't exist yet, a $TMPDIR/object_placer.3d file will be created
+ * then the hereunder string will be written to it. Then, this file will be
+ * loaded as needed.
  */
 #define EDITOR_OBJECT_PLACER_DATA "\
 begin_header\n\
@@ -198,6 +201,7 @@ typedef enum {
 	EDITOR_ACTION_QUIT,		// quit from SARCmdSceneEditor()
 	EDITOR_ACTION_QUIT_FROM_GTK,	// quit from GTK UI
 	EDITOR_ACTION_QUIT_WITHOUT_PRINT,
+	EDITOR_ACTION_ASK_TO_PRINT_BEFORE_QUIT,
 	EDITOR_ACTION_PRINT,
 	EDITOR_ACTION_NEW,
 	EDITOR_ACTION_SET,
@@ -207,7 +211,8 @@ typedef enum {
 	EDITOR_ACTION_INFO,
 	EDITOR_ACTION_INFO_NEXT,
 	EDITOR_ACTION_MOVE,
-	EDITOR_ACTION_REMOVE
+	EDITOR_ACTION_REMOVE,
+	EDITOR_ACTION_NAME
 } editor_action_type;
 
 /*
@@ -217,29 +222,24 @@ typedef enum {
  * of its type.
  *
  * Some data are stored in char or string type in order to be "ready to write"
- * in the scenery file. All strings (except 'type_s') can be NULL.
+ * in the scenery file. All strings, except the 'type_s' one, can be NULL.
  *
  * Height values are stored in feet (not in meters) and direction values are
  * stored in degrees (not in radians).
  *
- * Any parameter added in this structure must be (at least) added in the
- * EditorObjectDataStructNew(), EditorObjectDataStructFree() and
- * EditorObjectDataStructAreEqual() functions.
+ * Any parameter added to this structure must be (at least) added in the
+ * EditorObjectDataStructNew(), EditorObjectDataStructFree() functions.
  *
  * Members names are same as those used in sar2 object-dedicated structures.
  */
 
 typedef struct {
-
 	/*
 	 * "create_*" common data (used by more than one object type):
 	 */
-
 	sar_obj_type		type;		/* one of SAR_OBJ_TYPE_* */
 	char			*type_s,	/* one of SAR_OBJ_TYPE_*_S */
-				*name,		/* the 'name' parameter */
-				*obj_name,	/* the 'object_name' parameter */
-				*object_map_description;
+				*name;		/* the object name */
 
 	sar_position_struct	pos;		/* x(m), y(m), z(IN FEET) */
 	sar_direction_struct	dir;		/* heading, pitch, bank (IN DEGREES) */
@@ -259,14 +259,12 @@ typedef struct {
 	/*
 	 * "create_fire" specific data:
 	 */
-
 	float			radius;
 
 
 	/*
 	 * "create_helipad" specific data:
 	 */
-
 	sar_helipad_style	style;			/* one of SAR_HELIPAD_STYLE_* */
 	char			*style_s;		/* one of SAR_HELIPAD_STYLE_*_S */
 	float			recession;		/* feet */
@@ -282,7 +280,6 @@ typedef struct {
 	/*
 	 * "create_human" specific data:
 	 */
-
 	char			*type_name,		/* Human preset name */
 				*need_rescue_s,		/* "need_rescue" or NULL */
 				*sit_up_s,		/* "sit_up" or NULL */
@@ -310,7 +307,6 @@ typedef struct {
 	/*
 	 * "create_premodeled" specific data:
 	 */
-
 	sar_premodeled_type	pm_type;	/* one of SAR_OBJ_PREMODELED_* */
 	char			*pm_type_s;	/* one of SAR_PREMODELED_*_s */
 	int			hazard_lights;
@@ -322,7 +318,6 @@ typedef struct {
 	/*
 	 * "create_runway" specific data:
 	 */
-
 	sar_runway_surface_type	surface_type;	/* one of SAR_RUNWAY_SURFACE_* */
 	char			*surface_type_s;/* one of SAR_RUNWAY_SURFACE_*_S */
 	int			dashes;
@@ -343,7 +338,6 @@ typedef struct {
 	/*
 	 * "create_smoke" specific data:
 	 */
-
 	float			radius_start,		/* meters */
 				radius_max,		/* meters */
 				radius_rate,		/* meters per second */
@@ -361,6 +355,7 @@ typedef struct {
 #define EDITOR_OBJECT_FLAG_DELETED	(1 << 1)
 #define EDITOR_OBJECT_FLAG_MODIFIED	(1 << 2)
 #define EDITOR_OBJECT_FLAG_MOVED	(1 << 3)
+#define EDITOR_OBJECT_FLAG_NAMED	(1 << 4)
 	sar_obj_flags_t		flags;
 
 	editor_object_data_struct	*obj_data_original,	/* at scenery opening */
@@ -376,12 +371,12 @@ typedef struct {
 typedef struct {
 
 #define YES_NO_QUERY_NONE		0
-#define QUERY_YES_NO_QUIT_WITHOUT_PRINT	1
+#define QUERY_YES_NO_PRINT_BEFORE_QUIT	1
 
-/* Max. number of objects in the pick list for the "info next" command */
+/* Maximum number of objects in the pick list for the "info next" command */
 #define PICKSKIPMAX 5
 
-	/* Object placer file name */
+	/* Object placer (aka the triedron) file name */
 	char			*object_placer_file_name;
 
 	/* Sceney work file name and pointer.
@@ -397,51 +392,93 @@ typedef struct {
 	sar_position_struct 	cur_obj_pos;		/* Position */
 	sar_direction_struct 	cur_obj_dir;		/* Direction */
 
+	/* "User text input" commands states.
+	 * User text input commands are commands which need some text to be
+	 * validated by user after the command call. For example, once user
+	 * has entered '/mod' to modify an object, he must validate the data
+	 * by pressing the <Enter> key.
+	 * If he presses the <Esc> key instead of the <Enter> key, then the
+	 * text_input_escaped variable will be set to True by SARKeyEscape().
+	 */
+	Boolean			in_modif_state,		/* True while user
+							 * enters modifying data.
+							 */
+				in_move_at_state,	/* True while user
+							 * enters positioning data.
+							 */
+				in_name_state,		/* True while user
+							 * enters an object name.
+							 */
+				text_input_escaped;	/* True if text input has been
+							 * cancelled by user by
+							 * pressing the 'esc' key.
+							 */
 
-	Boolean			in_move_state,		/* True if the current object
+	Boolean			in_move_state;		/* True if the current object
 							 * is an existing object being
 							 * moved.
 							 */
-				in_modif_state;		/* True if the current object
-							 * is an existing object being
-							 * modified.
+
+	Boolean			must_print;		/* False when all
+							 * modification have been
+							 * printed.
 							 */
 
 	int			current_action;		/* One of EDITOR_ACTION_* */
 
 	float			altitude_increment;
 
-
-	Boolean			gtk_mode_on;		/* True if GTK UI is ON */
+	Boolean			gui_mode_on;		/* True if any Graphical UI
+							 * (GTK, QT, ...) is ON.
+							 */
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+	Boolean			gtk_mode_on;		/* True if a GTK UI is ON */
 	editor_gtk_ui_struct	*editor_gtk_ui;
+#endif
 
-
+	/* For the "info next" command */
 	int			pick_skip_list[PICKSKIPMAX];
 	int			pick_skip_list_index;
 
+        /* Currently modified object data.
+	 * Used in functions in which ones user can modify
+	 * some existing parameters.
+	 */
+	char			*mod_cur_parm;
+
 	/* Previously edited object */
-	sar_obj_type		prev_obj_type;		/* Type */
 	int			prev_obj_num;		/* Number */
-	char			*prev_obj_arg;		/* Command arguments */
+
+	/* Previous player model file name (before entering scenery editor) */
+	char			*player_old_model_file;
 
 	int			mod_obj_num;		/* Currently modified object number */
 	int			total_original_objects,
 				total_objects;
 	editor_modified_object_struct	**modification_list;
-	int			total_printed;	/* Modifications printed during
-						 * current editing session
-						 */
 	int			yes_no_query;
-
-	/* Previous player model (before entering scenery editor) */
-	char			*old_player_model_file;
-	sar_position_struct	old_pos;
-	sar_direction_struct	old_dir;
 
 } sar_scenery_editor_struct;
 
-/* editorgtkui.c - xxxxx */
+#ifndef SAR_CMD_PROTOTYPE
+/*
+ *	Prototype for all SARCmd*() function input parameters.
+ */
+#define SAR_CMD_PROTOTYPE	void *data, const char *arg, unsigned long flags
+#endif /* SAR_CMD_PROTOTYPE */
+void SARCmdSceneEditor(SAR_CMD_PROTOTYPE);
+
+/* In editorgtkui.c */
 extern int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags);
 extern void gtkAppStop(sar_core_struct *core_ptr);
 extern void EditorGtkAskToQuitWithoutPrint();
-extern void GwSetWindowFocusToSar2Window(const gw_display_struct *display);
+
+#ifndef SAR_KEY_FUNC_PROTOTYPE
+/* Prototype for all SARKey*() functions */
+#define SAR_KEY_FUNC_PROTOTYPE				\
+sar_core_struct *core_ptr, gw_display_struct *display,	\
+sar_scene_struct *scene, Boolean state
+#endif	/* SAR_KEY_FUNC_PROTOTYPE */
+extern void SARKeyCommand(SAR_KEY_FUNC_PROTOTYPE);
+
+char* DoParametersLineFromEditorObjectData(const editor_object_data_struct *editor_obj_data);

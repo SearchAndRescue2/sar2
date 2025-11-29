@@ -126,7 +126,7 @@ to move it</property>
             <property name="has-tooltip">True</property>
             <property name="label">Print</property>
             <property name="tooltip-text">Print scenery modifications
-to the console</property>
+to report file</property>
             <property name="use-action-appearance">False</property>
           </object>
           <packing>
