@@ -74,9 +74,6 @@ gtk_version = 3
 
 # Check if GTK libraries and headers are installed
 import subprocess
-if subprocess.call("locate" + " gtk.h > /dev/null", shell=True):
-    gtk_version = 0
-    print('SConscript: Warning: no gtk.h file found:', end='')
 if gtk_version == 3:
     if subprocess.call("pkg-config" + " --exists gtk+-3.0", shell=True):
         gtk_version = 0
