@@ -59,6 +59,7 @@ $ sudo zypper in \
 scons \
 Mesa-devel \
 freealut-devel \
+glu-devel \
 openal-soft-devel \
 gcc-c++ \
 libvorbis-devel \
@@ -68,8 +69,9 @@ xorg-x11-libX11-devel \
 xorg-x11-libXext-devel \
 xorg-x11-libXmu-devel \
 xorg-x11-libXpm-devel \
-libSDL2-devel \
-gtk3-devel
+sdl2-compat-devel \
+gtk3-devel \
+libXxf86vm-devel
 ```
 
 For Ubuntu:
@@ -88,7 +90,8 @@ libx11-dev \
 libxext-dev \
 libxmu-dev \
 libxpm-dev \
-libgtk-3-dev
+libgtk-3-dev \
+libglu1-mesa-dev
 ```
 
 For OSX:
