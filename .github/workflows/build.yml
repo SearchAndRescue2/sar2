@@ -31,7 +31,9 @@ jobs:
         libx11-dev \
         libxext-dev \
         libxmu-dev \
-        libxpm-dev
+        libxpm-dev \
+        libglu1-mesa-dev \
+        gtk3-devel
 
     - name: "Run scons"
       run: scons
