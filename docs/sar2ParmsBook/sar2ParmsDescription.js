@@ -687,7 +687,7 @@ __DESCRIPTION\
 __Defines how the object can be contacted by others. Must be used in conjunction with a ##contact_cylendrical , ##contact_rectangular or ##contact_spherical parameter.\
 __ARGUMENTS\
 __crash_other can be: '1' if this object can crash into or contact other objects, '0' if it can't. Can be '1' ONLY for 'human' and 'aircraft' objects, and in this case, contact bounds MUST be cylendrical (see ##contact_cylendrical parameter). Use it for mobile objects.\
-__cause_crash can be: '1' if other objects can crash into this object, '0' if they can't. MUST be '0' if 'crash_other' flag is '1'. Use it for fixed objects.\
+__cause_crash can be: '1' if other objects can crash into this object, '0' if they can't. MUST be '0' if 'crash_other' flag is '1'. Use it for static objects.\
 __support_surface must be: '1' if this object is landable/walkable, '0' if not.<br>If 'crash_other' flag is '1', then support_surface MUST be '0' .<br>If support_surface is set:<br> - object can only have its heading rotated.<br> - even if contact bounds don't start from ground, flying under contact bounds will cause crash.\
 __crash_type can be: 0 (obstruction), 1 (ground), 2 (mountain), 3 (building), 4 (aircraft). Defines collision message type.\
 __CONTEXT\
@@ -910,7 +910,7 @@ __-----\
 __NAME\
 __create_runway\
 __SYNOPSIS\
-__create_runway range length width surface dashes edge_light_spacing [ north_label south_label north_displaced_threshold south_displaced_threshold [ flag ] [ ... ] ]\
+__create_runway range length width surface dashes edge_light_spacing north_label south_label north_displaced_threshold south_displaced_threshold [ flag ] [ ... ]\
 __DESCRIPTION\
 __Creates a runway. Have a look at ##https://en.wikipedia.org/wiki/Runway for more explanations on flags.\
 __ARGUMENTS\
@@ -924,7 +924,7 @@ __north_label runway 'north' label.\
 __south_label runway 'south' label.\
 __north_displaced_threshold  'northern' displaced threshold length (0.0 for none).\
 __south_displaced_threshold 'southern' displaced threshold length (0.0 for none).\
-__flags: <hr>\
+__Optional&nbsp;flags: <hr>\
 __thresholds add thresholds lines.\
 __borders add a border line on each side.\
 __td_markers add touch down markers.\
@@ -961,7 +961,7 @@ __y Y offset, relative to 'translate' position, in meters.\
 __z Z offset, relative to 'translate' position, in meters.\
 __r_st start radius, in meters. Cloud radius at beginning.\
 __r_max maximum radius, in meters. Cloud radius at end.\
-__r_rate radius rate, in meters per second. At which speed the clouds grows. If r_rate is négative, radius rate will be automatically generated.\
+__r_rate radius rate, in meters per second. At which speed the clouds grows. If r_rate is negative, radius rate will be automatically generated.\
 __hide@max altitude, in meters, at which one smoke clouds will be hidden when they reach it.\
 __respawn_int respawn interval, in milliseconds. Time interval between two clouds generation.\
 __units number of clouds.\
@@ -1326,7 +1326,7 @@ __engine_state\
 __SYNOPSIS\
 __engine_state state\
 __DESCRIPTION\
-__//FIXME . Not used at now. Found in sarfioopen.c > SARParmLoadFromFileIterate(...) and sarfiosave.c > SARParmSaveToFileAnyIterate(...).\
+__//FIXME . Not used at now. Found in sarfioopen.c > SARParmLoadFromFileIterate(...) and sarfiosave.c > SARParmSaveToFileAnyIterate(...). Look for 'case SAR_PARM_ENGINE_STATE:' in sceneio.c\
 __ARGUMENTS\
 __state can be: 0 (engine off), 1 (engine init), 2 (engine on).\
 __CONTEXT\
@@ -1948,7 +1948,7 @@ __model_file file_name\
 __DESCRIPTION\
 __Defines model path and file name.\
 __ARGUMENTS\
-__file_name path to and name of model file.\
+__file_name path to and name of model file. Path must be relative to the Sar2 <i>data/</i> directory.\
 __CONTEXT\
 __mis scn\
 __EXAMPLE\
@@ -1980,9 +1980,9 @@ __name\
 __SYNOPSIS\
 __name string\
 __DESCRIPTION\
-__Defines a name for the mission / scenery / model.\
+__Defines a name for the mission / scenery / model.<br>This is not the ##object_name, even if when it is used in a model *.3d file, SarII will automatically set the first token of this name as the object name.\
 __ARGUMENTS\
-__string mission / scenery / model name. Space characters are allowed.\
+__string the name of the mission, scenery, or model. Space characters are allowed.\
 __CONTEXT\
 __mis 3d scn\
 __EXAMPLE\
@@ -2143,9 +2143,9 @@ __object_name\
 __SYNOPSIS\
 __object_name name\
 __DESCRIPTION\
-__Defines object name. This name can be used later as argument for some parameters (for example for a ##mission_begin_at parameter). Tip: if used AFTER model_file declaration, then model will be renamed.\
+__Defines the object name. This name can be used later as argument for some parameters (for example for a ##mission_begin_at parameter).<br>Important: as SarII always check objects by order of appearance in the scenery and mission files, note that if two (or more) objects have the same name, only the first one will be considered as the name matching object.\
 __ARGUMENTS\
-__name name_of_the_object (without spaces!).\
+__name name_of_the_object, without any space character.\
 __CONTEXT\
 __mis scn\
 __EXAMPLES\
@@ -2167,7 +2167,7 @@ __create_object 1\
 __model_file automobiles/cuda.3d\
 __# Object name is defined in cuda.3d as 'Cuda'. Let's rename it:\
 __object_name What_a_cool_car\
-__# From now, this object is refered as 'What_a_cool_car'\
+__# From now, this object can be refered as 'What_a_cool_car'\
 \
 __-----\
 \
@@ -2191,7 +2191,7 @@ __passengers\
 __SYNOPSIS\
 __passengers passengers passengers_max\
 __DESCRIPTION\
-__//FIXME . This parameter is not used at now.\
+__//FIXME . This parameter is not used at now. Look for 'case SAR_PARM_PASSENGERS:' in sceneio.c\
 __ARGUMENTS\
 __passengers must be equal or lower than 'passengers_max' value.\
 __passengers_max maximum number of passengers in the aircraft.\

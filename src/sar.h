@@ -468,6 +468,13 @@ typedef struct {
 	 */
 	sar_fps_struct	fps;
 
+	/* In-game scenery editor */
+	Boolean		editor_mode_on,		/* State */
+			gtk_main_loop_on;	/* True when GTK "main" loop
+						 * must be run.
+						 */
+	void		*in_game_editor;	/* Data */
+
 } sar_core_struct;
 
 #define SAR_CORE(p)	((sar_core_struct *)(p))

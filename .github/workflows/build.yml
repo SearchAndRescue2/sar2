@@ -2,9 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
 
 env:
   GO: 1.20.7
@@ -33,7 +31,9 @@ jobs:
         libx11-dev \
         libxext-dev \
         libxmu-dev \
-        libxpm-dev
+        libxpm-dev \
+        libglu1-mesa-dev \
+        libgtk-3-dev
 
     - name: "Run scons"
       run: scons

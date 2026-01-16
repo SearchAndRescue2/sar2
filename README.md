@@ -48,7 +48,9 @@ variable exported or to run the game directly from the XQuartz terminal.
 #### Required dependencies
 
 Before you try to build and install Search and Rescue II, you'll need to have
-some development packages installed:
+some development packages installed.<br>
+The **gtk3** package is only needed for the built-in scenery editor *graphical*
+user interface and is therefore *optional*:
 
 For openSUSE:
 
@@ -57,6 +59,7 @@ $ sudo zypper in \
 scons \
 Mesa-devel \
 freealut-devel \
+glu-devel \
 openal-soft-devel \
 gcc-c++ \
 libvorbis-devel \
@@ -66,7 +69,9 @@ xorg-x11-libX11-devel \
 xorg-x11-libXext-devel \
 xorg-x11-libXmu-devel \
 xorg-x11-libXpm-devel \
-libSDL2-devel
+sdl2-compat-devel \
+gtk3-devel \
+libXxf86vm-devel
 ```
 
 For Ubuntu:
@@ -84,7 +89,9 @@ libsm-dev \
 libx11-dev \
 libxext-dev \
 libxmu-dev \
-libxpm-dev
+libxpm-dev \
+libgtk-3-dev \
+libglu1-mesa-dev
 ```
 
 For OSX:
@@ -95,7 +102,8 @@ scons \
 sdl2 \
 openal-soft \
 freealut \
-libvorbis
+libvorbis \
+gtk+3
 
 $ brew cask install \
 xquartz

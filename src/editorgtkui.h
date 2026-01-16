@@ -14,21 +14,45 @@
 *   along with SaR2.  If not, see <http://www.gnu.org/licenses/>.     *
 ***********************************************************************/
 
-/*
-	SAR Simulation Ending
+#ifndef EDITORGTKGUI_H
+#define EDITORGTKGUI_H
 
-	Switches from simulation back to menus, if a mission was being
-	played then the mission results will be tabulated.
- */
+#include <gtk/gtk.h>
+#if GTK_MAJOR_VERSION == 3
+#include <gdk/gdk.h>
+#endif
+#if GTK_MAJOR_VERSION == 4
+#include <gdk/x11/gdkx.h>
+#endif
 
-#ifndef SARSIMEND_H
-#define SARSIMEND_H
 
-#include "sar.h"
+/* Editor dialog identifiers */
+typedef enum {
+	DIALOG_ID_NONE,
+	DO_YOU_WANT_TO_PRINT_BEFORE_QUIT
+} editor_gtk_dialog_id;
 
-extern void SARSimEnd(sar_core_struct *core_ptr);
+typedef struct {
+	/* Gtk specific data variables */
+	GdkDisplay		*gdk_display;
+	GMainContext		*gtk_context;
+	GtkApplication		*gtk_application;
 
-/* In cmdscnedit.c */
-extern void EditorOff(sar_core_struct *core_ptr);
+	int			picked_obj_num;
+	void			*temp_obj_data; //editor_object_data_struct
+	unsigned long		cmd_flags;		/* See SAR_CMD_PROTOTYPE */
+} editor_gtk_ui_struct;
 
-#endif	/* SARSIMEND_H */
+
+/* cmdscnedit.c */
+extern int SceneObjectPick(const sar_core_struct *core_ptr,
+			   int picker_obj_num,
+			   Boolean next
+);
+void GwSetWindowFocusToSar2Window(const gw_display_struct *display);
+
+
+/* objio.c */
+extern char *COMPLETE_PATH(const char *path);
+
+#endif	/* EDITORGTKGUI_H */

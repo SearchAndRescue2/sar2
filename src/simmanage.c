@@ -36,6 +36,7 @@
 #include "simop.h"
 #include "simmanage.h"
 #include "config.h"
+#include "cmdscnedit.h"
 
 
 static void SARSimGenerateLighteningPoints(
@@ -658,14 +659,29 @@ int SARSimUpdateSceneObjects(
     sar_core_struct *core_ptr, sar_scene_struct *scene
 )
 {
-	int i, status;
+	int i, status, editor_cur_obj_num;
 	int *obj_total;
 	sar_object_struct *obj_ptr, ***obj_pa;
 	sar_object_aircraft_struct *obj_aircraft_ptr;
 	sar_contact_bounds_struct *cb;
 	SFMModelStruct *fdm;
+	sar_scenery_editor_struct *scn_ed;
+
 	if(scene == NULL)
 	    return(-1);
+
+	/* Editor mode on? */
+	if(core_ptr != NULL && core_ptr->editor_mode_on == True)
+	{
+	    /* No need to check if scn_ed != NULL if
+	     * core_ptr->editor_mode_on is True.
+	     */
+
+	    scn_ed = core_ptr->in_game_editor;
+	    editor_cur_obj_num = scn_ed->cur_obj_num;
+	}
+	else
+	    editor_cur_obj_num = -1;
 
 	/* Update timing on realm */
 	if(scene->realm != NULL)
@@ -683,6 +699,14 @@ int SARSimUpdateSceneObjects(
 	    obj_ptr = (*obj_pa)[i];
 	    if(obj_ptr == NULL)
 		continue;
+
+	    /* Scenery editor currently edited object? */
+	    if(i == editor_cur_obj_num)
+	    {
+		/* Copy player position to currently edited object position. */
+		obj_ptr->pos = scene->player_obj_ptr->pos;
+		obj_ptr->dir = scene->player_obj_ptr->dir;
+	    }
 
 	    status = 0;		/* Reset `SFM handled' value */
 

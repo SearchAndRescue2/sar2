@@ -857,6 +857,7 @@ int SARObjLoadTranslate(
 	    float ground_elevation = 0.0f;
 
 	    ground_elevation += SARSimFindGround(
+		core_ptr,
 		scene,
 		core_ptr->object, core_ptr->total_objects,
 		&new_pos	/* Position of our object */
@@ -1609,7 +1610,7 @@ int SARObjLoadHuman(
 	    scene, &core_ptr->object, &core_ptr->total_objects,
 	    p_new_human->flags,
 	    p_new_human->assisting_humans,
-	    p_new_human->assisting_human_preset_name,
+	    (const char **)p_new_human->assisting_human_preset_name,
 	    p_new_human->type_name
 	);
 

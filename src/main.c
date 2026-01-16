@@ -21,6 +21,10 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+/* COMPILE_EDITOR_WITH_GTK_UI is defined (or not) in SConscript */
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+#include <gtk/gtk.h>
+#endif
 
 #ifdef __MSW__
 # include <windows.h>
@@ -65,6 +69,8 @@
 #include "sarmenucodes.h"
 #include "sarsimend.h"
 #include "config.h"
+#include "cmdscnedit.h"
+#include "simutils.h"	/* For SARSimWarpObject() */
 
 #include "fonts/6x10.fnt"
 #include "fonts/7x14.fnt"
@@ -1013,13 +1019,26 @@ void SARCloseCB(int ctx_num, void *ptr, void *data)
 		}
 		else
 		{
-		    SARTextInputMap(
-			core_ptr->text_input,
-			"Are you sure you want to quit simulation?",
-			NULL,
-			SARTextInputCBQuitSimulation,
-			core_ptr
-		    );
+		    if(core_ptr->editor_mode_on)
+		    {
+			SARTextInputMap(
+			    core_ptr->text_input,
+			    "Are you sure you want to quit scenery editor and simulation?",
+			    NULL,
+			    SARTextInputCBQuitSimulation,
+			    core_ptr
+			);
+		    }
+		    else
+		    {
+			SARTextInputMap(
+			    core_ptr->text_input,
+			    "Are you sure you want to quit simulation?",
+			    NULL,
+			    SARTextInputCBQuitSimulation,
+			    core_ptr
+			);
+		    }
 		}
 	    }
 	}
@@ -1309,6 +1328,10 @@ sar_core_struct *SARInit(int argc, char **argv)
 
 	memset(opt, 0x00, sizeof(sar_option_struct));
 	memset(&core_ptr->fps, 0x00, sizeof(sar_fps_struct));
+
+	core_ptr->editor_mode_on = False;
+	core_ptr->gtk_main_loop_on = False;
+	core_ptr->in_game_editor = NULL;
 
 
 	/* Reset options to defaults */
@@ -2354,6 +2377,80 @@ void SARManage(void *ptr)
 	 * changes the music as needed.
 	 */
 	SARMusicUpdate(core_ptr);
+
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+	/* Run a scenery editor GTK main loop */
+	if(core_ptr->gtk_main_loop_on)
+	{
+	    /* Note: gtk_main_loop_on == True implies that scn_ed,
+	     * editor_gtk_ui, and editor_gtk_ui->gtk_context are valid.
+	     */
+	    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+	    editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
+	    GMainContext *context = editor_gtk_ui->gtk_context;
+
+	    /* Check for events */
+	    while(g_main_context_pending(context))
+	    {
+		/* Run a single GTK non-blocking iteration */
+		g_main_context_iteration(context, FALSE);
+	    }
+
+	    /* Has user asked to quit editor mode from the GTK UI or has user
+	     * confirmed to quit without print the scnenery modifications?
+	     */
+	    if(scn_ed->current_action == EDITOR_ACTION_QUIT_FROM_GTK ||
+		scn_ed->current_action == EDITOR_ACTION_QUIT_WITHOUT_PRINT
+	    )
+	    {
+		/* Send the "scnedit off" command to SARCmdSceneEditor() */
+		SARCmdSceneEditor((void *)core_ptr, "scnedit off", editor_gtk_ui->cmd_flags);
+	    }
+	}
+#endif
+
+	/* FIXME: not sure that this is the right place to do that...
+	 * This code will certainly be moved to another place once the
+	 * joystick_mapping_improvement branch will be merged.
+	 *
+	 * Update player Z position from throttle value if edit mode is on.
+	 */
+	if(core_ptr->editor_mode_on)
+	{
+	    float throttle;
+	    double increment;
+	    sar_object_struct *player_obj_ptr;
+	    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+
+	    scene = core_ptr->scene;
+	    player_obj_ptr = scene->player_obj_ptr;
+
+	    /* Set zero value at throttle middle position */
+	    throttle = core_ptr->gctl->throttle - 0.5;
+
+	    /* Out of deadband? */
+	    if(throttle < -0.033f || throttle > 0.033f)
+	    {
+		/* This will give very low increment when throttle is close to
+		 * its middle position and very high increment when it is
+		 * farest of it.
+		 */
+		increment = 1000 * pow((double)throttle, 7);
+
+		if(throttle < 0 && increment >= 0)
+		    player_obj_ptr->pos.z -= (float)increment;
+		else
+		    player_obj_ptr->pos.z += (float)increment;
+
+		/* Realize player object position */
+		SARSimWarpObject(scene, player_obj_ptr, &player_obj_ptr->pos, &player_obj_ptr->dir);
+	    }
+	    else
+		increment = 0;
+
+	    /* Save increment value */
+	    scn_ed->altitude_increment = (float)increment;
+	}
 
 }
 

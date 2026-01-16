@@ -1,0 +1,6897 @@
+/**********************************************************************
+*   This file is part of Search and Rescue II (SaR2).                 *
+*                                                                     *
+*   SaR2 is free software: you can redistribute it and/or modify      *
+*   it under the terms of the GNU General Public License v.2 as       *
+*   published by the Free Software Foundation.                        *
+*                                                                     *
+*   SaR2 is distributed in the hope that it will be useful, but       *
+*   WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See          *
+*   the GNU General Public License for more details.                  *
+*                                                                     *
+*   You should have received a copy of the GNU General Public License *
+*   along with SaR2.  If not, see <http://www.gnu.org/licenses/>.     *
+***********************************************************************/
+
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <locale.h>
+#include <time.h>
+
+#include "../include/string.h"
+#include "../include/strexp.h"
+#include "../include/fio.h"
+#include "../include/disk.h"
+
+#include "gw.h"
+#include "obj.h"
+#include "objutils.h"
+#include "messages.h"
+#include "simop.h"
+#include "cmd.h"
+#include "sar.h"
+#include "config.h"
+#include "objio.h"
+#include "simcontact.h"
+#include "simutils.h"
+#include "smoke.h"
+#include "fire.h"
+#include "sardraw.h"
+#include "simsurface.h"
+#include "cmdscnedit.h"
+/* COMPILE_EDITOR_WITH_GTK_UI is defined (or not) in SConscript */
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+#include "editorgtkui.h"
+#endif
+
+
+void EditorOff(sar_core_struct *core_ptr);
+FILE *FCopy(const char *source, const char *target);
+static int FInsertData(FILE *fp, unsigned long start_pos, const char *data,
+		       unsigned long data_length
+);
+/*
+static int FRemoveData(FILE *fp, unsigned long start_pos, unsigned long data_length);
+*/
+/*
+static int AddObjNumToSceneryFile(FILE *fp);
+*/
+char *GetObjectModelFileNameFromSceneryFile(sar_scenery_editor_struct *scn_ed, int obj_num);
+int SceneObjectPick(const sar_core_struct *core_ptr, int picker_obj_num, Boolean next);
+static int ScnEditLoadObject(sar_core_struct *core_ptr,
+			     int obj_num, sar_obj_type type,
+			     const char *arg_list
+);
+static int ScnEditDeleteObject(sar_core_struct *core_ptr, int obj_num);
+static int ScnEditCopyObjectWithChildren(sar_core_struct *core_ptr,
+			     int obj_num, sar_obj_type type,
+			     const char *arg_list
+);
+static char *ScnEditGetTextureNamePtrByRef(sar_scene_struct *scene,int tex_index);
+static char *ScnEditGetHumanPresetNameByHumanPtr(const sar_core_struct *core_ptr,
+						 sar_object_human_struct *human
+);
+static char *ScnEditObjectRename(const sar_core_struct *core_ptr,
+				 char *old_name
+);
+int EditorObjectDataReinit(editor_object_data_struct *object_data);
+int EditorObjectDataFree(editor_object_data_struct *object_data);
+static const char* SceneObjectGetTypeName(sar_core_struct *core_ptr, int obj_num);
+static char *EditorGetObjectFileName(const sar_object_struct *obj_ptr);
+static editor_object_data_struct *EditorObjectDataNew(void);
+int EditorObjectDataStructFill(
+    sar_core_struct *core_ptr,
+    editor_object_data_struct *object_data,
+    int obj_num
+);
+int SetModificationFlags(editor_modified_object_struct *modification);
+char* DoParametersLineFromEditorObjectData(
+    const editor_object_data_struct *editor_obj_data
+);
+int ScnEditShowObjectInfoWindow(
+    sar_core_struct *core_ptr,
+    int obj_num,
+    editor_object_data_struct *editor_obj_data
+);
+void GwSetWindowFocusToSar2Window(const gw_display_struct *display);
+int ScnEditPrintModificationsList(const sar_core_struct *core_ptr,
+				  const sar_scenery_editor_struct *scn_ed,
+				  FILE *fp
+);
+void doPrint(sar_core_struct *core_ptr, unsigned long flags);
+char *timeStamp();
+int ScnEditSetPlayerObject(
+    sar_core_struct *core_ptr,
+    sar_scene_struct *scene,
+    const char *player_file,
+    sar_position_struct start_pos,
+    sar_direction_struct start_dir
+);
+void SARCmdSceneEditor(SAR_CMD_PROTOTYPE);
+
+#define ATOI(s)         (((s) != NULL) ? atoi(s) : 0)
+#define ATOL(s)         (((s) != NULL) ? atol(s) : 0)
+#define ATOF(s)         (((s) != NULL) ? (float)atof(s) : 0.0f)
+#define STRDUP(s)       (((s) != NULL) ? strdup(s) : NULL)
+
+#define MAX(a,b)        (((a) > (b)) ? (a) : (b))
+#define MIN(a,b)        (((a) < (b)) ? (a) : (b))
+#define CLIP(a,l,h)     (MIN(MAX((a),(l)),(h)))
+#define STRLEN(s)       (((s) != NULL) ? ((int)strlen(s)) : 0)
+
+#define RADTODEG(r)     ((r) * 180.0 / PI)
+#define DEGTORAD(d)     ((d) * PI / 180.0)
+
+/* Editor OBJect number tag and number of digits.
+ * Defines a #_EOBJ#nnnnn comment where nnnnn is a 5 digits object number.
+ */
+#define TAGSTRING "#_EOBJ#"
+#define TAGVALLENGTH "%05d"
+
+#define NOTIFY(s)			\
+{ if(SAR_CMD_IS_VERBOSE(flags) &&	\
+     (scene != NULL) && ((s) != NULL)	\
+  ) { SARMessageAdd(scene, (s)); }	\
+}
+
+#define ISBLANK(c)	(((c) == ' ') || ((c) == '\t'))
+#define ISCOMMENT(c)	((c) == SAR_COMMENT_CHAR)
+#define STRISEMPTY(s)	(((s) != NULL) ? (*(s) == '\0') : 1)
+
+#define SKIPARGS(cmd_args, n)				\
+{							\
+    char *val = cmd_args;				\
+    for(int i = 0; i < n; i++)				\
+    {							\
+	while(!ISBLANK(*val) && (*val != '\0'))		\
+	    val++;					\
+	while(ISBLANK(*val))				\
+	    val++;					\
+    }							\
+    cmd_args = val;					\
+}
+
+#define S_LENGTH 1024
+#define REMAINING(s) (MAX(0, S_LENGTH - strlen(s) - 1))
+
+#define EDITOROBJECTSETDATA(obj_num)					\
+{									\
+    modification = scn_ed->modification_list[obj_num];			\
+    editor_obj_data = modification->obj_data_new;			\
+    EditorObjectDataStructFill(						\
+	core_ptr,							\
+	editor_obj_data,						\
+	obj_num								\
+    );									\
+}
+
+/* Max number of children (i.e. referenced) objects per parent object */
+#define MAXCHILDREN 10
+
+
+/*
+ * Shut off the scenery editor.
+ */
+void EditorOff(sar_core_struct *core_ptr)
+{
+    gw_display_struct *display = core_ptr->display;
+    sar_scene_struct *scene = core_ptr->scene;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    int player_obj_num, obj_num;
+    sar_object_struct *player_obj_ptr;
+    int i;
+
+    if(scene == NULL)
+	return;
+
+    if(display == NULL)
+	return;
+
+    if(scn_ed == NULL)
+	return;
+
+    if(core_ptr->editor_mode_on == False)
+	return;
+
+    core_ptr->editor_mode_on = False;
+
+    /* GUI on? */
+    if(scn_ed->gui_mode_on)
+    {
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+	if(scn_ed->gtk_mode_on)
+	    gtkAppStop(core_ptr);
+#endif
+    }
+
+    if(scn_ed->cur_obj_num >= 0)
+    {
+	obj_num = scn_ed->cur_obj_num;
+
+	/* Unlink current object from player object */
+	scn_ed->cur_obj_num = -1;
+
+	ScnEditDeleteObject(core_ptr, obj_num);
+    }
+
+    free(scn_ed->object_placer_file_name);
+    scn_ed->object_placer_file_name = NULL;
+
+    if(scn_ed->scn_file_fp != NULL)
+	fclose(scn_ed->scn_file_fp);
+
+    free(scn_ed->scn_file_name);
+    scn_ed->scn_file_name = NULL;
+
+    free(scn_ed->cur_obj_arg);
+    scn_ed->cur_obj_arg = NULL;
+
+    free(scn_ed->mod_cur_parm);
+    scn_ed->mod_cur_parm = NULL;
+
+    /* Free the modification_list structure */
+    if(scn_ed->modification_list != NULL)
+    {
+	for(i = 0; i < scn_ed->total_objects; i++)
+	{
+	    /* Should always be True */
+	    if(scn_ed->modification_list[i] != NULL)
+	    {
+		if(scn_ed->modification_list[i]->obj_data_original != NULL)
+		    EditorObjectDataFree(scn_ed->modification_list[i]->obj_data_original);
+
+		if(scn_ed->modification_list[i]->obj_data_new != NULL)
+		    EditorObjectDataFree(scn_ed->modification_list[i]->obj_data_new);
+
+		free(scn_ed->modification_list[i]);
+	    }
+	}
+	free(scn_ed->modification_list);
+    }
+
+    /* Get player object references from scene structure */
+    player_obj_num = scene->player_obj_num;
+    player_obj_ptr = scene->player_obj_ptr;
+
+    if(player_obj_ptr != NULL)
+    {
+	if(SARSimIsSlew(player_obj_ptr))
+	{
+	    /* Was in slew mode, now go into previous flight mode */
+	    SARSimSetSlew(player_obj_ptr, 0);
+	}
+
+	/* Move player object to nearest restarting point and
+	 * repair it.
+	 *
+	 * NOTE disabled because if user wants to fly immediately after editing,
+	 * he/she maybe don't want to restart far away from actual position.
+	 */
+	if(False)
+	{
+	    SARSimRestart(
+		core_ptr, scene,
+		&core_ptr->object, &core_ptr->total_objects,
+		player_obj_num, player_obj_ptr
+	    );
+	}
+
+	/* Delete current player model (i.e. the triedron) then restore
+	 * the player old model.
+	 */
+	ScnEditSetPlayerObject(
+	    core_ptr,
+	    scene,
+	    (const char *)scn_ed->player_old_model_file,
+	    player_obj_ptr->pos,
+	    player_obj_ptr->dir
+	);
+    }
+
+    free(scn_ed->player_old_model_file);
+    scn_ed->player_old_model_file = NULL;
+
+    free(scn_ed);
+    scn_ed = NULL;
+    core_ptr->in_game_editor = scn_ed;
+
+    /* Hide pointer cursor */
+    GWHideCursor(display);
+
+    return;
+}
+
+
+/*
+ * Copy source file to target file and return target FILE pointer
+ * or NULL on error.
+ */
+FILE *FCopy(const char *source, const char *target)
+{
+    FILE *src, *tar;
+    int c;
+
+    src = fopen(source, "r");
+    if(src == NULL)
+        return NULL;
+
+    tar = fopen(target, "w");
+    if(tar == NULL)
+    {
+	fclose(src);
+        return NULL;
+    }
+
+    while((c = fgetc(src)) != EOF)
+        fputc(c, tar);
+
+    fclose(src);
+
+    return tar;
+}
+
+
+/*
+ * Insert data_length bytes of data in fp file, starting at start_pos offset.
+ */
+static int FInsertData(FILE *fp, unsigned long start_pos, const char *data, unsigned long data_length)
+{
+    size_t file_size, buffer_size;
+    char *buffer;
+    long offset;
+
+    if(fp == NULL)
+	return -1;
+
+    /* Get file size */
+    fseek(fp, 0L, SEEK_END);
+    file_size = ftell(fp);
+    rewind(fp);
+
+    buffer_size = file_size - start_pos;
+    if(buffer_size < 0)
+    {
+	fprintf(stderr, "%s:%d: Can't insert %ld bytes in file.\n", __FILE__, __LINE__, buffer_size);
+	return -1;
+    }
+    else if(buffer_size == 0)
+	return 0;
+
+    buffer = malloc(buffer_size + 1);
+    if(buffer == NULL)
+    {
+	fprintf(stderr, "%s:%d: Can't allocate %ld bytes for buffer.\n", __FILE__, __LINE__, buffer_size);
+	return -1;
+    }
+
+    /* Copy file end data to buffer */
+    fseek(fp, start_pos, SEEK_SET);
+    if(fread(buffer, buffer_size, 1, fp) != 1)
+    {
+	fprintf(stderr, "%s:%d: Can't copy %ld file bytes to buffer.\n", __FILE__, __LINE__, buffer_size);
+	free(buffer);
+	return -1;
+    }
+
+    /* Write user data */
+    fseek(fp, start_pos, SEEK_SET);
+    if(fwrite(data, data_length, 1, fp) != 1)
+    {
+	fprintf(stderr, "%s:%d: Can't write %ld data bytes to file.\n", __FILE__, __LINE__, data_length);
+	free(buffer);
+	return -1;
+    }
+
+    /* Save current cursor position */
+    offset = ftell(fp);
+
+    /* Write buffer */
+    if(fwrite(buffer, buffer_size, 1, fp) != 1)
+    {
+	fprintf(stderr, "%s:%d: Can't write %ld buffer bytes at end of file.\n", __FILE__, __LINE__, data_length);
+	free(buffer);
+	return -1;
+    }
+
+    /* Set cursor position */
+    fseek(fp, offset, SEEK_SET);
+    free(buffer);
+
+    return 0;
+}
+
+/*
+ * Remove data_length bytes in fp file, starting at start_pos offset.
+ */
+/*
+static int FRemoveData(FILE *fp, unsigned long  start_pos, unsigned long data_length)
+{
+    size_t file_size, buffer_size;
+    char *buffer;
+
+    if(fp == NULL)
+	return -1;
+
+    // Get file size //
+    fseek(fp, 0L, SEEK_END);
+    file_size = ftell(fp);
+    rewind(fp);
+
+    // Clear end of file from start_pos? //
+    if(data_length >= file_size - start_pos)
+    {
+	fseek(fp, start_pos, SEEK_SET);
+	fputs("", fp);
+	return 0;
+    }
+
+    buffer_size = file_size - start_pos + data_length;
+    buffer = malloc(buffer_size + 1);
+    if(buffer == NULL)
+    {
+	fprintf(stderr, "%s:%d: Can't allocate %ld bytes for buffer.\n", __FILE__, __LINE__, buffer_size);
+	return -1;
+    }
+
+    // Copy file end data to buffer //
+    fseek(fp, start_pos + data_length, SEEK_SET);
+    if(fread(buffer, buffer_size, 1, fp) != 1)
+    {
+	fprintf(stderr, "%s:%d: Can't copy %ld file bytes to buffer.\n", __FILE__, __LINE__, buffer_size);
+	free(buffer);
+	return -1;
+    }
+
+    // Return to start_pos //
+    fseek(fp, start_pos, SEEK_SET);
+
+    // Write buffer //
+    if(fwrite(buffer, buffer_size, 1, fp) != 1)
+    {
+	fprintf(stderr, "%s:%d: Can't write %ld buffer bytes at end of file.\n", __FILE__, __LINE__, data_length);
+	free(buffer);
+	return -1;
+    }
+
+    // Set cursor position at line start //
+    if(fseek(fp, start_pos, SEEK_SET) != 0)
+    {
+	free(buffer);
+	return -1;
+    }
+
+    free(buffer);
+    return 0;
+}
+*/
+
+
+/*
+ * Add object number tags in editor scenery file.
+ */
+static int AddObjNumToSceneryFile(FILE *fp)
+{
+    const char *line_parm, *val;
+    char *line_buf;
+    int obj_num = 0;
+    long offset;
+    const size_t tag_string_length = strlen(TAGSTRING);
+
+    if(fp == NULL)
+	return -1;
+
+    line_buf = NULL;
+    while(1)
+    {
+	/* Delete previous line and load new line
+	 * if new line is NULL then that implies end of file is
+	 * reached
+	 */
+	free(line_buf);
+	line_buf = NULL;
+
+	/* Save current cursor position */
+	offset = ftell(fp);
+
+	/* Read line */
+	line_buf = FGetStringLiteral(fp);
+
+	if(line_buf == NULL)
+	    break;
+
+	/* Check if this is not the a comment or empty line and get the
+	 * pointer to the parameter.
+	 */
+	line_parm = line_buf;
+	while(ISBLANK(*line_parm))
+	    line_parm++;
+	if(ISCOMMENT(*line_parm))
+	{
+	    /* Comment don't start whith TAGSTRING? */
+	    if(strncmp(line_parm, TAGSTRING, tag_string_length))
+		continue;
+	}
+
+	/* Set val pointer to start of argument, can be NULL if
+	 * there is no argument.
+	 */
+	val = line_parm;
+	while(!ISBLANK(*val) && (*val != '\0'))
+	    val++;
+	while(ISBLANK(*val))
+	    val++;
+
+	/* Begin handling by parameter name */
+
+	/* Tag for next ligne already exists? */
+	if(strstr(line_parm, TAGSTRING) != NULL)
+	{
+	    /* Skip next line */
+
+	    if(line_buf != NULL)
+		free(line_buf);
+	    line_buf = FGetStringLiteral(fp);
+	    if(line_buf == NULL)
+		break;
+	}
+	/* Object creation parameters */
+	else if( strcasepfx(line_parm, "add_fire") ||
+	    strcasepfx(line_parm, "create_fire") ||
+	    strcasepfx(line_parm, "new_fire") ||
+
+	    strcasepfx(line_parm, "add_helipad") ||
+	    strcasepfx(line_parm, "create_helipad") ||
+	    strcasepfx(line_parm, "new_helipad") ||
+
+	    strcasepfx(line_parm, "add_human") ||
+	    strcasepfx(line_parm, "create_human") ||
+	    strcasepfx(line_parm, "new_human") ||
+
+	    strcasepfx(line_parm, "add_object") ||
+	    strcasepfx(line_parm, "create_object") ||
+	    strcasepfx(line_parm, "new_object") ||
+
+	    strcasepfx(line_parm, "add_premodeled") ||
+	    strcasepfx(line_parm, "create_premodeled") ||
+	    strcasepfx(line_parm, "new_premodeled") ||
+
+	    strcasepfx(line_parm, "add_runway") ||
+	    strcasepfx(line_parm, "create_runway") ||
+	    strcasepfx(line_parm, "new_runway") ||
+
+	    strcasepfx(line_parm, "add_smoke") ||
+	    strcasepfx(line_parm, "create_smoke") ||
+	    strcasepfx(line_parm, "new_smoke")
+	)
+	{
+	    /* Set cursor position at line start */
+	    if(fseek(fp, offset, SEEK_SET) != 0)
+		return -1;
+
+	    /* Prepare tag */
+	    char *s = (char *)malloc(16 * sizeof(char));
+	    snprintf(s, 16, "%s"TAGVALLENGTH"\n", TAGSTRING, obj_num);
+
+	    /* Write tag */
+	    if(FInsertData(fp, (unsigned long)offset, s, strlen(s)) != 0)
+	    {
+		free(s);
+		return -1;
+	    }
+	    else
+		free(s);
+
+	    /* Skip line */
+	    if(line_buf != NULL)
+		free(line_buf);
+	    line_buf = FGetStringLiteral(fp);
+	    if(line_buf == NULL)
+		break;
+
+	    obj_num++;
+	}
+    }
+
+    if(line_buf != NULL)
+	free(line_buf);
+
+    return obj_num;
+}
+
+
+/*
+ * Get model file name from object number (in editor scenery file).
+ * Editor scenery file must have be treated by AddObjNumToSceneryFile() first.
+ */
+/*
+char *GetObjectModelFileNameFromSceneryFile(sar_scenery_editor_struct *scn_ed,
+					    int obj_num)
+{
+    const char *line_parm, *val;
+    char *line_buf;
+    long offset;
+    char *obj_tag_s = (char *)malloc(16 * sizeof(char));
+    char *arguments = NULL;
+    Boolean obj_num_found = False;
+    FILE *fp;
+
+    if(scn_ed == NULL)
+    {
+	arguments = STRDUP("/");
+	return arguments;
+    }
+
+    if(scn_ed->scn_file_fp == NULL)
+    {
+	arguments = STRDUP("/");
+	return arguments;
+    }
+
+    fp = scn_ed->scn_file_fp;
+
+    // Go to top of file //
+    rewind(fp);
+
+    snprintf(obj_tag_s, 16, "%s"TAGVALLENGTH, TAGSTRING, obj_num);
+
+    line_buf = NULL;
+    while(1)
+    {
+	// Delete previous line and load new line //
+	// if new line is NULL then that implies end of file is //
+	// reached //
+	//
+	if(line_buf != NULL)
+	    free(line_buf);
+	// Save current cursor position //
+	offset = ftell(fp);
+
+	// Read line //
+	line_buf = FGetStringLiteral(fp);
+	if(line_buf == NULL)
+	    break;
+
+	// Check if this is a comment or empty line and get the //
+	// pointer to the parameter. //
+	//
+	line_parm = line_buf;
+	while(ISBLANK(*line_parm))
+	    line_parm++;
+	if(ISCOMMENT(*line_parm))
+	    continue;
+
+	// Set val pointer to start of argument, can be NULL if //
+	// there is no argument. //
+	//
+	val = line_parm;
+	while(!ISBLANK(*val) && (*val != '\0'))
+	    val++;
+	while(ISBLANK(*val))
+	    val++;
+
+	// Object number found? //
+	if(strcasepfx(line_parm, obj_tag_s))
+	{
+	    obj_num_found = True;
+	}
+	// Object number found and model_file definition line exists? //
+	else if((obj_num_found == True) && strcasepfx(line_parm, "model_file"))
+	{
+	    arguments = STRDUP(val);
+	    break;
+	}
+    }
+
+    free(obj_tag_s);
+
+    if(line_buf != NULL)
+	free(line_buf);
+
+    return arguments;
+}
+*/
+
+
+/*
+ * Return the number of the picker_obj_num object closer object.
+ * Ground objects are skipped.
+ *
+ * If the 'next' variable is True, next closest object number found in
+ * scn_ed->pick_skip_list will be returned. Size of scn_ed->pick_skip_list is
+ * hard coded in the sar_scenery_editor_struct structure.
+ *
+ * Return -1 on error.
+ */
+int SceneObjectPick(const sar_core_struct *core_ptr, int picker_obj_num, Boolean next)
+{
+    sar_scene_struct *scene = core_ptr->scene;
+    sar_object_struct *obj_ptr, *picker_obj_ptr;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+    editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
+#endif
+    int picked_obj_num = -1, i;
+    double distance, picked_obj_dist = DBL_MAX, temp_dbl;
+    int *skip_list, pick_skip_list_index, skip_list_size;
+    int total_objects = core_ptr->total_objects, temp_i;
+    Boolean one_more_time = True;
+
+    typedef struct {
+	int obj_num;
+	double obj_dist;
+    } object_distance_struct;
+
+    if(scene == NULL)
+	return picked_obj_num;
+
+    picker_obj_ptr = core_ptr->object[picker_obj_num];
+    if(picker_obj_ptr == NULL)
+	return picked_obj_num;
+
+    skip_list = scn_ed->pick_skip_list;
+    skip_list_size = sizeof(scn_ed->pick_skip_list)/sizeof(int);
+    pick_skip_list_index = scn_ed->pick_skip_list_index;
+
+    /* "next" closer object not requested? */
+    if(next == False)
+    {
+	/* Iterate through each scene object, checking wich
+	 * scene object is closer to the picker object.
+	 */
+
+	for(i = 0; i < total_objects; i++)
+	{
+	    /* Skip ourself */
+	    if(i == picker_obj_num)
+		continue;
+
+	    /* Skip currrently edited object, if any */
+	    if(i == scn_ed->cur_obj_num)
+		continue;
+
+	    obj_ptr = core_ptr->object[i];
+	    if(obj_ptr == NULL)
+		continue;
+
+	    /* Skip if is a ground object */
+	    if(obj_ptr->type == SAR_OBJ_TYPE_GROUND)
+		continue;
+
+	    /* 3D distance */
+	    distance = (float)SFMHypot3(
+		obj_ptr->pos.x - picker_obj_ptr->pos.x,
+		obj_ptr->pos.y - picker_obj_ptr->pos.y,
+		obj_ptr->pos.z - picker_obj_ptr->pos.z
+	    );
+	    if(distance < picked_obj_dist)
+	    {
+		picked_obj_dist = distance;
+		picked_obj_num = i;
+	    }
+	}
+
+	/* Set skip_list as not initialized */
+	pick_skip_list_index = -1;
+
+	skip_list[0] = -1;
+    }
+
+    /* "next" closer object requested and skip_list not initialized? */
+    if(next == True && pick_skip_list_index == -1)
+    {
+	/* Iterate through each scene object and generate the sorted
+	 * obj_dist_list array which contains a by distance sorted
+	 * list of all scene objects, then generate the skip_list which
+	 * contains the closests objects.
+	 */
+
+	object_distance_struct obj_dist_list[total_objects];
+
+	/* Populate obj_dist array */
+	for(i = 0; i < total_objects; i++)
+	{
+	    /* Set default values */
+	    obj_dist_list[i].obj_num = -1;
+	    obj_dist_list[i].obj_dist = DBL_MAX;
+
+	    /* Skip ourself */
+	    if(i == picker_obj_num)
+		continue;
+
+	    /* Skip currrently edited object, if any */
+	    if(i == scn_ed->cur_obj_num)
+		continue;
+
+	    obj_ptr = core_ptr->object[i];
+	    if(obj_ptr == NULL)
+		continue;
+
+	    /* 3D distance */
+	    distance = SFMHypot3(
+		obj_ptr->pos.x - picker_obj_ptr->pos.x,
+		obj_ptr->pos.y - picker_obj_ptr->pos.y,
+		obj_ptr->pos.z - picker_obj_ptr->pos.z
+	    );
+
+	    obj_dist_list[i].obj_num = i;
+	    obj_dist_list[i].obj_dist = distance;
+	}
+
+	/* Sort obj_dist_list array by distance from picker object */
+	while(one_more_time)
+	{
+	    one_more_time = False;
+
+	    for(i = 1; i < total_objects; i++)
+	    {
+		if((obj_dist_list[i].obj_num >= 0) &&
+		    (obj_dist_list[i].obj_dist < obj_dist_list[i - 1].obj_dist)
+		)
+		{
+		    temp_i = obj_dist_list[i].obj_num;
+		    temp_dbl = obj_dist_list[i].obj_dist;
+
+		    obj_dist_list[i].obj_num = obj_dist_list[i - 1].obj_num;
+		    obj_dist_list[i].obj_dist = obj_dist_list[i - 1].obj_dist;
+
+		    obj_dist_list[i - 1].obj_num = temp_i;
+		    obj_dist_list[i - 1].obj_dist = temp_dbl;
+
+		    one_more_time = True;
+		}
+	    }
+	}
+
+	/*
+	 * Fill skip_list
+	 */
+	for(i = 0; i < skip_list_size; i++)
+	    skip_list[i] = obj_dist_list[i].obj_num;
+
+	pick_skip_list_index = 0;
+    }
+
+    /* "next" closer object requested and skip_list initialized? */
+    if(next == True && skip_list[0] >= 0)
+    {
+	pick_skip_list_index++;
+
+	if(pick_skip_list_index >= skip_list_size)
+	    pick_skip_list_index = 0;
+
+	picked_obj_num = skip_list[pick_skip_list_index];
+    }
+
+    scn_ed->pick_skip_list_index = pick_skip_list_index;
+
+    if(scn_ed->gui_mode_on)
+    {
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+	if(scn_ed->gtk_mode_on &&
+	    scn_ed->editor_gtk_ui != NULL
+	)
+	    editor_gtk_ui->picked_obj_num = picked_obj_num;
+#endif
+    }
+
+    return picked_obj_num;
+}
+
+
+/*
+ * Load (or reload) an object.
+ *
+ * If obj_num is >= 0 then current obj_num object will
+ * be deleted before the new object will be created.
+ *
+ * New object will be created with given type and arg_list parameters,
+ * then current cur_obj_arg and cur_obj_type values will be set.
+ *
+ * Return newly created object number or a negative value on error.
+ */
+static int ScnEditLoadObject(sar_core_struct *core_ptr,
+			     int obj_num,
+			     sar_obj_type type,
+			     const char *arg_list
+)
+{
+    sar_scene_struct *scene;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    sar_object_struct *obj_ptr;
+    char **strv;
+    int new_obj_num = -1, strc = 0, i, j;
+    float height_m, heading_degrees, pitch_degrees, bank_degrees;
+    char *obj_name = NULL;
+
+#define DELETECURRENTOBJECTASNEEDED			\
+/* Shall the new object replace the current one? */	\
+if(obj_num >= 0)					\
+{							\
+    /* Unlink current object from player object */	\
+    scn_ed->cur_obj_num = -1;				\
+							\
+    ScnEditDeleteObject(core_ptr, obj_num);		\
+}
+
+    if(arg_list == NULL)
+	return -1;
+
+    scene = core_ptr->scene;
+    if(scene == NULL)
+	return -1;
+
+    if(scn_ed == NULL)
+	return -1;
+
+     /* Parse argument */
+    strv = strexp(arg_list, &strc);
+
+    if(strc == 0)
+	return -1;
+
+    /* Will this object be deleted then reloaded? */
+    if(obj_num >= 0)
+    {
+	obj_ptr = core_ptr->object[obj_num];
+
+	/* Save object name */
+	if(obj_ptr != NULL)
+	    obj_name = STRDUP(obj_ptr->name);
+    }
+
+    /* Load the new object.
+     * Note: new object number is always the first free number found in the
+     * object list, so it is not guaranteed that this number will be equal
+     * to the last deleted object number, especially if one or more objects
+     * have been deleted before new object creation.
+     */
+
+    switch(type)
+    {
+	case SAR_OBJ_TYPE_GARBAGE:
+	    new_obj_num = -1;
+	    break;
+
+	case SAR_OBJ_TYPE_STATIC:
+	case SAR_OBJ_TYPE_AUTOMOBILE:
+	case SAR_OBJ_TYPE_WATERCRAFT:
+	case SAR_OBJ_TYPE_AIRCRAFT:
+	    if(type == SAR_OBJ_TYPE_AIRCRAFT)
+	    {
+		/*
+		 * When I tried, aircraft model was successfully loaded but it
+		 * was positionned at 0,0,0 and not linked to the player
+		 * position as expected, and its heading follows the player
+		 * position dynamically.
+		 * Even if it can work with some code modifications, I think
+		 * that it is a bad idea to allow to load a "flyable" aircraft
+		 * because it will need a lot of memory for a static object.
+		 */
+		SARMessageAdd(scene,
+"Sorry: adding a \"flyable\" aircraft as a scenery static object is not permitted."
+		);
+		new_obj_num = -1;
+		break;
+	    }
+
+	    if(!strcmp(strv[0], "(null)"))
+	    {
+		new_obj_num = -1;
+		break;
+	    }
+
+	    DELETECURRENTOBJECTASNEEDED
+	    /* Create a new object */
+	    new_obj_num = SARObjNew(
+		scene, &core_ptr->object, &core_ptr->total_objects,
+		type
+	    );
+	    if(new_obj_num < 0)
+		break;
+
+	    /* Object loading fails? */
+	    if(SARObjLoadFromFile(core_ptr, new_obj_num, strv[0]) < 0)
+	    {
+		char *s = (char *)malloc(S_LENGTH * sizeof(char));
+		snprintf(s, S_LENGTH, "Can't load '%s' model.",
+			strv[0]
+		    );
+		SARMessageAdd(scene, (s));
+		free(s);
+
+		SARObjDelete(
+		    core_ptr,
+		    &core_ptr->object,
+		    &core_ptr->total_objects,
+		    new_obj_num
+		);
+
+		new_obj_num = -1;
+	    }
+	    else
+	    {
+		/* Object loading successfull */
+	    }
+	    break;
+
+	case SAR_OBJ_TYPE_RUNWAY:
+	    sar_parm_new_runway_struct *p_new_runway;
+
+	    /* Not enough parameters? */
+	    if(strc < 10)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Not enough parameters for runway.");
+		break;
+	    }
+
+	    p_new_runway = malloc(sizeof(sar_parm_new_runway_struct));
+	    if(p_new_runway == NULL)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Can't allocate memory for runway structure.");
+		break;
+	    }
+	    else
+	    {
+		/* Set structure type */
+		p_new_runway->type = SAR_PARM_NEW_RUNWAY;
+	    }
+
+	    /* Parse runway values:
+	     * <range> <length> <width> <surface> <dashes> <edge_light_spacing>
+	     * <north_label> <south_label> <north_displaced_threshold>
+	     * <south_displaced_threshold>
+	     */
+
+	    p_new_runway->range = (float)MAX(ATOF(strv[0]), 1000); /* Visual range in meters */
+
+	    /* Size (in meters) can't be less that the smallest runway in the world */
+	    p_new_runway->length = (float)MAX(ATOF(strv[1]), 122.0);
+	    p_new_runway->width = (float)MAX(ATOF(strv[2]), 6.0);
+
+	    p_new_runway->surface_type =
+		(sar_runway_surface_type)((ATOI(strv[3]) >= 0 && ATOI(strv[3]) < 4) ?
+					    ATOI(strv[3]) : SAR_RUNWAY_SURFACE_CONCRETE);
+	    p_new_runway->dashes = ATOI(strv[4]); /* Number of dashes (0 for none) */
+	    p_new_runway->edge_light_spacing = ATOF(strv[5]); /* In meters (0.0 for none) */
+	    p_new_runway->north_label = strv[6];
+	    p_new_runway->south_label = strv[7];
+	    p_new_runway->north_displaced_threshold = ATOF(strv[8]);
+	    p_new_runway->south_displaced_threshold = ATOF(strv[9]);
+
+	    /* Parse runway optional flags */
+
+	    p_new_runway->flags = 0;
+	    if(strc > 10)
+	    {
+		for(i = 10; i < strc; i++)
+		{
+		    if(!strcasecmp(strv[i], "thresholds"))
+			p_new_runway->flags |= SAR_RUNWAY_FLAG_THRESHOLDS;
+		    else if(!strcasecmp(strv[i], "borders"))
+			p_new_runway->flags |= SAR_RUNWAY_FLAG_BORDERS;
+		    else if(!strcasecmp(strv[i], "td_markers") ||
+			    !strcasecmp(strv[i], "tdmarkers"))
+			p_new_runway->flags |= SAR_RUNWAY_FLAG_TD_MARKERS;
+		    else if(!strcasecmp(strv[i], "midway_markers") ||
+			    !strcasecmp(strv[i], "midwaymarkers"))
+			p_new_runway->flags |= SAR_RUNWAY_FLAG_MIDWAY_MARKERS;
+		    else if(!strcasecmp(strv[i], "north_gs") ||
+			    !strcasecmp(strv[i], "northgs"))
+			p_new_runway->flags |= SAR_RUNWAY_FLAG_NORTH_GS;
+		    else if(!strcasecmp(strv[i], "south_gs") ||
+			    !strcasecmp(strv[i], "southgs"))
+			p_new_runway->flags |= SAR_RUNWAY_FLAG_SOUTH_GS;
+		}
+	    }
+
+	    DELETECURRENTOBJECTASNEEDED
+	    new_obj_num = SARObjLoadRunway(core_ptr, scene, p_new_runway);
+
+	    if(new_obj_num < 0)
+		SARMessageAdd(scene, "Can't create runway.");
+
+	    free(p_new_runway);
+	    break;
+
+	case SAR_OBJ_TYPE_HELIPAD:
+	    sar_parm_new_helipad_struct *p_new_helipad;
+	    /* Not enough parameters for a without ref_object helipad? */
+	    if(strc < 10)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Not enough parameters for helipad.");
+		break;
+	    }
+	    /* Not enough parameters? */
+	    else if(strc > 10 && strc < 17)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Not enough parameters for a referenced helipad.");
+		break;
+	    }
+	    /* Too much parameters? */
+	    else if(strc > 17)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Too much parameters for a referenced helipad.");
+		break;
+	    }
+
+	    p_new_helipad = malloc(sizeof(sar_parm_new_helipad_struct));
+	    if(p_new_helipad == NULL)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Can't allocate memory for helipad structure.");
+		break;
+	    }
+	    else
+	    {
+		/* Set structure type */
+		p_new_helipad->type = SAR_PARM_NEW_HELIPAD;
+	    }
+
+	    /* Parse helipad mandatory values:
+	     * <style> <length> <width> <recession> <label>
+	     */
+	    if(!strcasecmp(strv[0], SAR_HELIPAD_STYLE_DEFAULT_S))
+		p_new_helipad->style = STRDUP(SAR_HELIPAD_STYLE_DEFAULT_S);
+	    else if(!strcasecmp(strv[0], SAR_HELIPAD_STYLE_STANDARD_S))
+		p_new_helipad->style = STRDUP(SAR_HELIPAD_STYLE_STANDARD_S);
+	    else if(!strcasecmp(strv[0], SAR_HELIPAD_STYLE_GROUND_PAVED_S))
+		p_new_helipad->style = STRDUP(SAR_HELIPAD_STYLE_GROUND_PAVED_S);
+	    else if(!strcasecmp(strv[0], SAR_HELIPAD_STYLE_GROUND_BARE_S))
+		p_new_helipad->style = STRDUP(SAR_HELIPAD_STYLE_GROUND_BARE_S);
+	    else if(!strcasecmp(strv[0], SAR_HELIPAD_STYLE_BUILDING_S))
+		p_new_helipad->style = STRDUP(SAR_HELIPAD_STYLE_BUILDING_S);
+	    else if(!strcasecmp(strv[0], SAR_HELIPAD_STYLE_VEHICLE_S))
+		p_new_helipad->style = STRDUP(SAR_HELIPAD_STYLE_VEHICLE_S);
+	    p_new_helipad->length = (float)MAX(ATOF(strv[1]), 2.0); /* Size (in meters) */
+	    p_new_helipad->width = (float)MAX(ATOF(strv[2]), 2.0);
+
+	    height_m = (float)SFMFeetToMeters((double)ATOF(strv[3]));
+	    p_new_helipad->recession = (height_m >= 0 ? height_m : 0);
+
+	    p_new_helipad->label = strv[4];
+
+	    /* Parse helipad mandatory flags:
+	     * <edge_lighting> <has_fuel> <has_repair> <has_drop_off>
+	     * <restarting_point>
+	     */
+	    p_new_helipad->flags = 0;
+	    for(i = 5; i < 10; i++)
+	    {
+		if(!strcasecmp(strv[i], "y") || !strcmp(strv[i], "1"))
+		    p_new_helipad->flags |= SAR_HELIPAD_FLAG_EDGE_LIGHTING;
+		if(!strcasecmp(strv[i], "y") || !strcmp(strv[i], "1"))
+		    p_new_helipad->flags |= SAR_HELIPAD_FLAG_FUEL;
+		if(!strcasecmp(strv[i], "y") || !strcmp(strv[i], "1"))
+		    p_new_helipad->flags |= SAR_HELIPAD_FLAG_REPAIR;
+		if(!strcasecmp(strv[i], "y") || !strcmp(strv[i], "1"))
+		    p_new_helipad->flags |= SAR_HELIPAD_FLAG_DROPOFF;
+		if(!strcasecmp(strv[i], "y") || !strcmp(strv[i], "1"))
+		    p_new_helipad->flags |= SAR_HELIPAD_FLAG_RESTART_POINT;
+	    }
+
+	    /* Helipad reference object (if any) */
+	    if(strc > 10)
+	    {
+		/* Parse helipad optional reference object values */
+		p_new_helipad->ref_obj_name = strv[10];
+		p_new_helipad->ref_offset.x = ATOF(strv[11]);
+		p_new_helipad->ref_offset.y = ATOF(strv[12]);
+		height_m = (float)SFMFeetToMeters((double)ATOF(strv[13]));
+		p_new_helipad->ref_offset.z = height_m;
+
+		heading_degrees = ATOF(strv[14]);
+		pitch_degrees = ATOF(strv[15]);
+		bank_degrees = ATOF(strv[16]);
+		p_new_helipad->ref_dir.heading = (float)SFMDegreesToRadians((double)heading_degrees);
+		p_new_helipad->ref_dir.pitch = (float)SFMDegreesToRadians((double)pitch_degrees);
+		p_new_helipad->ref_dir.bank = (float)SFMDegreesToRadians((double)bank_degrees);
+	    }
+	    else
+		p_new_helipad->ref_obj_name = NULL;
+
+	    DELETECURRENTOBJECTASNEEDED
+	    new_obj_num = SARObjLoadHelipad(core_ptr, scene, p_new_helipad);
+
+	    if(new_obj_num < 0)
+		SARMessageAdd(scene, "Can't create helipad.");
+
+	    free(p_new_helipad);
+	    break;
+
+	case SAR_OBJ_TYPE_HUMAN:
+	    sar_parm_new_human_struct *p_new_human;
+
+	    /* Not enough parameters? */
+	    if(strc < 1)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Not enough parameters for human.");
+		break;
+	    }
+
+	    p_new_human = malloc(sizeof(sar_parm_new_human_struct));
+	    if(p_new_human == NULL)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Can't allocate memory for human structure.");
+		break;
+	    }
+	    else
+	    {
+		/* Set structure type */
+		p_new_human->type = SAR_PARM_NEW_HUMAN;
+	    }
+
+	    /* Parse human mandatory value: <type_name> */
+	    p_new_human->type_name = strv[0];
+
+	    /* Parse human optional flags ans values:
+	     * <need_rescue> <sit_up> <sit_down> <sitting> <lying> <alert>
+	     * <aware> <in_water> <on_stretcher> <assisted n type_name(s)>
+	     */
+	    p_new_human->flags = 0;
+	    p_new_human->assisting_humans = 0;
+	    i = 1;
+	    while(i < strc)
+	    {
+		if(!strcasecmp(strv[i], "need_rescue"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_NEED_RESCUE;
+		else if(!strcasecmp(strv[i], "sit_up"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_SIT_UP;
+		else if(!strcasecmp(strv[i], "sit_down"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_SIT_DOWN;
+		else if(!strcasecmp(strv[i], "sitting"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_SIT;
+		else if(!strcasecmp(strv[i], "lying"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_LYING;
+		else if(!strcasecmp(strv[i], "alert"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_ALERT;
+		else if(!strcasecmp(strv[i], "aware"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_AWARE;
+		else if(!strcasecmp(strv[i], "in_water"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_IN_WATER;
+		else if(!strcasecmp(strv[i], "on_stretcher"))
+		    p_new_human->flags |= SAR_HUMAN_FLAG_ON_STRETCHER;
+		else if(!strcasecmp(strv[i], "assisted"))
+		{
+		    int assistants;
+
+		    i++;
+		    assistants = ATOI(strv[i]);
+		    p_new_human->assisting_humans = assistants;
+		    for(j = 0; j < assistants; j++)
+		    {
+			i++;
+
+			p_new_human->assisting_human_preset_name[j] = STRDUP(strv[i]);
+			if(i >= strc)
+			{
+			    SARMessageAdd(scene, "Missing assistant(s) name(s).");
+			    break;
+			}
+		    }
+		    for(; j < SAR_ASSISTING_HUMANS_MAX; j++)
+			p_new_human->assisting_human_preset_name[j] = NULL;
+		}
+		i++;
+	    }
+
+	    DELETECURRENTOBJECTASNEEDED
+	    new_obj_num = SARObjLoadHuman(core_ptr, scene, p_new_human);
+
+	    if(new_obj_num < 0)
+	    {
+		SARMessageAdd(scene, "Can't create human.");
+	    }
+	    else
+	    {
+		/* Set human z positon a little bit higher. If not done, if
+		 * human was on an elevated ground surface (for example on a
+		 * building roof), he will pass though this ground and fall
+		 * until he touches the earth ground.
+		 */
+		scn_ed->cur_obj_pos.z += 0.05;
+	    }
+
+	    free(p_new_human);
+	    break;
+
+	case SAR_OBJ_TYPE_SMOKE:
+	    sar_parm_new_smoke_struct *p_new_smoke;
+
+	    /* Not enough parameters? */
+	    if(strc < 10)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Not enough parameters for smoke.");
+		break;
+	    }
+	    /* Too much parameters? */
+	    else if(strc > 10)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Too much parameters for smoke.");
+		break;
+	    }
+
+	    p_new_smoke = malloc(sizeof(sar_parm_new_smoke_struct));
+	    if(p_new_smoke == NULL)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Can't allocate memory for smoke structure.");
+		break;
+	    }
+	    else
+	    {
+		/* Set structure type */
+		p_new_smoke->type = SAR_PARM_NEW_SMOKE;
+	    }
+
+	    /* Parse smoke values:
+	     * <x_offset> <y_offset> <z_offset> <r_st> <r_max> <r_rate>
+	     * <hide@max> <respawn_int> <units> <color_code>
+	     */
+	    p_new_smoke->offset.x = ATOF(strv[0]);
+	    p_new_smoke->offset.y = ATOF(strv[1]);
+	    p_new_smoke->offset.z = ATOF(strv[2]);
+	    p_new_smoke->radius_start = ATOF(strv[3]);
+	    p_new_smoke->radius_max = ATOF(strv[4]);
+	    p_new_smoke->radius_rate = ATOF(strv[5]);
+	    p_new_smoke->hide_at_max = ATOI(strv[6]);
+	    p_new_smoke->respawn_int = (time_t)ATOL(strv[7]);
+	    p_new_smoke->total_units = ATOI(strv[8]);
+	    p_new_smoke->color_code = ATOI(strv[9]);
+
+	    DELETECURRENTOBJECTASNEEDED
+	    new_obj_num = SARObjLoadSmoke(core_ptr, scene, p_new_smoke);
+
+	    if(new_obj_num < 0)
+		SARMessageAdd(scene, "Can't create smoke.");
+
+	    free(p_new_smoke);
+	    break;
+
+	case SAR_OBJ_TYPE_FIRE:
+	    sar_parm_new_fire_struct *p_new_fire;
+
+	    /* Not enough parameters? */
+	    if(strc < 2)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Not enough parameters for fire.");
+		break;
+	    }
+	    /* Too much parameters? */
+	    else if(strc > 2)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Too much parameters for fire.");
+		break;
+	    }
+
+	    p_new_fire = malloc(sizeof(sar_parm_new_fire_struct));
+	    if(p_new_fire == NULL)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Can't allocate memory for fire structure.");
+		break;
+	    }
+	    else
+	    {
+		/* Set structure type */
+		p_new_fire->type = SAR_PARM_NEW_FIRE;
+	    }
+
+	    /* Parse fire values: <radius> <height> */
+	    p_new_fire->radius = ATOF(strv[0]);
+	    height_m = (float)SFMFeetToMeters((double)ATOF(strv[1]));
+	    p_new_fire->height = height_m;
+
+	    DELETECURRENTOBJECTASNEEDED
+	    new_obj_num = SARObjLoadFire(core_ptr, scene, p_new_fire);
+
+	    if(new_obj_num < 0)
+		SARMessageAdd(scene, "Can't create fire.");
+
+	    free(p_new_fire);
+	    break;
+
+	case SAR_OBJ_TYPE_PREMODELED:
+	    sar_parm_new_premodeled_struct *p_new_premodeled;
+	    Boolean okay;
+	    char s[S_LENGTH];
+
+	    /* Parameters number will be checked later by premodeled type */
+
+	    p_new_premodeled = malloc(sizeof(sar_parm_new_premodeled_struct));
+	    if(p_new_premodeled == NULL)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene, "Can't allocate memory for premodeled structure.");
+		break;
+	    }
+	    else
+	    {
+		/* Set structure type */
+		p_new_premodeled->type = SAR_PARM_NEW_PREMODELED;
+	    }
+
+	    /* Premodeled type value ok? */
+	    if(!strcasecmp(strv[0], SAR_PREMODELED_POWER_TRANSMISSION_TOWER_S) ||
+		!strcasecmp(strv[0], SAR_PREMODELED_RADIO_TOWER_S) ||
+		!strcasecmp(strv[0], SAR_PREMODELED_TOWER_S) ||
+		!strcasecmp(strv[0], SAR_PREMODELED_CONTROL_TOWER_S) ||
+		!strcasecmp(strv[0], SAR_PREMODELED_BUILDING_S)
+	    )
+	    {
+		p_new_premodeled->model_type = strv[0];
+	    }
+	    else
+	    {
+		new_obj_num = -1;
+		free(p_new_premodeled);
+		p_new_premodeled = NULL;
+		SARMessageAdd(scene, "Unknown premodeled type.");
+		break;
+	    }
+
+	    /* Check parameters number by premodeled type: */
+	    okay = False;
+	    if((!strcasecmp(strv[0], SAR_PREMODELED_POWER_TRANSMISSION_TOWER_S) ||
+		!strcasecmp(strv[0], SAR_PREMODELED_RADIO_TOWER_S) ||
+		!strcasecmp(strv[0], SAR_PREMODELED_TOWER_S)) &&
+		strc == 4
+	    )
+		okay = True;
+	    else if(!strcasecmp(strv[0], SAR_PREMODELED_CONTROL_TOWER_S) && strc == 7)
+		okay = True;
+	    else if(!strcasecmp(strv[0], SAR_PREMODELED_BUILDING_S) && strc == 8)
+		okay = True;
+	    if(okay == False)
+	    {
+		new_obj_num = -1;
+		SARMessageAdd(scene,
+		    "Too much or not enough parameters for premodeled."
+		    );
+		break;
+	    }
+
+	    /* Check textures availability */
+	    okay = True;
+	    if(!strcasecmp(strv[0], SAR_PREMODELED_CONTROL_TOWER_S))
+	    {
+		for(i = 5; i < 7; i++)
+		    if(SARGetTextureRefNumberByName(scene, (const char *)strv[i]) < 0)
+		    {
+			snprintf(s, S_LENGTH,
+				"Texture '%s' not loaded in this scenery.",
+				strv[i]
+				);
+			SARMessageAdd(scene, s);
+			okay = False;
+		    };
+	    }
+	    else if(!strcasecmp(strv[0], SAR_PREMODELED_BUILDING_S))
+	    {
+		for(i = 5; i < 8; i++)
+		    if(SARGetTextureRefNumberByName(scene, (const char *)strv[i]) < 0)
+		    {
+			snprintf(s, S_LENGTH,
+				"Texture '%s' not loaded in this scenery.",
+				strv[i]
+				);
+			SARMessageAdd(scene, s);
+			okay = False;
+		    };
+	    }
+	    if(okay == False)
+	    {
+		new_obj_num = -1;
+		break;
+	    }
+
+	    /* Set premodeled type arguments number and arguments values */
+	    p_new_premodeled->argc = strc - 1;
+	    p_new_premodeled->argv = malloc(p_new_premodeled->argc * sizeof(char **));
+	    for(i = 0; i < p_new_premodeled->argc; i++)
+		p_new_premodeled->argv[i] = strv[i + 1];
+
+	    DELETECURRENTOBJECTASNEEDED
+	    new_obj_num = SARObjPremodeledNew(
+		core_ptr, scene,
+		strv[0],
+		p_new_premodeled->argc,
+		p_new_premodeled->argv
+	    );
+
+	    if(new_obj_num < 0)
+		SARMessageAdd(scene, "Can't create premodeled.");
+
+	    free(p_new_premodeled);
+	    p_new_premodeled = NULL;
+	    break;
+
+	default:
+	    SARMessageAdd(scene, "Unknown model type.");
+	    break;
+    }
+
+    if(new_obj_num < 0)
+    {
+	scn_ed->cur_obj_type = SAR_OBJ_TYPE_GARBAGE;
+	free(scn_ed->cur_obj_arg);
+	scn_ed->cur_obj_arg = NULL;
+
+	return new_obj_num;
+    }
+    else
+    {
+	scn_ed->cur_obj_type = type;
+
+	char *s = STRDUP(arg_list);
+	free(scn_ed->cur_obj_arg);
+	scn_ed->cur_obj_arg = STRDUP(s);
+	free(s);
+
+	/* As it links current object to player object, let scn_ed->cur_obj_num
+	 * be set by calling function.
+	 */
+    }
+
+    strlistfree(strv, strc);
+
+    /* Was this object deleted then reloaded? */
+    if(obj_num >= 0)
+    {
+	int child_obj_num[MAXCHILDREN + 1], child_counter = 0;
+
+	obj_ptr = core_ptr->object[new_obj_num];
+
+	/* Restore object name */
+	obj_ptr->name = obj_name;
+
+	/* Is this object named? */
+	if(obj_ptr->name != NULL)
+	{
+	    editor_modified_object_struct *modification;
+	    editor_object_data_struct *editor_obj_data;
+
+	    /* Iterate through scene objects */
+	    for(i = 0; i < scn_ed->total_objects; i++)
+	    {
+		modification = scn_ed->modification_list[i];
+		editor_obj_data = modification->obj_data_new;
+
+		/* Referenced? */
+		if(editor_obj_data->ref_obj_name != NULL &&
+		    !strcmp(editor_obj_data->ref_obj_name, obj_ptr->name)
+		)
+		{
+		    if(child_counter < MAXCHILDREN)
+		    {
+			/* Add this object to children list */
+			child_obj_num[child_counter++] = i;
+		    }
+		    else
+			break;
+		}
+	    }
+	}
+
+	for(i = 0; i < child_counter; i++)
+	{
+	    sar_object_helipad_struct *helipad = NULL;
+
+	    obj_ptr = core_ptr->object[child_obj_num[i]];
+
+	    if((helipad = SAR_OBJ_GET_HELIPAD(obj_ptr)) != NULL)
+	    {
+		helipad->ref_object = obj_num;
+		helipad->flags |= SAR_HELIPAD_FLAG_REF_OBJECT;
+		helipad->flags |= SAR_HELIPAD_FLAG_FOLLOW_REF_OBJECT;
+	    }
+	}
+    }
+
+    editor_modified_object_struct *modification;
+
+    /* Not enough entries in modification_list? */
+    if((scn_ed->total_objects - 1) < new_obj_num)
+    {
+	editor_object_data_struct *editor_obj_data;
+
+	(scn_ed->total_objects)++;
+
+	scn_ed->modification_list = realloc(
+			scn_ed->modification_list,
+			scn_ed->total_objects *
+			sizeof(editor_modified_object_struct *)
+		    );
+	if(scn_ed->modification_list == NULL)
+	{
+	    fprintf(stderr, "%s:%d: Memory allocation error.\n",
+		    __FILE__, __LINE__);
+	    return -1;
+	}
+	modification = malloc(sizeof(editor_modified_object_struct));
+	if(modification == NULL)
+	{
+	    fprintf(stderr, "%s:%d: Memory allocation error.\n",
+		    __FILE__, __LINE__);
+	    return -1;
+	}
+	scn_ed->modification_list[new_obj_num] = modification;
+	modification->flags = 0;
+	modification->obj_data_original = NULL;
+	editor_obj_data = EditorObjectDataNew();
+	modification->obj_data_new = editor_obj_data;
+    }
+
+    return new_obj_num;
+
+#undef DELETECURRENTOBJECTASNEEDED
+}
+
+
+/*
+ * Delete an object and its children (if any).
+ *
+ * Return number of objects deleted.
+ */
+static int ScnEditDeleteObject(sar_core_struct *core_ptr, int obj_num)
+{
+    int deleted = 0, i, child_obj_num[MAXCHILDREN + 1], child_counter = 0;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    sar_object_struct *obj_ptr;
+    editor_object_data_struct *editor_obj_data;
+    editor_modified_object_struct *modification;
+
+    obj_ptr = ((obj_num < 0) ? NULL : (*&core_ptr->object)[obj_num]);
+
+    if(obj_ptr == NULL)
+	return 0;
+
+    /* Is this object named? */
+    if(obj_ptr->name != NULL)
+    {
+	/* Check if deleted object is referenced by another object */
+
+	for(i = 0; i < scn_ed->total_objects; i++)
+	{
+	    modification = scn_ed->modification_list[i];
+	    editor_obj_data = modification->obj_data_new;
+
+	    /* Deleted object referenced by another one? */
+	    if(editor_obj_data->ref_obj_name != NULL &&
+		!strcmp(editor_obj_data->ref_obj_name, obj_ptr->name)
+	    )
+	    {
+		if(child_counter < MAXCHILDREN)
+		{
+		    /* Add object number to children list */
+		    child_obj_num[child_counter++] = i;
+		}
+		else
+		    break;
+	    }
+	}
+    }
+
+    /* Delete each child object (if any) */
+    for(i = 0; i < child_counter; i++)
+    {
+	SARObjDelete(
+	    core_ptr,
+	    &core_ptr->object,
+	    &core_ptr->total_objects,
+	    child_obj_num[i]
+	);
+	deleted++;
+
+	modification = scn_ed->modification_list[child_obj_num[i]];
+	editor_obj_data = modification->obj_data_new;
+	EditorObjectDataReinit(editor_obj_data);
+    }
+
+    /* Delete picked object */
+    SARObjDelete(
+	core_ptr,
+	&core_ptr->object,
+	&core_ptr->total_objects,
+	obj_num
+    );
+    deleted++;
+
+    modification = scn_ed->modification_list[obj_num];
+    editor_obj_data = modification->obj_data_new;
+    EditorObjectDataReinit(editor_obj_data);
+
+    return deleted;
+}
+
+
+/*
+ * Copy an object and its children (if any)
+ *
+ * New object will be created with given type and arg_list parameters.
+ *
+ * Return newly created object number or a negative value on error.
+ */
+static int ScnEditCopyObjectWithChildren(sar_core_struct *core_ptr,
+			     int original_obj_num, sar_obj_type type,
+			     const char *arg_list
+)
+{
+    sar_scene_struct *scene = core_ptr->scene;
+    int i, child_obj_num[MAXCHILDREN + 1], child_counter = 0;
+    sar_object_struct *original_obj_ptr, *new_obj_ptr;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    editor_modified_object_struct *modification;
+    editor_object_data_struct *editor_obj_data;
+    sar_object_helipad_struct *helipad = NULL;
+    sar_obj_type parent_type;
+    char *parent_arg_list;
+    char *s = (char *)malloc(S_LENGTH * sizeof(char));
+
+    original_obj_ptr = core_ptr->object[original_obj_num];
+    if(original_obj_ptr == NULL)
+	return -1;
+
+    /* Save parent type and arguments */
+    parent_type = type;
+    parent_arg_list = strdup(arg_list);
+
+    /* Create then load the (parent) new object */
+    int new_obj_num = ScnEditLoadObject(
+		core_ptr,
+		-1,
+		type,
+		arg_list
+	    );
+
+    new_obj_ptr = core_ptr->object[new_obj_num];
+    if(new_obj_ptr == NULL)
+	return -2;
+
+    /* Was original object named? */
+    if(original_obj_ptr->name != NULL)
+    {
+	/* Generate a new name */
+	char *obj_new_name = ScnEditObjectRename(core_ptr, original_obj_ptr->name);
+
+	/* Update SarII object name */
+
+	free(new_obj_ptr->name);
+	new_obj_ptr->name = STRDUP(obj_new_name);
+	free(obj_new_name);
+
+	/* Update editor object name */
+
+	modification = scn_ed->modification_list[new_obj_num];
+	if(modification->obj_data_new != NULL)
+	    editor_obj_data = modification->obj_data_new;
+	else
+	    editor_obj_data = modification->obj_data_original;
+
+	free(editor_obj_data->name);
+	editor_obj_data->name = STRDUP(new_obj_ptr->name);
+
+	/* Check if picked object was referenced by another one */
+
+	for(i = 0; i < scn_ed->total_objects; i++)
+	{
+	    modification = scn_ed->modification_list[i];
+	    editor_obj_data = modification->obj_data_new;
+
+	    /* Referenced? */
+	    if(editor_obj_data->ref_obj_name != NULL &&
+		!strcmp(editor_obj_data->ref_obj_name, original_obj_ptr->name)
+	    )
+	    {
+		if(child_counter < MAXCHILDREN)
+		{
+		    /* Add object number to children list */
+		    child_obj_num[child_counter++] = i;
+		}
+		else
+		    break;
+	    }
+	}
+    }
+
+    /* For each child objects (if any) */
+    for(i = 0; i < child_counter; i++)
+    {
+	sar_object_struct *original_child_obj_ptr, *copied_child_obj_ptr;
+	int copied_child_obj_num;
+
+	original_child_obj_ptr = core_ptr->object[child_obj_num[i]];
+	if(original_child_obj_ptr == NULL)
+	    continue;
+
+	type = original_child_obj_ptr->type;
+
+	/* Create a new temporary object data structure */
+	editor_obj_data = EditorObjectDataNew();
+
+	/* Fill it with original child data */
+	EditorObjectDataStructFill(core_ptr, editor_obj_data, child_obj_num[i]);
+
+	/* Replace original reference object name by the new one */
+	free(editor_obj_data->ref_obj_name);
+	editor_obj_data->ref_obj_name = STRDUP(new_obj_ptr->name);
+
+	/* Prepare parameters string */
+	strncpy(s, DoParametersLineFromEditorObjectData(editor_obj_data), S_LENGTH);
+
+	EditorObjectDataFree(editor_obj_data);
+
+	/* Create then load a new object */
+	copied_child_obj_num = ScnEditLoadObject(
+		    core_ptr,
+		    -1,
+		    type,
+		    s
+		);
+
+	if(copied_child_obj_num >= 0)
+	    EDITOROBJECTSETDATA(copied_child_obj_num)
+
+	copied_child_obj_ptr = core_ptr->object[copied_child_obj_num];
+
+	if(type == SAR_OBJ_TYPE_HELIPAD)
+	{
+	    helipad = SAR_OBJ_GET_HELIPAD(copied_child_obj_ptr);
+
+	    /* Has helipad a reference object? */
+	    if(helipad != NULL)
+	    {
+		/* Set reference object */
+		helipad->ref_object = new_obj_num;
+
+		/* Realize new object relative position */
+		SARSimWarpObjectRelative(
+			scene, copied_child_obj_ptr,
+			core_ptr->object, core_ptr->total_objects,
+			helipad->ref_object,
+			&helipad->ref_offset,
+			&helipad->ref_dir
+		    );
+
+		/* Set flags */
+		helipad->flags |= SAR_HELIPAD_FLAG_REF_OBJECT;
+		helipad->flags |= SAR_HELIPAD_FLAG_FOLLOW_REF_OBJECT;
+	    }
+	}
+
+
+    }
+
+    /* Had this object children? */
+    if(child_counter > 0)
+    {
+	/* Restore parent type and arguments because ScnEditLoadObject() had
+	 * set them to the last loaded children type and args.
+	 */
+	scn_ed->cur_obj_type = parent_type;
+	free(scn_ed->cur_obj_arg);
+	scn_ed->cur_obj_arg = strdup(parent_arg_list);
+    }
+
+    free(parent_arg_list);
+
+    return new_obj_num;
+}
+
+
+/*
+ *	Return the pointer to the string wich contains the name of the texture
+ *	referenced by texture index.
+ * 	Return NULL if texture index or texture name not found.
+ */
+static char *ScnEditGetTextureNamePtrByRef(
+	sar_scene_struct *scene, int tex_index
+)
+{
+	int i, total;
+	v3d_texture_ref_struct *t, **ptr;
+
+	if((scene == NULL))
+	    return NULL;
+
+	ptr = scene->texture_ref;
+	total = scene->total_texture_refs;
+
+	for(i = 0; i < total; i++)
+	{
+	    t = ptr[i];
+	    if((t != NULL) ? (t->name == NULL) : 1)
+		continue;
+
+	    if(i == tex_index)
+	    {
+		if(t->name != NULL)
+		    return t->name;
+		else
+		    return NULL;
+	    }
+	}
+	return NULL;
+}
+
+
+/*
+ *	Try to retrieve the human preset name of the given human
+ * 	structure, then return a string which contains the preset
+ * 	name or NULL if no correspondence was found.
+ *
+ * 	Note: needed because SarII don't store the human preset name
+ *	in the human structure but only the necessary data (gender,
+ *	height, mass, colors, ...).
+ */
+static char *ScnEditGetHumanPresetNameByHumanPtr(
+	const sar_core_struct *core_ptr, sar_object_human_struct *human
+)
+{
+	char *human_preset_name = NULL;
+	sar_human_data_entry_struct *entry;
+	sar_human_data_struct *hd = core_ptr->human_data;
+	sar_color_struct *ent_color, *hum_color;
+	Boolean colors_matches, gender_matches, found = False;
+	int i, j;
+
+	/* Iterate through all human presets */
+	for(i = 0; i < hd->total_presets; i++)
+	{
+	    found = False;
+
+	    /* Get preset */
+	    entry = hd->preset[i];
+	    if(entry == NULL)
+		continue;
+
+	    /* First, check gender */
+	    gender_matches = False;
+	    if(((entry->preset_entry_flags & SAR_HUMAN_FLAG_GENDER_FEMALE) == SAR_HUMAN_FLAG_GENDER_FEMALE) &&
+		((human->flags & SAR_HUMAN_FLAG_GENDER_FEMALE) == SAR_HUMAN_FLAG_GENDER_FEMALE)
+	    )
+		gender_matches = True;
+	    else if(((entry->preset_entry_flags & SAR_HUMAN_FLAG_GENDER_FEMALE) != SAR_HUMAN_FLAG_GENDER_FEMALE) &&
+		((human->flags & SAR_HUMAN_FLAG_GENDER_FEMALE) != SAR_HUMAN_FLAG_GENDER_FEMALE)
+	    )
+		gender_matches = True;
+
+	    /* Gender mass and height matches? */
+	    if(gender_matches == True &&
+		entry->mass == human->mass &&
+		entry->height == human->height
+	    )
+	    {
+		/* Check colors */
+		colors_matches = True;
+		for(j = 0; j < SAR_HUMAN_COLORS_MAX; j++)
+		{
+		    ent_color = &entry->color[j];
+		    hum_color = &human->color[j];
+
+		    if(ent_color->r != hum_color->r ||
+			ent_color->g != hum_color->g ||
+			ent_color->b != hum_color->b ||
+			ent_color->a != hum_color->a
+		    )
+			colors_matches = False;
+		}
+
+		if(colors_matches == True && human->assisting_humans == 1)
+		{
+		    /* Gender, mass, height and color matches.
+		     * For backward compatibility, we must now check if
+		     * this human is the "default" human or if he is the
+		     * "victim_streatcher_assisted" human, because these both
+		     * humans have identical gender, mass, height and color.
+		     */
+
+		    /* Is this human the victim_streatcher_assisted one? */
+		    if(!strcmp(entry->name, "victim_streatcher_assisted"))
+			found = False;
+		    else
+			found = True;
+		}
+		else
+		    found = True;
+
+		if(found == True)
+		{
+		    human_preset_name = entry->name;
+		    break;
+		}
+	    }
+	}
+
+	if(found == False)
+	    human_preset_name = NULL;
+
+	return human_preset_name;
+}
+
+
+/*
+ * Generate then return a new unique name based on given old_name.
+ *
+ * Returned string must be freed by calling function and can be NULL.
+ *
+ * Examples:
+ *
+ * Given old name	Returned new name (if it doesn't already exist)
+ * abcd			abcd_01
+ * abcd_		abcd__01
+ * abcd_01		abcd_02
+ * abcd_123		abcd_123_01
+ * ab_cd		ab_cd_01
+ * abcd_01		abcd_05 (if abcd_02, abcd_03 and abcd_04 already exist)
+ */
+static char *ScnEditObjectRename(const sar_core_struct *core_ptr, char *old_name)
+{
+    char *last_underscore_ptr, *new_name_head, *new_name, *obj_name;
+    int i, counter, head_length;
+    sar_object_struct *obj_ptr;
+
+    if(old_name == NULL)
+	return NULL;
+
+    new_name = malloc((strlen(old_name) + 3 + 1) * sizeof(char));
+    last_underscore_ptr = strrchr(old_name, '_');
+
+    /* Is old_name tail '_nn' (nn = 00 to 99)?  */
+    if(last_underscore_ptr != NULL &&
+	strlen(last_underscore_ptr) == 3 &&
+	isdigit(last_underscore_ptr[1]) &&
+	isdigit(last_underscore_ptr[2])
+    )
+    {
+	/* Set the 'nn' value as counter initial value */
+	sscanf(++last_underscore_ptr, "%d", &counter);
+
+	/* Increment counter */
+	counter++;
+
+	head_length = (strlen(old_name) - 3) + 1;
+	new_name_head = malloc(head_length * sizeof(char));
+	snprintf(new_name_head, head_length, "%s", old_name);
+    }
+    else
+    {
+	counter = 1;
+	new_name_head = strdup(old_name);
+    }
+
+    /* From here, the new_name_head string and the counter value are set */
+
+    sprintf(new_name, "%s_%02d", new_name_head, counter);
+
+    /*
+     * Check if new name already exist, then if yes,
+     * increment counter then re-check.
+     */
+
+    i = 0;
+    for(; i < core_ptr->total_objects; i++)
+    {
+	obj_ptr = core_ptr->object[i];
+	if(obj_ptr == NULL)
+	    continue;
+
+	obj_name = obj_ptr->name;
+	if(obj_name == NULL)
+	    continue;
+
+	/* Matching name found? */
+	if(obj_name != NULL && !strcmp(new_name, obj_name))
+	{
+	    sprintf(new_name, "%s_%02d", new_name_head, ++counter);
+	    i = 0;
+	}
+    }
+    free(new_name_head);
+
+    return new_name;
+}
+
+
+/*
+ * Re-initialize a data structure created by EditorObjectDataNew():
+ * - free all allocated strings (if any)
+ * - set all values to 0
+ * - set type to SAR_OBJ_TYPE_GARBAGE
+ *
+ * Return a non-zero value on error.
+ */
+int EditorObjectDataReinit(editor_object_data_struct *object_data)
+{
+    int i;
+
+    if(object_data == NULL)
+	return 1;
+
+    free(object_data->type_s);
+    object_data->type_s = NULL;
+    free(object_data->name);
+    object_data->name = NULL;
+    free(object_data->ref_obj_name);
+    object_data->ref_obj_name = NULL;
+    free(object_data->style_s);
+    object_data->style_s = NULL;
+    free(object_data->label);
+    object_data->label = NULL;
+    free(object_data->type_name);
+    object_data->type_name = NULL;
+    free(object_data->need_rescue_s);
+    object_data->need_rescue_s = NULL;
+    free(object_data->sit_up_s);
+    object_data->sit_up_s = NULL;
+    free(object_data->sit_down_s);
+    object_data->sit_down_s = NULL;
+    free(object_data->sitting_s);
+    object_data->sitting_s = NULL;
+    free(object_data->lying_s);
+    object_data->lying_s = NULL;
+    free(object_data->alert_s);
+    object_data->alert_s = NULL;
+    free(object_data->aware_s);
+    object_data->aware_s = NULL;
+    free(object_data->in_water_s);
+    object_data->in_water_s = NULL;
+    free(object_data->on_stretcher_s);
+    object_data->on_stretcher_s = NULL;
+    free(object_data->assisted_s);
+    object_data->assisted_s = NULL;
+
+    for(i = 0; i < SAR_ASSISTING_HUMANS_MAX; i++)
+    {
+	free(object_data->assist_type_name[i]);
+	object_data->assist_type_name[i] = NULL;
+    }
+    free(object_data->human_displacement_dir_s);
+    object_data->human_displacement_dir_s = NULL;
+    free(object_data->file_name);
+    object_data->file_name = NULL;
+    free(object_data->pm_type_s);
+    object_data->pm_type_s = NULL;
+    free(object_data->walls_texture_s);
+    object_data->walls_texture_s = NULL;
+    free(object_data->walls_texture_night_s);
+    object_data->walls_texture_night_s = NULL;
+    free(object_data->roof_texture_s);
+    object_data->roof_texture_s = NULL;
+    free(object_data->surface_type_s);
+    object_data->surface_type_s = NULL;
+    free(object_data->north_label);
+    object_data->north_label = NULL;
+    free(object_data->south_label);
+    object_data->south_label = NULL;
+    free(object_data->has_thresholds_s);
+    object_data->has_thresholds_s = NULL;
+    free(object_data->has_borders_s);
+    object_data->has_borders_s = NULL;
+    free(object_data->has_td_markers_s);
+    object_data->has_td_markers_s = NULL;
+    free(object_data->has_midway_markers_s);
+    object_data->has_midway_markers_s = NULL;
+    free(object_data->has_north_gs_s);
+    object_data->has_north_gs_s = NULL;
+    free(object_data->has_south_gs_s);
+    object_data->has_south_gs_s = NULL;
+
+    /* Set all values to zero */
+    memset(object_data, 0, sizeof(editor_object_data_struct));
+
+    object_data->type = SAR_OBJ_TYPE_GARBAGE;
+
+    return 0;
+}
+
+
+/*
+ * Free a data structure created by EditorObjectDataNew().
+ * Return non-zero value on error.
+ */
+int EditorObjectDataFree(editor_object_data_struct *object_data)
+{
+    if(object_data == NULL)
+	return 1;
+
+    /* Clear object_data structure */
+    EditorObjectDataReinit(object_data);
+
+    free(object_data);
+    object_data = NULL;
+
+    return 0;
+}
+
+
+/*
+ * Return a string containing object type name.
+ * Return NULL on error.
+ */
+static const char* SceneObjectGetTypeName(sar_core_struct *core_ptr, int obj_num)
+{
+    const char *obj_type_name;
+    sar_object_struct *obj_ptr;
+
+    if(obj_num < 0)
+	return NULL;
+
+    obj_ptr = core_ptr->object[obj_num];
+    if(obj_ptr != NULL)
+    {
+	/* Get object type name */
+	switch(obj_ptr->type)
+	{
+	    case SAR_OBJ_TYPE_GARBAGE:
+		obj_type_name = SAR_OBJ_TYPE_GARBAGE_S;
+		break;
+	    case SAR_OBJ_TYPE_STATIC:
+		obj_type_name = SAR_OBJ_TYPE_STATIC_S;
+		break;
+
+	    case SAR_OBJ_TYPE_AUTOMOBILE:
+		obj_type_name = SAR_OBJ_TYPE_AUTOMOBILE_S;
+		break;
+
+	    case SAR_OBJ_TYPE_WATERCRAFT:
+		obj_type_name = SAR_OBJ_TYPE_WATERCRAFT_S;
+		break;
+
+	    case SAR_OBJ_TYPE_AIRCRAFT:
+		obj_type_name = SAR_OBJ_TYPE_AIRCRAFT_S;
+		break;
+
+	    case SAR_OBJ_TYPE_GROUND:
+		obj_type_name = SAR_OBJ_TYPE_GROUND_S;
+		break;
+
+	    case SAR_OBJ_TYPE_RUNWAY:
+		obj_type_name = SAR_OBJ_TYPE_RUNWAY_S;
+		break;
+
+	    case SAR_OBJ_TYPE_HELIPAD:
+		obj_type_name = SAR_OBJ_TYPE_HELIPAD_S;
+		break;
+
+	    case SAR_OBJ_TYPE_HUMAN:
+		obj_type_name = SAR_OBJ_TYPE_HUMAN_S;
+		break;
+
+	    case SAR_OBJ_TYPE_SMOKE:
+		obj_type_name = SAR_OBJ_TYPE_SMOKE_S;
+		break;
+
+	    case SAR_OBJ_TYPE_FIRE:
+		obj_type_name = SAR_OBJ_TYPE_FIRE_S;
+		break;
+
+	    case SAR_OBJ_TYPE_EXPLOSION:
+		obj_type_name = SAR_OBJ_TYPE_EXPLOSION_S;
+		break;
+
+	    case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+		obj_type_name = SAR_OBJ_TYPE_CHEMICAL_SPRAY_S;
+		break;
+
+	    case SAR_OBJ_TYPE_FUELTANK:
+		obj_type_name = SAR_OBJ_TYPE_FUELTANK_S;
+		break;
+
+	    case SAR_OBJ_TYPE_PREMODELED:
+		obj_type_name = SAR_OBJ_TYPE_PREMODELED_S;
+		break;
+
+	    default:
+		obj_type_name = "(unknown)";
+		break;
+	}
+	return obj_type_name;
+    }
+    else
+	return NULL;
+}
+
+
+/*
+ * Return a pointer to the object file name string (relative to current
+ * SAR_DEF_ENV_GLOBAL_DIR), or NULL if file name was not found.
+ */
+char *EditorGetObjectFileName(const sar_object_struct *obj_ptr)
+{
+    sar_visual_model_struct *vmodel = obj_ptr->visual_model;
+    char *file_name = NULL;
+
+    if(vmodel != NULL && vmodel->filename != NULL)
+    {
+	file_name = vmodel->filename + strlen(dname.global_data);
+	if(file_name[0] == '/')
+	    file_name++;
+    }
+
+    return file_name;
+}
+
+
+/*
+ * Allocate a new editor_object_data_struct structure
+ */
+editor_object_data_struct *EditorObjectDataNew(void)
+{
+    editor_object_data_struct *editor_obj_data;
+
+    editor_obj_data = calloc(1, sizeof(editor_object_data_struct));
+    if(editor_obj_data == NULL)
+	fprintf(stderr, "%s:%d: Memory allocation error.\n", __FILE__, __LINE__);
+
+    return editor_obj_data;
+}
+
+
+/*
+ * Fill an editor_object_data_struct structure.
+ *
+ * Any parameter added in this function must be added
+ * in the EditorObjectDataFree() function.
+ */
+int EditorObjectDataStructFill(
+    sar_core_struct *core_ptr,
+    editor_object_data_struct *editor_obj_data,
+    int obj_num
+)
+{
+    sar_scenery_editor_struct *scn_ed;
+    sar_object_runway_struct *runway = NULL;
+    sar_object_helipad_struct *helipad = NULL;
+    sar_object_human_struct *human = NULL;
+    sar_object_smoke_struct *smoke = NULL;
+    sar_object_fire_struct *fire = NULL;
+    sar_object_premodeled_struct *premodeled = NULL;
+    sar_object_struct *obj_ptr;
+    char *tex_ref_name = NULL;
+    int i;
+
+    scn_ed = core_ptr->in_game_editor;
+    if(scn_ed == NULL)
+	return -1;
+
+    if(editor_obj_data == NULL)
+	return -1;
+
+    if(obj_num < 0)
+	return obj_num;
+
+    obj_ptr = core_ptr->object[obj_num];
+    if(obj_ptr == NULL)
+	return -1;
+
+    /* Clear object_data structure */
+    EditorObjectDataReinit(editor_obj_data);
+
+    /* Set type */
+    editor_obj_data->type = obj_ptr->type;
+
+    /* Set object name */
+    editor_obj_data->name = STRDUP(obj_ptr->name);
+
+    /* Set object location */
+    memcpy(&editor_obj_data->pos, &obj_ptr->pos, sizeof(sar_position_struct));
+    /* Convert height unit */
+    editor_obj_data->pos.z =
+		(float)SFMMetersToFeet((double)editor_obj_data->pos.z);
+
+    /* Set object attitude */
+    memcpy(&editor_obj_data->dir, &obj_ptr->dir, sizeof(sar_direction_struct));
+    /* Convert radians to degrees */
+    editor_obj_data->dir.heading =
+		SFMRadiansToDegrees((double)editor_obj_data->dir.heading);
+    editor_obj_data->dir.pitch =
+		SFMRadiansToDegrees((double)editor_obj_data->dir.pitch);
+    editor_obj_data->dir.bank =
+		SFMRadiansToDegrees((double)editor_obj_data->dir.bank);
+
+    switch(editor_obj_data->type)
+    {
+	case SAR_OBJ_TYPE_GARBAGE:
+	    break;
+
+	case SAR_OBJ_TYPE_STATIC:
+	case SAR_OBJ_TYPE_AUTOMOBILE:
+	case SAR_OBJ_TYPE_WATERCRAFT:
+	case SAR_OBJ_TYPE_AIRCRAFT:
+	case SAR_OBJ_TYPE_GROUND:
+	    /* Set data structure type_s string value */
+	    switch(editor_obj_data->type)
+	    {
+		case SAR_OBJ_TYPE_STATIC:
+		    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_STATIC_S);
+		    break;
+		case SAR_OBJ_TYPE_AUTOMOBILE:
+		    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_AUTOMOBILE_S);
+		    break;
+		case SAR_OBJ_TYPE_WATERCRAFT:
+		    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_WATERCRAFT_S);
+		    break;
+		case SAR_OBJ_TYPE_AIRCRAFT:
+		    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_AIRCRAFT_S);
+		    break;
+		case SAR_OBJ_TYPE_GROUND:
+		    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_GROUND_S);
+		    break;
+		default:
+		    editor_obj_data->type_s = NULL;
+		    break;
+	    }
+
+	    /* Set file name */
+	    editor_obj_data->file_name = STRDUP(EditorGetObjectFileName(obj_ptr));
+
+	    break;
+
+	case SAR_OBJ_TYPE_RUNWAY:
+	    runway = SAR_OBJ_GET_RUNWAY(obj_ptr);
+	    if(runway == NULL)
+		break;
+
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_RUNWAY_S);
+
+	    editor_obj_data->range = obj_ptr->range;
+	    editor_obj_data->length = runway->length;
+	    editor_obj_data->width = runway->width;
+
+	    editor_obj_data->surface_type = runway->surface_type;
+	    switch(editor_obj_data->surface_type)
+	    {
+		case SAR_RUNWAY_SURFACE_PAVED:
+		    editor_obj_data->surface_type_s = STRDUP(SAR_RUNWAY_SURFACE_PAVED_S);
+		    break;
+		case SAR_RUNWAY_SURFACE_GRAVEL:
+		    editor_obj_data->surface_type_s = STRDUP(SAR_RUNWAY_SURFACE_GRAVEL_S);
+		    break;
+		case SAR_RUNWAY_SURFACE_CONCRETE:
+		    editor_obj_data->surface_type_s = STRDUP(SAR_RUNWAY_SURFACE_CONCRETE_S);
+		    break;
+		case SAR_RUNWAY_SURFACE_GROVED:
+		    editor_obj_data->surface_type_s = STRDUP(SAR_RUNWAY_SURFACE_GROVED_S);
+		    break;
+		default:
+		    editor_obj_data->surface_type_s = NULL;
+		    break;
+	    }
+
+	    editor_obj_data->dashes = runway->dashes;
+	    editor_obj_data->edge_light_spacing = runway->edge_light_spacing;
+
+	    editor_obj_data->north_label = STRDUP(runway->north_label);
+	    editor_obj_data->south_label = STRDUP(runway->south_label);
+
+	    editor_obj_data->north_displaced_threshold = runway->north_displaced_threshold;
+	    editor_obj_data->south_displaced_threshold = runway->south_displaced_threshold;
+
+	    if(runway->flags & SAR_RUNWAY_FLAG_THRESHOLDS)
+		editor_obj_data->has_thresholds_s = strdup("thresholds");
+	    else
+		editor_obj_data->has_thresholds_s = NULL;
+
+	    if(runway->flags & SAR_RUNWAY_FLAG_BORDERS)
+		editor_obj_data->has_borders_s = strdup("borders");
+	    else
+		editor_obj_data->has_borders_s = NULL;
+
+	    if(runway->flags & SAR_RUNWAY_FLAG_TD_MARKERS)
+		editor_obj_data->has_td_markers_s = strdup("td_markers");
+	    else
+		editor_obj_data->has_td_markers_s = NULL;
+
+	    if(runway->flags & SAR_RUNWAY_FLAG_MIDWAY_MARKERS)
+		editor_obj_data->has_midway_markers_s = strdup("midway_markers");
+	    else
+		editor_obj_data->has_midway_markers_s = NULL;
+
+	    if(runway->flags & SAR_RUNWAY_FLAG_NORTH_GS)
+		editor_obj_data->has_north_gs_s = strdup("north_gs");
+	    else
+		editor_obj_data->has_north_gs_s = NULL;
+
+	    if(runway->flags & SAR_RUNWAY_FLAG_SOUTH_GS)
+		editor_obj_data->has_south_gs_s = strdup("south_gs");
+	    else
+		editor_obj_data->has_south_gs_s = NULL;
+
+	    break;
+
+	case SAR_OBJ_TYPE_HELIPAD:
+	    helipad = SAR_OBJ_GET_HELIPAD(obj_ptr);
+	    if(helipad == NULL)
+		break;
+
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_HELIPAD_S);
+
+	    editor_obj_data->style = helipad->style;
+	    switch(editor_obj_data->style)
+	    {
+		case SAR_HELIPAD_STYLE_GROUND_PAVED:
+		    editor_obj_data->style_s = STRDUP(SAR_HELIPAD_STYLE_GROUND_PAVED_S);
+		    break;
+		case SAR_HELIPAD_STYLE_GROUND_BARE:
+		    editor_obj_data->style_s = STRDUP(SAR_HELIPAD_STYLE_GROUND_BARE_S);
+		    break;
+		case SAR_HELIPAD_STYLE_BUILDING:
+		    editor_obj_data->style_s = STRDUP(SAR_HELIPAD_STYLE_BUILDING_S);
+		    break;
+		case SAR_HELIPAD_STYLE_VEHICLE:
+		    editor_obj_data->style_s = STRDUP(SAR_HELIPAD_STYLE_VEHICLE_S);
+		    break;
+		default:
+		    editor_obj_data->style_s = STRDUP(SAR_HELIPAD_STYLE_DEFAULT_S);
+		    break;
+	    }
+
+	    editor_obj_data->length = helipad->length;
+	    editor_obj_data->width = helipad->width;
+	    editor_obj_data->recession = (float)SFMMetersToFeet((double)helipad->recession);
+	    editor_obj_data->label = STRDUP(helipad->label);
+
+	    if(helipad->flags & SAR_HELIPAD_FLAG_EDGE_LIGHTING)
+		editor_obj_data->edge_lighting_c = 'y';
+	    else
+		editor_obj_data->edge_lighting_c = 'n';
+
+	    if(helipad->flags & SAR_HELIPAD_FLAG_FUEL)
+		editor_obj_data->has_fuel_c = 'y';
+	    else
+		editor_obj_data->has_fuel_c = 'n';
+
+	    if(helipad->flags & SAR_HELIPAD_FLAG_REPAIR)
+		editor_obj_data->has_repair_c = 'y';
+	    else
+		editor_obj_data->has_repair_c = 'n';
+
+	    if(helipad->flags & SAR_HELIPAD_FLAG_DROPOFF)
+		editor_obj_data->has_drop_off_c = 'y';
+	    else
+		editor_obj_data->has_drop_off_c = 'n';
+
+	    if(helipad->flags & SAR_HELIPAD_FLAG_RESTART_POINT)
+		editor_obj_data->restarting_point_c = 'y';
+	    else
+		editor_obj_data->restarting_point_c = 'n';
+
+	    if(helipad->ref_object >= 0 )
+	    {
+		sar_object_struct *ref_obj_ptr;
+
+		/* Get reference object pointer */
+		ref_obj_ptr = ((helipad->ref_object < 0) ?
+			    NULL : (*&core_ptr->object)[helipad->ref_object]
+			);
+
+		editor_obj_data->ref_obj_num = helipad->ref_object;
+		editor_obj_data->ref_obj_name = STRDUP(ref_obj_ptr->name);
+
+		/* Copy helipad offset location to editor_obj_data */
+		memcpy(&editor_obj_data->offset_pos,
+			    &helipad->ref_offset,
+			    sizeof(sar_position_struct)
+		       );
+
+		/* Convert height unit */
+		editor_obj_data->offset_pos.z =
+		    (float)SFMMetersToFeet((double)editor_obj_data->offset_pos.z);
+
+		/* Copy helipad offset attitude to editor_obj_data */
+		memcpy(&editor_obj_data->offset_dir,
+			    &helipad->ref_dir,
+			    sizeof(sar_direction_struct)
+		       );
+		/* Convert radians to degrees */
+		editor_obj_data->offset_dir.heading =
+		    SFMRadiansToDegrees((double)editor_obj_data->offset_dir.heading);
+		editor_obj_data->offset_dir.pitch =
+		    SFMRadiansToDegrees((double)editor_obj_data->offset_dir.pitch);
+		editor_obj_data->offset_dir.bank =
+		    SFMRadiansToDegrees((double)editor_obj_data->offset_dir.bank);
+
+		/* Copy reference object location to editor_obj_data */
+		memcpy(&editor_obj_data->ref_obj_pos,
+			    &ref_obj_ptr->pos,
+			    sizeof(sar_position_struct)
+		       );
+		/* Convert height unit */
+		editor_obj_data->ref_obj_pos.z =
+		    (float)SFMMetersToFeet((double)editor_obj_data->ref_obj_pos.z);
+		/* Copy reference object attitude to editor_obj_data */
+		memcpy(&editor_obj_data->ref_obj_dir,
+			    &ref_obj_ptr->dir,
+			    sizeof(sar_direction_struct)
+		       );
+		/* Convert radians to degrees */
+		editor_obj_data->ref_obj_dir.heading =
+		    SFMRadiansToDegrees((double)editor_obj_data->ref_obj_dir.heading);
+		editor_obj_data->ref_obj_dir.pitch =
+		    SFMRadiansToDegrees((double)editor_obj_data->ref_obj_dir.pitch);
+		editor_obj_data->ref_obj_dir.bank =
+		    SFMRadiansToDegrees((double)editor_obj_data->ref_obj_dir.bank);
+	    }
+
+	    break;
+
+	case SAR_OBJ_TYPE_HUMAN:
+	    human = SAR_OBJ_GET_HUMAN(obj_ptr);
+		if(human == NULL)
+		    break;
+
+		editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_HUMAN_S);
+
+		/* Get human preset name */
+		editor_obj_data->type_name = STRDUP(
+		    ScnEditGetHumanPresetNameByHumanPtr(core_ptr, human));
+
+		if(human->flags & SAR_HUMAN_FLAG_NEED_RESCUE)
+		    editor_obj_data->need_rescue_s = strdup("need_rescue");
+		else
+		    editor_obj_data->need_rescue_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_SIT_UP)
+		    editor_obj_data->sit_up_s = strdup("sit_up");
+		else
+		    editor_obj_data->sit_up_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_SIT_DOWN)
+		    editor_obj_data->sit_down_s = strdup("sit_down");
+		else
+		    editor_obj_data->sit_down_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_SIT)
+		    editor_obj_data->sitting_s = strdup("sitting");
+		else
+		    editor_obj_data->sitting_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_LYING)
+		    editor_obj_data->lying_s = strdup("lying");
+		else
+		    editor_obj_data->lying_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_ALERT)
+		    editor_obj_data->alert_s = strdup("alert");
+		else
+		    editor_obj_data->alert_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_AWARE)
+		    editor_obj_data->aware_s = strdup("aware");
+		else
+		    editor_obj_data->aware_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_IN_WATER)
+		    editor_obj_data->in_water_s = strdup("in_water");
+		else
+		    editor_obj_data->in_water_s = NULL;
+
+		if(human->flags & SAR_HUMAN_FLAG_ON_STRETCHER)
+		    editor_obj_data->on_stretcher_s = strdup("on_stretcher");
+		else
+		    editor_obj_data->on_stretcher_s = NULL;
+
+		editor_obj_data->assistants = human->assisting_humans;
+
+		/* Copy assistant(s) number and preset name(s) only if
+		 * main human has assistant(s) and is not the
+		 * "victim_streatcher_assisted" human.
+		 */
+		if(editor_obj_data->assistants > 0 &&
+		    strcmp(editor_obj_data->type_name, "victim_streatcher_assisted") &&
+		    strcmp(editor_obj_data->type_name, "victim_stretcher_assisted")
+		)
+		{
+		    editor_obj_data->assisted_s = strdup("assisted");
+
+		    i = 0;
+		    while(i < editor_obj_data->assistants)
+		    {
+			editor_obj_data->assist_type_name[i] =
+			    STRDUP(human->assisting_human_preset_name[i]);
+
+			i++;
+		    }
+
+		    /* Set non-used pointers to NULL */
+		    while(i < SAR_ASSISTING_HUMANS_MAX)
+			editor_obj_data->assist_type_name[i++] = NULL;
+		}
+		else
+		    editor_obj_data->assisted_s = NULL;
+
+		/* Human displacement */
+
+		/* Get reference/intercepting object number */
+		editor_obj_data->ref_obj_num = human->intercepting_object;
+
+		/* Is reference object the player object? */
+		if(editor_obj_data->ref_obj_num == -2)
+		{
+		    editor_obj_data->ref_obj_name = strdup("player");
+
+		    if(human->flags & SAR_HUMAN_FLAG_RUN_TOWARDS)
+			editor_obj_data->human_displacement_dir_s = strdup("run_towards");
+		    else if(human->flags & SAR_HUMAN_FLAG_RUN_AWAY)
+			editor_obj_data->human_displacement_dir_s = strdup("run_away");
+		    else
+			editor_obj_data->human_displacement_dir_s = strdup("?");
+
+		    /* Don't copy reference object position to editor_obj_data */
+		}
+		/* Is reference object a scene object? */
+		else if(editor_obj_data->ref_obj_num >= 0)
+		{
+		    obj_num = editor_obj_data->ref_obj_num;
+		    obj_ptr = ((obj_num < 0) ? NULL : (*&core_ptr->object)[obj_num]);
+		    if(obj_ptr != NULL)
+		    {
+			/* Get reference object name */
+			editor_obj_data->ref_obj_name = STRDUP(obj_ptr->name);
+
+			if(human->flags & SAR_HUMAN_FLAG_RUN_TOWARDS)
+			    editor_obj_data->human_displacement_dir_s = strdup("run_towards");
+			else if(human->flags & SAR_HUMAN_FLAG_RUN_AWAY)
+			    editor_obj_data->human_displacement_dir_s = strdup("run_away");
+			else
+			    editor_obj_data->human_displacement_dir_s = strdup("?");
+
+			/* Copy reference object location to editor_obj_data */
+			memcpy(&editor_obj_data->ref_obj_pos,
+			    &obj_ptr->pos,
+			    sizeof(sar_position_struct)
+			);
+			/* Convert height unit */
+			editor_obj_data->ref_obj_pos.z =
+			(float)SFMMetersToFeet((double)editor_obj_data->ref_obj_pos.z);
+			/* Copy reference object attitude to editor_obj_data */
+			memcpy(&editor_obj_data->ref_obj_dir,
+				    &obj_ptr->dir,
+				    sizeof(sar_direction_struct)
+			    );
+			/* Convert radians to degrees */
+			editor_obj_data->ref_obj_dir.heading =
+			    SFMRadiansToDegrees((double)editor_obj_data->ref_obj_dir.heading);
+			editor_obj_data->ref_obj_dir.pitch =
+			    SFMRadiansToDegrees((double)editor_obj_data->ref_obj_dir.pitch);
+			editor_obj_data->ref_obj_dir.bank =
+			    SFMRadiansToDegrees((double)editor_obj_data->ref_obj_dir.bank);
+		    }
+		    else
+		    {
+			/* Force "no reference object" */
+			editor_obj_data->ref_obj_num = -1;
+		    }
+		}
+		/* No reference object (should be editor_obj_data->ref_obj_num == -1) */
+		else
+		{
+		    ;
+		}
+
+	    break;
+
+	case SAR_OBJ_TYPE_SMOKE:
+	    smoke = SAR_OBJ_GET_SMOKE(obj_ptr);
+	    if(smoke == NULL)
+		break;
+
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_SMOKE_S);
+
+	    /* Copy smoke offset position to editor_obj_data */
+	    memcpy(&editor_obj_data->offset_pos, &smoke->respawn_offset, sizeof(sar_position_struct));
+
+	    editor_obj_data->radius_start = smoke->radius_start;
+	    editor_obj_data->radius_max = smoke->radius_max;
+	    editor_obj_data->radius_rate = smoke->radius_rate;
+	    editor_obj_data->hide_at_max = smoke->hide_at_max;
+	    editor_obj_data->respawn_int = smoke->respawn_int;
+	    editor_obj_data->total_units = smoke->total_units;
+
+	    /* Get smoke texture name */
+	    tex_ref_name = ScnEditGetTextureNamePtrByRef(
+						core_ptr->scene,
+						smoke->tex_num
+					    );
+
+	    /* Retrieve smoke color code */
+	    if(!strcmp(tex_ref_name, SAR_STD_TEXNAME_SMOKE_LIGHT))
+		editor_obj_data->color_code = 0;
+	    else if(!strcmp(tex_ref_name, SAR_STD_TEXNAME_SMOKE_MEDIUM))
+		editor_obj_data->color_code = 1;
+	    else if(!strcmp(tex_ref_name, SAR_STD_TEXNAME_SMOKE_DARK))
+		editor_obj_data->color_code = 2;
+	    else if(!strcmp(tex_ref_name, SAR_STD_TEXNAME_SMOKE_ORANGE))
+		editor_obj_data->color_code = 3;
+	    /* Should never happen */
+	    else
+		editor_obj_data->color_code = 0;
+
+	    break;
+
+	case SAR_OBJ_TYPE_FIRE:
+	    fire = SAR_OBJ_GET_FIRE(obj_ptr);
+	    if(fire == NULL)
+		break;
+
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_FIRE_S);
+	    editor_obj_data->radius = fire->radius;
+	    editor_obj_data->height = (float)SFMMetersToFeet((double)fire->height);
+
+	    break;
+
+	case SAR_OBJ_TYPE_EXPLOSION:
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_EXPLOSION_S);
+	    break;
+
+	case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_CHEMICAL_SPRAY_S);
+	    break;
+	case SAR_OBJ_TYPE_FUELTANK:
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_FUELTANK_S);
+	    break;
+
+	case SAR_OBJ_TYPE_PREMODELED:
+	    premodeled = SAR_OBJ_GET_PREMODELED(obj_ptr);
+	    if(premodeled == NULL)
+		break;
+
+	    editor_obj_data->type_s = STRDUP(SAR_OBJ_TYPE_PREMODELED_S);
+
+	    /* Premodeled type */
+	    editor_obj_data->pm_type = premodeled->type;
+	    if(premodeled->type == SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER)
+		editor_obj_data->pm_type_s = STRDUP(SAR_PREMODELED_POWER_TRANSMISSION_TOWER_S);
+	    else if(premodeled->type == SAR_OBJ_PREMODELED_TOWER)
+		editor_obj_data->pm_type_s = STRDUP(SAR_PREMODELED_TOWER_S);
+	    else if(premodeled->type == SAR_OBJ_PREMODELED_RADIO_TOWER)
+		editor_obj_data->pm_type_s = STRDUP(SAR_PREMODELED_RADIO_TOWER_S);
+	    else if(premodeled->type == SAR_OBJ_PREMODELED_CONTROL_TOWER)
+		editor_obj_data->pm_type_s = STRDUP(SAR_PREMODELED_CONTROL_TOWER_S);
+	    else if(premodeled->type == SAR_OBJ_PREMODELED_BUILDING)
+		editor_obj_data->pm_type_s = STRDUP(SAR_PREMODELED_BUILDING_S);
+	    else
+		editor_obj_data->pm_type_s = STRDUP(SAR_PREMODELED_UNKNOWN_S);
+
+	    switch(editor_obj_data->pm_type)
+	    {
+		case SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER:
+		case SAR_OBJ_PREMODELED_TOWER:
+		case SAR_OBJ_PREMODELED_RADIO_TOWER:
+		    editor_obj_data->range = obj_ptr->range;
+		    editor_obj_data->height =
+			    (float)SFMMetersToFeet((double)premodeled->height);
+		    editor_obj_data->hazard_lights = obj_ptr->total_lights;
+		    break;
+
+		case SAR_OBJ_PREMODELED_CONTROL_TOWER:
+		    editor_obj_data->range = obj_ptr->range;
+		    editor_obj_data->length = premodeled->length;
+		    editor_obj_data->width = premodeled->width;
+		    editor_obj_data->height =
+			    (float)SFMMetersToFeet((double)premodeled->height);
+
+		    /* Get control tower walls texture name */
+		    tex_ref_name = ScnEditGetTextureNamePtrByRef(
+						core_ptr->scene,
+						premodeled->tex_num[0]
+					    );
+		    editor_obj_data->walls_texture_s = STRDUP(tex_ref_name);
+
+		    /* Get control tower roof texture name */
+		    tex_ref_name = ScnEditGetTextureNamePtrByRef(
+						core_ptr->scene,
+						premodeled->tex_num[1]
+					    );
+		    editor_obj_data->roof_texture_s = STRDUP(tex_ref_name);
+		    break;
+
+		case SAR_OBJ_PREMODELED_BUILDING:
+		    editor_obj_data->range = obj_ptr->range;
+		    editor_obj_data->length = premodeled->length;
+		    editor_obj_data->width = premodeled->width;
+		    editor_obj_data->height =
+			    (float)SFMMetersToFeet((double)premodeled->height);
+
+		    /* Get building walls texture name */
+		    tex_ref_name = ScnEditGetTextureNamePtrByRef(
+						core_ptr->scene,
+						premodeled->tex_num[0]
+					    );
+		    editor_obj_data->walls_texture_s = STRDUP(tex_ref_name);
+
+		    /* Get building walls night texture name */
+		    tex_ref_name = ScnEditGetTextureNamePtrByRef(
+						core_ptr->scene,
+						premodeled->tex_num[1]
+					    );
+		    editor_obj_data->walls_texture_night_s = STRDUP(tex_ref_name);
+
+		    /* Get building roof texture name */
+		    tex_ref_name = ScnEditGetTextureNamePtrByRef(
+						core_ptr->scene,
+						premodeled->tex_num[2]
+					    );
+		    editor_obj_data->roof_texture_s = STRDUP(tex_ref_name);
+		    break;
+
+		case SAR_OBJ_PREMODELED_HANGAR:
+		default:
+
+		    break;
+	    }
+	    break;
+    }
+
+    return obj_num;
+}
+
+
+/*
+ * Set modification flags by comparing original to new
+ * editor_object_data structures.
+ *
+ * Return:
+ * 0 if no error,
+ * 1 if data_original pointer is NULL,
+ * 2 if data_new pointer is NULL.
+
+ */
+int SetModificationFlags(
+    editor_modified_object_struct *modification
+)
+{
+    editor_object_data_struct *data_original = modification->obj_data_original;
+    editor_object_data_struct *data_new = modification->obj_data_new;
+    sar_obj_flags_t flags = 0;
+    int i;
+    sar_obj_type type;
+
+    if(data_original == NULL)
+	return 1;
+    if(data_new == NULL)
+	return 2;
+
+    /* Object renamed? */
+    if((data_original->name == NULL &&
+	data_new->name != NULL) ||
+	(data_original->name != NULL &&
+	data_new->name != NULL &&
+	strcmp(data_original->name, data_new->name))
+    )
+	flags |= EDITOR_OBJECT_FLAG_NAMED;
+
+    /* Object moved? */
+    if(data_original->pos.x != data_new->pos.x ||
+	data_original->pos.y != data_new->pos.y ||
+	data_original->pos.z != data_new->pos.z
+    )
+	flags |= EDITOR_OBJECT_FLAG_MOVED;
+    else if(data_original->dir.heading != data_new->dir.heading ||
+	data_original->dir.pitch != data_new->dir.pitch ||
+	data_original->dir.bank != data_new->dir.bank
+    )
+	flags |= EDITOR_OBJECT_FLAG_MOVED;
+
+
+    /* Object parameters modified? */
+    if(data_original->type != data_new->type)
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->type_s != NULL &&
+	data_new->type_s != NULL &&
+	strcmp(data_original->type_s, data_new->type_s)
+    )
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->range != data_new->range)
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->length != data_new->length)
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->width != data_new->width)
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->height != data_new->height)
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->ref_obj_num != data_new->ref_obj_num)
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->ref_obj_name != NULL &&
+	data_new->ref_obj_name != NULL &&
+	strcmp(data_original->ref_obj_name, data_new->ref_obj_name)
+    )
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->ref_obj_pos.x != data_new->ref_obj_pos.x ||
+	data_original->ref_obj_pos.y != data_new->ref_obj_pos.y ||
+	data_original->ref_obj_pos.z != data_new->ref_obj_pos.z
+    )
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->ref_obj_dir.heading != data_new->ref_obj_dir.heading ||
+	data_original->ref_obj_dir.pitch != data_new->ref_obj_dir.pitch ||
+	data_original->ref_obj_dir.bank != data_new->ref_obj_dir.bank
+    )
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else if(data_original->offset_pos.x != data_new->offset_pos.x ||
+	data_original->offset_pos.y != data_new->offset_pos.y ||
+	data_original->offset_pos.z != data_new->offset_pos.z
+    )
+	flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+    else
+    {
+	type = data_original->type;
+	switch(type)
+	{
+	    case SAR_OBJ_TYPE_FIRE:
+		if(data_original->radius != data_new->radius)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		break;
+
+	    case SAR_OBJ_TYPE_HELIPAD:
+		if(data_original->style != data_new->style)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->style_s != NULL &&
+		    data_new->style_s != NULL &&
+		    strcmp(data_original->style_s, data_new->style_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->recession != data_new->recession)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->label != NULL &&
+		    data_new->label != NULL &&
+		    strcmp(data_original->label, data_new->label)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->edge_lighting_c != data_new->edge_lighting_c)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_fuel_c != data_new->has_fuel_c)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_repair_c != data_new->has_repair_c)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_drop_off_c != data_new->has_drop_off_c)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->restarting_point_c != data_new->restarting_point_c)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->offset_dir.heading != data_new->offset_dir.heading ||
+		    data_original->offset_dir.pitch != data_new->offset_dir.pitch ||
+		    data_original->offset_dir.bank != data_new->offset_dir.bank
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		break;
+
+	    case SAR_OBJ_TYPE_HUMAN:
+		if(data_original->type_name != NULL &&
+		    data_new->type_name != NULL &&
+		    strcmp(data_original->type_name, data_new->type_name)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->need_rescue_s != NULL &&
+		    data_new->need_rescue_s != NULL &&
+		    strcmp(data_original->need_rescue_s, data_new->need_rescue_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->sit_up_s != NULL &&
+		    data_new->sit_up_s != NULL &&
+		    strcmp(data_original->sit_up_s, data_new->sit_up_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->sit_down_s != NULL &&
+		    data_new->sit_down_s != NULL &&
+		    strcmp(data_original->sit_down_s, data_new->sit_down_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->sitting_s != NULL &&
+		    data_new->sitting_s != NULL &&
+		    strcmp(data_original->sitting_s, data_new->sitting_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->lying_s != NULL &&
+		    data_new->lying_s != NULL &&
+		    strcmp(data_original->lying_s, data_new->lying_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->alert_s != NULL &&
+		    data_new->alert_s != NULL &&
+		    strcmp(data_original->alert_s, data_new->alert_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->aware_s != NULL &&
+		    data_new->aware_s != NULL &&
+		    strcmp(data_original->aware_s, data_new->aware_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->in_water_s != NULL &&
+		    data_new->in_water_s != NULL &&
+		    strcmp(data_original->in_water_s, data_new->in_water_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->on_stretcher_s != NULL &&
+		    data_new->on_stretcher_s != NULL &&
+		    strcmp(data_original->on_stretcher_s, data_new->on_stretcher_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->assisted_s != NULL &&
+		    data_new->assisted_s != NULL &&
+		    strcmp(data_original->assisted_s, data_new->assisted_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->assistants != data_new->assistants)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->human_displacement_dir_s != NULL &&
+		    data_new->human_displacement_dir_s != NULL &&
+		    strcmp(data_original->human_displacement_dir_s, data_new->human_displacement_dir_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else
+		{
+		    for(i = 0; i < SAR_ASSISTING_HUMANS_MAX; i++)
+			if(data_original->assist_type_name[i] != NULL &&
+			    data_new->assist_type_name[i] != NULL &&
+			    strcmp(data_original->assist_type_name[i], data_new->assist_type_name[i])
+			)
+			    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		}
+		break;
+
+	    case SAR_OBJ_TYPE_STATIC:
+	    case SAR_OBJ_TYPE_AUTOMOBILE:
+	    case SAR_OBJ_TYPE_WATERCRAFT:
+	    case SAR_OBJ_TYPE_AIRCRAFT:
+	    case SAR_OBJ_TYPE_GROUND:
+		if(data_original->file_name != NULL &&
+		    data_new->file_name != NULL &&
+		    strcmp(data_original->file_name, data_new->file_name)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		break;
+
+	    case SAR_OBJ_TYPE_PREMODELED:
+		if(data_original->pm_type != data_new->pm_type)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->pm_type_s != NULL &&
+		    data_new->pm_type_s != NULL &&
+		    strcmp(data_original->pm_type_s, data_new->pm_type_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->hazard_lights != data_new->hazard_lights)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->walls_texture_s != NULL &&
+		    data_new->walls_texture_s != NULL &&
+		    strcmp(data_original->walls_texture_s, data_new->walls_texture_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->walls_texture_night_s != NULL &&
+		    data_new->walls_texture_night_s != NULL &&
+		    strcmp(data_original->walls_texture_night_s, data_new->walls_texture_night_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->roof_texture_s != NULL &&
+		    data_new->roof_texture_s != NULL &&
+		    strcmp(data_original->roof_texture_s, data_new->roof_texture_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		break;
+
+	    case SAR_OBJ_TYPE_RUNWAY:
+		if(data_original->surface_type != data_new->surface_type)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->surface_type_s != NULL &&
+		    data_new->surface_type_s != NULL &&
+		    strcmp(data_original->surface_type_s, data_new->surface_type_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->dashes != data_new->dashes)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->edge_light_spacing != data_new->edge_light_spacing)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->north_label != NULL &&
+		    data_new->north_label != NULL &&
+		    strcmp(data_original->north_label, data_new->north_label)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->south_label != NULL &&
+		    data_new->south_label != NULL &&
+		    strcmp(data_original->south_label, data_new->south_label)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->north_displaced_threshold != data_new->north_displaced_threshold)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->south_displaced_threshold != data_new->south_displaced_threshold)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_thresholds_s != NULL &&
+		    data_new->has_thresholds_s != NULL &&
+		    strcmp(data_original->has_thresholds_s, data_new->has_thresholds_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_borders_s != NULL &&
+		    data_new->has_borders_s != NULL &&
+		    strcmp(data_original->has_borders_s, data_new->has_borders_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_td_markers_s != NULL &&
+		    data_new->has_td_markers_s != NULL &&
+		    strcmp(data_original->has_td_markers_s, data_new->has_td_markers_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_midway_markers_s != NULL &&
+		    data_new->has_midway_markers_s != NULL &&
+		    strcmp(data_original->has_midway_markers_s, data_new->has_midway_markers_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_north_gs_s != NULL &&
+		    data_new->has_north_gs_s != NULL &&
+		    strcmp(data_original->has_north_gs_s, data_new->has_north_gs_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->has_south_gs_s != NULL &&
+		    data_new->has_south_gs_s != NULL &&
+		    strcmp(data_original->has_south_gs_s, data_new->has_south_gs_s)
+		)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		break;
+
+	    case SAR_OBJ_TYPE_SMOKE:
+		if(data_original->radius_start != data_new->radius_start)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->radius_max != data_new->radius_max)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->radius_rate != data_new->radius_rate)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->hide_at_max != data_new->hide_at_max)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->respawn_int != data_new->respawn_int)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->total_units != data_new->total_units)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		else if(data_original->color_code != data_new->color_code)
+		    flags |= EDITOR_OBJECT_FLAG_MODIFIED;
+		break;
+
+	    case SAR_OBJ_TYPE_GARBAGE:
+	    case SAR_OBJ_TYPE_EXPLOSION:
+	    case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+	    case SAR_OBJ_TYPE_FUELTANK:
+		break;
+	}
+    }
+
+    modification->flags = flags;
+
+    return 0;
+}
+
+
+/*
+ * Return a string containing object creation parameters.
+ * Return NULL on error.
+ *
+ * Returned string must be freed by calling function.
+ */
+char* DoParametersLineFromEditorObjectData(const editor_object_data_struct *editor_obj_data)
+{
+    const sar_position_struct *pos = NULL;
+    const sar_direction_struct *dir = NULL;
+    char value_str[S_LENGTH];
+    int i;
+
+    char *s = (char *)malloc((S_LENGTH + 1) * sizeof(char));
+    if(s == NULL)
+    {
+	fprintf(stderr,
+		"%s:%d: Memory allocation error.\n",
+		__FILE__,
+		__LINE__
+	    );
+	return s;
+    }
+
+    /* Init strings */
+    s[0] = '\0';
+    value_str[0] = '\0';
+
+    if(editor_obj_data == NULL)
+	return s;
+
+    switch(editor_obj_data->type)
+    {
+	case SAR_OBJ_TYPE_GARBAGE:
+	    s = NULL;
+	    break;
+
+	case SAR_OBJ_TYPE_STATIC:
+	case SAR_OBJ_TYPE_AUTOMOBILE:
+	case SAR_OBJ_TYPE_WATERCRAFT:
+	case SAR_OBJ_TYPE_AIRCRAFT:
+	    strncat(s, editor_obj_data->file_name, REMAINING(s));
+	    break;
+
+	case SAR_OBJ_TYPE_GROUND:
+	    break;
+
+	case SAR_OBJ_TYPE_RUNWAY:
+	    sprintf(value_str, "%.3f", editor_obj_data->range);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->length);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->width);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %d", editor_obj_data->surface_type);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %d", editor_obj_data->dashes);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->edge_light_spacing);
+	    strncat(s, value_str, REMAINING(s));
+	    snprintf(value_str, S_LENGTH, " %s",
+(editor_obj_data->north_label != NULL) ? editor_obj_data->north_label : "_");
+	    strncat(s, value_str, REMAINING(s));
+	    snprintf(value_str, S_LENGTH, " %s",
+(editor_obj_data->south_label != NULL) ? editor_obj_data->south_label : "_");
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f",
+		    editor_obj_data->north_displaced_threshold);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f",
+		    editor_obj_data->south_displaced_threshold);
+	    strncat(s, value_str, REMAINING(s));
+
+	    /* Optional flags */
+
+	    if(editor_obj_data->has_thresholds_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->has_thresholds_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->has_borders_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->has_borders_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->has_td_markers_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->has_td_markers_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->has_midway_markers_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->has_midway_markers_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->has_north_gs_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->has_north_gs_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->has_south_gs_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->has_south_gs_s, REMAINING(s));
+	    }
+	    break;
+
+	case SAR_OBJ_TYPE_HELIPAD:
+	    strncat(s, editor_obj_data->style_s, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->length);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->width);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->recession);
+	    strncat(s, value_str, REMAINING(s));
+	    snprintf(value_str, S_LENGTH, " %s", editor_obj_data->label);
+	    strncat(s, value_str, REMAINING(s));
+
+	    sprintf(value_str, " %c", editor_obj_data->edge_lighting_c);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %c", editor_obj_data->has_fuel_c);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %c", editor_obj_data->has_repair_c);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %c", editor_obj_data->has_drop_off_c);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %c", editor_obj_data->restarting_point_c);
+	    strncat(s, value_str, REMAINING(s));
+
+	    /* Has helipad a reference object? */
+	    if(editor_obj_data->ref_obj_name != NULL)
+	    {
+		sprintf(value_str, " %s", editor_obj_data->ref_obj_name);
+		strncat(s, value_str, REMAINING(s));
+
+		pos = &(editor_obj_data->offset_pos);
+		dir = &(editor_obj_data->offset_dir);
+
+		sprintf(value_str, " %.3f", pos->x);
+		strncat(s, value_str, REMAINING(s));
+		sprintf(value_str, " %.3f", pos->y);
+		strncat(s, value_str, REMAINING(s));
+		sprintf(value_str, " %.3f", pos->z);
+		strncat(s, value_str, REMAINING(s));
+		sprintf(value_str, " %.3f", dir->heading);
+		strncat(s, value_str, REMAINING(s));
+		sprintf(value_str, " %.3f", dir->pitch);
+		strncat(s, value_str, REMAINING(s));
+		sprintf(value_str, " %.3f", dir->bank);
+		strncat(s, value_str, REMAINING(s));
+	    }
+	    break;
+
+	case SAR_OBJ_TYPE_HUMAN:
+	    strncat(s, editor_obj_data->type_name, REMAINING(s));
+
+	    if(editor_obj_data->need_rescue_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->need_rescue_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->sit_up_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->sit_up_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->sit_down_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->sit_down_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->sitting_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->sitting_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->lying_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->lying_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->alert_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->alert_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->aware_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->aware_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->in_water_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->in_water_s, REMAINING(s));
+	    }
+	    if(editor_obj_data->on_stretcher_s != NULL)
+	    {
+		strncat(s, " ", REMAINING(s));
+		strncat(s, editor_obj_data->on_stretcher_s, REMAINING(s));
+	    }
+
+	    /* Set assistant(s) number and preset name(s) only if
+	     * main human has assistant(s) and is not the
+	     * "victim_streatcher_assisted" human.
+	     */
+	    if(editor_obj_data->assistants > 0 &&
+		strcmp(editor_obj_data->type_name, "victim_streatcher_assisted") &&
+		strcmp(editor_obj_data->type_name,  "victim_stretcher_assisted")
+	    )
+	    {
+		sprintf(value_str, " %s %d",
+			    editor_obj_data->assisted_s,
+			    editor_obj_data->assistants
+			);
+		strncat(s, value_str, REMAINING(s));
+
+		for(i = 0; i < editor_obj_data->assistants; i++)
+		{
+		    sprintf(value_str, " %s", editor_obj_data->assist_type_name[i]);
+		    strncat(s, value_str, REMAINING(s));
+		}
+	    }
+	    break;
+
+	case SAR_OBJ_TYPE_SMOKE:
+	    pos = &(editor_obj_data->offset_pos);
+
+	    sprintf(value_str, "%.3f", pos->x);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", pos->y);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", pos->z);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->radius_start);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->radius_max);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->radius_rate);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->hide_at_max);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %ld", editor_obj_data->respawn_int);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %d", editor_obj_data->total_units);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %d", editor_obj_data->color_code);
+	    strncat(s, value_str, REMAINING(s));
+	    break;
+
+	case SAR_OBJ_TYPE_FIRE:
+	    sprintf(value_str, "%.3f", editor_obj_data->radius);
+	    strncat(s, value_str, REMAINING(s));
+	    sprintf(value_str, " %.3f", editor_obj_data->height);
+	    strncat(s, value_str, REMAINING(s));
+	    break;
+
+	case SAR_OBJ_TYPE_EXPLOSION:
+	case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+	case SAR_OBJ_TYPE_FUELTANK:
+	    strncat(s, "ERROR: Can't get object data.", REMAINING(s));
+	    break;
+
+	case SAR_OBJ_TYPE_PREMODELED:
+	    strncat(s, editor_obj_data->pm_type_s, REMAINING(s));
+
+	    switch(editor_obj_data->pm_type)
+	    {
+		case SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER:
+		case SAR_OBJ_PREMODELED_TOWER:
+		case SAR_OBJ_PREMODELED_RADIO_TOWER:
+		    sprintf(value_str, " %.3f", editor_obj_data->range);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %.3f", editor_obj_data->height);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %d", editor_obj_data->hazard_lights);
+		    strncat(s, value_str, REMAINING(s));
+		    break;
+
+		case SAR_OBJ_PREMODELED_CONTROL_TOWER:
+		    sprintf(value_str, " %.3f", editor_obj_data->range);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %.3f", editor_obj_data->length);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %.3f", editor_obj_data->width);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %.3f", editor_obj_data->height);
+		    strncat(s, value_str, REMAINING(s));
+		    strncat(s, " ", REMAINING(s));
+		    strncat(s, editor_obj_data->walls_texture_s, REMAINING(s));
+		    strncat(s, " ", REMAINING(s));
+		    strncat(s, editor_obj_data->roof_texture_s, REMAINING(s));
+		    break;
+
+		case SAR_OBJ_PREMODELED_BUILDING:
+		    sprintf(value_str, " %.3f", editor_obj_data->range);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %.3f", editor_obj_data->length);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %.3f", editor_obj_data->width);
+		    strncat(s, value_str, REMAINING(s));
+		    sprintf(value_str, " %.3f", editor_obj_data->height);
+		    strncat(s, value_str, REMAINING(s));
+		    strncat(s, " ", REMAINING(s));
+		    strncat(s, editor_obj_data->walls_texture_s, REMAINING(s));
+		    strncat(s, " ", REMAINING(s));
+		    strncat(s, editor_obj_data->walls_texture_night_s, REMAINING(s));
+		    strncat(s, " ", REMAINING(s));
+		    strncat(s, editor_obj_data->roof_texture_s, REMAINING(s));
+		    break;
+
+		default:
+
+		    break;
+	    }
+	    break;
+
+	default:
+	    sprintf(value_str, "ERROR: object #%d type is unknown", editor_obj_data->type);
+	    strncat(s, value_str, REMAINING(s));
+	    break;
+    }
+
+    return s;
+}
+
+
+/*
+ * Object info window.
+ * Note that this is the window shown when the G(TK)UI is not activated.
+ */
+int ScnEditShowObjectInfoWindow(
+    sar_core_struct *core_ptr,
+    int obj_num,
+    editor_object_data_struct *editor_obj_data)
+{
+#define TITLE_LENGTH 40
+    const sar_scene_struct *scene = core_ptr->scene;
+    gw_display_struct *display = core_ptr->display;
+    sar_obj_type type;
+    char *s = (char *)malloc(S_LENGTH * sizeof(char));
+    char *s1 = (char *)malloc(S_LENGTH * sizeof(char));
+    char *window_title = (char *)malloc(TITLE_LENGTH * sizeof(char));
+    char *type_str = NULL;
+    int i;
+    float distance;
+
+    if(scene == NULL ||
+	display == NULL
+    )
+	return -1;
+
+    /* 3D distance between triedron (i.e. player) and #obj_num object */
+    distance = (float)SFMHypot3(
+	scene->player_obj_ptr->pos.x - editor_obj_data->pos.x,
+	scene->player_obj_ptr->pos.y - editor_obj_data->pos.y,
+	scene->player_obj_ptr->pos.z - SFMFeetToMeters((double)editor_obj_data->pos.z)
+    );
+
+    /* Set window title */
+    snprintf(window_title, TITLE_LENGTH, "     Object #%05d @%.3fm    ", obj_num, distance);
+
+    s[0] = '\0';
+    strncat(s, "-------- Object general data --------\n", REMAINING(s));
+
+    /* Object type */
+    type = editor_obj_data->type;
+    type_str = STRDUP(SceneObjectGetTypeName(core_ptr, obj_num));
+    snprintf(s1, S_LENGTH, "Type  : %s\n", type_str);
+    strncat(s, s1, REMAINING(s));
+
+    /* Object name */
+    strncat(s, "Name : ", REMAINING(s));
+    if(editor_obj_data->name != NULL)
+	snprintf(s1, S_LENGTH, "%s\n", editor_obj_data->name);
+    else
+	snprintf(s1, S_LENGTH, "\n");
+    strncat(s, s1, REMAINING(s));
+
+    snprintf(s1, S_LENGTH,
+		    "Position (m/m/ft) : %.3f %.3f %.3f\nDirection (deg)  : %.3f %.3f %.3f\n",
+		    editor_obj_data->pos.x,
+		    editor_obj_data->pos.y,
+		    editor_obj_data->pos.z,
+		    editor_obj_data->dir.heading,
+		    editor_obj_data->dir.pitch,
+		    editor_obj_data->dir.bank
+		);
+    strncat(s, s1, REMAINING(s));
+
+    switch(type)
+    {
+	case SAR_OBJ_TYPE_GARBAGE:
+	    break;
+
+	case SAR_OBJ_TYPE_STATIC:
+	case SAR_OBJ_TYPE_AUTOMOBILE:
+	case SAR_OBJ_TYPE_WATERCRAFT:
+	case SAR_OBJ_TYPE_AIRCRAFT:
+	case SAR_OBJ_TYPE_GROUND:
+	    snprintf(s1, S_LENGTH,
+		     "\nFile name : %s\n",
+		    editor_obj_data->file_name
+	    );
+	    strncat(s, s1, REMAINING(s));
+
+	    break;
+
+	case SAR_OBJ_TYPE_RUNWAY:
+	    strncat(s, "\n-------- Runway specific data --------\n", REMAINING(s));
+
+	    snprintf(s1, S_LENGTH,
+		     "Visual range                     : %.3f\nLength (m)                        : %.3f\nWidth (m)                          : %.3f\nSurface type                     : %s\nDashes                            : %d\nEdge light spacing             : %.3f\nNorth label                       : %s\nSouth label                       : %s",
+		    editor_obj_data->range,
+		    editor_obj_data->length,
+		    editor_obj_data->width,
+		    editor_obj_data->surface_type_s,
+		    editor_obj_data->dashes,
+		    editor_obj_data->edge_light_spacing,
+		    editor_obj_data->north_label,
+		    editor_obj_data->south_label
+		);
+	    strncat(s, s1, REMAINING(s));
+
+	    strncat(s, "\nHas thresholds ?               : ", REMAINING(s));
+	    if(editor_obj_data->has_thresholds_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nHas borders ?                   : ", REMAINING(s));
+	    if(editor_obj_data->has_borders_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nHas touch down markers ? : ", REMAINING(s));
+	    if(editor_obj_data->has_td_markers_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nHas midway markers ?       : ", REMAINING(s));
+	    if(editor_obj_data->has_midway_markers_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nHas north glide slope ?      : ", REMAINING(s));
+	    if(editor_obj_data->has_north_gs_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nHas south glide slope ?     : ", REMAINING(s));
+	    if(editor_obj_data->has_south_gs_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    break;
+
+	case SAR_OBJ_TYPE_HELIPAD:
+	    strncat(s, "\n-------- Helipad specific data --------\n", REMAINING(s));
+
+	    snprintf(s1, S_LENGTH,
+		     "Style            : %s\nLength (m)    : %.3f\nWidth (m)      : %.3f\nRecession (ft): %.3f\nLabel           : %s\nHas edge lighting ?   : %c\nHas fuel ?                : %c\nHas repair ?             : %c\nHas drop off ?           : %c\nIs a restarting point ? : %c\n",
+		    editor_obj_data->style_s,
+		    editor_obj_data->length,
+		    editor_obj_data->width,
+		    editor_obj_data->recession,
+		    editor_obj_data->label,
+		    editor_obj_data->edge_lighting_c,
+		    editor_obj_data->has_fuel_c,
+		    editor_obj_data->has_repair_c,
+		    editor_obj_data->has_drop_off_c,
+		    editor_obj_data->restarting_point_c
+		);
+	    strncat(s, s1, REMAINING(s));
+
+	    /* Has helipad a reference object? */
+	    if(editor_obj_data->ref_obj_name != NULL)
+	    {
+		snprintf(s1, S_LENGTH,
+		     "Ref. object name : %s\nOffset position (m/m/ft) : %.3f %.3f %.3f\nOffset direction (deg) : %.3f %.3f %.3f\n\n-------- Reference object data --------\nPosition (m/m/ft) : %.3f %.3f %.3f\nDirection (deg)  : %.3f %.3f %.3f",
+		    editor_obj_data->ref_obj_name,
+		    editor_obj_data->offset_pos.x,
+		    editor_obj_data->offset_pos.y,
+		    editor_obj_data->offset_pos.z,
+		    editor_obj_data->offset_dir.heading,
+		    editor_obj_data->offset_dir.pitch,
+		    editor_obj_data->offset_dir.bank,
+		    editor_obj_data->ref_obj_pos.x,
+		    editor_obj_data->ref_obj_pos.y,
+		    editor_obj_data->ref_obj_pos.z,
+		    editor_obj_data->ref_obj_dir.heading,
+		    editor_obj_data->ref_obj_dir.pitch,
+		    editor_obj_data->ref_obj_dir.bank
+		);
+		strncat(s, s1, REMAINING(s));
+	    }
+
+	    break;
+
+	case SAR_OBJ_TYPE_HUMAN:
+	    strncat(s, "\n-------- Human specific data --------\n", REMAINING(s));
+
+	    snprintf(s1, S_LENGTH,
+		     "Type name         : %s",
+		    editor_obj_data->type_name
+	    );
+	    strncat(s, s1, REMAINING(s));
+
+	    strncat(s, "\nNeeds rescue ?  : ", REMAINING(s));
+	    if(editor_obj_data->need_rescue_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nSit up ?             : ", REMAINING(s));
+	    if(editor_obj_data->sit_up_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nSit down ?         : ", REMAINING(s));
+	    if(editor_obj_data->sit_down_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nSitting ?             : ", REMAINING(s));
+	    if(editor_obj_data->sitting_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nLying ?              : ", REMAINING(s));
+	    if(editor_obj_data->lying_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nAlerts ?              : ", REMAINING(s));
+	    if(editor_obj_data->alert_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nIs aware ?          : ", REMAINING(s));
+	    if(editor_obj_data->aware_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nIn water ?           : ", REMAINING(s));
+	    if(editor_obj_data->in_water_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    strncat(s, "\nOn a stretcher ?  : ", REMAINING(s));
+	    if(editor_obj_data->on_stretcher_s != NULL)
+		strncat(s, "y", REMAINING(s));
+	    else
+		strncat(s, "n", REMAINING(s));
+
+	    snprintf(s1, S_LENGTH, "\nAssistant(s)         : %d\n",
+			editor_obj_data->assistants
+		     );
+	    strncat(s, s1, REMAINING(s));
+
+	    /* Has this human assistants?
+	     * Note that EditorObjectDataNew() sets assistants number
+	     * to 0 if human type is "victim_stretcher_assisted".
+	     */
+	    if(editor_obj_data->assistants > 0)
+	    {
+		for(i = 0; i < editor_obj_data->assistants; i++)
+		{
+		    snprintf(s1, S_LENGTH, "Assistant #%d type : %s\n",
+				i + 1,
+				editor_obj_data->assist_type_name[i]
+			    );
+		    strncat(s, s1, REMAINING(s));
+		}
+	    }
+
+	    /* Has this human a displacement? */
+	    if((editor_obj_data->human_displacement_dir_s != NULL)
+	    )
+	    {
+		strncat(s, "\n-------- Human displacement --------\n", REMAINING(s));
+		snprintf(s1, S_LENGTH, "Action type   : %s\nRef. name     : %s\n",
+			    editor_obj_data->human_displacement_dir_s,
+			    editor_obj_data->ref_obj_name
+			);
+		strncat(s, s1, REMAINING(s));
+
+		/* Is reference object the player object? */
+		if(editor_obj_data->ref_obj_num == -2)
+		{
+		    strncat(s, "Ref. obj. pos. : (player position)\nRef. obj. dir.  : (player direction)\n", REMAINING(s));
+		}
+		else if(editor_obj_data->ref_obj_num >= 0)
+		{
+		    snprintf(s1, S_LENGTH, "Ref. obj. pos. (m/m/ft) : %.3f %.3f %.3f\nRef. obj. dir. (deg)   : %.3f %.3f %.3f\n",
+				editor_obj_data->ref_obj_pos.x,
+				editor_obj_data->ref_obj_pos.y,
+				editor_obj_data->ref_obj_pos.z,
+				editor_obj_data->ref_obj_dir.heading,
+				editor_obj_data->ref_obj_dir.pitch,
+				editor_obj_data->ref_obj_dir.bank
+			    );
+		    strncat(s, s1, REMAINING(s));
+		}
+	    }
+
+	    break;
+
+	case SAR_OBJ_TYPE_SMOKE:
+	    strncat(s, "\n-------- Smoke specific data --------\n", REMAINING(s));
+
+	    snprintf(s1, S_LENGTH,
+		    "X offset (m)                : %.3f\nY offset (m)                : %.3f\nZ offset (m)                : %.3f\nStart radius (m)           : %.3f\nMax radius (m)           : %.3f\nRadius rate (m/s)        : %.3f\nHide at max (m)          : %.3f\nRespawn interval (ms) : %ld\nTotal units                  : %d\nColor code                 : %d\n",
+		    editor_obj_data->offset_pos.x,
+		    editor_obj_data->offset_pos.y,
+		    editor_obj_data->offset_pos.z,
+		    editor_obj_data->radius_start,
+		    editor_obj_data->radius_max,
+		    editor_obj_data->radius_rate,
+		    editor_obj_data->hide_at_max,
+		    editor_obj_data->respawn_int,
+		    editor_obj_data->total_units,
+		    editor_obj_data->color_code
+	    );
+	    strncat(s, s1, REMAINING(s));
+
+	    break;
+
+	case SAR_OBJ_TYPE_FIRE:
+	    strncat(s, "\n--------- Fire specific data ---------\n", REMAINING(s));
+
+	    snprintf(s1, S_LENGTH,
+		    "Radius (m)  : %.3f\nHeight (ft)   : %.3f\n",
+		    editor_obj_data->radius,
+		    editor_obj_data->height
+	    );
+	    strncat(s, s1, REMAINING(s));
+
+	    break;
+
+	case SAR_OBJ_TYPE_EXPLOSION:
+	case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+	case SAR_OBJ_TYPE_FUELTANK:
+	    break;
+
+	case SAR_OBJ_TYPE_PREMODELED:
+	    strncat(s, "\n-------- Premodeled specific data --------\n", REMAINING(s));
+
+	    snprintf(s1, S_LENGTH,
+		     "Premodeled type  : %s\nVisual range        : %.3f\n",
+		    editor_obj_data->pm_type_s,
+		    editor_obj_data->range
+	    );
+	    strncat(s, s1, REMAINING(s));
+
+	    switch(editor_obj_data->pm_type)
+	    {
+		case SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER:
+		case SAR_OBJ_PREMODELED_TOWER:
+		case SAR_OBJ_PREMODELED_RADIO_TOWER:
+		    snprintf(s1, S_LENGTH,
+			"Height                 : %.3f\nHazard lights       : %d\n",
+			editor_obj_data->height,
+			editor_obj_data->hazard_lights
+		);
+		strncat(s, s1, REMAINING(s));
+		    break;
+
+		case SAR_OBJ_PREMODELED_CONTROL_TOWER:
+		    snprintf(s1, S_LENGTH,
+			"Length                : %.3f\nWidth                  : %.3f\nHeight                 : %.3f\nWalls texture        : %s\nRoof texture         : %s\n",
+			editor_obj_data->length,
+			editor_obj_data->width,
+			editor_obj_data->height,
+			editor_obj_data->walls_texture_s,
+			editor_obj_data->roof_texture_s
+		);
+		strncat(s, s1, REMAINING(s));
+		    break;
+
+		case SAR_OBJ_PREMODELED_BUILDING:
+		    snprintf(s1, S_LENGTH,
+			"Length                : %.3f\nWidth                  : %.3f\nHeight                 : %.3f\nWalls texture        : %s\nRoof texture         : %s\nRoof night texture : %s\n",
+			editor_obj_data->length,
+			editor_obj_data->width,
+			editor_obj_data->height,
+			editor_obj_data->walls_texture_s,
+			editor_obj_data->walls_texture_night_s,
+			editor_obj_data->roof_texture_s
+		);
+		strncat(s, s1, REMAINING(s));
+		    break;
+
+		default:
+		    break;
+	    }
+
+	    break;
+
+	default:
+	    break;
+    }
+
+    /*
+     * Use the SarII GWOutputMessage() function to print information data.
+     */
+
+    if(True)
+    {
+	/* Ugly workaround to avoid immediate window closing: sleep 0.2s .
+	 *
+	 * Bug description:
+	 * When user press the <Enter> key to validate the 'info' command,
+	 * the info window is shown then immediatly closed.
+	 *
+	 * The reason is as the window [OK] button is automatically set
+	 * as the default button by GWOutputMessage(): when the window
+	 * opens, the user has not yet released the <Enter> key thus
+	 * the [OK] button is immediately considered as validated therefore
+	 * the window is closed.
+	 * Sleeping 0.2s before opening the window gives more time to user
+	 * to release the <Enter> key.
+	 */
+	struct timespec requested, remaining;
+	requested.tv_sec = 0;
+	requested.tv_nsec = 200000000;
+	nanosleep(&requested, &remaining);
+    }
+
+    GWOutputMessage(
+	display,
+	GWOutputMessageTypeGeneral,	/* One of GWOutputMessageType* */
+	window_title,			/* Subject string */
+	s,				/* Message string */
+	NULL				/* Help string */
+    );
+
+    free(window_title);
+    free(s1);
+    free(s);
+    free(type_str);
+
+    return obj_num;
+
+#undef TITLE_LENGTH
+}
+
+
+/*
+ * Sets the focus to the SarII X11 main window
+ */
+void GwSetWindowFocusToSar2Window(const gw_display_struct *display)
+{
+    Window sar2_x_window;
+    int ctx_num;
+
+    ctx_num = display->gl_context_num;
+
+    /* Get the sar2 window X11 identifier */
+    sar2_x_window = display->toplevel[ctx_num];
+
+    XSetInputFocus(display->display, sar2_x_window, RevertToNone, CurrentTime);
+}
+
+
+/*
+ * Print the scenery modifications to the fp file and
+ * return the total_modifications number, or -1 on error.
+ */
+int ScnEditPrintModificationsList(const sar_core_struct *core_ptr,
+				  const sar_scenery_editor_struct *scn_ed,
+				  FILE *fp
+)
+{
+#define PRINTCOMMANDNAME(type)			\
+switch(type)					\
+{						\
+    case SAR_OBJ_TYPE_GARBAGE:			\
+	break;					\
+    case SAR_OBJ_TYPE_STATIC:			\
+    case SAR_OBJ_TYPE_AUTOMOBILE:		\
+    case SAR_OBJ_TYPE_WATERCRAFT:		\
+    case SAR_OBJ_TYPE_AIRCRAFT:			\
+    case SAR_OBJ_TYPE_GROUND:			\
+	fprintf(fp, "create_object %d\n", type);\
+	fprintf(fp, "model_file ");		\
+	break;					\
+    case SAR_OBJ_TYPE_RUNWAY:			\
+	fprintf(fp, "create_runway ");		\
+	break;					\
+    case SAR_OBJ_TYPE_HELIPAD:			\
+	fprintf(fp, "create_helipad ");		\
+	break;					\
+    case SAR_OBJ_TYPE_HUMAN:			\
+	fprintf(fp, "create_human ");		\
+	break;					\
+    case SAR_OBJ_TYPE_SMOKE:			\
+	fprintf(fp, "create_smoke ");		\
+	break;					\
+    case SAR_OBJ_TYPE_FIRE:			\
+	fprintf(fp, "create_fire ");		\
+	break;					\
+    case SAR_OBJ_TYPE_EXPLOSION:		\
+    case SAR_OBJ_TYPE_CHEMICAL_SPRAY:		\
+    case SAR_OBJ_TYPE_FUELTANK:			\
+	break;					\
+    case SAR_OBJ_TYPE_PREMODELED:		\
+	fprintf(fp, "create_premodeled ");	\
+	break;					\
+}
+#define PRINTMODTITLEASNEEDED				\
+if(!modified_title_printed)				\
+{							\
+    fprintf(fp, "+-----------------------+\n"		\
+		"| Modified objects list |\n"		\
+		"+-----------------------+\n\n");	\
+    modified_title_printed = True;			\
+}
+
+#define PRINTNEWTITLEASNEEDED			\
+if(!new_title_printed)				\
+{						\
+    fprintf(fp, "+------------------+\n"	\
+		"| New objects list |\n"	\
+		"+------------------+\n\n");	\
+    new_title_printed = True;			\
+}
+
+    editor_modified_object_struct *modification;
+    editor_object_data_struct *data_new, *data_original;
+    int obj_num, total_original_objects, total_objects, i, total_modifications = 0;
+    char *s = malloc(S_LENGTH * sizeof(char));
+    Boolean modified_title_printed = False, new_title_printed = False;
+
+    if(scn_ed == NULL || s == NULL || fp == NULL)
+	return -1;
+
+    s[0] = '\0';
+
+    total_original_objects = scn_ed->total_original_objects;
+    total_objects = scn_ed->total_objects;
+
+
+    /* Print list of original objects (i.e. objects which were in
+     * the *.scn file at scenery loading).
+     * These objects may have been :
+     * - deleted
+     * OR
+     * - modified or/and moved.
+     */
+    for(obj_num = 0; obj_num < total_original_objects; obj_num++)
+    {
+	modification = scn_ed->modification_list[obj_num];
+	data_original = modification->obj_data_original;
+	data_new = modification->obj_data_new;
+
+	/* Skip ground objects */
+	if(data_original->type == SAR_OBJ_TYPE_GROUND)
+	    continue;
+
+	/* Is this object deleted? */
+	if(core_ptr->object[obj_num] == NULL)
+	    modification->flags = EDITOR_OBJECT_FLAG_DELETED;
+	else
+	    SetModificationFlags(modification);
+
+	if((modification->flags & EDITOR_OBJECT_FLAG_DELETED) &&
+	    !(modification->flags & EDITOR_OBJECT_FLAG_MODIFIED)
+	)
+	{
+	    PRINTMODTITLEASNEEDED
+
+	    /* Note that "deleted" means "deleted AND not modified" */
+	    fprintf(fp, "%s"TAGVALLENGTH" has been removed.\n",
+		TAGSTRING,
+		obj_num
+	    );
+
+	    fprintf(fp, "\n");
+
+	    total_modifications++;
+	    continue;
+	}
+
+	if(data_original == NULL && data_new == NULL)
+	    continue;
+
+	/* Name modification? */
+	if(modification->flags & EDITOR_OBJECT_FLAG_NAMED)
+	{
+	    PRINTMODTITLEASNEEDED
+
+	    if(data_original->name == NULL && data_new->name != NULL)
+	    {
+		fprintf(fp,
+		    TAGSTRING""TAGVALLENGTH" object name set to:\n",
+		    obj_num
+		);
+
+		/* Print the 'new object' new name */
+		fprintf(fp, "object_name %s\n", data_new->name);
+
+		fprintf(fp, "\n");
+
+		total_modifications++;
+	    }
+	    else if(data_original->name != NULL && data_new->name == NULL)
+	    {
+		fprintf(fp,
+		    TAGSTRING""TAGVALLENGTH" object name removed:\n",
+		    obj_num
+		);
+
+		fprintf(fp, "FROM:\n");
+
+		/* Print the 'original object' name */
+		fprintf(fp, "object_name %s\n", data_original->name);
+
+		fprintf(fp, "\n");
+
+		total_modifications++;
+	    }
+	    else if(data_original->name != NULL &&
+		data_new->name != NULL &&
+		strcmp(data_original->name, data_new->name)
+	    )
+	    {
+		fprintf(fp,
+		    TAGSTRING""TAGVALLENGTH" object name modified:\n",
+		    obj_num
+		);
+
+		fprintf(fp, "FROM:\n");
+
+		/* Print the 'original object' name */
+		fprintf(fp, "object_name %s\n", data_original->name);
+
+		fprintf(fp, "TO:\n");
+
+		/* Print the 'new object' new name */
+		fprintf(fp, "object_name %s\n", data_new->name);
+
+		fprintf(fp, "\n");
+
+		total_modifications++;
+	    }
+	}
+
+	/* Aurguments modification only? */
+	if((modification->flags & EDITOR_OBJECT_FLAG_MODIFIED) &&
+	    !(modification->flags & EDITOR_OBJECT_FLAG_MOVED)
+	)
+	{
+	    char *s1;
+
+	    PRINTMODTITLEASNEEDED
+
+	    fprintf(fp,
+		TAGSTRING""TAGVALLENGTH" definition changed:\n",
+		obj_num
+	    );
+
+	    fprintf(fp, "FROM:\n");
+
+	    /* Generate then print the 'original object' command line string */
+	    PRINTCOMMANDNAME(data_original->type)
+	    s1 = DoParametersLineFromEditorObjectData(data_original);
+	    fprintf(fp, "%s\n", s1);
+	    free(s1);
+
+	    fprintf(fp, "TO:\n");
+
+	    /* Generate then print the 'new object' command line string */
+	    PRINTCOMMANDNAME(data_new->type)
+	    s1 = DoParametersLineFromEditorObjectData(data_new);
+	    fprintf(fp, "%s\n", s1);
+	    free(s1);
+
+	    fprintf(fp, "\n");
+
+	    total_modifications++;
+	}
+	/* Position modification only? */
+	else if((modification->flags & EDITOR_OBJECT_FLAG_MOVED) &&
+		!(modification->flags & EDITOR_OBJECT_FLAG_MODIFIED)
+	)
+	{
+	    PRINTMODTITLEASNEEDED
+
+	    fprintf(fp,
+		TAGSTRING""TAGVALLENGTH" position changed:\n",
+		obj_num
+	    );
+
+	    fprintf(fp, "FROM:\n");
+	    fprintf(fp, "translate %.3f %.3f %.3f\n",
+		    data_original->pos.x,
+		    data_original->pos.y,
+		    data_original->pos.z
+		);
+	    fprintf(fp, "rotate %.3f %.3f %.3f\n",
+		    data_original->dir.heading,
+		    data_original->dir.pitch,
+		    data_original->dir.bank
+		);
+
+	    fprintf(fp, "TO:\n");
+	    fprintf(fp, "translate %.3f %.3f %.3f\n",
+		    data_new->pos.x,
+		    data_new->pos.y,
+		    data_new->pos.z
+		);
+	    if(data_new->type != SAR_OBJ_TYPE_FIRE &&
+		data_new->type != SAR_OBJ_TYPE_SMOKE
+	    )
+	    {
+		fprintf(fp, "rotate %.3f %.3f %.3f\n",
+			data_new->dir.heading,
+			data_new->dir.pitch,
+			data_new->dir.bank
+		    );
+	    }
+
+	    fprintf(fp, "\n");
+
+	    total_modifications++;
+	}
+	/* Arguments and position modification? */
+	else if((modification->flags & EDITOR_OBJECT_FLAG_MODIFIED) &&
+	    (modification->flags & EDITOR_OBJECT_FLAG_MOVED)
+	)
+	{
+	    char *s1;
+
+	    PRINTMODTITLEASNEEDED
+
+	    fprintf(fp,
+		    TAGSTRING""TAGVALLENGTH" changed:\n",
+		    obj_num
+		);
+
+	    fprintf(fp, "FROM:\n");
+
+	    /* Generate then print the 'original object' command line string */
+	    PRINTCOMMANDNAME(data_original->type)
+	    s1 = DoParametersLineFromEditorObjectData(data_original);
+	    fprintf(fp, "%s\n", s1);
+	    free(s1);
+	    fprintf(fp, "translate %.3f %.3f %.3f\n",
+		    data_original->pos.x,
+		    data_original->pos.y,
+		    data_original->pos.z
+		);
+	    fprintf(fp, "rotate %.3f %.3f %.3f\n",
+		    data_original->dir.heading,
+		    data_original->dir.pitch,
+		    data_original->dir.bank
+		);
+
+	    fprintf(fp, "TO:\n");
+
+	    /* Generate then print the 'new object' command line string */
+	    PRINTCOMMANDNAME(data_new->type)
+	    s1 = DoParametersLineFromEditorObjectData(data_new);
+	    fprintf(fp, "%s\n", s1);
+	    free(s1);
+	    fprintf(fp, "translate %.3f %.3f %.3f\n",
+		    data_new->pos.x,
+		    data_new->pos.y,
+		    data_new->pos.z
+		);
+	    if(data_new->type != SAR_OBJ_TYPE_FIRE &&
+		data_new->type != SAR_OBJ_TYPE_SMOKE
+	    )
+	    {
+		fprintf(fp, "rotate %.3f %.3f %.3f\n",
+			data_new->dir.heading,
+			data_new->dir.pitch,
+			data_new->dir.bank
+		    );
+	    }
+
+	    fprintf(fp, "\n");
+
+	    total_modifications++;
+	}
+    }
+
+    /* Print list of new objects */
+    for(obj_num = total_original_objects; obj_num < total_objects; obj_num++)
+    {
+	modification = scn_ed->modification_list[obj_num];
+
+	data_new = modification->obj_data_new;
+
+	if(data_new == NULL)
+	    continue;
+
+	if(modification->flags & EDITOR_OBJECT_FLAG_DELETED)
+	    continue;
+
+	if(data_new->type == SAR_OBJ_TYPE_GARBAGE)
+	    continue;
+
+	PRINTNEWTITLEASNEEDED
+
+	switch(data_new->type)
+	{
+	    case SAR_OBJ_TYPE_GARBAGE:
+		break;
+
+	    case SAR_OBJ_TYPE_STATIC:
+	    case SAR_OBJ_TYPE_AUTOMOBILE:
+	    case SAR_OBJ_TYPE_WATERCRAFT:
+	    case SAR_OBJ_TYPE_AIRCRAFT:
+	    case SAR_OBJ_TYPE_GROUND:
+		snprintf(s, S_LENGTH, "create_object %d", data_new->type);
+		fprintf(fp, "%s\n", s);
+
+		if(data_new->file_name != NULL && strlen(data_new->file_name) > 0)
+		    snprintf(s, S_LENGTH, "model_file %s", data_new->file_name);
+		else
+		    snprintf(s, S_LENGTH, "model_file UNKNOWN");
+
+		fprintf(fp, "%s\n", s);
+		break;
+
+	    case SAR_OBJ_TYPE_RUNWAY:
+		fprintf(fp,
+			"create_runway %.3f %.3f %.3f %d %d %.3f %s %s %.3f %.3f",
+			data_new->range,
+			data_new->length,
+			data_new->width,
+			data_new->surface_type,
+			data_new->dashes,
+			data_new->edge_light_spacing,
+			data_new->north_label,
+			data_new->south_label,
+			data_new->north_displaced_threshold,
+			data_new->south_displaced_threshold
+		    );
+		    if(data_new->has_thresholds_s != NULL)
+			fprintf(fp, " %s", data_new->has_thresholds_s);
+		    if(data_new->has_borders_s != NULL)
+			fprintf(fp, " %s", data_new->has_borders_s);
+		    if(data_new->has_td_markers_s != NULL)
+			fprintf(fp, " %s", data_new->has_td_markers_s);
+		    if(data_new->has_midway_markers_s != NULL)
+			fprintf(fp, " %s", data_new->has_midway_markers_s);
+		    if(data_new->has_north_gs_s != NULL)
+			fprintf(fp, " %s", data_new->has_north_gs_s);
+		    if(data_new->has_south_gs_s != NULL)
+			fprintf(fp, " %s", data_new->has_south_gs_s);
+
+		    fprintf(fp, "\n");
+		break;
+
+	    case SAR_OBJ_TYPE_HELIPAD:
+		fprintf(fp,
+			"create_helipad %s %.3f %.3f %.3f %s %c %c %c %c %c",
+			data_new->style_s,
+			data_new->length,
+			data_new->width,
+			data_new->recession,
+			data_new->label,
+			data_new->edge_lighting_c,
+			data_new->has_fuel_c,
+			data_new->has_repair_c,
+			data_new->has_drop_off_c,
+			data_new->restarting_point_c
+		    );
+		if(data_new->ref_obj_name != NULL)
+		{
+		    fprintf(fp,
+			" %s %.3f %.3f %.3f %.3f %.3f %.3f\n",
+			data_new->ref_obj_name,
+			data_new->offset_pos.x,
+			data_new->offset_pos.y,
+			data_new->offset_pos.z,
+			data_new->offset_dir.heading,
+			data_new->offset_dir.pitch,
+			data_new->offset_dir.bank
+		    );
+		}
+		else
+		    fprintf(fp, "\n");
+		break;
+
+	    case SAR_OBJ_TYPE_HUMAN:
+		fprintf(fp, "create_human %s", data_new->type_name);
+		if(data_new->need_rescue_s != NULL)
+		    fprintf(fp, " %s", data_new->need_rescue_s);
+		if(data_new->sit_up_s != NULL)
+		    fprintf(fp, " %s", data_new->sit_up_s);
+		if(data_new->sit_down_s != NULL)
+		    fprintf(fp, " %s", data_new->sit_down_s);
+		if(data_new->sitting_s != NULL)
+		    fprintf(fp, " %s", data_new->sitting_s);
+		if(data_new->lying_s != NULL)
+		    fprintf(fp, " %s", data_new->lying_s);
+		if(data_new->alert_s != NULL)
+		    fprintf(fp, " %s", data_new->alert_s);
+		if(data_new->aware_s != NULL)
+		    fprintf(fp, " %s", data_new->aware_s);
+		if(data_new->in_water_s != NULL)
+		    fprintf(fp, " %s", data_new->in_water_s);
+		if(data_new->on_stretcher_s != NULL)
+		    fprintf(fp, " %s", data_new->on_stretcher_s);
+
+		if(data_new->assisted_s != NULL)
+		{
+		    fprintf(fp, " %s %d",
+			     data_new->assisted_s,
+			     data_new->assistants
+			);
+		    for(i = 0; i < data_new->assistants; i++)
+			fprintf(fp, " %s", data_new->assist_type_name[i]);
+		}
+
+		fprintf(fp, "\n");
+		break;
+
+	    case SAR_OBJ_TYPE_SMOKE:
+		fprintf(fp,
+		    "create_smoke %.3f %.3f %.3f %.3f %.3f %.3f %.3f %ld %d %d\n",
+		    data_new->offset_pos.x,
+		    data_new->offset_pos.y,
+		    data_new->offset_pos.z,
+		    data_new->radius_start,
+		    data_new->radius_max,
+		    data_new->radius_rate,
+		    data_new->hide_at_max,
+		    data_new->respawn_int,
+		    data_new->total_units,
+		    data_new->color_code
+		);
+		break;
+
+	    case SAR_OBJ_TYPE_FIRE:
+		fprintf(fp, "create_fire %.3f %.3f\n",
+		    data_new->radius,
+		    data_new->height
+		);
+		break;
+
+	    case SAR_OBJ_TYPE_EXPLOSION:
+	    case SAR_OBJ_TYPE_CHEMICAL_SPRAY:
+	    case SAR_OBJ_TYPE_FUELTANK:
+		break;
+
+	    case SAR_OBJ_TYPE_PREMODELED:
+		fprintf(fp, "create_premodeled %s", data_new->pm_type_s);
+		switch(data_new->pm_type)
+		{
+		    case SAR_OBJ_PREMODELED_BUILDING:
+			fprintf(fp, " %.3f %.3f %.3f %.3f %s %s %s\n",
+			    data_new->range,
+			    data_new->length,
+			    data_new->width,
+			    data_new->height,
+			    data_new->walls_texture_s,
+			    data_new->walls_texture_night_s,
+			    data_new->roof_texture_s
+			);
+		    break;
+
+		    case SAR_OBJ_PREMODELED_CONTROL_TOWER:
+			fprintf(fp, " %.3f %.3f %.3f %.3f %s %s\n",
+			    data_new->range,
+			    data_new->length,
+			    data_new->width,
+			    data_new->height,
+			    data_new->walls_texture_s,
+			    data_new->roof_texture_s
+			);
+		    break;
+
+		    case SAR_OBJ_PREMODELED_HANGAR:
+			;
+		    break;
+
+		    case SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER:
+		    case SAR_OBJ_PREMODELED_TOWER:
+		    case SAR_OBJ_PREMODELED_RADIO_TOWER:
+			fprintf(fp, " %.3f %.3f %d\n",
+			    data_new->range,
+			    data_new->height,
+			    data_new->hazard_lights
+			);
+		    break;
+		}
+		break;
+	}
+
+	if(data_new->name != NULL)
+	    fprintf(fp, "object_name %s\n", data_new->name);
+
+	/* FIXME compare don't work if limit is set to > 0.0f instead of > 0.0005f */
+	if(data_new->range > 0.0005f)
+	    fprintf(fp, "range %.3f\n", data_new->range);
+
+	/* Referenced helipad? */
+	if(data_new->type == SAR_OBJ_TYPE_HELIPAD &&
+	    data_new->ref_obj_name != NULL
+	)
+	{
+	    /* No need to print translate and rotate value, they're part of the
+	     * create_helipad parameters (ref object offsets).
+	     */
+	}
+	else
+	{
+	    fprintf(fp, "translate %.3f %.3f %.3f\n",
+			data_new->pos.x,
+			data_new->pos.y,
+			data_new->pos.z
+		    );
+
+	    if(data_new->type != SAR_OBJ_TYPE_FIRE &&
+		data_new->type != SAR_OBJ_TYPE_SMOKE
+	    )
+	    {
+		fprintf(fp, "rotate %.3f %.3f %.3f\n",
+			    data_new->dir.heading,
+			    data_new->dir.pitch,
+			    data_new->dir.bank
+			);
+	    }
+	}
+
+	fprintf(fp, "\n");
+
+	total_modifications++;
+    }
+
+    free(s);
+    return total_modifications;
+#undef PRINTNEWTITLEASNEEDED
+#undef PRINTMODTITLEASNEEDED
+#undef PRINTCOMMANDNAME
+}
+
+
+/*
+ * Do the print command.
+ */
+void doPrint(sar_core_struct *core_ptr, unsigned long flags)
+{
+#define REPORTFILEPREFIX "sar2_editor_report_"
+#define SCENERYCOPYFILEEXTENSION "_with_obj_num.txt"
+
+	sar_scene_struct *scene = core_ptr->scene;
+	//gw_display_struct *display = core_ptr->display;
+	sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+	char *s = (char *)malloc(81 * sizeof(char));
+
+	/* Something to print? */
+	if(scn_ed->must_print == True)
+	{
+	    struct stat stat_buf;
+	    Boolean no_file, file_ok = False;
+	    FILE *fp, *output_file;
+	    char *scn_file_full_name, *scn_file_short_name;
+	    char *editor_scn_filename;
+	    char *output_file_name;
+	    char *time_stamp = timeStamp();
+
+	    /*
+	     * Get scene file name
+	     */
+
+	    /* Editor started from a mission? */
+	    if(core_ptr->mission != NULL)
+		scn_file_full_name = core_ptr->mission->scene_file;
+	    /* Editor started from a free flight? */
+	    else if(core_ptr->cur_scene_file != NULL)
+		scn_file_full_name = core_ptr->cur_scene_file;
+	    /* Should never happen... */
+	    else
+		scn_file_full_name = NULL;
+
+	    scn_file_short_name = strrchr(scn_file_full_name, '/');
+
+	    /*
+	     * Print scenery modifications
+	     */
+
+	    output_file_name = (char *)malloc(
+				(strlen(getenv("HOME"))
+				    + 1
+				    + strlen(REPORTFILEPREFIX)
+				    + strlen("YYYYMMDDHHMMSS.txt")
+				) * sizeof(char) + 1);
+
+	    sprintf(output_file_name, "%s/%s%s.txt",
+		    getenv("HOME"),
+		    REPORTFILEPREFIX,
+		    time_stamp
+	    );
+	    free(time_stamp);
+
+	    output_file = fopen(output_file_name, "w");
+	    if(output_file != NULL)
+	    {
+		fprintf(output_file,
+			"*******************************\n"
+			"* SarII scenery editor report *\n"
+			"*******************************\n"
+		    );
+
+		/* Editor started from a mission? */
+		if(core_ptr->mission != NULL)
+		{
+		    /* Print warning header */
+
+		    fprintf(output_file, "     --- WARNING ---     \nScenery editor has been started from the '%s' mission:\nIf there are any, #_EOBJ#nnnnn numbers can be WRONG!!!\n\n", core_ptr->mission->title);
+
+		    fprintf(output_file, "Hereunder is the SUPPOSED modification list for the '%s' scenery.\n\n\n", scn_file_full_name);
+		}
+		/* Editor started from a free flight */
+		else
+		{
+		    /* Print normal header */
+
+		    fprintf(output_file, "Original scenery file name :\n");
+		    fprintf(output_file, "%s\n\n\n", scn_file_full_name);
+		}
+
+		/* Print modification data */
+		ScnEditPrintModificationsList(core_ptr, scn_ed, output_file);
+		fclose(output_file);
+
+		snprintf(
+			s,
+			80,
+			"Scenery modifications report written to '%s'.",
+			output_file_name
+		);
+		NOTIFY(s);
+
+		free(s);
+		s = NULL;
+	    }
+	    else
+	    {
+		snprintf(
+			s,
+			80,
+			"ERROR: Can't open '%s' for writing.",
+			output_file_name
+		);
+		NOTIFY(s);
+
+		free(s);
+		s = NULL;
+	    }
+
+	    free(output_file_name);
+
+	    /*
+	     * Copy the scenery file and add the E_OBJ#obj_num tags
+	     */
+
+	    editor_scn_filename = (char *)malloc(
+				(strlen(getenv("HOME"))
+				    + 1
+				    + strlen(scn_file_short_name)
+				    + strlen(SCENERYCOPYFILEEXTENSION)
+				) * sizeof(char) + 1);
+
+	    sprintf(editor_scn_filename, "%s%s%s",
+		    getenv("HOME"),
+		    scn_file_short_name,
+		    SCENERYCOPYFILEEXTENSION
+	    );
+
+	    /* Check if file with object number tags doesn't exist */
+	    if(stat(editor_scn_filename, &stat_buf))
+	    {
+		no_file = True;
+	    }
+	    /* File already exists, try to remove it */
+	    else
+	    {
+		/* File can't be removed? */
+		if(remove((const char *)editor_scn_filename) != 0)
+		{
+		    snprintf(
+			s,
+			80,
+			"ERROR: Can't delete file '%s'.",
+			editor_scn_filename
+		    );
+		    NOTIFY(s);
+		    no_file = False;
+		    free(s);
+		    s = NULL;
+		}
+		else
+		    no_file = True;
+	    }
+
+	    if(no_file)
+	    {
+		/* Copy file */
+		fp = FCopy((const char *)scn_file_full_name,
+			    (const char *)editor_scn_filename
+			);
+
+		/* File copied? */
+		if(fp != NULL)
+		{
+		    /* Change output file access mode to read/write */
+		    fp = freopen(editor_scn_filename, "r+", fp );
+
+		    /* No error while adding object number tags in file? */
+		    if(fp != NULL && AddObjNumToSceneryFile(fp) >= 0)
+			file_ok = True;
+		    else
+		    {
+			fclose(fp);
+			file_ok = False;
+		    }
+		}
+		else
+		    file_ok = False;
+	    }
+
+	    if(file_ok)
+	    {
+		fclose(fp);
+		free(scn_ed->scn_file_name);
+		scn_ed->scn_file_name = STRDUP(editor_scn_filename);
+	    }
+	    else
+	    {
+		free(scn_ed->scn_file_name);
+		scn_ed->scn_file_name = NULL;
+
+		snprintf(
+		    s,
+		    80,
+		    "ERROR: Can't create file '%s'.",
+		    editor_scn_filename
+		);
+		NOTIFY(s);
+		free(s);
+		s = NULL;
+	    }
+
+	    free(editor_scn_filename);
+	}
+	else
+	{
+	    NOTIFY("No scenery modification to print.");
+	}
+
+	/* Set that all modifications have been printed */
+	scn_ed->must_print = False;
+
+	free(s);
+
+#undef SCENERYCOPYFILEEXTENSION
+#undef REPORTFILEPREFIX
+    }
+
+
+/*
+ * Return a YYYYMMDDHHMMSS time stamp string.
+ * Returned string must be freed by calling function.
+ */
+char *timeStamp()
+{
+    int h, min, s, day, month, year;
+    time_t now;
+    char *timeStampString;
+
+    /* Current time */
+    time(&now);
+
+    /* Convert to local time */
+    struct tm *local = localtime(&now);
+    h = local->tm_hour;
+    min = local->tm_min;
+    s = local->tm_sec;
+    day = local->tm_mday;
+    month = local->tm_mon + 1;
+    year = local->tm_year + 1900;
+
+    timeStampString = strdup("YYYYMMDDHHMMSS");
+    sprintf(timeStampString, "%04d%02d%02d%02d%02d%02d", year, month, day, h, min, s);
+
+    return(timeStampString);
+}
+
+
+/*
+ * Delete current player object then set the new one.
+ */
+int ScnEditSetPlayerObject(
+    sar_core_struct *core_ptr,
+    sar_scene_struct *scene,
+    const char *player_file,
+    sar_position_struct start_pos,
+    sar_direction_struct start_dir
+)
+{
+    float ground_height;
+    sar_object_struct *player_obj_ptr;
+
+    /* Get player object pointer */
+    player_obj_ptr = scene->player_obj_ptr;
+
+    /* Get ground height below player */
+    ground_height = SARSimFindGround(
+			core_ptr,
+			scene,
+			core_ptr->object, core_ptr->total_objects,
+			&player_obj_ptr->pos
+		    );
+
+    /* Delete player current object */
+    SARObjDelete(
+		core_ptr,
+		&core_ptr->object,
+		&core_ptr->total_objects,
+		scene->player_obj_num
+	    );
+
+    /* Set z position to ground */
+    start_pos.z = ground_height;
+
+    /* Add player new object */
+    SARSceneAddPlayerObject(
+		core_ptr, scene, player_file,
+		&start_pos, &start_dir
+	    );
+
+    /* Update player model file name */
+    free(core_ptr->cur_player_model_file);
+    core_ptr->cur_player_model_file = STRDUP(player_file);
+
+    return 0;
+}
+
+
+/*
+ *	Scenery editor utility.
+ */
+void SARCmdSceneEditor(SAR_CMD_PROTOTYPE)
+{
+    sar_core_struct *core_ptr = SAR_CORE(data);
+    sar_scene_struct *scene = core_ptr->scene;
+    gw_display_struct *display = core_ptr->display;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    int player_obj_num, obj_num = -1, picked_obj_num, new_obj_num;
+    int strc, i;
+    sar_obj_type type;
+    sar_object_struct *obj_ptr, *player_obj_ptr, *picked_obj_ptr;
+    sar_object_aircraft_struct *aircraft = NULL;
+    //sar_object_smoke_struct *smoke = NULL;
+    //sar_object_explosion_struct *explosion = NULL;
+    //sar_object_fire_struct *fire = NULL;
+    //sar_object_fueltank_struct *fueltank = NULL;
+    sar_object_helipad_struct *helipad = NULL;
+    char **strv, *cmd_args = NULL;
+    editor_object_data_struct *editor_obj_data;
+    editor_modified_object_struct *modification;
+    Boolean next;
+
+    if(scene == NULL)
+	return;
+
+    if(display == NULL)
+	return;
+
+    /* Get player object references from scene structure */
+    player_obj_num = scene->player_obj_num;
+    player_obj_ptr = scene->player_obj_ptr;
+
+    /* Get aircraft */
+    aircraft = SAR_OBJ_GET_AIRCRAFT(player_obj_ptr);
+    if(aircraft == NULL)
+	return;
+
+    /* Editor not yet started and no scnedit argument given? */
+    if(scn_ed == NULL && *arg == '\0')
+    {
+	NOTIFY(
+	    "Usage: scnedit on|off"
+	);
+	return;
+    }
+
+    /* Scenery editor structure not yet allocated? */
+    if(scn_ed == NULL)
+    {
+	scn_ed = malloc(sizeof(sar_scenery_editor_struct));
+
+	if(scn_ed != NULL)
+	{
+	    /* Init structure values */
+
+	    scn_ed->object_placer_file_name = NULL;
+	    scn_ed->scn_file_name = NULL;
+	    scn_ed->scn_file_fp = NULL;
+	    scn_ed->cur_obj_type = SAR_OBJ_TYPE_GARBAGE;
+	    scn_ed->cur_obj_num = -1;
+	    scn_ed->cur_obj_arg = NULL;
+	    scn_ed->in_modif_state = False;
+	    scn_ed->in_move_at_state = False;
+	    scn_ed->in_name_state = False;
+	    scn_ed->text_input_escaped = False;
+	    scn_ed->in_move_state = False;
+	    scn_ed->must_print = False;
+	    scn_ed->current_action = EDITOR_ACTION_NONE;
+	    scn_ed->gui_mode_on = False;
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+	    scn_ed->gtk_mode_on = False;
+	    scn_ed->editor_gtk_ui = NULL;
+#endif
+	    scn_ed->pick_skip_list_index = -1;
+	    for(i = 0; i < sizeof(scn_ed->pick_skip_list)/sizeof(int); i++)
+		scn_ed->pick_skip_list[i] = -1;
+	    scn_ed->mod_cur_parm = NULL;
+	    scn_ed->prev_obj_num = -1;
+	    scn_ed->mod_obj_num = -1;
+	    scn_ed->total_original_objects = core_ptr->total_objects;
+	    scn_ed->total_objects = 0;
+	    scn_ed->modification_list = NULL;
+	    scn_ed->yes_no_query = YES_NO_QUERY_NONE;
+	    scn_ed->player_old_model_file = NULL;
+	}
+	else
+	    return;
+
+	core_ptr->in_game_editor = (sar_scenery_editor_struct *)scn_ed;
+    }
+
+    /* Parse command argument */
+    strv = strexp(arg, &strc);
+
+#define FREETHENRETURN		\
+{				\
+strlistfree(strv, strc);	\
+return;				\
+}
+
+    cmd_args = (char *)arg;
+
+    /* No argument?
+     * Can happen when user has deleted the whole parameters line.
+     */
+    if(strc == 0)
+    {
+	strc = 1;
+	strv = malloc(strc * sizeof(char *));
+	strv[0] = strdup("");
+    }
+
+    /* In progress command cancelled? */
+    if(scn_ed->text_input_escaped == True)
+    {
+	scn_ed->in_move_at_state = False;
+	scn_ed->in_modif_state = False;
+	scn_ed->in_name_state = False;
+
+	scn_ed->text_input_escaped = False;
+    }
+
+    /* Set (stick to scene) current object? */
+    if(!strcasecmp(strv[0], "set") ||
+	!strcasecmp(strv[0], "set_to_ground") ||
+	!strcasecmp(strv[0], "stg")
+    )
+    {
+	obj_num = scn_ed->cur_obj_num;
+
+	/* Must force Z value to ground level? */
+	if(!strcasecmp(strv[0], "set_to_ground") ||
+	    !strcasecmp(strv[0], "stg")
+	)
+	{
+	    float ground_height;
+
+	    NOTIFY("Please note that this command is deprecated and will be removed.");
+
+	    /* Get ground height below player */
+	    ground_height = SARSimFindGround(
+				core_ptr,
+				scene,
+				core_ptr->object, core_ptr->total_objects,
+				&player_obj_ptr->pos
+			    );
+
+	    /* Move player object to ground */
+	    player_obj_ptr->pos.z = ground_height;
+	    /* Realize player object position */
+	    SARSimWarpObject(scene, player_obj_ptr, &player_obj_ptr->pos, &player_obj_ptr->dir);
+
+	    if(obj_num >= 0)
+	    {
+		/* Get object pointer */
+		obj_ptr = core_ptr->object[obj_num];
+
+		/* Move object to ground */
+		obj_ptr->pos.z = ground_height;
+		/* Realize object position */
+		SARSimWarpObject(scene, obj_ptr, &obj_ptr->pos, &obj_ptr->dir);
+
+		scn_ed->must_print = True;
+	    }
+	}
+
+	/* In a "move" procedure? */
+	if(scn_ed->in_move_state == True)
+	{
+	    /* Unlink moved object from player object (stick object to scene) */
+	    scn_ed->cur_obj_num = -1;
+
+	    /* Object has been sticked to scene, move procedure is finished */
+	    scn_ed->in_move_state = False;
+
+	    char *s = (char *)malloc(S_LENGTH * sizeof(char));
+	    obj_ptr = ((obj_num < 0) ? NULL : (*&core_ptr->object)[obj_num]);
+
+	    EDITOROBJECTSETDATA(obj_num)
+
+	    /* Reset triedron Z axis (force it to be vertical) */
+	    player_obj_ptr->dir.pitch = 0;
+	    player_obj_ptr->dir.bank = 0;
+
+	    /* Notify user that move has been done */
+	    snprintf(s, S_LENGTH, "Object #%d moved to %.3f %.3f %.3f\n",
+			obj_num,
+			obj_ptr->pos.x,
+			obj_ptr->pos.y,
+			obj_ptr->pos.z
+		    );
+	    NOTIFY(s);
+	    free(s);
+
+	    scn_ed->must_print = True;
+	}
+	/* Not in a "move object" procedure */
+	else
+	{
+	    /* No object currently loaded? */
+	    if(obj_num < 0)
+	    {
+		/* Create then load a new object placer (triedron) object */
+		new_obj_num = ScnEditLoadObject(core_ptr, -1, SAR_OBJ_TYPE_STATIC, scn_ed->object_placer_file_name);
+
+		scn_ed->cur_obj_type = SAR_OBJ_TYPE_STATIC;
+		free(scn_ed->cur_obj_arg);
+		scn_ed->cur_obj_arg = STRDUP(scn_ed->object_placer_file_name);
+
+		/* Set object position as player position */
+		obj_ptr = ((new_obj_num < 0) ? NULL : (*&core_ptr->object)[new_obj_num]);
+		if(obj_ptr != NULL)
+		{
+		    memcpy(&obj_ptr->pos, &player_obj_ptr->pos, sizeof(sar_position_struct));
+		    memcpy(&obj_ptr->dir, &player_obj_ptr->dir, sizeof(sar_direction_struct));
+		}
+
+		scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+		EDITOROBJECTSETDATA(new_obj_num)
+
+		/* Unlink object from player object (stick object to scene) */
+		scn_ed->cur_obj_num = -1;
+	    }
+	    else
+	    {
+		/* Copy the current object and its children (if any) */
+		new_obj_num = ScnEditCopyObjectWithChildren(
+			core_ptr,
+			scn_ed->cur_obj_num,
+			scn_ed->cur_obj_type,
+			scn_ed->cur_obj_arg
+		    );
+
+		EDITOROBJECTSETDATA(scn_ed->cur_obj_num)
+		scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+
+		/* Link newly created object to player object.
+		 * As only one object (with its children, if any) can be linked
+		 * to the player object at a time, the "old" previous object
+		 * will automatically be sticked to scene.
+		 */
+		scn_ed->cur_obj_num = new_obj_num;
+	    }
+
+	    obj_ptr = ((new_obj_num < 0) ? NULL : (*&core_ptr->object)[new_obj_num]);
+
+	    if(obj_ptr != NULL)
+	    {
+		/* Set object position as player position */
+		memcpy(&obj_ptr->pos, &player_obj_ptr->pos, sizeof(sar_position_struct));
+		memcpy(&obj_ptr->dir, &player_obj_ptr->dir, sizeof(sar_direction_struct));
+
+		/* Try to get a helipad structure pointer */
+		helipad = SAR_OBJ_GET_HELIPAD(obj_ptr);
+
+		/* Is helipad a referenced one? */
+		if(helipad && helipad->ref_object >= 0)
+		{
+		    sar_object_struct *ref_obj_ptr;
+		    sar_position_struct offset_pos;
+		    sar_direction_struct offset_dir;
+
+		    /* Get helipad reference object pointer */
+		    ref_obj_ptr = (
+				    (helipad->ref_object < 0) ?
+				    NULL :
+				    (*&core_ptr->object)[helipad->ref_object]
+				   );
+
+		    if(ref_obj_ptr)
+		    {
+			/* Calculate and set helipad offset pos and dir values */
+			offset_pos.x = obj_ptr->pos.x - ref_obj_ptr->pos.x;
+			offset_pos.y = obj_ptr->pos.y - ref_obj_ptr->pos.y;
+			offset_pos.z = obj_ptr->pos.z - ref_obj_ptr->pos.z;
+			offset_dir.heading = obj_ptr->dir.heading - ref_obj_ptr->dir.heading;
+			offset_dir.pitch = obj_ptr->dir.pitch - ref_obj_ptr->dir.pitch;
+			offset_dir.bank = obj_ptr->dir.bank - ref_obj_ptr->dir.bank;
+
+			/* Realize object position */
+			SARSimWarpObjectRelative(
+			    scene, obj_ptr,
+			    core_ptr->object,
+			    core_ptr->total_objects,
+			    helipad->ref_object,
+			    &offset_pos,
+			    &offset_dir
+			);
+
+			/* Update editor object data structure */
+			modification = scn_ed->modification_list[new_obj_num];
+			editor_object_data_struct *new_data = modification->obj_data_new;
+			EditorObjectDataStructFill(core_ptr, new_data, new_obj_num);
+		    }
+		}
+	    }
+
+	    /* Move a little bit player object to show user that
+	     * object has been set.
+	     */
+	    player_obj_ptr->pos.x += 0.5f * cos(player_obj_ptr->dir.heading);
+	    player_obj_ptr->pos.y += 0.5f * sin(player_obj_ptr->dir.heading);
+
+	    /* Realize player new position */
+	    SARSimWarpObject(scene, player_obj_ptr, &player_obj_ptr->pos, &player_obj_ptr->dir);
+
+	    obj_num = new_obj_num;
+
+	    scn_ed->must_print = True;
+	}
+    }
+    /* Exit edit mode?
+     * NOTE If you are looking for "scnedit on", search for
+     *       !strcasecmp(strv[0], "on") in this source file.
+     */
+    else if(core_ptr->editor_mode_on == True &&
+	    (!strcasecmp(strv[0], "scnedit") &&
+	    strc > 1 && !strcasecmp(strv[1], "off"))
+    )
+    {
+	/* Are they some modifications to print? */
+	if(scn_ed->must_print == True &&
+	    scn_ed->current_action != EDITOR_ACTION_QUIT_WITHOUT_PRINT
+	)
+	{
+	    /* Ask player to really quit without print */
+
+	    /* Enter command mode */
+	    SARKeyCommand(core_ptr, display, scene, True);
+
+	    /* Set command prompt */
+	    SARTextInputMap(
+		core_ptr->text_input,
+"Modifications list has not been printed. Do you want to print them before quit editor? (y/n)",
+		NULL,
+		SARCmdTextInputCB,
+		core_ptr
+	    );
+
+	    /* Set y/n querier */
+	    scn_ed->yes_no_query = QUERY_YES_NO_PRINT_BEFORE_QUIT;
+	}
+	/* No new modification to print or do not print modification,
+	 * shut off editor.
+	 */
+	else
+	{
+	    EditorOff(core_ptr);
+	    NOTIFY("Editing mode is now OFF");
+	}
+    }
+    /*
+     * Move sequence running?
+     * Note that the commands which are available when a "move" sequence is
+     * running must have been tested before this test.
+     *
+     */
+    else if(scn_ed->in_move_state == True)
+    {
+	NOTIFY("You must \"set\" currently moved object before.");
+    }
+    /* Unload current object? */
+    else if(!strcasecmp(strv[0], "ul") || !strcasecmp(strv[0], "unload"))
+    {
+	if(scn_ed->in_move_state == True)
+	{
+	    NOTIFY(
+		"Can't unload this object because it is in \"move\": you must \"set\" it."
+	    );
+	}
+	else if(scn_ed->cur_obj_num >= 0)
+	{
+	    scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+
+	    /* Unlink object from player object */
+	    scn_ed->cur_obj_num = -1;
+
+	    free(scn_ed->cur_obj_arg);
+	    scn_ed->cur_obj_arg = NULL;
+	    scn_ed->cur_obj_type = SAR_OBJ_TYPE_GARBAGE;
+
+	    ScnEditDeleteObject(core_ptr, scn_ed->prev_obj_num);
+	}
+    }
+    /* Remove closer object? */
+    else if(!strcasecmp(strv[0], "rm") ||
+	    !strcasecmp(strv[0], "remove") ||
+	    !strcasecmp(strv[0], "del") ||
+	    !strcasecmp(strv[0], "delete")
+    )
+    {
+	picked_obj_num = SceneObjectPick(core_ptr, player_obj_num, False);
+
+	if(picked_obj_num > -1)
+	{
+	    char *s = (char *)malloc(80 * sizeof(char));
+	    int deleted;
+
+	    deleted = ScnEditDeleteObject(core_ptr, picked_obj_num);
+
+	    if(deleted == 1)
+		snprintf(s, 80, "Object #%d has been removed.", picked_obj_num);
+	    else if (deleted == 1)
+snprintf(s, 80, "Object #%d and its child have been removed.",
+			picked_obj_num
+		    );
+	    else if (deleted > 1)
+snprintf(s, 80, "Object #%d and its %d children have been removed.",
+			picked_obj_num,
+			--deleted
+		    );
+
+	    NOTIFY(s);
+	    free(s);
+
+	    obj_num = picked_obj_num;
+	    scn_ed->must_print = True;
+	}
+    }
+    /* Give info about closer object? */
+    else if(!strcasecmp(strv[0], "info") || !strcasecmp(strv[0], "ifn"))
+    {
+	/* "next" object requested by user? */
+	if((strc >= 2 && !strcasecmp(strv[1], "next")) ||
+	    !strcasecmp(strv[0], "ifn")
+	)
+	    next = True;
+	else
+	    next = False;
+
+	/* Get closer or "next closer" object as needed */
+	picked_obj_num = SceneObjectPick(core_ptr, player_obj_num, next);
+
+	/* Get object data structure pointer */
+	modification = scn_ed->modification_list[picked_obj_num];
+	editor_obj_data = modification->obj_data_new;
+
+	if(picked_obj_num > -1)
+	{
+	    /* GUI off? */
+	    if(!scn_ed->gui_mode_on)
+		ScnEditShowObjectInfoWindow(core_ptr, picked_obj_num, editor_obj_data);
+	}
+	else
+	{
+	    NOTIFY("No object selected.");
+	}
+    }
+    /* Move closer object with joystick? */
+    else if(scn_ed->in_move_state != True &&
+	 (!strcasecmp(strv[0], "mv") ||
+	 (!strcasecmp(strv[0], "move") && strc == 1))
+    )
+    {
+	sar_object_struct *picked_obj_ptr;
+
+	/* Has user given an object number? */
+	if(strc > 1 && strv[1][0] == '#')
+	{
+	    if(sscanf(strv[1], "#%d", &picked_obj_num) != 1)
+		picked_obj_num = -1;
+	}
+	else
+	    picked_obj_num = SceneObjectPick(core_ptr, player_obj_num, False);
+
+	/* Is there already an edited object? */
+	if(scn_ed->cur_obj_num >= 0)
+	{
+	    /* Delete currently edited object */
+
+	    obj_num = scn_ed->cur_obj_num;
+
+	    /* Unlink object from player object */
+	    scn_ed->cur_obj_num = -1;
+
+	    ScnEditDeleteObject(core_ptr, obj_num);
+	}
+
+	/* Get picked object pointer */
+	picked_obj_ptr = ((picked_obj_num < 0) ? NULL : (*&core_ptr->object)[picked_obj_num]);
+
+	/* Is picked object a helipad? */
+	if((helipad = SAR_OBJ_GET_HELIPAD(picked_obj_ptr)) != NULL)
+	{
+	    // FIXME (helipad->flags & SAR_HELIPAD_FLAG_REF_OBJECT) don't work!?!
+	    if(helipad != NULL && helipad->ref_object >= 0)
+	    {
+		NOTIFY("This helipad is referenced. You should use the \"modify\" command.");
+		picked_obj_ptr = NULL;
+	    }
+	}
+
+	/* Link picked object to player object */
+
+	if(picked_obj_ptr != NULL)
+	{
+	    /* Move player object to picked object position */
+	    player_obj_ptr->pos = picked_obj_ptr->pos;
+	    player_obj_ptr->dir = picked_obj_ptr->dir;
+
+	    /* Realize player new position */
+	    SARSimWarpObject(scene, player_obj_ptr, &player_obj_ptr->pos, &player_obj_ptr->dir);
+
+	    scn_ed->cur_obj_type = picked_obj_ptr->type;
+
+	    modification = scn_ed->modification_list[picked_obj_num];
+	    if(modification->obj_data_new != NULL)
+		editor_obj_data = modification->obj_data_new;
+	    else
+		editor_obj_data = modification->obj_data_original;
+
+	    free(scn_ed->cur_obj_arg);
+	    /* Generate command line parameters string */
+	    scn_ed->cur_obj_arg = DoParametersLineFromEditorObjectData(editor_obj_data);
+
+	    /* Link object to player object */
+	    scn_ed->cur_obj_num = picked_obj_num;
+
+	    scn_ed->in_move_state = True;
+	}
+    }
+    /* Move closer object by modifying its position and orientation? */
+    else if(scn_ed->in_move_at_state != True &&
+	(!strcasecmp(strv[0], "mva") ||
+	 !strcasecmp(strv[0], "move_at") ||
+	 (!strcasecmp(strv[0], "move") && !strcasecmp(strv[1], "at"))
+	)
+    )
+    {
+#define MAXVALUESTRCHARNUM 64
+	char *obj_type_name;
+	text_input_struct *p;
+	char *buf;
+	char value_str[MAXVALUESTRCHARNUM];
+	char *s = NULL;
+
+	picked_obj_num = SceneObjectPick(core_ptr, player_obj_num, False);
+
+	if(picked_obj_num < 0)
+	    FREETHENRETURN
+
+	scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+
+	modification = scn_ed->modification_list[picked_obj_num];
+	editor_obj_data = modification->obj_data_new;
+
+	if(editor_obj_data->type == SAR_OBJ_TYPE_HELIPAD &&
+		editor_obj_data->ref_obj_name != NULL
+	)
+	{
+	    NOTIFY("This helipad is referenced. You should use the \"modify\" command.");
+	    picked_obj_num = -1;
+	    FREETHENRETURN
+	}
+
+	if(picked_obj_num >= 0)
+	{
+	    /* Generate command line string */
+	    s = (char *)malloc(S_LENGTH * sizeof(char));
+	    snprintf(s, MAXVALUESTRCHARNUM, "%.3f %.3f %.3f %.3f %.3f %.3f",
+		     editor_obj_data->pos.x,
+		     editor_obj_data->pos.y,
+		     editor_obj_data->pos.z,
+		     editor_obj_data->dir.heading,
+		     editor_obj_data->dir.pitch,
+		     editor_obj_data->dir.bank
+		     );
+
+	    /* No GUI ? */
+	    if(!scn_ed->gui_mode_on)
+	    {
+		/* Get object type name */
+		obj_type_name = STRDUP(SceneObjectGetTypeName(core_ptr, picked_obj_num));
+
+		/*
+		 * Show command line
+		 */
+
+		/* Enter command mode */
+		SARKeyCommand(core_ptr, display, scene, True);
+
+		/* Prepare command prompt */
+		snprintf(value_str, MAXVALUESTRCHARNUM, "#%05d %s position and orientation",
+			    picked_obj_num,
+			    obj_type_name
+			);
+		free(obj_type_name);
+		obj_type_name = NULL;
+
+		/* Set command prompt */
+		SARTextInputMap(
+		    core_ptr->text_input,
+		    value_str, NULL,
+		    SARCmdTextInputCB,
+		    core_ptr
+		);
+
+		/* Copy command line string to command text buffer */
+		p = core_ptr->text_input;
+		p->len = strlen(s);
+		p->buf = buf = STRDUP(s);
+		if(buf == NULL)
+		{
+		    p->len = p->pos = 0;
+		    free(s);
+		    FREETHENRETURN
+		}
+
+		/* Turn on keyboard autorepeat
+		 * FIXME : can cause some trouble in Ubuntu?
+		 * 	see Jesse's note in gwx.c / GWKeyboardAutoRepeat()
+		 */
+		GWKeyboardAutoRepeat(display, True);
+	    }
+
+	    scn_ed->mod_obj_num = picked_obj_num;
+
+	    scn_ed->in_move_at_state = True;
+	}
+	else
+	    NOTIFY("Can't get object pointer.");
+
+	free(s);
+
+#undef MAXVALUESTRCHARNUM
+    }
+    /* In a "move at" sequence? */
+    else if(scn_ed->in_move_at_state == True)
+    {
+	double old_x, old_y, old_z, old_heading, old_pitch, old_bank;
+	double x, y, z_feet, heading_degrees, pitch_degrees, bank_degrees;
+	double z_meters, heading_radians, pitch_radians, bank_radians;
+
+	if(strc == 6 &&
+	    (sscanf(arg, "%lf %lf %lf %lf %lf %lf",
+	    &x, &y, &z_feet, &heading_degrees, &pitch_degrees, &bank_degrees
+	    )) == 6
+	)
+	{
+	    char *s = (char *)malloc(S_LENGTH * sizeof(char));
+
+	    obj_num = scn_ed->mod_obj_num;
+
+	    /* Get object pointer */
+	    obj_ptr = core_ptr->object[obj_num];
+
+	    /* Get editor object data pointer */
+	    modification = scn_ed->modification_list[obj_num];
+	    editor_obj_data = modification->obj_data_new;
+
+	    /* Convert units */
+	    z_meters = SFMFeetToMeters(z_feet);
+	    heading_radians = SFMDegreesToRadians(heading_degrees);
+	    pitch_radians = SFMDegreesToRadians(pitch_degrees);
+	    bank_radians = SFMDegreesToRadians(bank_degrees);
+
+	    /* Get object current position */
+	    old_x = obj_ptr->pos.x;
+	    old_y = obj_ptr->pos.y;
+	    old_z = obj_ptr->pos.y;
+	    old_heading = obj_ptr->dir.heading;
+	    old_pitch = obj_ptr->dir.pitch;
+	    old_bank = obj_ptr->dir.bank;
+
+	    /* Object position modified? */
+	    if(old_x != x ||
+		old_y != y ||
+		old_z != z_meters ||
+		old_heading != heading_radians ||
+		old_pitch != pitch_radians ||
+		old_bank != bank_radians
+	    )
+	    {
+		/* Set object new position and heading */
+		obj_ptr->pos.x = x;
+		obj_ptr->pos.y = y;
+		obj_ptr->pos.z = z_meters;
+		obj_ptr->dir.heading = heading_radians;
+
+		/* Update object data structure */
+		editor_obj_data->pos.x = x;
+		editor_obj_data->pos.y = y;
+		editor_obj_data->pos.z = z_feet;
+		editor_obj_data->dir.heading = heading_degrees;
+
+		/* Is object a support surface? */
+		if(obj_ptr->contact_bounds != NULL &&
+		    (obj_ptr->contact_bounds->crash_flags & SAR_CRASH_FLAG_SUPPORT_SURFACE)
+		)
+		{
+		    /* From obj.h:
+		     * "If an object's crash flag has set
+		     * SAR_CRASH_FLAG_SUPPORT_SURFACE then the object
+		     * can only have its heading rotated."
+		     */
+
+		    if(pitch_radians != 0 || bank_radians != 0)
+		    {
+			NOTIFY("Support surface object: pitch and/or bank rotation value automatically forced to zero.");
+
+			obj_ptr->dir.pitch = 0;
+			obj_ptr->dir.bank = 0;
+			editor_obj_data->dir.pitch = 0;
+			editor_obj_data->dir.bank = 0;
+		    }
+		}
+		/* Object is not a support surface */
+		else
+		{
+		    /* Set pitch and bank values has requested by user */
+		    obj_ptr->dir.pitch = pitch_radians;
+		    obj_ptr->dir.bank = bank_radians;
+		    editor_obj_data->dir.pitch = pitch_degrees;
+		    editor_obj_data->dir.bank = bank_degrees;
+		}
+
+		/* Realize new object position */
+		SARSimWarpObject(scene, obj_ptr, &obj_ptr->pos, &obj_ptr->dir);
+
+		snprintf(
+		    s,
+		    S_LENGTH,
+		    "Object #%05d position has been modified.",
+		    obj_num
+		);
+
+		scn_ed->must_print = True;
+	    }
+	    else if(scn_ed->gui_mode_on)
+	    {
+		snprintf(
+		    s,
+		    S_LENGTH,
+		    "Object #%05d position has not been modified.",
+		    obj_num
+		);
+	    }
+
+	    NOTIFY(s);
+	    free(s);
+	}
+	else if(strc < 6)
+	{
+	    NOTIFY("Not enough values to set object position and direction.");
+	}
+	else if(strc > 6)
+	{
+	    NOTIFY("Too much values to set object position and direction.");
+	}
+
+	scn_ed->mod_obj_num = -1;
+	scn_ed->in_move_at_state = False;
+    }
+    /* Enter edit mode?
+     * Note that at first run the command name is not yet rerouted to editor,
+     * thus strv[0] string contains "on" and not "scnedit".
+     */
+    else if((core_ptr->editor_mode_on != True) && !strcasecmp(strv[0], "on"))
+    {
+	struct stat stat_buf;
+	char object_placer_file_name[PATH_MAX];
+	char const *temp_dir = getenv("TMPDIR");
+
+	/* Save current player model file */
+	free(scn_ed->player_old_model_file);
+	scn_ed->player_old_model_file = STRDUP(core_ptr->cur_player_model_file);
+
+	/*
+	 * Set the triedron as player model
+	 */
+
+	sprintf(object_placer_file_name, "%s/%s", temp_dir, "sar2_object_placer.3d");
+
+	/* Object placer *.3d file doesn't exist yet? */
+	if(stat(object_placer_file_name, &stat_buf))
+	{
+	    FILE *object_placer_fp;
+
+	    /* Create then write data to the file */
+
+	    object_placer_fp = fopen(object_placer_file_name, "w");
+
+	    if(object_placer_fp != NULL)
+	    {
+		char *tempData = strdup(EDITOR_OBJECT_PLACER_DATA);
+
+		fwrite(tempData, strlen(tempData), 1, object_placer_fp);
+
+		fclose(object_placer_fp);
+		free(tempData);
+	    }
+	    else
+	    {
+		NOTIFY("Can't create object placer *.3d file.");
+		FREETHENRETURN
+	    }
+	}
+
+	/* Save object placer file name */
+	free(scn_ed->object_placer_file_name);
+	scn_ed->object_placer_file_name = STRDUP(object_placer_file_name);
+
+	ScnEditSetPlayerObject(
+		    core_ptr,
+		    scene,
+		    object_placer_file_name,
+		    player_obj_ptr->pos,
+		    player_obj_ptr->dir
+	    );
+
+
+	/* Get player new object references from scene structure */
+	player_obj_num = scene->player_obj_num;
+	player_obj_ptr = scene->player_obj_ptr;
+
+	/* Get new aircraft */
+	aircraft = SAR_OBJ_GET_AIRCRAFT(player_obj_ptr);
+	if(aircraft == NULL)
+	{
+	    NOTIFY("Can't get aircraft.");
+	    FREETHENRETURN
+	}
+
+	/*
+	 * Init modification list
+	 */
+
+	editor_modified_object_struct *modification;
+
+	/* Allocate modification_list */
+	scn_ed->modification_list = malloc(
+		core_ptr->total_objects *
+		sizeof(editor_modified_object_struct*)
+	    );
+	if(scn_ed->modification_list == NULL)
+	{
+	    fprintf(stderr,
+		    "%s:%d: Memory allocation error.\n",
+		    __FILE__,
+		    __LINE__
+		);
+	    FREETHENRETURN
+	}
+
+	/* Fill modification_list */
+	for( i = 0; i < core_ptr->total_objects; i++)
+	{
+	    modification = malloc(sizeof(editor_modified_object_struct));
+	    if(modification == NULL)
+	    {
+		fprintf(stderr,
+			"%s:%d: Memory allocation error.\n",
+			__FILE__,
+			__LINE__
+		    );
+		FREETHENRETURN
+	    }
+	    scn_ed->modification_list[i] = modification;
+
+	    editor_obj_data = EditorObjectDataNew();
+	    EditorObjectDataStructFill(core_ptr, editor_obj_data, i);
+	    modification->obj_data_original = editor_obj_data;
+
+	    /*  */
+	    editor_obj_data = EditorObjectDataNew();
+	    EditorObjectDataStructFill(core_ptr, editor_obj_data, i);
+	    modification->obj_data_new = editor_obj_data;
+	}
+	scn_ed->total_original_objects = core_ptr->total_objects;
+	scn_ed->total_objects = scn_ed->total_original_objects;
+
+	/* Clean currently edited object values */
+	scn_ed->cur_obj_arg = NULL;
+	scn_ed->cur_obj_type = SAR_OBJ_TYPE_GARBAGE;
+
+	/* Unlink object from player object */
+	scn_ed->cur_obj_num = -1;
+
+	/* Enter scenery editing mode */
+	core_ptr->editor_mode_on = True;
+
+	/* Show pointer cursor */
+	GWShowCursor(display);
+
+	NOTIFY("Editing mode is now ON");
+
+	/* Set spot view direction and distance at startup */
+	sar_direction_struct *camera_spot_dir = &scene->camera_spot_dir;
+	camera_spot_dir->heading = (float)(-0.95f * PI);
+	camera_spot_dir->pitch = (float)(-0.075f * PI);
+	camera_spot_dir->bank = (float)(0.0f * PI);
+	scene->camera_spot_dist = 25.0f;
+	scene->camera_target = scene->player_obj_num;
+	scene->camera_ref = SAR_CAMERA_REF_SPOT;
+
+	SARSimSetSlew(player_obj_ptr, 1);
+	aircraft->engine_state = SAR_ENGINE_ON;
+    }
+    /* "scnedit off" when editor is off? */
+    else if((core_ptr->editor_mode_on == False) &&
+	    !strcasecmp(strv[0], "off")
+    )
+    {
+	NOTIFY("Editing mode is already OFF");
+    }
+    /* Attempt to enter edit mode when already editing? */
+    else if((core_ptr->editor_mode_on == True) &&
+	    !strcasecmp(strv[0], "scnedit") &&
+	    strc > 1 &&
+	    !strcasecmp(strv[1], "on")
+    )
+    {
+	NOTIFY("Editing mode already ON");
+    }
+    /* Create a fire?
+     * create fire <radius> <height>
+     * or: cfi <radius> <height>
+     */
+    else if(!strcasecmp(strv[0], "cfi") ||
+	    !strcasecmp(strv[0], "create_fire") ||
+	    (!strcasecmp(strv[0], "create") &&
+	    strc > 1 && !strcasecmp(strv[1], "fire"))
+    )
+    {
+	type = SAR_OBJ_TYPE_FIRE;
+
+	if(!strcasecmp(strv[0], "create"))
+	{
+	    SKIPARGS(cmd_args, 2);
+	}
+	else
+	{
+	    SKIPARGS(cmd_args, 1);
+	}
+
+	/* Create then load a new object */
+	obj_num = ScnEditLoadObject(core_ptr, -1, type, cmd_args);
+
+	if(obj_num >= 0)
+	{
+	    /* Link object to player object. */
+	    scn_ed->cur_obj_num = obj_num;
+	}
+    }
+    /* Create a helipad?
+     * create helipad <style> <length> <width> [ ... ]
+     * or: che <style> <length> <width> [ ... ]
+     */
+    else if(!strcasecmp(strv[0], "che") ||
+	    !strcasecmp(strv[0], "create_helipad") ||
+	    (!strcasecmp(strv[0], "create") &&
+	    strc > 1 && !strcasecmp(strv[1], "helipad"))
+    )
+    {
+	type = SAR_OBJ_TYPE_HELIPAD;
+
+	if(!strcasecmp(strv[0], "create"))
+	{
+	    SKIPARGS(cmd_args, 2);
+	}
+	else
+	{
+	    SKIPARGS(cmd_args, 1);
+	}
+
+	/* Create then load a new object */
+	obj_num = ScnEditLoadObject(core_ptr, -1, type, cmd_args);
+
+	if(obj_num >= 0)
+	{
+	    obj_ptr = ((obj_num < 0) ? NULL : (*&core_ptr->object)[obj_num]);
+	    helipad = SAR_OBJ_GET_HELIPAD(obj_ptr);
+
+	    /* Has helipad a reference object? */
+	    if(helipad != NULL && helipad->ref_object >= 0)
+	    {
+		helipad->flags |= SAR_HELIPAD_FLAG_REF_OBJECT;
+		helipad->flags |= SAR_HELIPAD_FLAG_FOLLOW_REF_OBJECT;
+
+		scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+		EDITOROBJECTSETDATA(obj_num)
+
+		/* As a referenced helipad don't have to be "set",
+		 * we must set the must_print flag here.
+		 */
+		scn_ed->must_print = True;
+	    }
+	    else
+	    {
+		/* Link object to player object */
+		scn_ed->cur_obj_num = obj_num;
+	    }
+	}
+    }
+    /* Create a human?
+     * create human <type_name> <flag> [ ... ]
+     * or: chu <type_name> <flag> [ ... ]
+     */
+    else if(!strcasecmp(strv[0], "chu") ||
+	    !strcasecmp(strv[0], "create_human") ||
+	    (!strcasecmp(strv[0], "create") &&
+	    strc > 1 && !strcasecmp(strv[1], "human"))
+    )
+    {
+	type = SAR_OBJ_TYPE_HUMAN;
+
+	if(!strcasecmp(strv[0], "create"))
+	{
+	    SKIPARGS(cmd_args, 2);
+	}
+	else
+	{
+	    SKIPARGS(cmd_args, 1);
+	}
+
+	/* Load and create a new object */
+	obj_num = ScnEditLoadObject(core_ptr, -1, type, cmd_args);
+
+	if(obj_num >= 0)
+	{
+	    /* Link object to player object. */
+	    scn_ed->cur_obj_num = obj_num;
+	}
+    }
+    /* Load an object (i.e. an external model) ?
+     * load object <sub_dir_name/file_name.3d>
+     * or: lob <sub_dir_name/file_name.3d>
+     */
+    else if(!strcasecmp(strv[0], "lob") ||
+	    !strcasecmp(strv[0], "load_object") ||
+	    (!strcasecmp(strv[0], "load") &&
+	    strc > 1 && !strcasecmp(strv[1], "object"))
+    )
+    {
+	char *sub_dir_name_mem_ptr = NULL, *sub_dir_name;
+
+	if(!strcasecmp(strv[0], "load") )
+	{
+	    SKIPARGS(cmd_args, 2);
+	}
+	else
+	{
+	    SKIPARGS(cmd_args, 1);
+	}
+
+	/* Is an object linked to the player object? */
+	if(scn_ed->cur_obj_num >= 0)
+	{
+	    obj_num = scn_ed->cur_obj_num;
+
+	    /* Unlink object from player object */
+	    scn_ed->cur_obj_num = -1;
+
+	    scn_ed->cur_obj_type = SAR_OBJ_TYPE_GARBAGE;
+	    free(scn_ed->cur_obj_arg);
+	    scn_ed->cur_obj_arg = NULL;
+
+	    ScnEditDeleteObject(core_ptr, obj_num);
+	}
+
+	/* Extract subdirectory name */
+
+	sub_dir_name_mem_ptr = STRDUP(cmd_args);
+	sub_dir_name = sub_dir_name_mem_ptr;
+
+	/* Remove first slash if any */
+	if(sub_dir_name[0] == '/')
+	    sub_dir_name++;
+
+	/* Go to next slash */
+	i = 0;
+	while(sub_dir_name[i] != '/')
+	    i++;
+
+	/* Close sub_dir_name string */
+	sub_dir_name[i] = '\0';
+
+	/* Set object type (needed for ScnEditLoadObject() */
+	if(!strcmp(sub_dir_name, SAR_DEF_OBJECTS_DIR))
+	    type = SAR_OBJ_TYPE_STATIC;
+	else if(!strcmp(sub_dir_name, SAR_DEF_AIRCRAFTS_DIR))
+	    type = SAR_OBJ_TYPE_AIRCRAFT;
+	else if(!strcmp(sub_dir_name, SAR_DEF_AUTOMOBILES_DIR))
+	    type = SAR_OBJ_TYPE_AUTOMOBILE;
+	else if(!strcmp(sub_dir_name, SAR_DEF_WATERCRAFTS_DIR))
+	    type = SAR_OBJ_TYPE_WATERCRAFT;
+	else
+	{
+	    int string_length = 20 + strlen(cmd_args) + 1;
+	    char *s = malloc(string_length);
+
+	    snprintf(s, string_length, "Can't find model %s", cmd_args);
+	    NOTIFY(s);
+	    free(s);
+
+	    NOTIFY("Model filename example: vessels/jetski.3d");
+
+	    type = SAR_OBJ_TYPE_GARBAGE;
+	}
+	free(sub_dir_name_mem_ptr);
+
+	if(type != SAR_OBJ_TYPE_GARBAGE)
+	{
+	    scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+
+	    /* Load and create a new object */
+	    obj_num = ScnEditLoadObject(core_ptr, obj_num, type, cmd_args);
+
+	    if(obj_num >= 0)
+	    {
+		scn_ed->cur_obj_type = type;
+		free(scn_ed->cur_obj_arg);
+		scn_ed->cur_obj_arg = STRDUP(cmd_args);
+
+		/* Link object to player object. */
+		scn_ed->cur_obj_num = obj_num;
+	    }
+	    else
+	    {
+		/* Error message has been set by ScnEditLoadObject() */
+	    }
+	}
+	else
+	{
+	    obj_num = -1;
+	    NOTIFY("Model loading aborted");
+	}
+    }
+    /* Create a premodeled object? */
+    else if(!strcasecmp(strv[0], "cpr") ||
+	    !strcasecmp(strv[0], "create_premodeled") ||
+	    (!strcasecmp(strv[0], "create") &&
+	    strc > 1 && !strcasecmp(strv[1], "premodeled"))
+    )
+    {
+	type = SAR_OBJ_TYPE_PREMODELED;
+
+	if(!strcasecmp(strv[0], "create") )
+	{
+	    SKIPARGS(cmd_args, 2);
+	}
+	else
+	{
+	    SKIPARGS(cmd_args, 1);
+	}
+
+	/* Create then load a new object */
+	obj_num = ScnEditLoadObject(core_ptr, -1, type, cmd_args);
+
+	if(obj_num >= 0)
+	{
+	    /* Link object to player object. */
+	    scn_ed->cur_obj_num = obj_num;
+	}
+    }
+    /* Create a runway?
+     * create runway <length> <width>
+     * or: cru runway <length> <width>
+     */
+    else if(!strcasecmp(strv[0], "cru") ||
+	    !strcasecmp(strv[0], "create_runway") ||
+	    (!strcasecmp(strv[0], "create") &&
+	    strc > 1 && !strcasecmp(strv[1], "runway"))
+    )
+    {
+	type = SAR_OBJ_TYPE_RUNWAY;
+
+	if(!strcasecmp(strv[0], "create") )
+	{
+	    SKIPARGS(cmd_args, 2);
+	}
+	else
+	{
+	    SKIPARGS(cmd_args, 1);
+	}
+
+	/* Create then load a new object */
+	obj_num = ScnEditLoadObject(core_ptr, -1, type, cmd_args);
+
+	if(obj_num >= 0)
+	{
+	    /* Link object to player object. */
+	    scn_ed->cur_obj_num = obj_num;
+	}
+    }
+    /* Create a smoke?
+     * create smoke <color> <start_radius>
+     * or: csm smoke <color> <start_radius>
+     */
+    else if(!strcasecmp(strv[0], "csm") ||
+	    !strcasecmp(strv[0], "create_smoke") ||
+	    (!strcasecmp(strv[0], "create") &&
+	    strc > 1 && !strcasecmp(strv[1], "smoke"))
+    )
+    {
+	type = SAR_OBJ_TYPE_SMOKE;
+
+	if(!strcasecmp(strv[0], "create") )
+	{
+	    SKIPARGS(cmd_args, 2);
+	}
+	else
+	{
+	    SKIPARGS(cmd_args, 1);
+	}
+
+	/* Create then load a new object */
+	obj_num = ScnEditLoadObject(core_ptr, -1, type, cmd_args);
+
+	if(obj_num >= 0)
+	{
+	    /* Link object to player object. */
+	    scn_ed->cur_obj_num = obj_num;
+	}
+    }
+    /* Copy closer object? */
+    else if(!strcasecmp(strv[0], "cp") || !strcasecmp(strv[0], "copy"))
+    {
+	/* Is an object currently loaded? */
+	if(scn_ed->cur_obj_num >= 0)
+	{
+	    /* Unload (delete) current object */
+
+	    scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+
+	    /* Unlink object from player object */
+	    scn_ed->cur_obj_num = -1;
+
+	    scn_ed->cur_obj_type = SAR_OBJ_TYPE_GARBAGE;
+	    free(scn_ed->cur_obj_arg);
+	    scn_ed->cur_obj_arg = NULL;
+
+	    ScnEditDeleteObject(core_ptr, scn_ed->prev_obj_num);
+	}
+
+	/* Get closer object number */
+	picked_obj_num = SceneObjectPick(core_ptr, player_obj_num, False);
+
+	if(picked_obj_num >= 0)
+	{
+	    char *s = (char *)malloc(S_LENGTH * sizeof(char));
+
+	    picked_obj_ptr = core_ptr->object[picked_obj_num];
+	    if(picked_obj_ptr == NULL)
+		FREETHENRETURN
+
+	    type = picked_obj_ptr->type;
+
+	    modification = scn_ed->modification_list[picked_obj_num];
+	    if(modification->obj_data_new != NULL)
+		editor_obj_data = modification->obj_data_new;
+	    else
+		editor_obj_data = modification->obj_data_original;
+
+	    strncpy(s, DoParametersLineFromEditorObjectData(editor_obj_data), S_LENGTH);
+
+	    /* Copy the picked_obj_num object and its children (if any) */
+	    int obj_new_num = ScnEditCopyObjectWithChildren(
+			core_ptr,
+			picked_obj_num,
+			type,
+			s
+		    );
+
+	    obj_ptr = ((obj_new_num < 0) ? NULL : (*&core_ptr->object)[obj_new_num]);
+
+	    if(obj_ptr != NULL)
+	    {
+		/* Copy player position to object position */
+		memcpy(&obj_ptr->pos, &player_obj_ptr->pos, sizeof(sar_position_struct));
+		memcpy(&obj_ptr->dir, &player_obj_ptr->dir, sizeof(sar_direction_struct));
+
+		/* Realize object position */
+		SARSimWarpObject(scene, obj_ptr, &obj_ptr->pos, &obj_ptr->dir);
+
+		EDITOROBJECTSETDATA(obj_new_num);
+
+		free(scn_ed->cur_obj_arg);
+		scn_ed->cur_obj_arg = STRDUP(s);
+
+		scn_ed->cur_obj_type = type;
+
+		/* Link object to player object. */
+		scn_ed->cur_obj_num = obj_new_num;
+
+		/* Move a little bit player object to show user that
+		 * object has been copied.
+		 */
+		player_obj_ptr->pos.x += 0.5f * cos(player_obj_ptr->dir.heading);
+		player_obj_ptr->pos.y += 0.5f * sin(player_obj_ptr->dir.heading);
+
+		/* Realize player new position */
+		SARSimWarpObject(
+		    scene,
+		    player_obj_ptr,
+		    &player_obj_ptr->pos,
+		    &player_obj_ptr->dir
+		);
+	    }
+
+	    snprintf(
+		s,
+		S_LENGTH,
+		"Object #%05d has been copied.",
+		picked_obj_num
+	    );
+
+	    NOTIFY(s);
+	    free(s);
+	}
+    }
+    /* Name closer object?
+     * name or name <object_name>
+     */
+    else if(!strcasecmp(strv[0], "name") && scn_ed->in_name_state != True)
+    {
+#define MAXVALUESTRCHARNUM 64
+	char *obj_type_name;
+	text_input_struct *p;
+	char *buf;
+	char value_str[MAXVALUESTRCHARNUM];
+
+	/* Get number of closer object */
+	picked_obj_num = SceneObjectPick(core_ptr, player_obj_num, False);
+
+	scn_ed->mod_obj_num = picked_obj_num;
+
+	char *s = NULL;
+
+	if(picked_obj_num < 0)
+	    FREETHENRETURN
+
+	scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+
+	obj_num = picked_obj_num;
+
+	modification = scn_ed->modification_list[obj_num];
+	editor_obj_data = modification->obj_data_new;
+
+	if(editor_obj_data->type == SAR_OBJ_TYPE_GROUND)
+	{
+	    NOTIFY("Sorry, ground object naming is not possible.");
+	    scn_ed->mod_obj_num = -1;
+	    FREETHENRETURN
+	}
+
+	/* Name value given and object not already named? */
+	if(strc >= 2 && editor_obj_data->name == NULL)
+	{
+	    /* Generate command line parameter string */
+	    s = STRDUP(strv[1]);
+	}
+	/* No name value given */
+	else
+	{
+	    /* Generate command line parameter string */
+	    if(editor_obj_data->name != NULL)
+		s = STRDUP(editor_obj_data->name);
+	    else
+		s = STRDUP("");
+	}
+	obj_ptr = core_ptr->object[obj_num];
+
+	if(s != NULL && obj_ptr != NULL)
+	{
+	    /* Save picked object position */
+	    memcpy(&scn_ed->cur_obj_pos, &obj_ptr->pos, sizeof(sar_position_struct));
+	    memcpy(&scn_ed->cur_obj_dir, &obj_ptr->dir, sizeof(sar_direction_struct));
+
+	    /* Copy parameter (the object name) */
+	    scn_ed->mod_cur_parm = strdup(s);
+
+	    /* GUI off? */
+	    if(!scn_ed->gui_mode_on)
+	    {
+		/* Get object type name */
+		obj_type_name = STRDUP(SceneObjectGetTypeName(core_ptr, obj_num));
+
+		/*
+		 * Show command line
+		 */
+
+		/* Enter command mode */
+		SARKeyCommand(core_ptr, display, scene, True);
+
+		/* Prepare command prompt */
+		snprintf(value_str, MAXVALUESTRCHARNUM, "#%05d %s name",
+			    scn_ed->mod_obj_num,
+			    obj_type_name
+			);
+		free(obj_type_name);
+		obj_type_name = NULL;
+
+		/* Set command prompt */
+		SARTextInputMap(
+		    core_ptr->text_input,
+		    value_str, NULL,
+		    SARCmdTextInputCB,
+		    core_ptr
+		);
+
+		/* Copy command line string to command text buffer */
+		p = core_ptr->text_input;
+		p->len = strlen(s);
+		p->buf = buf = STRDUP(s);
+		if(buf == NULL)
+		{
+		    p->len = p->pos = 0;
+		    free(s);
+		    FREETHENRETURN
+		}
+
+		/* Turn on keyboard autorepeat
+		 * FIXME : can cause some trouble in Ubuntu?
+		 * 	see Jesse's note in gwx.c / GWKeyboardAutoRepeat()
+		 */
+		GWKeyboardAutoRepeat(display, True);
+	    }
+
+	    scn_ed->in_name_state = True;
+	}
+	else
+	    NOTIFY("Can't get object data.");
+
+	free(s);
+#undef MAXVALUESTRCHARNUM
+    }
+    else if(scn_ed->in_name_state == True)
+    {
+	char *obj_old_name, *obj_new_name;
+	char *s = (char *)malloc(S_LENGTH * sizeof(char));
+	s[0] = '\0';
+
+	/* Turn off keyboard autorepeat
+	 * FIXME : see Jesse's note in gwx.c / GWKeyboardAutoRepeat()
+	 */
+	GWKeyboardAutoRepeat(display, False);
+
+	obj_num = scn_ed->mod_obj_num;
+
+	/* Get object pointer */
+	obj_ptr = core_ptr->object[obj_num];
+
+	/* Get object old name */
+	obj_old_name = scn_ed->mod_cur_parm;
+
+	/* Get object data structure pointer */
+	modification = scn_ed->modification_list[obj_num];
+	editor_obj_data = modification->obj_data_new;
+
+	if(strcmp(strv[0], ""))
+	    obj_new_name = STRDUP(strv[0]);
+	else
+	    obj_new_name = STRDUP("");
+
+	if(strcmp(obj_new_name, obj_old_name) && strcmp(obj_new_name, ""))
+	{
+	    snprintf(s, S_LENGTH,
+		    "Object #%05d has been renamed as '%s'.",
+		    obj_num,
+		    obj_new_name
+		    );
+	    NOTIFY(s);
+
+	    free(obj_ptr->name);
+	    obj_ptr->name = STRDUP(obj_new_name);
+
+	    free(editor_obj_data->name);
+	    editor_obj_data->name = STRDUP(obj_new_name);
+
+	    scn_ed->must_print = True;
+	}
+
+	/* Check if renamed object was referenced by other objects,
+	 * then inform user as needed.
+	 */
+
+	for(i = 0; i < scn_ed->total_objects; i++)
+	{
+	    modification = scn_ed->modification_list[i];
+	    editor_obj_data = modification->obj_data_new;
+
+	    /* Has object 'i' a reference to the renamed object? */
+	    if(editor_obj_data->ref_obj_name != NULL &&
+		!strcmp(editor_obj_data->ref_obj_name, obj_old_name)
+	    )
+	    {
+		/* Treat editor_obj_data object */
+
+		free(editor_obj_data->ref_obj_name);
+		editor_obj_data->ref_obj_name = STRDUP(obj_new_name);
+
+		/* As for 'in game' objects reference object value is the
+		 * number of the referenced object, there is no need to modify
+		 * it. Therefore, just inform user about object 'i' command
+		 * line parameters modification.
+		 */
+		snprintf(s, S_LENGTH,
+			"Object #%05d reference object name has been changed to '%s'.",
+			i,
+			obj_new_name
+			);
+		NOTIFY(s);
+	    }
+	}
+
+	free(s);
+	free(obj_new_name);
+	free(scn_ed->mod_cur_parm);
+	scn_ed->mod_cur_parm = NULL;
+
+	scn_ed->mod_obj_num = -1;
+	scn_ed->in_name_state = False;
+    }
+    /* Enable or disable Graphical User Interface? */
+    else if(!strcasecmp(strv[0], "gui"))
+    {
+#ifdef COMPILE_EDITOR_WITH_GTK_UI
+	editor_gtk_ui_struct *editor_gtk_ui;
+	Boolean is_full_screen = display->fullscreen;
+
+	/* WARNING:
+	 * At this writing, this code can compile on GTK3(.24) and GTK4(.10)
+	 * libraries, but GTK4 turns the main SarII window to black and
+	 * sometimes crashes Sar2.
+	 */
+
+	if(strc > 1 && !strcasecmp(strv[1], "on") && !is_full_screen)
+	{
+	    Boolean gtk_is_initialized = False;
+
+	    /* Gtk initialization ok? */
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
+	    if(gtk_init_check(0, NULL))
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+	    if(gtk_init_check())
+#endif
+	    {
+		gtk_is_initialized = True;
+
+		editor_gtk_ui = malloc(sizeof(editor_gtk_ui_struct));
+		if(editor_gtk_ui != NULL)
+		{
+		    editor_gtk_ui->gdk_display = NULL;
+		    editor_gtk_ui->gtk_application = NULL;
+		    editor_gtk_ui->gtk_context = NULL;
+		    editor_gtk_ui->picked_obj_num = -1;
+		    editor_gtk_ui->temp_obj_data = NULL;
+		    editor_gtk_ui->cmd_flags = flags;
+
+		    scn_ed->editor_gtk_ui = editor_gtk_ui;
+
+		    /* Set locale. If not, a bug appears on non dot ('.')
+		     * decimal point locales: once GTK UI is on, the decimal
+		     * part of the numbers is automatically set to 0 when *.3d
+		     * files are read from disk, which causes very strange
+		     * model shapes on display.
+		     */
+		    setlocale(LC_NUMERIC, "C");
+		}
+		else
+		    gtk_is_initialized = False;
+	    }
+
+	    /* Gtk initialized? */
+	    if(gtk_is_initialized)
+	    {
+		/* Gtk application started? */
+		if(!gtkAppStart(core_ptr, flags))
+		{
+		    scn_ed->gtk_mode_on = True;
+		    scn_ed->gui_mode_on = True;
+
+		    char *s = (char *)malloc(64 * sizeof(char));
+		    snprintf(s, 64,
+			    "GTK %d.%d user interface is now ON",
+			    gtk_get_major_version(),
+			    gtk_get_minor_version()
+			    );
+		    NOTIFY(s);
+		    free(s);
+		}
+		else
+		    NOTIFY("Sorry, can't (re)start a new GTK user interface. Try to quit then restart SarII.");
+	    }
+	    else
+		NOTIFY("Can't initialize GTK user interface");
+	}
+	else if(is_full_screen == True)
+	{
+	    scn_ed->gtk_mode_on = False;
+	    NOTIFY("Sorry, the GTK UI is not available in fullscreen mode.");
+	}
+#else
+	NOTIFY("Sorry, the GTK UI is not available because it has not been compiled.");
+#endif //#ifdef COMPILE_EDITOR_WITH_GTK_UI
+    }
+    /* Print modifications to file? */
+    else if(!strcasecmp(strv[0], "print"))
+    {
+	doPrint(core_ptr, flags);
+    }
+    /* Has user answered Yes to a question? */
+    else if(scn_ed->yes_no_query != YES_NO_QUERY_NONE &&
+	    !strcasecmp(strv[0], "Y")
+    )
+    {
+	switch(scn_ed->yes_no_query)
+	{
+	    case QUERY_YES_NO_PRINT_BEFORE_QUIT:
+		/* Is there an object linked to the player object?
+		 * Can happen if user ask to quit editor while a "copy"
+		 * sequence is running.
+		 */
+		if(scn_ed->cur_obj_num >= 0)
+		{
+		    /* Note that this must be done before print: if not, linked
+		     * object children will be printed to the report file.
+		     */
+		    ScnEditDeleteObject(core_ptr, scn_ed->cur_obj_num);
+		}
+		doPrint(core_ptr, flags);
+
+		EditorOff(core_ptr);
+		NOTIFY("Editing mode is now OFF");
+		break;
+
+	    case YES_NO_QUERY_NONE:
+	    default:
+		break;
+	}
+
+	/* Answer treated, set y/n querier to none */
+	scn_ed->yes_no_query = YES_NO_QUERY_NONE;
+    }
+    /* Has user answered No to a question? */
+    else if(scn_ed->yes_no_query != YES_NO_QUERY_NONE &&
+	    !strcasecmp(strv[0], "N")
+    )
+    {
+	switch(scn_ed->yes_no_query)
+	{
+	    case QUERY_YES_NO_PRINT_BEFORE_QUIT:
+		EditorOff(core_ptr);
+		NOTIFY("Editing mode is now OFF");
+		break;
+
+	    case YES_NO_QUERY_NONE:
+	    default:
+		break;
+	}
+
+	/* Answer treated, set querier to none */
+	scn_ed->yes_no_query = YES_NO_QUERY_NONE;
+    }
+    /* Modify the closer object parameters? */
+    else if((!strcasecmp(strv[0], "mod") || !strcasecmp(strv[0], "modify")) &&
+	 scn_ed->in_modif_state != True
+    )
+    {
+#define MAXVALUESTRCHARNUM 64
+	char *obj_type_name;
+	text_input_struct *p;
+	char *buf;
+	char value_str[MAXVALUESTRCHARNUM];
+
+	/* No object number parameter passed? */
+	if(strc == 1)
+	{
+	    picked_obj_num = SceneObjectPick(core_ptr, player_obj_num, False);
+	}
+	/* User has passed an object number */
+	else if(strc == 2)
+	{
+	    char *endPtr;
+	    long value = strtol((const char *)strv[1], &endPtr, 10);
+
+	    /* 'string' to 'long' conversion fails or decimal number passed? */
+	    if(endPtr == strv[1] || (endPtr != strv[1] + strlen(strv[1])))
+	    {
+		picked_obj_num = -1;
+	    }
+	    else
+	    {
+		/* Object number within limits? */
+		if(value >= 0 && value < core_ptr->total_objects)
+		    picked_obj_num = (int)value;
+		else
+		    picked_obj_num = -1;
+	    }
+
+	    if(picked_obj_num == -1)
+		NOTIFY("Bad object number");
+	}
+	scn_ed->mod_obj_num = picked_obj_num;
+
+	char *s = NULL;
+
+	if(picked_obj_num < 0)
+	    FREETHENRETURN
+
+	scn_ed->prev_obj_num = scn_ed->cur_obj_num;
+
+	obj_num = picked_obj_num;
+
+	modification = scn_ed->modification_list[obj_num];
+	editor_obj_data = modification->obj_data_new;
+
+	if(editor_obj_data->type == SAR_OBJ_TYPE_GROUND)
+	{
+	    NOTIFY("Sorry, ground object modification is not possible.");
+	    scn_ed->mod_obj_num = -1;
+	    FREETHENRETURN
+	}
+
+	/* Generate command line string */
+	s = DoParametersLineFromEditorObjectData(editor_obj_data);
+
+	obj_ptr = core_ptr->object[obj_num];
+
+	if(s != NULL && obj_ptr != NULL)
+	{
+	    /* Save picked object position */
+	    memcpy(&scn_ed->cur_obj_pos, &obj_ptr->pos, sizeof(sar_position_struct));
+	    memcpy(&scn_ed->cur_obj_dir, &obj_ptr->dir, sizeof(sar_direction_struct));
+
+	    /* Copy parameters */
+	    scn_ed->mod_cur_parm = strdup(s);
+
+	    /* GUI off? */
+	    if(!scn_ed->gui_mode_on)
+	    {
+		/* Get object type name */
+		obj_type_name = STRDUP(SceneObjectGetTypeName(core_ptr, obj_num));
+
+		/*
+		 * Show command line
+		 */
+
+		/* Enter command mode */
+		SARKeyCommand(core_ptr, display, scene, True);
+
+		/* Prepare command prompt */
+		snprintf(value_str, MAXVALUESTRCHARNUM, "#%05d %s",
+			    scn_ed->mod_obj_num,
+			    obj_type_name
+			);
+		free(obj_type_name);
+		obj_type_name = NULL;
+
+		/* Set command prompt */
+		SARTextInputMap(
+		    core_ptr->text_input,
+		    value_str, NULL,
+		    SARCmdTextInputCB,
+		    core_ptr
+		);
+
+		/* Copy command line string to command text buffer */
+		p = core_ptr->text_input;
+		p->len = strlen(s);
+		p->buf = buf = STRDUP(s);
+		if(buf == NULL)
+		{
+		    p->len = p->pos = 0;
+		    free(s);
+		    FREETHENRETURN
+		}
+
+		/* Turn on keyboard autorepeat
+		 * FIXME : can cause some trouble in Ubuntu?
+		 * 	see Jesse's note in gwx.c / GWKeyboardAutoRepeat()
+		 */
+		GWKeyboardAutoRepeat(display, True);
+	    }
+
+	    scn_ed->in_modif_state = True;
+	}
+	else
+	    NOTIFY("Can't get object data.");
+
+	free(s);
+
+#undef MAXVALUESTRCHARNUM
+    }
+    /* Object parameters modification validated? */
+    else if(scn_ed->in_modif_state == True)
+    {
+	char *s = (char *)malloc(S_LENGTH * sizeof(char));
+	char *cur_parm = NULL;
+	char *new_parm = (char *)malloc(S_LENGTH * sizeof(char));
+	obj_num = scn_ed->mod_obj_num;
+
+	/* Turn off keyboard autorepeat
+	 * FIXME : see Jesse's note in gwx.c / GWKeyboardAutoRepeat()
+	 */
+	GWKeyboardAutoRepeat(display, False);
+
+	/* Concatenate object new parameters */
+	new_parm[0] = '\0';
+	strncat(new_parm, strv[0], REMAINING(new_parm));
+	for(i = 1; i < strc; i++)
+	{
+	    strncat(new_parm, " ", REMAINING(new_parm));
+	    strncat(new_parm, strv[i], REMAINING(new_parm));
+	}
+
+	/* Get object current parameters */
+	modification = scn_ed->modification_list[obj_num];
+	editor_obj_data = modification->obj_data_new;
+	cur_parm = scn_ed->mod_cur_parm;
+
+	/* Parameters modified by user? */
+	if(cur_parm != NULL && new_parm != NULL && strcmp(cur_parm, new_parm))
+	{
+	    sar_obj_flags_t no_depth_test = False;
+
+	    /* Get object pointer */
+	    obj_ptr = core_ptr->object[obj_num];
+
+	    /* Save the no_depth_test flag (mainly for landing surfaces) */
+	    if(obj_ptr->flags & SAR_OBJ_FLAG_NO_DEPTH_TEST)
+		no_depth_test = True;
+
+	    /* Delete current object then reload it (easier and faster than
+	     * check then update each modified parameter).
+	     */
+	    int obj_new_num = ScnEditLoadObject(core_ptr, obj_num, obj_ptr->type, cmd_args);
+
+	    if(obj_new_num >= 0)
+	    {
+		/* Get new object pointer */
+		obj_ptr = core_ptr->object[obj_new_num];
+
+		/* Set new object position */
+		memcpy(&obj_ptr->pos, &scn_ed->cur_obj_pos, sizeof(sar_position_struct));
+		memcpy(&obj_ptr->dir, &scn_ed->cur_obj_dir, sizeof(sar_direction_struct));
+
+		/* Realize new object position */
+		SARSimWarpObject(scene, obj_ptr, &obj_ptr->pos, &obj_ptr->dir);
+
+		if(obj_ptr->type == SAR_OBJ_TYPE_HELIPAD)
+		{
+		    helipad = SAR_OBJ_GET_HELIPAD(obj_ptr);
+
+		    /* Has helipad a reference object? */
+		    if(helipad != NULL && helipad->ref_object >= 0)
+		    {
+			/* Realize new object relative position */
+			SARSimWarpObjectRelative(
+				scene, obj_ptr,
+				core_ptr->object, core_ptr->total_objects,
+				helipad->ref_object,
+				&helipad->ref_offset,
+				&helipad->ref_dir
+			    );
+
+			/* Set flags */
+			helipad->flags |= SAR_HELIPAD_FLAG_REF_OBJECT;
+			helipad->flags |= SAR_HELIPAD_FLAG_FOLLOW_REF_OBJECT;
+		    }
+		}
+
+		EDITOROBJECTSETDATA(obj_new_num)
+
+		/* Object number modified? */
+		if(obj_new_num != obj_num)
+		{
+		    snprintf(s, S_LENGTH,
+"Object #%05d successfully modified and renumbered as #%05d",
+			    obj_num, obj_new_num
+			    );
+		}
+		else
+		{
+		    snprintf(s, S_LENGTH,
+			"Object #%05d successfully modified",
+			obj_num
+			);
+		}
+		NOTIFY(s);
+
+		scn_ed->must_print = True;
+
+		/* Restore the no_depth_test flag (mainly for landing surfaces) */
+		if(no_depth_test == True)
+		    obj_ptr->flags |= SAR_OBJ_FLAG_NO_DEPTH_TEST;
+	    }
+	    obj_num = obj_new_num;
+	}
+	else
+	{
+	    snprintf(s, S_LENGTH,
+		"Object #%05d has not been modified",
+		obj_num
+		);
+	    NOTIFY(s);
+
+	}
+
+	free(scn_ed->mod_cur_parm);
+	scn_ed->mod_cur_parm = NULL;
+	free(new_parm);
+	free(s);
+
+	scn_ed->mod_obj_num = -1;
+	scn_ed->in_modif_state = False;
+    }
+    /* Unknown command */
+    else
+    {
+	char *s = (char *)malloc(S_LENGTH * sizeof(char));
+	snprintf(s, S_LENGTH, "%s: Editor invalid command.", arg);
+	NOTIFY(s);
+	free(s);
+    }
+
+/*
+    obj_ptr = ((obj_num < 0) ? NULL : (*&core_ptr->object)[obj_num]);
+    if(obj_ptr != NULL)
+    {
+	if(scn_ed->cur_obj_type == SAR_OBJ_TYPE_PREMODELED)
+	{
+	    sar_object_premodeled_struct *premodeled;
+	    premodeled = SAR_OBJ_GET_PREMODELED(obj_ptr);
+	    if(premodeled != NULL)
+	    {
+		sar_premodeled_type premod_type = premodeled->type;
+		switch(premod_type)
+		{
+		    case SAR_OBJ_PREMODELED_BUILDING:
+		    case SAR_OBJ_PREMODELED_CONTROL_TOWER:
+		    case SAR_OBJ_PREMODELED_HANGAR:
+			break;
+
+		    case SAR_OBJ_PREMODELED_POWER_TRANSMISSION_TOWER :
+			// #include "sceneio.h"
+			// Refresh electrical conductors data //
+			SARScenePostLoading(core_ptr, scene);
+			break;
+
+		    case SAR_OBJ_PREMODELED_TOWER:
+		    case SAR_OBJ_PREMODELED_RADIO_TOWER:
+			break;
+		}
+	    }
+	}
+    }
+*/
+
+    strlistfree(strv, strc);
+
+    /* Set focus to the sar2 window */
+    if(scn_ed->gui_mode_on)
+    {
+	GwSetWindowFocusToSar2Window(display);
+    }
+
+#undef FREETHENRETURN
+}
+#undef EDITOROBJECTSETDATA
+#undef TAGVALLENGTH
+#undef TAGSTRING
+#undef S_LENGTH

@@ -38,10 +38,12 @@
 #include <stdio.h>
 
 
+#ifndef SAR_CMD_PROTOTYPE
 /*
  *	Prototype for all SARCmd*() function input parameters.
  */
 #define SAR_CMD_PROTOTYPE	void *data, const char *arg, unsigned long flags
+#endif /* SAR_CMD_PROTOTYPE */
 
 /*
  *	Flags for SARCmd*() flags input.
@@ -73,6 +75,9 @@ extern void SARCmdSmoke(SAR_CMD_PROTOTYPE);
 /* cmdtime.c - time setting */
 extern void SARCmdTime(SAR_CMD_PROTOTYPE);
 
+/* cmdscnedit.c - scenery editor */
+extern void SARCmdSceneEditor(SAR_CMD_PROTOTYPE);
+
 
 /* cmd.c - front end and callback functions */
 extern void SARCmdTextInputCB(const char *value, void *data);
@@ -89,17 +94,18 @@ extern void SARCmdTextInputCB(const char *value, void *data);
  *
  * The last set of pointers should be four NULL pointers.
  */
-#define SAR_CMD_FUNC_REF_LIST	{				\
- { (void *)"clean",	(void *)SARCmdClean,	NULL,	NULL },	\
- { (void *)"fire",	(void *)SARCmdFire,	NULL,	NULL },	\
- { (void *)"memory",	(void *)SARCmdMemory,	NULL,	NULL }, \
- { (void *)"mem",	(void *)SARCmdMemory,	NULL,	NULL },	\
- { (void *)"option",	(void *)SARCmdOption,	NULL,	NULL },	\
- { (void *)"opt",	(void *)SARCmdOption,	NULL,	NULL }, \
- { (void *)"set",	(void *)SARCmdSet,	NULL,	NULL },	\
- { (void *)"smoke",	(void *)SARCmdSmoke,	NULL,	NULL },	\
- { (void *)"time",	(void *)SARCmdTime,	NULL,	NULL },	\
- { NULL,		NULL,			NULL,	NULL }	\
+#define SAR_CMD_FUNC_REF_LIST	{					\
+ { (void *)"clean",	(void *)SARCmdClean,		NULL,	NULL },	\
+ { (void *)"fire",	(void *)SARCmdFire,		NULL,	NULL },	\
+ { (void *)"memory",	(void *)SARCmdMemory,		NULL,	NULL }, \
+ { (void *)"mem",	(void *)SARCmdMemory,		NULL,	NULL },	\
+ { (void *)"option",	(void *)SARCmdOption,		NULL,	NULL },	\
+ { (void *)"opt",	(void *)SARCmdOption,		NULL,	NULL }, \
+ { (void *)"set",	(void *)SARCmdSet,		NULL,	NULL },	\
+ { (void *)"smoke",	(void *)SARCmdSmoke,		NULL,	NULL },	\
+ { (void *)"time",	(void *)SARCmdTime,		NULL,	NULL },	\
+ { (void *)"scnedit",	(void *)SARCmdSceneEditor,	NULL,	NULL },	\
+ { NULL,		NULL,				NULL,	NULL }	\
 }
 
 

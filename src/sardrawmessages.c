@@ -36,6 +36,7 @@
 #include "sardraw.h"
 #include "sardrawdefs.h"
 #include "config.h"
+#include "cmdscnedit.h"
 
 
 void SARDrawHelp(sar_dc_struct *dc);
@@ -501,8 +502,9 @@ void SARDrawCameraRefTitle(sar_dc_struct *dc)
 	sar_scene_struct *scene = dc->scene;
 	const sar_option_struct *opt = dc->option;
 	GWFont *font = opt->message_font;
-	const int margin_x = 5, margin_y = 5;
+	int margin_x = 5, margin_y = 5;
 	const char *s = scene->camera_ref_title;
+	const int flight_model = dc->player_flight_model_type;
 
 	/* Coordinates are handled in left hand rule xy plane,
 	 * the y axis is inverted at the call to the draw
@@ -525,6 +527,15 @@ void SARDrawCameraRefTitle(sar_dc_struct *dc)
 
 	if(s != NULL)
 	{
+	    /* Player in slew mode? */
+	    if(flight_model == SAR_FLIGHT_MODEL_SLEW)
+	    {
+		/* Let space for slew mode icon */
+		margin_x = 15 + 15 + 15;
+
+		/* Let space for slew coordinates line */
+		margin_y = 30 ;
+	    }
 	    GWSetFont(display, font);
 	    if(dc->flir)
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -553,6 +564,7 @@ static void SARDrawSlewCoordinates(
 	sar_dc_struct *dc, sar_object_struct *obj_ptr
 )
 {
+	sar_core_struct *core_ptr = dc->core_ptr;
 	gw_display_struct *display = dc->display;
 	sar_scene_struct *scene = dc->scene;
 	const sar_position_struct *pos = &obj_ptr->pos;
@@ -585,23 +597,66 @@ static void SARDrawSlewCoordinates(
 	}
 	else
 	{
-	    sprintf(
-		text,
+	    /* Edit mode OFF? */
+	    if(core_ptr->editor_mode_on != True)
+	    {
+		sprintf(
+		    text,
  "%i:%2i Player: (hpb) %.0f %.0f %.0f  (xyz) %.2f %.2f %.2f(%.2f feet)\n",
-		(int)(scene->tod / 3600),
-		(int)((int)((int)scene->tod / 60) % 60),
-		SFMRadiansToDegrees(dir->heading),
-		SFMRadiansToDegrees(dir->pitch),
-		SFMRadiansToDegrees(dir->bank),
-		pos->x, pos->y, pos->z,
-		SFMMetersToFeet(pos->z)
-	    );
-	    GWDrawString(
-		display,
-		margin_x,
-		margin_y,
-		text
-	    );
+		    (int)(scene->tod / 3600),
+		    (int)((int)((int)scene->tod / 60) % 60),
+		    SFMRadiansToDegrees(dir->heading),
+		    SFMRadiansToDegrees(dir->pitch),
+		    SFMRadiansToDegrees(dir->bank),
+		    pos->x, pos->y, pos->z,
+		    SFMMetersToFeet(pos->z)
+		);
+		GWDrawString(
+		    display,
+		    margin_x,
+		    margin_y,
+		    text
+		);
+	    }
+	    /* Edit mode ON? */
+	    else
+	    {
+		sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+		char z_inc;
+
+		if(scn_ed->altitude_increment == 0.0)
+		    z_inc = '=';
+		else if(scn_ed->altitude_increment > 0.0)
+		    z_inc = '+';
+		else
+		    z_inc = '-';
+
+		sprintf(
+		    text,
+ "Object: (hpb) %.0f %.0f %.0f  (xyz) %.2f %.2f %.2f(%.2f feet)%c\n",
+		    SFMRadiansToDegrees(dir->heading),
+		    SFMRadiansToDegrees(dir->pitch),
+		    SFMRadiansToDegrees(dir->bank),
+		    pos->x, pos->y, pos->z,
+		    SFMMetersToFeet(pos->z),
+		    z_inc
+		);
+		GWDrawString(
+		    display,
+		    margin_x + 130,
+		    margin_y,
+		    text
+		);
+
+		/* Red text */
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		GWDrawString(
+		    display,
+		    margin_x,
+		    margin_y,
+		    "[EDIT MODE ON]"
+		);
+	    }
 	}
 }
 

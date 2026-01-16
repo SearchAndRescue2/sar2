@@ -13,8 +13,14 @@
         <h2>Search And Rescue II documentation: how to write a scenery.</h2>
     </header>
     <main>
-    [TODO], just a few information for now, mainly for terrain, and two usefull tips to place objects on a scenery and to edit a terrain height field:<br>
+    Just a few information for now, and two usefull tips to place objects on a scenery and to edit a terrain height field:<br>
+
     <ul>
+    <li>
+    You can easily place objects on a scenery with the game embedded <a href= "../scenery_editor/scenery_editor.html">scenery editor</a>.
+    </li>
+    <br>
+
     <li>
     Scenery (*.scn file) loads objects (data/objects/*.3d files). Objects can be terrain, building, trees, ...
     </li>
@@ -35,50 +41,6 @@
     If you have "altitude" waterbodies, you must use a 4*8 bits rgba ground texture: all texture area with at least 1% transparency will be detected as water. If you set an area with 100% transparency (or with a full black color), it will be detected as water too, but you will see down up to the <a href= "../sar2ParmsBook/sar2ParmsBook.html#scene_ground_tile">scene_ground_tile</a>s.
     </li>
 
-    <br>
-
-    <li>
-    If you want to place objects on a scenery, you can easily determine object coordinates and rotation whith this tip:
-	<ul>
-	<li>
-	First, create the following "object_placer.3d" file with a text editor then save it in the "<i>sar2_base_directory/data/aircrafts/</i>" directory. This will create a very minimal "aircraft" wich will only be able to move in slew mode.
-	<code>
-	begin_header<br>
-	<b>#------------- You can put object texture(s) path(s) here -------------#</b><br>
-	end_header<br>
-	<br>
-	name Object placer<br>
-	type 4<br>
-	range 20000<br>
-	dry_mass 1000.0<br>
-	fuel 0.0001 1000.0 1000.0<br>
-	engine n 0 100 1.0<br>
-	<br>
-	begin_model standard<br>
-	<b>#---------------------- Put object vertices here ----------------------#</b><br>
-	end_model standard<br>
-	<br>
-	begin_model cockpit<br>
-	# Don't put anything here<br>
-	end_model cockpit<br>
-	</code>
-	</li>
-	<li>
-	Once done, complete this file with your object verticies and (it's not mandatory but prettier) texture path, and save it.
-	</li>
-	<li>
-	Start sar2, select Free Flight, then your scenery, then select the "Object placer" aircraft, then Begin. After loading, <b>DON'T PANIC</b> and press [F3] key... Phew! Better, isn't it? Now, press [E] to start engine.
-	</li>
-	<li>
-	Once engine started (wait to see "Thr: x%" instead of "Eng(O): 0%"), press [CTRL]+[A] to activate slew mode. You can now move your object horizontally as you want with joystick or the cursor keys. Use joystick twist rudder or press [CTRL] + [Left]/[Right] cursor keys for steering (heading), and press [HOME]/[END] keys for up/down (25 feet steps).<br>
-	Note: your object will always be on or above the ground. If it is above the ground, press [END] key until it touches ground (it will never move below ground).
-	</li>
-	<li>
-	Place your object where you want. You will see it's position (relative to scenery origin point) at the top left corner of the screen. Interesting values are <b>h</b>eading, <b>x</b> and <b>y</b> coordinates, and <b>z <i><u>in feet</u></i></b>, because you will can use them to set object position in scenery or mission files with the <a href= "../sar2ParmsBook/sar2ParmsBook.html#rotate">rotate</a> and <a href= "../sar2ParmsBook/sar2ParmsBook.html#translate">translate</a> statements.<br>
-	<img src="./images/object_placer.jpg"><br>
-	</li>
-	</ul>
-    </li>
     <br>
 
     <li>

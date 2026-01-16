@@ -39,20 +39,14 @@
 #include "sarsimend.h"
 #include "sarkey.h"
 #include "config.h"
-
-
-/* Prototype for all SARKey*() functions */
-#define SAR_KEY_FUNC_PROTOTYPE					\
-	sar_core_struct *core_ptr, gw_display_struct *display,	\
-	sar_scene_struct *scene, Boolean state
-
+#include "cmdscnedit.h"
 
 static void SARKeyCameraRefCockpit(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyCameraRefHoist(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyCameraRefMap(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyCameraRefSpot(SAR_KEY_FUNC_PROTOTYPE);
 static void SARKeyCameraRefTower(SAR_KEY_FUNC_PROTOTYPE);
-static void SARKeyCommand(SAR_KEY_FUNC_PROTOTYPE);
+void SARKeyCommand(SAR_KEY_FUNC_PROTOTYPE);
 
 static void SARKeyEscape(SAR_KEY_FUNC_PROTOTYPE);
 
@@ -345,7 +339,7 @@ static void SARKeyCameraRefTower(SAR_KEY_FUNC_PROTOTYPE)
  *	will then be forwarded to SARTextInputHandleKey() until
  *	the command argument is typed in and processed or aborted.
  */
-static void SARKeyCommand(SAR_KEY_FUNC_PROTOTYPE)
+void SARKeyCommand(SAR_KEY_FUNC_PROTOTYPE)
 {
 	if(!state)
 	    return;
@@ -371,10 +365,24 @@ static void SARKeyCommand(SAR_KEY_FUNC_PROTOTYPE)
  *	3. Check if a mission is in progress, and if so map the prompt
  *	   for confirmation.
  *
- *	4. All else prompt to end simulation.
+ *	4. If scenery editor is running, shut it off.
+ *
+ *	5. All else prompt to end simulation.
  */
 static void SARKeyEscape(SAR_KEY_FUNC_PROTOTYPE)
 {
+	/* This must be done before the '!state' test */
+	if(core_ptr->editor_mode_on)
+	{
+	    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+
+	    if(scn_ed->in_modif_state ||
+		scn_ed->in_move_at_state ||
+		scn_ed->in_name_state
+	    )
+		scn_ed->text_input_escaped = True;
+	}
+
 	if(!state)
 	    return;
 
@@ -408,6 +416,28 @@ static void SARKeyEscape(SAR_KEY_FUNC_PROTOTYPE)
 		SARTextInputCBQuitSimulation,
 		core_ptr
 	    );
+	}
+	else if(core_ptr->editor_mode_on)
+	{
+	    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+
+	    if(scn_ed != NULL && scn_ed->must_print == True)
+	    {
+		/* Send a "scnedit off" command: this will prompt user to
+		 * print scenery modifications, then quit editor.
+		 */
+		SARCmdSceneEditor((void *)core_ptr, "scnedit off", SAR_CMD_FLAG_VERBOSE | SAR_CMD_FLAG_ISUSER);
+	    }
+	    else
+	    {
+		SARTextInputMap(
+		    core_ptr->text_input,
+		    "Are you sure you want to quit scenery editor?",
+		    NULL,
+		    SARTextInputCBQuitSimulation,
+		    core_ptr
+		);
+	    }
 	}
 	else
 	{
