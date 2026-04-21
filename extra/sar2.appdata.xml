@@ -5,6 +5,9 @@
   <project_license>GPL-2.0</project_license>
   <name>Search and Rescue II</name>
   <summary>Rescue Helicopter Simulator</summary>
+  <developer id="io.github.searchandrescue2">
+    <name>SAR2 developers</name>
+  </developer>
   <description>
     <p>
       Search and Rescue II is a rescue helicopter simulator for Linux.
@@ -16,18 +19,27 @@
   <screenshots>
     <screenshot type="default">
       <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar1.jpg</image>
+      <caption>Burning skyscrapers</caption>
     </screenshot>
     <screenshot>
       <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar2.jpg</image>
+      <caption>Forest fires</caption>
     </screenshot>
     <screenshot>
       <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar3.jpg</image>
+      <caption>Mountain top</caption>
     </screenshot>
     <screenshot>
       <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar4.jpg</image>
+      <caption>Coast guard</caption>
     </screenshot>
     <screenshot>
       <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar5.jpg</image>
+      <caption>Fighter jet</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://searchandrescue2.github.io/sar2/images/screenshots/sar6.jpg</image>
+      <caption>Rescue basket</caption>
     </screenshot>
   </screenshots>
   <releases>
@@ -53,6 +65,7 @@
       <url>https://github.com/SearchAndRescue2/sar2/releases/tag/v2.3.2</url>
     </release>
   </releases>
+  <launchable type="desktop-id">sar2.desktop</launchable>
   <url type="homepage">https://searchandrescue2.github.io/sar2/</url>
   <url type="vcs-browser">https://github.com/SearchAndRescue2/sar2/</url>
   <url type="bugtracker">https://github.com/SearchAndRescue2/sar2/issues</url>
