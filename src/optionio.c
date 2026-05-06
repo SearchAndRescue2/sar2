@@ -53,7 +53,6 @@ int SAROptionsSaveToFile(
 # define SAR_CFG_DELIM_CHAR	'='
 #endif
 
-
 /*
  *	Loads options from file.
  */
@@ -63,6 +62,7 @@ int SAROptionsLoadFromFile(
 {
 	FILE *fp;
 	char *buf = NULL;
+	double version[3];
 	struct stat stat_buf;
 
 
@@ -106,9 +106,7 @@ int SAROptionsLoadFromFile(
 	    /* Version */
 	    if(!strcasecmp(buf, "Version"))
 	    {
-		double vf[3];
-		FGetValuesF(fp, vf, 3);
-
+		FGetValuesF(fp, version, 3);
 	    }
 
 	    /* MenuBackgrounds */
@@ -375,6 +373,54 @@ int SAROptionsLoadFromFile(
 		opt->gctl_controllers = (gctl_controllers)vf[0];
 
 	    }
+	    /* Joystick #1 (js0) SDL_NAME */
+	    else if(!strcasecmp(buf, "Joystick0Name"))
+	    {
+		char *s = FGetString(fp);
+		opt->js0_sdl_name = STRDUP(s);
+	    }
+	    /* Joystick #1 (js0) SDL_GUID */
+	    else if(!strcasecmp(buf, "Joystick0Guid"))
+	    {
+		char *s = FGetString(fp);
+		if(strlen(s) == 32){
+		    strcpy(opt->js0_sdl_guid_s, s);
+		}
+		else
+		    strcpy(opt->js0_sdl_guid_s, "");
+	    }
+	    /* Joystick #2 (js1) SDL_NAME */
+	    else if(!strcasecmp(buf, "Joystick1Name"))
+	    {
+		char *s = FGetString(fp);
+		opt->js1_sdl_name = STRDUP(s);
+	    }
+	    /* Joystick #2 (js1) SDL_GUID */
+	    else if(!strcasecmp(buf, "Joystick1Guid"))
+	    {
+		char *s = FGetString(fp);
+		if(strlen(s) == 32){
+		    strcpy(opt->js1_sdl_guid_s, s);
+		}
+		else
+		    strcpy(opt->js1_sdl_guid_s, "");
+	    }
+	    /* Joystick #3 (js2) SDL_NAME */
+	    else if(!strcasecmp(buf, "Joystick2Name"))
+	    {
+		char *s = FGetString(fp);
+		opt->js2_sdl_name = STRDUP(s);
+	    }
+	    /* Joystick #3 (js2) SDL_GUID */
+	    else if(!strcasecmp(buf, "Joystick2Guid"))
+	    {
+		char *s = FGetString(fp);
+		if(strlen(s) == 32){
+		    strcpy(opt->js2_sdl_guid_s, s);
+		}
+		else
+		    strcpy(opt->js2_sdl_guid_s, "");
+	    }
 	    /* Joystick #1 (js0) button mappings */
 	    else if(!strcasecmp(buf, "Joystick0ButtonMappings") ||
 		    !strcasecmp(buf, "JoystickButtonMappings")
@@ -415,21 +461,203 @@ int SAROptionsLoadFromFile(
 		opt->js1_btn_hoist_up = (int)vf[5];
 		opt->js1_btn_hoist_down = (int)vf[6];
 	    }
-	    /* Joystick #1 (js0) axis roles */
+	    /* Joystick #3 (js2) button mappings */
+	    else if(!strcasecmp(buf, "Joystick2ButtonMappings"))
+	    {
+		/* Format:
+		 *
+		 * <rotate> <air brakes> <wheel brakes> <zoom in>
+		 * <zoom out> <hoist up> <hoist_down>
+		 */
+		double vf[7];
+		FGetValuesF(fp, vf, 7);
+
+		opt->js2_btn_rotate = (int)vf[0];
+		opt->js2_btn_air_brakes = (int)vf[1];
+		opt->js2_btn_wheel_brakes = (int)vf[2];
+		opt->js2_btn_zoom_in = (int)vf[3];
+		opt->js2_btn_zoom_out = (int)vf[4];
+		opt->js2_btn_hoist_up = (int)vf[5];
+		opt->js2_btn_hoist_down = (int)vf[6];
+	    }
+	    /* Joystick #1 (js0) axis roles.
+	     * Should only happen when opening sar2.ini file version <= 2.6.0.
+	     */
 	    else if(!strcasecmp(buf, "Joystick0AxisRoles"))
 	    {
 		/* Value is stored as bits (unsigned long) */
 		double vf[1];
+		/* Read value to avoid complain (backward compatibility). */
 		FGetValuesF(fp, vf, 1);
-		opt->gctl_js0_axis_roles = (gctl_js_axis_roles)vf[0];
+		/* opt->gctl_js0_axis_roles = (gctl_js_axis_roles)vf[0]; */
+
+		if(vf[0] != 0){
+		    fprintf(stderr, "It seems that your %s configuration file \
+is not up to date.\nPlease go to Options/Controller/Joystick then remap your \
+joystick(s).\n", filename);
+
+		    /* Reset old sar2.ini file version values */
+		    opt->js0_btn_rotate = -1;
+		    opt->js0_btn_air_brakes = -1;
+		    opt->js0_btn_wheel_brakes = -1;
+		    opt->js0_btn_zoom_in = -1;
+		    opt->js0_btn_zoom_out = -1;
+		    opt->js0_btn_hoist_up = -1;
+		    opt->js0_btn_hoist_down = -1;
+		    opt->js0_pov_hat = -1;
+
+		    opt->js1_btn_rotate = -1;
+		    opt->js1_btn_air_brakes = -1;
+		    opt->js1_btn_wheel_brakes = -1;
+		    opt->js1_btn_zoom_in = -1;
+		    opt->js1_btn_zoom_out = -1;
+		    opt->js1_btn_hoist_up = -1;
+		    opt->js1_btn_hoist_down = -1;
+		    opt->js1_pov_hat = -1;
+
+		    /* No need to reset js0/1/2 axis mappings and js2 buttons
+		     * values because they don't exist in old sar2.ini files.
+		     */
+		}
 	    }
-	    /* Joystick #2 (js1) axis roles */
+	    /* Joystick #2 (js1) axis roles. Sar2 versions <= 2.6.0 only! */
 	    else if(!strcasecmp(buf, "Joystick1AxisRoles"))
 	    {
 		/* Value is stored as bits (unsigned long) */
 		double vf[1];
+		/* Read value to avoid complain (backward compatibility). */
 		FGetValuesF(fp, vf, 1);
-		opt->gctl_js1_axis_roles = (gctl_js_axis_roles)vf[0];
+		/* opt->gctl_js1_axis_roles = (gctl_js_axis_roles)vf[0]; */
+	    }
+	    /* Joystick #1 (js0) axes mappings */
+	    else if(!strcasecmp(buf, "Joystick0AxisMappings"))
+	    {
+		/* Format:
+		 *
+		 * <heading> <pitch> <bank> <throttle>
+		 * <hat_x> <hat_y> <pov_hat> <brake_left> <brake_right>
+		 */
+		int value[9];
+		FGetValuesI(fp, value, 9);
+
+		opt->js0_axis_heading = value[0];
+		opt->js0_axis_pitch = value[1];
+		opt->js0_axis_bank = value[2];
+		opt->js0_axis_throttle = value[3];
+		opt->js0_axis_hat_x = value[4];
+		opt->js0_axis_hat_y = value[5];
+		opt->js0_pov_hat = value[6];
+		opt->js0_axis_brake_left = value[7];
+		opt->js0_axis_brake_right = value[8];
+	    }
+	    /* Joystick #2 (js1) axes mappings */
+	    else if(!strcasecmp(buf, "Joystick1AxisMappings"))
+	    {
+		/* Format:
+		 *
+		 * <heading> <pitch> <bank> <throttle>
+		 * <hat_x> <hat_y> <pov_hat> <brake_left> <brake_right>
+		 */
+		int value[9];
+		FGetValuesI(fp, value, 9);
+
+		opt->js1_axis_heading = value[0];
+		opt->js1_axis_pitch = value[1];
+		opt->js1_axis_bank = value[2];
+		opt->js1_axis_throttle = value[3];
+		opt->js1_axis_hat_x = value[4];
+		opt->js1_axis_hat_y = value[5];
+		opt->js1_pov_hat = value[6];
+		opt->js1_axis_brake_left = value[7];
+		opt->js1_axis_brake_right = value[8];
+	    }
+	    /* Joystick #3 (js2) axes mappings */
+	    else if(!strcasecmp(buf, "Joystick2AxisMappings"))
+	    {
+		/* Format:
+		 *
+		 * <heading> <pitch> <bank> <throttle>
+		 * <hat_x> <hat_y> <pov_hat> <brake_left> <brake_right>
+		 */
+		int value[9];
+		FGetValuesI(fp, value, 9);
+
+		opt->js2_axis_heading = value[0];
+		opt->js2_axis_pitch = value[1];
+		opt->js2_axis_bank = value[2];
+		opt->js2_axis_throttle = value[3];
+		opt->js2_axis_hat_x = value[4];
+		opt->js2_axis_hat_y = value[5];
+		opt->js2_pov_hat = value[6];
+		opt->js2_axis_brake_left = value[7];
+		opt->js2_axis_brake_right = value[8];
+	    }
+	    /* Joysticks axis inversion */
+	    else if(!strcasecmp(buf, "JoysticksAxisInversion"))
+	    {
+		/* Format:
+		 *
+		 * <heading> <pitch> <bank> <throttle>
+		 * <hat_x> <hat_y> <pov_hat> <brake_left> <brake_right>
+		 */
+		int value[9];
+		FGetValuesI(fp, value, 9);
+
+		opt->js_axes_inversion_bits = 0;
+
+		/* Heading */
+		if(value[0] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_HEADING;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_HEADING;
+
+		/* Pitch */
+		if(value[1] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_PITCH;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_PITCH;
+
+		/* Bank */
+		if(value[2] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_BANK;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_BANK;
+
+		/* Throttle */
+		if(value[3] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_THROTTLE;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_THROTTLE;
+
+		/* Hat x */
+		if(value[4] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_HAT_X;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_HAT_X;
+
+		/* Hat y */
+		if(value[5] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_HAT_Y;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_HAT_Y;
+
+		/* POV Hat */
+		if(value[6] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_POV_HAT;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_POV_HAT;
+
+		/* Brake left */
+		if(value[7] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_BRAKE_LEFT;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_BRAKE_LEFT;
+
+		/* Brake right */
+		if(value[8] == 1)
+		    opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_BRAKE_RIGHT;
+		else
+		    opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_BRAKE_RIGHT;
 	    }
 	    /* GameControllerOptions */
 	    else if(!strcasecmp(buf, "GameControllerOptions"))
@@ -823,8 +1051,9 @@ int SAROptionsSaveToFile(
 	    opt->rotor_wash_vis_coeff
 	);
 	PUTCR
+	PUTCR
 
-	/* Game controllers mask (was GameControllerType) */
+	/* Game controllers mask */
 	fprintf(
 	    fp,
 	    "# Mask of game controllers; (1 << 0) = keyboard, (1 << 1) = pointer,"
@@ -841,50 +1070,250 @@ int SAROptionsSaveToFile(
 	    opt->gctl_controllers
 	);
 	PUTCR
+	fprintf(
+	    fp,
+	    "# Joystick name and SDL GUID. SDL GUID must be unique."
+	);
+	PUTCR
+	if(opt->js0_sdl_name != NULL && strlen(opt->js0_sdl_guid_s) != 0)
+	    fprintf(
+		fp,
+		"Joystick0Name = %s",
+		opt->js0_sdl_name
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick0Name = "
+	    );
+	PUTCR
+	fprintf(
+	    fp,
+	    "Joystick0Guid = %s",
+	    opt->js0_sdl_guid_s
+	);
+	PUTCR
+	if(opt->js1_sdl_name != NULL && strlen(opt->js1_sdl_guid_s) != 0)
+	    fprintf(
+		fp,
+		"Joystick1Name = %s",
+		opt->js1_sdl_name
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick1Name = "
+	    );
+	PUTCR
+	fprintf(
+	    fp,
+	    "Joystick1Guid = %s",
+	    opt->js1_sdl_guid_s
+	);
+	PUTCR
+	if(opt->js2_sdl_name != NULL && strlen(opt->js2_sdl_guid_s) != 0)
+	    fprintf(
+		fp,
+		"Joystick2Name = %s",
+		opt->js2_sdl_name
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick2Name = "
+	    );
+	PUTCR
+	fprintf(
+	    fp,
+	    "Joystick2Guid = %s",
+	    opt->js2_sdl_guid_s
+	);
+	PUTCR
 	/* Joystick button mappings (7 values) */
 	fprintf(
 	    fp,
 "\
-# Joystick button mappings: <rot> <air_brk> <whl_brk> <zm_in> <zm_out>\n\
-#                           <hoist_up> <hoist_dn>"
+# Joystick button mappings.\n\
+# Set button number between 0 and 15 included if role is assigned,\n\
+# or set to -1 if role is not assigned.\n\
+# <rot> <air_brk> <whl_brk> <zm_in> <zm_out> <hoist_up> <hoist_dn>"
 	);
 	PUTCR
+	if(strlen(opt->js0_sdl_guid_s)!= 0)
+	    fprintf(
+		fp,
+		"Joystick0ButtonMappings = %2i %2i %2i %2i %2i %2i %2i",
+		opt->js0_btn_rotate,
+		opt->js0_btn_air_brakes,
+		opt->js0_btn_wheel_brakes,
+		opt->js0_btn_zoom_in,
+		opt->js0_btn_zoom_out,
+		opt->js0_btn_hoist_up,
+		opt->js0_btn_hoist_down
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick0ButtonMappings = -1 -1 -1 -1 -1 -1 -1"
+	    );
+	PUTCR
+	if(strlen(opt->js1_sdl_guid_s)!= 0)
+	    fprintf(
+		fp,
+		"Joystick1ButtonMappings = %2i %2i %2i %2i %2i %2i %2i",
+		opt->js1_btn_rotate,
+		opt->js1_btn_air_brakes,
+		opt->js1_btn_wheel_brakes,
+		opt->js1_btn_zoom_in,
+		opt->js1_btn_zoom_out,
+		opt->js1_btn_hoist_up,
+		opt->js1_btn_hoist_down
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick1ButtonMappings = -1 -1 -1 -1 -1 -1 -1"
+	    );
+	PUTCR
+	if(strlen(opt->js2_sdl_guid_s)!= 0)
+	    fprintf(
+		fp,
+		"Joystick2ButtonMappings = %2i %2i %2i %2i %2i %2i %2i",
+		opt->js2_btn_rotate,
+		opt->js2_btn_air_brakes,
+		opt->js2_btn_wheel_brakes,
+		opt->js2_btn_zoom_in,
+		opt->js2_btn_zoom_out,
+		opt->js2_btn_hoist_up,
+		opt->js2_btn_hoist_down
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick2ButtonMappings = -1 -1 -1 -1 -1 -1 -1"
+	    );
+	PUTCR
+	/* Joystick axes mappings (9 values) */
 	fprintf(
 	    fp,
-	    "Joystick0ButtonMappings = %i %i %i %i %i %i %i",
-	    opt->js0_btn_rotate,
-	    opt->js0_btn_air_brakes,
-	    opt->js0_btn_wheel_brakes,
-	    opt->js0_btn_zoom_in,
-	    opt->js0_btn_zoom_out,
-	    opt->js0_btn_hoist_up,
-	    opt->js0_btn_hoist_down
+"\
+# Joystick axis mappings.\n\
+# Set axis number between 0 and 7 included if role is assigned,\n\
+# or set to -1 if role is not assigned.\n\
+# If POV control use a standard POV hat switch,\n\
+# set <hat_x> and <hat_y> to -1 and <pov_hat> to hat number (0 or 1).\n\
+# If POV control use analog axes,\n\
+# set <hat_x> and <hat_y> to axis number and <pov_hat> to -1.\n\
+# If axis direction must be inverted, set corresponding inversion value to 1.\n\
+# <heading> <pitch> <bank> <throttle> <hat_x> <hat_y> <pov_hat> <brake_left> <brake_right>"
 	);
 	PUTCR
-	fprintf(
-	    fp,
-	    "Joystick1ButtonMappings = %i %i %i %i %i %i %i",
-	    opt->js1_btn_rotate,
-	    opt->js1_btn_air_brakes,
-	    opt->js1_btn_wheel_brakes,
-	    opt->js1_btn_zoom_in,
-	    opt->js1_btn_zoom_out,
-	    opt->js1_btn_hoist_up,
-	    opt->js1_btn_hoist_down
-	);
+	if(strlen(opt->js0_sdl_guid_s)!= 0)
+	    fprintf(
+		fp,
+		"Joystick0AxisMappings = %2i %2i %2i %2i %2i %2i %2i %2i %2i",
+		opt->js0_axis_heading,
+		opt->js0_axis_pitch,
+		opt->js0_axis_bank,
+		opt->js0_axis_throttle,
+		opt->js0_axis_hat_x,
+		opt->js0_axis_hat_y,
+		opt->js0_pov_hat,
+		opt->js0_axis_brake_left,
+		opt->js0_axis_brake_right
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick0AxisMappings = -1 -1 -1 -1 -1 -1 -1 -1 -1"
+	    );
 	PUTCR
-	/* Joystick axis roles */
-	fprintf(
-	    fp,
-	    "Joystick0AxisRoles = %i",
-	    opt->gctl_js0_axis_roles
-	);
+	if(strlen(opt->js1_sdl_guid_s)!= 0)
+	    fprintf(
+		fp,
+		"Joystick1AxisMappings = %2i %2i %2i %2i %2i %2i %2i %2i %2i",
+		opt->js1_axis_heading,
+		opt->js1_axis_pitch,
+		opt->js1_axis_bank,
+		opt->js1_axis_throttle,
+		opt->js1_axis_hat_x,
+		opt->js1_axis_hat_y,
+		opt->js1_pov_hat,
+		opt->js1_axis_brake_left,
+		opt->js1_axis_brake_right
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick1AxisMappings = -1 -1 -1 -1 -1 -1 -1 -1 -1"
+	    );
 	PUTCR
-	fprintf(
-	    fp,
-	    "Joystick1AxisRoles = %i",
-	    opt->gctl_js1_axis_roles
-	);
+	if(strlen(opt->js2_sdl_guid_s)!= 0)
+	    fprintf(
+		fp,
+		"Joystick2AxisMappings = %2i %2i %2i %2i %2i %2i %2i %2i %2i",
+		opt->js2_axis_heading,
+		opt->js2_axis_pitch,
+		opt->js2_axis_bank,
+		opt->js2_axis_throttle,
+		opt->js2_axis_hat_x,
+		opt->js2_axis_hat_y,
+		opt->js2_pov_hat,
+		opt->js2_axis_brake_left,
+		opt->js2_axis_brake_right
+	    );
+	else
+	    fprintf(
+		fp,
+		"Joystick2AxisMappings = -1 -1 -1 -1 -1 -1 -1 -1 -1"
+	    );
+	PUTCR
+
+	fprintf(fp, "JoysticksAxisInversion =");
+	if( strlen(opt->js0_sdl_guid_s) != 0 ||
+	    strlen(opt->js1_sdl_guid_s) != 0 ||
+	    strlen(opt->js2_sdl_guid_s) != 0
+	){
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_HEADING)
+		fprintf(fp, " 1");
+	    else
+		fprintf(fp, " 0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_PITCH)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_BANK)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_THROTTLE)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_HAT_X)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_HAT_Y)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_POV_HAT)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_BRAKE_LEFT)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	    if(opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_BRAKE_RIGHT)
+		fprintf(fp, "  1");
+	    else
+		fprintf(fp, "  0");
+	}
+	else
+	    fprintf(fp, " 0  0  0  0  0  0  0  0  0");
+
 	PUTCR
 	/* Game controller options */
 	fprintf(

@@ -33,6 +33,11 @@ extern void SARMenuOptionsJoystickTestDrawCB(
 	int x_min, int y_min, int x_max, int y_max
 );
 
+extern void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr);
+extern void SARMenuOptionsJoystickMappingReset(sar_core_struct *core_ptr, int gc_js_nums);
+extern void SARMenuOptionsJoystickMappingPrepare(sar_core_struct *core_ptr);
+extern void SARMenuOptionsJoystickMappingExit(sar_core_struct *core_ptr);
+
 extern void SARMenuOptionsGraphicsInfoRefresh(sar_core_struct *core_ptr);
 extern void SARMenuOptionsSoundTest(sar_core_struct *core_ptr);
 extern void SARMenuOptionsSoundRefresh(sar_core_struct *core_ptr);

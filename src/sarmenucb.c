@@ -76,7 +76,7 @@ void SARMenuSpinCB(
 #define STRDUP(s)	(((s) != NULL) ? strdup(s) : NULL)
 
 #define STRLEN(s)       (((s) != NULL) ? ((int)strlen(s)) : 0)
-#define ISSTREMPTY(s)	(((s) != NULL) ? ((s) == '\0') : True)
+#define ISSTREMPTY(s)	(((s) != NULL) ? ((*s) == '\0') : True)
 
 
 /*
@@ -1071,17 +1071,43 @@ free flight."
 	    break;
 
 	  case SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER:
+	    /* Is actual menu the joystick test menu? */
+	    if(core_ptr->cur_menu == SARMatchMenuByName(core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JOYSTICK)){
+		/* Shut off joystick events because we needed them only for
+		 * joystick hot plug detection in joystick test menu.
+		 */
+		SDL_JoystickEventState(SDL_IGNORE);
+	    }
 	    SARMenuSwitchToMenu(core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER);
 	    break;
-	  case SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JS_BTN:
+
+	  case SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JOYSTICK:
+	    /* Is actual menu the joystick mapping menu? */
+	    if(core_ptr->cur_menu == SARMatchMenuByName(core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_MAPPING)){
+		SARMenuOptionsJoystickMappingExit(core_ptr);
+	    }
+	    SARMenuOptionsJoystickReinit(core_ptr);
 	    SARMenuSwitchToMenu(
-		core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_BTN
+		core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JOYSTICK
+		);
+	    break;
+	  case SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JS_MAPPING:
+	    /* Is actual menu the joystick test menu? */
+	    if(core_ptr->cur_menu == SARMatchMenuByName(core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JOYSTICK)){
+		SARMenuOptionsJoystickMappingPrepare(core_ptr);
+	    }
+	    SARMenuSwitchToMenu(
+		core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_MAPPING
 	    );
 	    break;
-	  case SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_TEST:
-	    SARMenuSwitchToMenu(
-		core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_TEST
-	    );
+	  case SAR_MENU_ID_RESET_CONTROLLER_JS0_MAPPING:
+	    SARMenuOptionsJoystickMappingReset(core_ptr, 1<<0);
+	    break;
+	  case SAR_MENU_ID_RESET_CONTROLLER_JS1_MAPPING:
+	    SARMenuOptionsJoystickMappingReset(core_ptr, 1<<1);
+	    break;
+	  case SAR_MENU_ID_RESET_CONTROLLER_JS2_MAPPING:
+	    SARMenuOptionsJoystickMappingReset(core_ptr, 1<<2);
 	    break;
 
 	  case SAR_MENU_ID_GOTO_OPTIONS_GRAPHICS:

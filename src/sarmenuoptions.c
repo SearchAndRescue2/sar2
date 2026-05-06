@@ -53,13 +53,9 @@ static void SARMenuOptionsSaveMessageBox(
     sar_core_struct *core_ptr, const char *mesg,
     const char *path
     );
-static void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr);
-static void SARMenuOptionsJoystickButtonsRemap(sar_core_struct *core_ptr);
-static int SARGetJSButtonFromButtonRoleSpin(
-    sar_core_struct *core_ptr,
-    sar_menu_spin_struct *spin, int id
-    );
 
+void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr);
+void SARMenuOptionsJoystickMappingReset(sar_core_struct *core_ptr, int gc_js_nums);
 void SARMenuOptionsJoystickTestDrawCB(
     void *dpy,		/* Display */
     void *menu,		/* Menu */
@@ -68,6 +64,8 @@ void SARMenuOptionsJoystickTestDrawCB(
     void *client_data,	/* Data */
     int x_min, int y_min, int x_max, int y_max
     );
+void SARMenuOptionsJoystickMappingPrepare(sar_core_struct *core_ptr);
+void SARMenuOptionsJoystickMappingExit(sar_core_struct *core_ptr);
 
 void SARMenuOptionsGraphicsInfoRefresh(sar_core_struct *core_ptr);
 static void SARMenuOptionsSaveGraphicsInfoCB(const char *v, void *data);
@@ -305,8 +303,9 @@ static void SARMenuOptionsSaveMessageBox(
  *	This will update the gctl structure on the core structure and
  *	opt->gctl_controllers.
  */
-static void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr)
+void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr)
 {
+//fprintf(stderr, "%s:%d : Entering SARMenuOptionsJoystickReinit()\n", __FILE__, __LINE__);
     sar_option_struct *opt;
 
 
@@ -321,10 +320,69 @@ static void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr)
      */
     opt->gctl_controllers = GCTL_CONTROLLER_KEYBOARD |
 	GCTL_CONTROLLER_POINTER;
-    /* Check if one or more joystick(s) need to be enabled */
-    if((opt->gctl_js0_axis_roles != 0) ||
-       (opt->gctl_js1_axis_roles != 0)
-	)
+
+    if(
+	(opt->js0_axis_heading < 0) &&
+	(opt->js0_axis_pitch < 0) &&
+	(opt->js0_axis_bank < 0) &&
+	(opt->js0_axis_throttle < 0) &&
+	(opt->js0_pov_hat < 0) &&
+	(opt->js0_axis_hat_x < 0) &&
+	(opt->js0_axis_hat_y < 0) &&
+	(opt->js0_axis_brake_left < 0) &&
+	(opt->js0_axis_brake_right < 0) &&
+	(opt->js0_btn_rotate < 0) &&
+	(opt->js0_btn_air_brakes < 0) &&
+	(opt->js0_btn_wheel_brakes < 0) &&
+	(opt->js0_btn_zoom_in < 0) &&
+	(opt->js0_btn_zoom_out < 0) &&
+	(opt->js0_btn_hoist_up < 0) &&
+	(opt->js0_btn_hoist_down < 0)
+      )
+	strcpy(opt->js0_sdl_guid_s, "");
+    if(
+	(opt->js1_axis_heading < 0) &&
+	(opt->js1_axis_pitch < 0) &&
+	(opt->js1_axis_bank < 0) &&
+	(opt->js1_axis_throttle < 0) &&
+	(opt->js1_pov_hat < 0) &&
+	(opt->js1_axis_hat_x < 0) &&
+	(opt->js1_axis_hat_y < 0) &&
+	(opt->js1_axis_brake_left < 0) &&
+	(opt->js1_axis_brake_right < 0) &&
+	(opt->js1_btn_rotate < 0) &&
+	(opt->js1_btn_air_brakes < 0) &&
+	(opt->js1_btn_wheel_brakes < 0) &&
+	(opt->js1_btn_zoom_in < 0) &&
+	(opt->js1_btn_zoom_out < 0) &&
+	(opt->js1_btn_hoist_up < 0) &&
+	(opt->js1_btn_hoist_down < 0)
+      )
+	strcpy(opt->js1_sdl_guid_s, "");
+    if(
+	(opt->js2_axis_heading < 0) &&
+	(opt->js2_axis_pitch < 0) &&
+	(opt->js2_axis_bank < 0) &&
+	(opt->js2_axis_throttle < 0) &&
+	(opt->js2_pov_hat < 0) &&
+	(opt->js2_axis_hat_x < 0) &&
+	(opt->js2_axis_hat_y < 0) &&
+	(opt->js2_axis_brake_left < 0) &&
+	(opt->js2_axis_brake_right < 0) &&
+	(opt->js2_btn_rotate < 0) &&
+	(opt->js2_btn_air_brakes < 0) &&
+	(opt->js2_btn_wheel_brakes < 0) &&
+	(opt->js2_btn_zoom_in < 0) &&
+	(opt->js2_btn_zoom_out < 0) &&
+	(opt->js2_btn_hoist_up < 0) &&
+	(opt->js2_btn_hoist_down < 0)
+      )
+	strcpy(opt->js2_sdl_guid_s, "");
+
+    /* Check if joystick(s) need to be enabled */
+    if(strlen(opt->js0_sdl_guid_s) != 0 ||
+	strlen(opt->js1_sdl_guid_s) != 0 ||
+	strlen(opt->js2_sdl_guid_s) != 0)
     {
 	/* Add joystick to game controllers mask */
 	opt->gctl_controllers |= GCTL_CONTROLLER_JOYSTICK;
@@ -334,174 +392,167 @@ static void SARMenuOptionsJoystickReinit(sar_core_struct *core_ptr)
     GWSetInputBusy(core_ptr->display);
     SARInitGCTL(core_ptr);		/* Realize changes */
     GWSetInputReady(core_ptr->display);
+//fprintf(stderr, "%s:%d : Exiting SARMenuOptionsJoystickReinit()\n", __FILE__, __LINE__);
 }
 
+
 /*
- *	Checks if the gctl structure on the given core structure has
- *	one or more joysticks initialized. If so then the joystick
- *	structures on the gctl structure will have its button mappings
- *	updated with the global options joystick button mappings.
+ * 	Reset joystick(s) mapping spins and axis inversion switches as needed:
+ *	if gc_js_nums bit 'i' is set, then joystick 'i' mapping will be reset.
  *
- *	No reinitialization will take place.
+ * 	This will only reset spins to 'None' and switches to 'Off' position.
+ *	opt->js*_* values modifications are done by SARMenuOptionsSpinCB(...)
+ *	and SARMenuOptionsSwitchCB(...) call backs.
  */
-static void SARMenuOptionsJoystickButtonsRemap(sar_core_struct *core_ptr)
+void SARMenuOptionsJoystickMappingReset(sar_core_struct *core_ptr, int gc_js_nums)
 {
-    gctl_struct *gc;
-    sar_option_struct *opt;
+//fprintf(stderr, "%s:%d : Entering SARMenuOptionsJoystickMappingReset()\n", __FILE__, __LINE__);
+    //gctl_struct *gc = core_ptr->gctl;
+    //sar_option_struct *opt;
+    //gctl_js_struct *gc_js;
+    gw_display_struct *display;
+    sar_menu_struct *menu;
+    sar_menu_spin_struct *spin;
+    sar_menu_switch_struct *swtch;
+    int i, jsLastSpin, jsFirstSpin, jsnum, switch_id, switch_num;
+    //void *menu_object;
+    //sar_menu_label_struct *label;
+
+    if(gc_js_nums <= 0)
+	return;
 
     if(core_ptr == NULL)
 	return;
+    //opt = &core_ptr->option;
 
-    gc = core_ptr->gctl;
-    if(gc == NULL)
+    menu = SARMatchMenuByNamePtr(
+	    core_ptr,
+	    SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_MAPPING
+	    );
+    if(menu == NULL)
 	return;
 
-    opt = &core_ptr->option;
+    display = core_ptr->display;
+    if(display == NULL)
+	return;
 
-    /* Joystick controller defined as one of the game controllers? */
-    if(gc->controllers & GCTL_CONTROLLER_JOYSTICK)
-    {
-	int i;
-	gctl_js_struct *gc_js;
+    for(i = 0; i < menu->total_objects; i++){
+	if(SAR_MENU_IS_SPIN(menu->object[i])){
+	    spin = menu->object[i];
+	    jsLastSpin = (int)((spin->total_values - 1)/MAX_JOYSTICKS);
+	    jsFirstSpin = jsLastSpin - (int)((spin->total_values - 1)/MAX_JOYSTICKS) + 1;
+	    jsnum = -1;
 
+	    if(spin->cur_value >= jsFirstSpin && spin->cur_value <= jsLastSpin)
+		jsnum = 0;
+	    else if(spin->cur_value > jsLastSpin && spin->cur_value <= jsLastSpin * 2)
+		jsnum = 1;
+	    else if(spin->cur_value > jsLastSpin * 2 && spin->cur_value <= jsLastSpin * 3)
+		jsnum = 2;
 
-	/* First joystick initialized? */
-	i = 0;
-	if(i < gc->total_joysticks)
-	    gc_js = &gc->joystick[i];
-	else
-	    gc_js = NULL;
-	if(gc_js != NULL)
-	{
-	    gc_js->button_rotate = opt->js0_btn_rotate;
-	    gc_js->button_air_brakes = opt->js0_btn_air_brakes;
-	    gc_js->button_wheel_brakes =  opt->js0_btn_wheel_brakes;
-	    gc_js->button_zoom_in = opt->js0_btn_zoom_in;
-	    gc_js->button_zoom_out = opt->js0_btn_zoom_out;
-	    gc_js->button_hoist_up = opt->js0_btn_hoist_up;
-	    gc_js->button_hoist_down = opt->js0_btn_hoist_down;
+	    /* This spin to reset? */
+	    if( (jsnum == 0 && (gc_js_nums & 1<<0)) ||
+		(jsnum == 1 && (gc_js_nums & 1<<1)) ||
+		(jsnum == 2 && (gc_js_nums & 1<<2))
+	    ){
+		/* Reset spin */
+
+		SARMenuSpinSelectValueIndex(
+		    display, menu, i,
+		    0,		// set spin value index to 0
+		    True
+		);
+
+		/* Reset inversion switch */
+
+		switch(spin->id){
+		    case SAR_MENU_ID_OPT_HEADING_AXIS:
+			switch_id = SAR_MENU_ID_OPT_HEADING_AXIS_INV;
+			break;
+		    case SAR_MENU_ID_OPT_PITCH_AXIS:
+			switch_id = SAR_MENU_ID_OPT_PITCH_AXIS_INV;
+			break;
+		    case SAR_MENU_ID_OPT_BANK_AXIS:
+			switch_id = SAR_MENU_ID_OPT_BANK_AXIS_INV;
+			break;
+		    case SAR_MENU_ID_OPT_THROTTLE_AXIS:
+			switch_id = SAR_MENU_ID_OPT_THROTTLE_AXIS_INV;
+			break;
+		    case SAR_MENU_ID_OPT_POV_HAT_X:
+			switch_id = SAR_MENU_ID_OPT_POV_HAT_X_INV;
+			break;
+		    case SAR_MENU_ID_OPT_POV_HAT_Y:
+			switch_id = SAR_MENU_ID_OPT_POV_HAT_Y_INV;
+			break;
+		    case SAR_MENU_ID_OPT_POV_HAT:
+			switch_id = SAR_MENU_ID_OPT_POV_HAT_INV;
+			break;
+		    case SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS:
+			switch_id = SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS_INV;
+			break;
+		    case SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS:
+			switch_id = SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS_INV;
+			break;
+		    default:
+			switch_id = -1;
+			break;
+		}
+
+		if(switch_id >= 0){
+		    swtch = SARMenuGetObjectByID(menu, switch_id, &switch_num);
+		    SARMenuSwitchSetValue(
+			display, menu, switch_num,
+			False,	// set switch value to False
+			True
+		    );
+		}
+	    }
 	}
-
-	/* Second joystick initialized? */
-	i = 1;
-	if(i < gc->total_joysticks)
-	    gc_js = &gc->joystick[i];
-	else
-	    gc_js = NULL;
-	if(gc_js != NULL)
-	{
-	    gc_js->button_rotate = opt->js1_btn_rotate;
-	    gc_js->button_air_brakes = opt->js1_btn_air_brakes;
-	    gc_js->button_wheel_brakes =  opt->js1_btn_wheel_brakes;
-	    gc_js->button_zoom_in = opt->js1_btn_zoom_in;
-	    gc_js->button_zoom_out = opt->js1_btn_zoom_out;
-	    gc_js->button_hoist_up = opt->js1_btn_hoist_up;
-	    gc_js->button_hoist_down = opt->js1_btn_hoist_down;
-	}
-
     }
+//fprintf(stderr, "%s:%d : Exiting SARMenuOptionsJoystickMappingReset()\n", __FILE__, __LINE__);
 }
 
 
+
 /*
- *	Returns the current joystick button mapping for the given
- *	joystick action spin's current value.
- *
- *	The given id must be one of SAR_OPT_SELECT_JS#_BUTTON_ACTION
- *	where # is the joystick number.
- *
- *	Can return -1 on error or if the value is not set. Calling
- *	function must add 1 to offset when setting to the button spin's
- *	current value since the button spin's value 0 means button number
- *	-1 (none/invalid).
+ * 	Allocates gc->js_mapping_axes_values before entering joystick mapping menu.
  */
-static int SARGetJSButtonFromButtonRoleSpin(
-    sar_core_struct *core_ptr,
-    sar_menu_spin_struct *spin, int id
-    )
+void SARMenuOptionsJoystickMappingPrepare(sar_core_struct *core_ptr)
 {
-    int val = -1;
-    const sar_option_struct *opt;
+//fprintf(stderr, "%s:%d : Entering SARMenuOptionsJoystickMappingPrepare()\n", __FILE__, __LINE__);
+    gctl_struct *gc = core_ptr->gctl;
+    gctl_js_mapping_menu_data_struct *axis;
+    int  i, j;
 
+    gc->js_mapping_axes_values = GCTL_JS_MAPPING_MENU_DATA(
+			malloc(MAX_JOYSTICKS * MAX_JOYSTICK_AXES *
+			sizeof(gctl_js_mapping_menu_data_struct))
+    );
 
-    if((core_ptr == NULL) || (spin == NULL))
-	return(val);
-
-    opt = &core_ptr->option;
-
-    /* First joystick (js0) */
-    if(id == SAR_MENU_ID_OPT_JS0_BUTTON_ACTION)
+    for(i = 0; i < MAX_JOYSTICKS; i++)
     {
-	switch(spin->cur_value)
+	for(j = 0; j < MAX_JOYSTICK_AXES; j++)
 	{
-	    case 0:	/* Rotate Modifier */
-		val = opt->js0_btn_rotate;
-		break;
-	    case 1:	/* Air Brakes */
-		val = opt->js0_btn_air_brakes;
-		break;
-	    case 2:	/* Wheel Brakes */
-		val = opt->js0_btn_wheel_brakes;
-		break;
-	    case 3:	/* Zoom In */
-		val = opt->js0_btn_zoom_in;
-		break;
-	    case 4:	/* Zoom out */
-		val = opt->js0_btn_zoom_out;
-		break;
-	    case 5:	/* Hoist Up */
-		val = opt->js0_btn_hoist_up;
-		break;
-	    case 6:	/* Hoist Down */
-		val = opt->js0_btn_hoist_down;
-		break;
-/* When adding a new button mapping, make sure to add it to the
- * setting of the button mappings to option structure in
- * SARMenuOptionsSpinCB().
- *
- * Also make sure to add support for EACH joystick!
- */
-	}
-    }
-    /* Second joystick (js1) */
-    else if(id == SAR_MENU_ID_OPT_JS1_BUTTON_ACTION)
-    {
-	switch(spin->cur_value)
-	{
-	    case 0:   /* Rotate Modifier */
-		val = opt->js1_btn_rotate;
-		break;
-	    case 1:   /* Air Brakes */
-		val = opt->js1_btn_air_brakes;
-		break;
-	    case 2:   /* Wheel Brakes */
-		val = opt->js1_btn_wheel_brakes;
-		break;
-	    case 3:   /* Zoom In */
-		val = opt->js1_btn_zoom_in;
-		break;
-	    case 4:   /* Zoom out */
-		val = opt->js1_btn_zoom_out;
-		break;
-	    case 5:   /* Hoist Up */
-		val = opt->js1_btn_hoist_up;
-		break;
-	    case 6:   /* Hoist Down */
-		val = opt->js1_btn_hoist_down;
-		break;
-/* When adding a new button mapping, make sure to add it to the
- * setting of the button mappings to option structure in
- * SARMenuOptionsSpinCB().
- *
- * Also be sure to add support for EACH joystick!
- */
+	    axis = &gc->js_mapping_axes_values[i * MAX_JOYSTICK_AXES + j];
+	    axis->min = 0;
+	    axis->max = 0;
 	}
     }
 
-    if(val < 0)
-	val = -1;
+//fprintf(stderr, "%s:%d : Exiting SARMenuOptionsJoystickMappingPrepare()\n", __FILE__, __LINE__);
+}
 
-    return(val);
+/*
+ * 	Frees gc->js_mapping_axes_values while exiting joystick mapping menu.
+ */
+void SARMenuOptionsJoystickMappingExit(sar_core_struct *core_ptr)
+{
+//fprintf(stderr, "%s:%d : Entering SARMenuOptionsJoystickMappingExit()\n", __FILE__, __LINE__);
+    gctl_struct *gc = core_ptr->gctl;
+
+    free(gc->js_mapping_axes_values);
+
+//fprintf(stderr, "%s:%d : Exiting SARMenuOptionsJoystickMappingExit()\n", __FILE__, __LINE__);
 }
 
 
@@ -523,6 +574,7 @@ void SARMenuOptionsJoystickTestDrawCB(
     sar_core_struct *core_ptr = SAR_CORE(client_data);
     const sar_option_struct *opt;
     gctl_struct *gc;
+    SDL_Event event;
     int w = x_max - x_min, h = y_max - y_min;
     int fw, fh, width, height;
 
@@ -541,10 +593,34 @@ void SARMenuOptionsJoystickTestDrawCB(
 				0x7e, 0xfc, 0x7e, 0xfc, 0x7e, 0xfc, 0xfe, 0xfe, 0xc0, 0x06, 0xfe, 0xfe,
 				0x7e, 0xfc, 0x7e, 0xfc, 0x7e, 0xfc, 0x3e, 0xf8, 0x1f, 0xf0, 0x03, 0x80
     };
-    /* Button icon bitmap 15x15 */
-    const u_int8_t btn_bm[] = { 0x00, 0x00, 0x1f, 0xf0, 0x30, 0x18,
-				0x67, 0xcc, 0x4f, 0xe4, 0x5f, 0xf4, 0x5f, 0xf4, 0x5f, 0xf4, 0x5f, 0xf4,
-				0x5f, 0xf4, 0x4f, 0xe4, 0x67, 0xcc, 0x30, 0x18, 0x1f, 0xf0, 0x00, 0x00
+
+    /* Button pressed icon bitmap 22x22 (circle) */
+/*  const u_int8_t btn_pressed_bm[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfc, 0x00, 0x03, 0x03, 0x00, 0x04,
+	0x00, 0x80, 0x08, 0x00, 0x40, 0x08, 0x00, 0x40, 0x10, 0x00, 0x20, 0x10, 0x00, 0x20, 0x10, 0x00,
+	0x20, 0x10, 0x00, 0x20, 0x10, 0x00, 0x20, 0x10, 0x00, 0x20, 0x08, 0x00, 0x40, 0x08, 0x00, 0x40,
+	0x04, 0x00, 0x80, 0x03, 0x03, 0x00, 0x00, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00
+    };
+    */
+
+    /* Button pressed icon bitmap 22x22 (disc) */
+    const u_int8_t btn_pressed_bm[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfc, 0x00, 0x03, 0xff, 0x00, 0x07,
+	0xff, 0x80, 0x0f, 0xff, 0xc0, 0x0f, 0xff, 0xc0, 0x1f, 0xff, 0xe0, 0x1f, 0xff, 0xe0, 0x1f, 0xff,
+	0xe0, 0x1f, 0xff, 0xe0, 0x1f, 0xff, 0xe0, 0x1f, 0xff, 0xe0, 0x0f, 0xff, 0xc0, 0x0f, 0xff, 0xc0,
+	0x07, 0xff, 0x80, 0x03, 0xff, 0x00, 0x00, 0xfc, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00
+    };
+
+
+    /* Button released icon bitmap 22x22 */
+    const u_int8_t btn_released_bm[] = {
+	0x00, 0x00, 0x00, 0x01, 0xfe, 0x00, 0x06, 0x01, 0x80, 0x08, 0x00, 0x40, 0x10, 0x00, 0x20, 0x20,
+	0x00, 0x10, 0x20, 0x00, 0x10, 0x40, 0x00, 0x08, 0x40, 0x00, 0x08, 0x40, 0x00, 0x08, 0x40, 0x00,
+	0x08, 0x40, 0x00, 0x08, 0x40, 0x00, 0x08, 0x40, 0x00, 0x08, 0x40, 0x00, 0x08, 0x20, 0x00, 0x10,
+	0x20, 0x00, 0x10, 0x10, 0x00, 0x20, 0x08, 0x00, 0x40, 0x06, 0x01, 0x80, 0x01, 0xfe, 0x00, 0x00,
+	0x00, 0x00
     };
 
     if((display == NULL) || (mdpy == NULL) || (core_ptr == NULL))
@@ -573,347 +649,925 @@ void SARMenuOptionsJoystickTestDrawCB(
 	(int)((y) + y_min),			\
 	(s)					\
 	)
+#define COLOR_YELLOW glColor3f(1.0f, 1.0f, 0.0f);
+#define COLOR_GREEN glColor3f(0.0f, 1.0f, 0.0f);
+#define COLOR_LIGHT_GREEN glColor3f(0.0f, 0.60f, 0.0f);
+#define COLOR_GRAY glColor3f(0.50f, 0.50f, 0.50f);
+#define COLOR_RED glColor3f(1.0f, 0.0f, 0.0f);
+#define COLOR_BLACK glColor3f(0.0f, 0.0f, 0.0f);
 
-    /* Is game controller initialized to joystick? */
-    if((gc != NULL) ? (gc->controllers & GCTL_CONTROLLER_JOYSTICK) : False)
+    if(gc == NULL)
+	return;
+
+    int x, y;
+    int x_border = 30, y_border = 30;
+    int x_offset, y_offset, i;
+    int wc, hc;
+    const char* s;
+    gctl_js_struct *gc_joystick;
+    Boolean gcjs0_set = False, gcjs1_set = False, gcjs2_set = False;
+
+
+    /* Open sdl joysticks and map them to gc joysticks */
+    GctlJsOpenAndMapp(gc, NULL);
+    /* Update sdl joysticks axes and buttons values */
+    SDL_JoystickUpdate();
+
+    gc_joystick = &gc->joystick[0];
+    if(strlen(gc_joystick->sdl_guid_s) > 0)
+	gcjs0_set = True;
+
+    gc_joystick = &gc->joystick[1];
+    if(strlen(gc_joystick->sdl_guid_s) > 0)
+	gcjs1_set = True;
+
+    gc_joystick = &gc->joystick[2];
+    if(strlen(gc_joystick->sdl_guid_s) > 0)
+	gcjs2_set = True;
+
+
+    /* Calculate bounds for hat grid box */
+    x_offset = x_border;
+    y_offset = y_border;
+    wc = 50;
+    hc = 50;
+
+    /* Draw hat grid box */
+    if((gcjs0_set && gc->joystick[0].pov_hat > -1)
+	|| (gcjs1_set && gc->joystick[1].pov_hat > -1)
+	|| (gcjs2_set && gc->joystick[2].pov_hat > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_hat_x > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_hat_y > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_hat_x > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_hat_y > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_hat_x > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_hat_y > -1)
+    )
+	COLOR_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINE_LOOP);
     {
-	int js_num, x, y;
-	int x_border = 30, y_border = 30;
-	int x_offset, y_offset;
-	int wc, hc;
+	SET_VERTEX(x_offset, y_offset);
+	SET_VERTEX(x_offset, hc + y_offset);
+	SET_VERTEX(wc + x_offset, hc + y_offset);
+	SET_VERTEX(wc + x_offset, y_offset);
+    }
+    glEnd();
+    x = wc / 2;
+    y = hc / 2;
+    if((gcjs0_set && gc->joystick[0].pov_hat > -1)
+	|| (gcjs1_set && gc->joystick[1].pov_hat > -1)
+	|| (gcjs2_set && gc->joystick[2].pov_hat > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_hat_x > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_hat_y > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_hat_x > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_hat_y > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_hat_x > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_hat_y > -1)
+    )
+	COLOR_LIGHT_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINES);
+    {
+	SET_VERTEX(x_offset, y + y_offset);
+	SET_VERTEX(wc + x_offset, y + y_offset);
+	SET_VERTEX(x + x_offset, y_offset);
+	SET_VERTEX(x + x_offset, hc + y_offset);
+    }
+    glEnd();
 
-	/* Calculate bounds for pitch and bank axis grid box */
-	if(w > h)
-	{
-	    wc = (int)(h - MAX((2 * y_border) + 20, 0));
-	    hc = (int)(h - MAX((2 * y_border) + 15, 0));
-	}
+    /* Draw hat */
+    x = (int)((gc->hat_x * wc * 0.25) + (wc / 2));
+    y = (int)((-gc->hat_y * hc * 0.25) + (hc / 2));
+    if((gcjs0_set && gc->joystick[0].pov_hat > -1)
+	|| (gcjs1_set && gc->joystick[1].pov_hat > -1)
+	|| (gcjs2_set && gc->joystick[2].pov_hat > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_hat_x > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_hat_y > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_hat_x > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_hat_y > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_hat_x > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_hat_y > -1)
+    )
+	COLOR_YELLOW
+    else
+	COLOR_GRAY
+    glRasterPos2i(
+	x - 7 + x_offset + x_min,
+	height - (y + 7 + y_offset + y_min)
+    );
+    glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, hat_bm);
+
+
+    /* Begin drawing buttons, calculate offsets and starting
+     * coordinates.  Note that the y coordinate will be
+     * repositioned after each draw and does not need to
+     * be reset until the "column" shifts.
+     *
+     * Set the offsets for the start of drawing this column,
+     * note that x_offset was already set when drawing the
+     * hat.
+     */
+
+    /* Joysticks buttons roles.
+     * If role is not assigned, role name color will be gray
+     * If role is assigned and button released, role name color will be light green
+     * If role is assigned and button pressed, role name color will be yellow
+    */
+    x = wc + fw;
+    y_offset = y_border;
+    y = 0;
+
+    s = "Zoom in";
+    if((gcjs0_set && gc->joystick[0].button_zoom_in > -1)
+	|| (gcjs1_set && gc->joystick[1].button_zoom_in > -1)
+	|| (gcjs2_set && gc->joystick[2].button_zoom_in > -1)
+    ){
+	if(gc->zoom_in_state)
+	    COLOR_YELLOW
 	else
-	{
-	    wc = (int)(w - MAX((2 * x_border) + 20, 0));
-	    hc = (int)(w - MAX((2 * x_border) + 15, 0));
-	}
-	x_offset = x_border;
-	y_offset = y_border;
+	    COLOR_LIGHT_GREEN
+    }
+    else
+	COLOR_GRAY
+    DRAW_STRING(x + x_offset, y + y_offset, s);
+    y += fh;
 
-	/* Pitch and bank grid box */
-	glColor3f(0.0f, 0.75f, 0.0f);
-	glBegin(GL_LINE_LOOP);
-	{
-	    SET_VERTEX(x_offset, y_offset);
-	    SET_VERTEX(x_offset, hc + y_offset);
-	    SET_VERTEX(wc + x_offset, hc + y_offset);
-	    SET_VERTEX(wc + x_offset, y_offset);
-	}
-	glEnd();
-	/* Rudder grid box */
-	glBegin(GL_LINE_STRIP);
-	{
-	    SET_VERTEX(x_offset, hc + y_offset);
-	    SET_VERTEX(x_offset, hc + 15 + y_offset);
-	    SET_VERTEX(wc + x_offset, hc + 15 + y_offset);
-	    SET_VERTEX(wc + x_offset, hc + y_offset);
-	}
-	glEnd();
-	/* Throttle grid box */
-	glBegin(GL_LINE_STRIP);
-	{
-	    SET_VERTEX(wc + x_offset, y_offset);
-	    SET_VERTEX(wc + 20 + x_offset, y_offset);
-	    SET_VERTEX(wc + 20 + x_offset, hc + 15 + y_offset);
-	}
-	glEnd();
+    s = "Zoom out";
+    if((gcjs0_set && gc->joystick[0].button_zoom_out > -1)
+	|| (gcjs1_set && gc->joystick[1].button_zoom_out > -1)
+	|| (gcjs2_set && gc->joystick[2].button_zoom_out > -1)
+    ){
+	if(gc->zoom_out_state)
+	    COLOR_YELLOW
+	else
+	    COLOR_LIGHT_GREEN
+    }
+    else
+	COLOR_GRAY
+    DRAW_STRING(x + x_offset, y + y_offset, s);
+    y += fh;
 
-	/* Center line */
-	x = (int)(wc / 2);
-	y = (int)(hc / 2);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glBegin(GL_LINES);
-	{
-	    SET_VERTEX(x + x_offset, y_offset);
-	    SET_VERTEX(x + x_offset, hc + 15 + y_offset);
-	    SET_VERTEX(x_offset, y + y_offset);
-	    SET_VERTEX(wc + x_offset, y + y_offset);
+    s = "Rotate  ";
+    if((gcjs0_set && gc->joystick[0].button_rotate > -1)
+	|| (gcjs1_set && gc->joystick[1].button_rotate > -1)
+	|| (gcjs2_set && gc->joystick[2].button_rotate > -1)
+    ){
+	if(gc->ctrl_state)
+	    COLOR_YELLOW
+	else
+	    COLOR_LIGHT_GREEN
+    }
+    else
+	COLOR_GRAY
+    DRAW_STRING(x + x_offset, y + y_offset, s);
+    x += STRLEN(s) * fw + 2 * fw;
+    y -= 2*fh;
+
+    s = "Hoist up";
+    if((gcjs0_set && gc->joystick[0].button_hoist_up > -1)
+	|| (gcjs1_set && gc->joystick[1].button_hoist_up > -1)
+	|| (gcjs2_set && gc->joystick[2].button_hoist_up > -1)
+    ){
+	if(gc->hoist_up_state)
+	    COLOR_YELLOW
+	else
+	    COLOR_LIGHT_GREEN
+    }
+    else
+	COLOR_GRAY
+    DRAW_STRING(x + x_offset, y + y_offset, s);
+    y += fh;
+
+    s = "Hoist down";
+    if((gcjs0_set && gc->joystick[0].button_hoist_down > -1)
+	|| (gcjs1_set && gc->joystick[1].button_hoist_down > -1)
+	|| (gcjs2_set && gc->joystick[2].button_hoist_down > -1)
+    ){
+	if(gc->hoist_down_state)
+	    COLOR_YELLOW
+	else
+	    COLOR_LIGHT_GREEN
+    }
+    else
+	COLOR_GRAY
+    DRAW_STRING(x + x_offset, y + y_offset, s);
+    x += STRLEN(s) * fw + 2 * fw;
+    y -= fh;
+
+    if((gcjs0_set && gc->joystick[0].button_air_brakes > -1)
+	|| (gcjs1_set && gc->joystick[1].button_air_brakes > -1)
+	|| (gcjs2_set && gc->joystick[2].button_air_brakes > -1)
+    ){
+	if(gc->air_brakes_state){
+	    s = "Air brakes [ON]";
+	    COLOR_YELLOW
 	}
-	glEnd();
-	/* 25% lines */
-	glColor3f(0.0f, 0.75f, 0.0f);
-	glBegin(GL_LINES);
-	{
-	    x = (int)(wc * 0.25);
-	    SET_VERTEX(x + x_offset, y_offset);
-	    SET_VERTEX(x + x_offset, hc + 15 + y_offset);
-	    x = (int)(wc * 0.75);
-	    SET_VERTEX(x + x_offset, y_offset);
-	    SET_VERTEX(x + x_offset, hc + 15 + y_offset);
-	    y = (int)(hc * 0.25);
-	    SET_VERTEX(x_offset, y + y_offset);
-	    SET_VERTEX(wc + x_offset, y + y_offset);
-	    y = (int)(hc * 0.75);
-	    SET_VERTEX(x_offset, y + y_offset);
-	    SET_VERTEX(wc + x_offset, y + y_offset);
+	else{
+	    s = "Air brakes [OFF]";
+	    COLOR_LIGHT_GREEN
 	}
-	glEnd();
+    }
+    else{
+	s = "Air brakes";
+	COLOR_GRAY
+    }
+    DRAW_STRING(x + x_offset, y + y_offset, s);
+    y += fh;
+
+    /* Wheel Brakes, as button or axes */
+
+    if((gcjs0_set && gc->joystick[0].button_wheel_brakes > -1)
+	|| (gcjs1_set && gc->joystick[1].button_wheel_brakes > -1)
+	|| (gcjs2_set && gc->joystick[2].button_wheel_brakes > -1)
+    ){
+	/* Note 1: shift key state detection works only if window has focus.
+	 * Note 2: wheel brakes to parking brake state transition don't work
+	 *        very good on joystick test page but works fine while in game.
+	 */
+
+	/* As we are in a menu, shift key state is not handled by Game
+	 * Controller, thus we read it directly from display.
+	 */
+	if(display->shift_key_state && gc->wheel_brakes_state == 1)
+	    gc->wheel_brakes_state = 2;
+
+	switch(gc->wheel_brakes_state){
+	    case 0:
+		s = "Wheel brakes [OFF]";
+		COLOR_LIGHT_GREEN
+		break;
+	    case 1:
+		s = "Wheel brakes [ON]";
+		COLOR_YELLOW
+		break;
+	    case 2:
+		s = "Parking brake [ON]";
+		COLOR_YELLOW
+		break;
+	    default:
+		break;
+	}
+    }
+    else if((gcjs0_set && gc->joystick[0].axis_brake_left > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_brake_right > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_brake_left > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_brake_right > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_brake_left > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_brake_right > -1)
+    ){
+	/* Note : left and right wheel brake values are handled to an unique
+	 * brake coefficient (see GCtlUpdate()).
+	 */
+
+	int wheel_brakes_coeff_percents = gc->wheel_brakes_coeff * 100;
+
+	/* As we are in a menu, shift key state is not handled by Game
+	 * Controller, thus we read it directly from display.
+	 */
+	if(display->shift_key_state && wheel_brakes_coeff_percents >= 100)
+	    gc->wheel_brakes_state = 2;
+
+	switch(gc->wheel_brakes_state){
+	    case 0:
+		s = "Wheel brakes [0%]";
+		COLOR_LIGHT_GREEN
+		break;
+	    case 1:
+		char ns[48+1];
+		snprintf(ns, sizeof(ns), "Wheel brakes [%3d%%]", wheel_brakes_coeff_percents);
+		s = ns;
+		if(wheel_brakes_coeff_percents == 0)
+		    COLOR_LIGHT_GREEN
+		else
+		    COLOR_YELLOW
+		break;
+	    case 2:
+		s = "Parking brake [ON]";
+		COLOR_YELLOW
+		break;
+	}
+    }
+    else
+    {
+	s = "Wheel brakes";
+	COLOR_GRAY
+    }
+    DRAW_STRING(x + x_offset, y + y_offset, s);
+    y -= fh;
+
+    x_offset = x_border;
+    y_offset += wc + 15;
+
+    /* Calculate bounds for pitch and bank axis grid box */
+
+/* Max MAX_JOYSTICK_AXES axes per joystick and 6 characters per axis value */
+#define MAX_AXIS_TABLE_PIXELS_WIDTH	MAX_JOYSTICK_AXES * 6 * fw
+    if(w - MAX_AXIS_TABLE_PIXELS_WIDTH > h - hc)
+    {
+	hc = (int)(h - MAX((2 * y_border) + 20, 0) - wc - x_border/2);
+	wc = hc;
+    }
+    else
+    {
+	wc = (int)(w - MAX((2 * x_border) + 20, 0) - MAX_AXIS_TABLE_PIXELS_WIDTH - x_border/2);
+	hc = wc;
+    }
+#undef MAX_AXIS_TABLE_PIXELS_WIDTH
+
+    if((gcjs0_set && gc->joystick[0].axis_pitch > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_pitch > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_pitch > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_bank > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_bank > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_bank > -1)
+    )
+	COLOR_GREEN
+    else
+	COLOR_GRAY
+
+    /* Pitch and bank grid box */
+    glBegin(GL_LINE_LOOP);
+    {
+	SET_VERTEX(x_offset, y_offset);
+	SET_VERTEX(x_offset, hc + y_offset);
+	SET_VERTEX(wc + x_offset, hc + y_offset);
+	SET_VERTEX(wc + x_offset, y_offset);
+    }
+    glEnd();
+
+    /* Rudder (heading) grid box */
+    if((gcjs0_set && gc->joystick[0].axis_heading > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_heading > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_heading > -1)
+	|| (gcjs0_set && gc->joystick[0].button_rotate > -1 && gc->joystick[0].axis_bank > -1)
+	|| (gcjs1_set && gc->joystick[1].button_rotate > -1 && gc->joystick[1].axis_bank > -1)
+	|| (gcjs2_set && gc->joystick[2].button_rotate > -1 && gc->joystick[2].axis_bank > -1)
+    )
+	COLOR_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINE_STRIP);
+    {
+	SET_VERTEX(x_offset, hc + y_offset);
+	SET_VERTEX(x_offset, hc + 15 + y_offset);
+	SET_VERTEX(wc + x_offset, hc + 15 + y_offset);
+	SET_VERTEX(wc + x_offset, hc + y_offset);
+    }
+    glEnd();
+
+    /* Throttle grid box */
+    if((gcjs0_set && gc->joystick[0].axis_throttle > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_throttle > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_throttle > -1)
+    )
+	COLOR_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINE_STRIP);
+    {
+	SET_VERTEX(wc + x_offset, y_offset);
+	SET_VERTEX(wc + 20 + x_offset, y_offset);
+	SET_VERTEX(wc + 20 + x_offset, hc + 15 + y_offset);
+	SET_VERTEX(wc + x_offset, hc + 15 + y_offset);
+    }
+    glEnd();
+
+    /* Pitch center lines */
+    x = (int)(wc / 2);
+    y = (int)(hc / 2);
+    /* Pitch (horizontal) 25% lines */
+    if((gcjs0_set && gc->joystick[0].axis_pitch > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_pitch > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_pitch > -1)
+    )
+	COLOR_LIGHT_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINES);
+    {
+	SET_VERTEX(x_offset, y + y_offset);
+	SET_VERTEX(wc + x_offset, y + y_offset);
+    }
+    glEnd();
+    /* Bank center lines */
+    x = (int)(wc / 2);
+    y = (int)(hc / 2);
+    /* Pitch (horizontal) 25% lines */
+    if((gcjs0_set && gc->joystick[0].axis_bank > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_bank > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_bank > -1)
+    )
+	COLOR_LIGHT_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINES);
+    {
+	SET_VERTEX(x + x_offset, y_offset);
+	SET_VERTEX(x + x_offset, hc + 0 + y_offset);
+    }
+    glEnd();
+    /* Rudder (heading) center line */
+    if((gcjs0_set && gc->joystick[0].axis_heading > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_heading > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_heading > -1)
+	|| (gcjs0_set && gc->joystick[0].button_rotate > -1)
+	|| (gcjs1_set && gc->joystick[1].button_rotate > -1)
+	|| (gcjs2_set && gc->joystick[2].button_rotate > -1)
+    )
+	COLOR_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINES);
+    {
+	SET_VERTEX(x + x_offset, hc + 0 + y_offset);
+	SET_VERTEX(x + x_offset, hc + 15 + y_offset);
+    }
+    glEnd();
+    /* Pitch (horizontal) 25% lines */
+    if((gcjs0_set && gc->joystick[0].axis_pitch > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_pitch > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_pitch > -1)
+    )
+	COLOR_LIGHT_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINES);
+    {
+	y = (int)(hc * 0.25);
+	SET_VERTEX(x_offset, y + y_offset);
+	SET_VERTEX(wc + x_offset, y + y_offset);
+	y = (int)(hc * 0.75);
+	SET_VERTEX(x_offset, y + y_offset);
+	SET_VERTEX(wc + x_offset, y + y_offset);
+    }
+    glEnd();
+    /* Bank (vertical) 25% lines */
+    if((gcjs0_set && gc->joystick[0].axis_bank > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_bank > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_bank > -1)
+    )
+	COLOR_LIGHT_GREEN
+    else
+	COLOR_GRAY
+    glBegin(GL_LINES);
+    {
+	x = (int)(wc * 0.25);
+	SET_VERTEX(x + x_offset, y_offset);
+	SET_VERTEX(x + x_offset, hc + 0 + y_offset);
+	x = (int)(wc * 0.75);
+	SET_VERTEX(x + x_offset, y_offset);
+	SET_VERTEX(x + x_offset, hc + 0 + y_offset);
+    }
+    glEnd();
 
 
-	/* Draw pitch and bank crosshair */
-	x = (int)(CLIP(gc->bank, -1, 1) * wc / 2) + (wc / 2);
-	y = (int)(-CLIP(gc->pitch, -1, 1) * hc / 2) + (hc / 2);
-	glColor3f(1.0f, 1.0f, 0.0f);
-	glRasterPos2i(
-	    x - 7 + x_offset + x_min,
-	    height - (y + 7 + y_offset + y_min)
-	    );
-	glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, crosshairs_bm);
+    /* Draw pitch and bank crosshair */
+    x = (int)(CLIP(gc->bank, -1, 1) * wc / 2) + (wc / 2);
+    y = (int)(-CLIP(gc->pitch, -1, 1) * hc / 2) + (hc / 2);
+    if((gcjs0_set && gc->joystick[0].axis_pitch > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_pitch > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_pitch > -1)
+	|| (gcjs0_set && gc->joystick[0].axis_bank > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_bank > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_bank > -1)
+    )
+	COLOR_YELLOW
+    else
+	COLOR_GRAY
+    glRasterPos2i(
+	x - 7 + x_offset + x_min,
+	height - (y + 7 + y_offset + y_min)
+	);
+    glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, crosshairs_bm);
 
+
+    /* Draw throttle axis */
+    hc += 15;
+    if((gcjs0_set && gc->joystick[0].axis_throttle > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_throttle > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_throttle > -1)
+    ){
 	/* Calculate bounds for throttle axis */
-	hc += 15;
 	x_offset = x_border + wc;
-	y_offset = y_border;
 	y = (int)(CLIP(1.0 - gc->throttle, 0, 1) * hc);
-
-	/* Draw throttle axis */
+	COLOR_YELLOW
 	glBegin(GL_QUADS);
 	{
-	    SET_VERTEX(0 + x_offset, y + y_offset);
-	    SET_VERTEX(0 + x_offset, hc + y_offset);
+	    SET_VERTEX(1 + x_offset, y + y_offset);
+	    SET_VERTEX(1 + x_offset, hc + y_offset);
 	    SET_VERTEX(20 + x_offset, hc + y_offset);
 	    SET_VERTEX(20 + x_offset, y + y_offset);
 	}
 	glEnd();
-
-	hc -= 15;
-
-
-	/* Calculate bounds for rudder axis */
-	x_offset = x_border;
-	y_offset = y_border + hc;
-	x = (int)(CLIP(gc->heading, -1, 1) * (wc / 2)) + (wc / 2);
-
-	/* Draw rudder axis */
-	glRasterPos2i(
-	    x - 7 + x_offset + x_min,
-	    height - (15 + y_offset + y_min)
-	    );
-	glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, rudder_bm);
-
-
-	/* Calculate bounds for hat grid box */
-	x_offset = x_border + wc + 20 + 10;
-	y_offset = y_border;
-	wc = 50;
-	hc = 50;
-
-	/* Draw hat grid box */
-	glColor3f(0.0f, 0.75f, 0.0f);
-	glBegin(GL_LINE_LOOP);
-	{
-	    SET_VERTEX(x_offset, y_offset);
-	    SET_VERTEX(x_offset, hc + y_offset);
-	    SET_VERTEX(wc + x_offset, hc + y_offset);
-	    SET_VERTEX(wc + x_offset, y_offset);
-	}
-	glEnd();
-	x = wc / 2;
-	y = hc / 2;
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glBegin(GL_LINES);
-	{
-	    SET_VERTEX(x_offset, y + y_offset);
-	    SET_VERTEX(wc + x_offset, y + y_offset);
-	    SET_VERTEX(x + x_offset, y_offset);
-	    SET_VERTEX(x + x_offset, hc + y_offset);
-	}
-	glEnd();
-
-	/* Draw hat */
-	x = (int)((gc->hat_x * wc * 0.25) + (wc / 2));
-	y = (int)((-gc->hat_y * hc * 0.25) + (hc / 2));
-	glColor3f(1.0f, 1.0f, 0.0f);
-	glRasterPos2i(
-	    x - 7 + x_offset + x_min,
-	    height - (y + 7 + y_offset + y_min)
-	    );
-	glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, hat_bm);
-
-
-	/* Begin drawing buttons, calculate offsets and starting
-	 * coordinates.  Note that the y coordinate will be
-	 * repositioned after each draw and does not need to
-	 * be reset until the "column" shifts.
-	 *
-	 * Set the offsets for the start of drawing this column,
-	 * ote that x_offset was already set when drawing the
-	 * hat.
-	 */
-/*	    x_offset = x_border + wc + 20 + x_border; */
-	y_offset = y_border + hc + 10;
-	x = 0;
-	y = 0;
-
-	/* Buttons pressed on joystick */
-	js_num = 0;
-	if(gc->total_joysticks > js_num)
-	{
-	    SDL_Joystick *sdljoystick = gc->sdljoystick[js_num];
-	    int button = -1;
-
-	    glColor3f(0.0f, 1.0f, 0.0f);
-	    glRasterPos2i(
-		x + x_offset + x_min,
-		height - (15 + y + y_offset + y_min)
-		);
-	    glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, btn_bm);
-	    x += 15 + 5;
-	    glColor3f(1.0f, 1.0f, 0.0f);
-
-	    /* This joystick initialized? */
-	    if (sdljoystick == NULL && SDL_NumJoysticks() > js_num){
-		sdljoystick = SDL_JoystickOpen(js_num);
-		gc->sdljoystick[js_num] = sdljoystick;
-	    }
-	    if (sdljoystick != NULL){
-		int i;
-
-		/* Look for a currently pressed button */
-		for(i = 0; i < SDL_JoystickNumButtons(sdljoystick); i++)
-		{
-		    if(SDL_JoystickGetButton(sdljoystick,i))
-		    {
-			button = i;
-			break;
-		    }
-		}
-	    }
-	    /* Was a button pressed? */
-	    if(button > -1)
-	    {
-		char s[80];
-		sprintf(s, "%i", button + 1);
-		DRAW_STRING(
-		    x + x_offset,
-		    (15 / 2) - (fh / 2) + y + y_offset,
-		    s
-		    );
-		x += fw * (STRLEN(s) + 1);
-	    }
-	    y += 15 + 5;
-
-	}
-
-	js_num = 1;
-	if(gc->total_joysticks > js_num)
-	{
-	    SDL_Joystick *sdljoystick = gc->sdljoystick[js_num];
-	    int button = -1;
-
-	    glColor3f(0.0f, 1.0f, 0.0f);
-	    glRasterPos2i(
-		x + x_offset + x_min,
-		height - (15 + y + y_offset + y_min)
-		);
-	    glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, btn_bm);
-	    x += 15 + 5;
-	    glColor3f(1.0f, 1.0f, 0.0f);
-
-	    /* This joystick initialized? */
-	    if (sdljoystick == NULL && SDL_NumJoysticks() > js_num){
-		sdljoystick = SDL_JoystickOpen(js_num);
-		gc->sdljoystick[js_num] = sdljoystick;
-	    }
-	    if (sdljoystick != NULL){
-		int i;
-
-		/* Look for a currently pressed button */
-		for(i = 0; i < SDL_JoystickNumButtons(sdljoystick); i++)
-		{
-		    if(SDL_JoystickGetButton(sdljoystick,i))
-		    {
-			button = i;
-			break;
-		    }
-		}
-	    }
-	    /* Was a button pressed? */
-	    if(button > -1)
-	    {
-		char s[80];
-		sprintf(s, "%i", button + 1);
-		DRAW_STRING(
-		    x + x_offset,
-		    (15 / 2) - (fh / 2) + y + y_offset,
-		    s
-		    );
-		x += fw * (STRLEN(s) + 1);
-	    }
-	    y += 15 + 5;
-
-	}
-
-
-	/* Joystick names, axises, and buttons */
-	x = 0;
-	y += 5;
-	for(js_num = 0; js_num < gc->total_joysticks; js_num++)
-	{
-	    SDL_Joystick *sdljoystick = gc->sdljoystick[js_num];
-	    if(sdljoystick != NULL)
-	    {
-		const char* s;
-		char ns[40];
-
-		/* Joystick name */
-
-		sprintf(ns, "SDL Joystick #%i", js_num);
-		s = ns;
-		glColor3f(1.0f, 1.0f, 0.0f);
-		DRAW_STRING(x + x_offset, y + y_offset, s);
-		y += fh + 2;
-
-
-		/* Axises */
-		s = "Axises: ";
-		glColor3f(0.0f, 1.0f, 0.0f);
-		DRAW_STRING(x + x_offset, y + y_offset, s);
-		x += STRLEN(s) * fw;
-
-		sprintf(ns, "%i", SDL_JoystickNumAxes(sdljoystick));
-		s = ns;
-		glColor3f(1.0f, 1.0f, 0.0f);
-		DRAW_STRING(x + x_offset, y + y_offset, s);
-		x += STRLEN(s) * fw;
-
-		/* Buttons */
-		s = "  Buttons: ";
-		glColor3f(0.0f, 1.0f, 0.0f);
-		DRAW_STRING(x + x_offset, y + y_offset, s);
-		x += STRLEN(s) * fw;
-
-		sprintf(ns, "%i", SDL_JoystickNumButtons(sdljoystick));
-		s = ns;
-		glColor3f(1.0f, 1.0f, 0.0f);
-		DRAW_STRING(x + x_offset, y + y_offset, s);
-		x += STRLEN(s) * fw;
-
-		y += fh;
-	    }
-
-	    y += 5;
-	}
-
-
-
     }
+
+    hc += 50;
+
+    /* Calculate bounds for rudder axis */
+    x_offset = x_border;
+    y_offset = y_border + hc;
+    x = (int)(CLIP(gc->heading, -1, 1) * (wc / 2)) + (wc / 2);
+
+    /* Draw rudder (heading) axis */
+    if((gcjs0_set && gc->joystick[0].axis_heading > -1)
+	|| (gcjs1_set && gc->joystick[1].axis_heading > -1)
+	|| (gcjs2_set && gc->joystick[2].axis_heading > -1)
+	|| (gcjs0_set && gc->joystick[0].button_rotate > -1 && gc->joystick[0].axis_bank > -1)
+	|| (gcjs1_set && gc->joystick[1].button_rotate > -1 && gc->joystick[1].axis_bank > -1)
+	|| (gcjs2_set && gc->joystick[2].button_rotate > -1 && gc->joystick[1].axis_bank > -1)
+    )
+	COLOR_YELLOW
     else
+	COLOR_GRAY
+    glRasterPos2i(
+	x - 7 + x_offset + x_min,
+	height - (15 + y_offset + y_min)
+	);
+    glBitmap(15, 15, 0.0f, 0.0f, 15.0f, 0.0f, rudder_bm);
+
+    x_offset = x_border + wc + fw + x_border;
+    y_offset = y_border + 50 + fh;
+    x = 0;
+    y = 0;
+
+    SDL_Joystick *sdlstick;
+    int joystick_axes = 0;
+
+    /* Joystick number, name, axes, buttons, and hats. */
+
+    /* Iterate through all gc joysticks */
+    for(i = 0; i < gc->total_joysticks; i++)
     {
-	/* Game controller not initialized to joystick */
-	const char s[] = "Joystick Not Initialized";
-	int	x = (w / 2) - ((STRLEN(s) * fw) / 2),
-	    y = (h / 2) - (fh / 2);
-	glColor3f(1.0f, 1.0f, 0.0f);
+	sdlstick = gc->sdljoystick[i];
+
+	if(sdlstick != NULL)
+	{
+	    char ns[48+1];
+	    x = 0;
+
+	    if(gc->total_joysticks > i)
+		gc_joystick = &gc->joystick[i];
+	    else
+		gc_joystick = NULL;
+
+	    /* Joystick number and name */
+
+	    /* This joystick mapped? */
+	    if( (i == 0 && strlen(opt->js0_sdl_guid_s) > 0) ||
+		(i == 1 && strlen(opt->js1_sdl_guid_s) > 0) ||
+		(i == 2 && strlen(opt->js2_sdl_guid_s) > 0)
+	    ){
+		COLOR_GREEN
+		s = "Joystick #";
+		DRAW_STRING(x + x_offset, y + y_offset, s);
+		x += STRLEN(s) * fw;
+		COLOR_YELLOW
+		snprintf(ns, sizeof(ns), "%1d", i + 1);
+		s = ns;
+		DRAW_STRING(x + x_offset, y + y_offset, s);
+		x += STRLEN(s) * fw;
+	    }
+	    else{
+		COLOR_RED
+		s = "[NOT MAPPED]";
+		DRAW_STRING(x + x_offset, y + y_offset, s);
+		x += STRLEN(s) * fw;
+	    }
+	    COLOR_GREEN
+	    s = ": ";
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+	    COLOR_YELLOW
+	    snprintf(ns, sizeof(ns), "%s", SDL_JoystickName(sdlstick));
+	    s = ns;
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+
+	    y += fh;
+
+	    /* Axes number */
+	    COLOR_GREEN
+	    x = 0;
+	    s = "Axes: ";
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+	    COLOR_YELLOW
+	    snprintf(ns, sizeof(ns), "%i", SDL_JoystickNumAxes(sdlstick));
+	    s = ns;
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+
+	    /* Buttons number*/
+	    COLOR_GREEN
+	    s = "   Buttons: ";
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+	    COLOR_YELLOW
+	    snprintf(ns, sizeof(ns), "%i", SDL_JoystickNumButtons(sdlstick));
+	    s = ns;
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+
+	    /* Hats number */
+	    COLOR_GREEN
+	    s = "   POV hats: ";
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+	    COLOR_YELLOW
+	    snprintf(ns, sizeof(ns), "%i", SDL_JoystickNumHats(sdlstick));
+	    s = ns;
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+
+	    /* Mapped hat number */
+	    if(gc_joystick != NULL && gc_joystick->pov_hat > -1){
+		for(int k = 0; k < SDL_JoystickNumHats(sdlstick); k++)
+		{
+		    if(k >= MAX_JOYSTICK_HATS)
+			break;
+
+		    if(SDL_JoystickGetHat(sdlstick, k) != SDL_HAT_CENTERED){
+			COLOR_YELLOW
+			snprintf(ns, sizeof(ns), " [%i]", gc_joystick->pov_hat + 1);
+		    }
+		    else{
+			COLOR_GREEN
+			snprintf(ns, sizeof(ns), " (%i)", gc_joystick->pov_hat + 1);
+		    }
+		}
+		s = ns;
+		DRAW_STRING(x + x_offset, y + y_offset, s);
+		x += STRLEN(s) * fw;
+	    }
+
+	    y += 1.2*fh;
+
+	    /* Draw axes table */
+#define CHARS_PER_AXIS 6
+	    joystick_axes = SDL_JoystickNumAxes(sdlstick);
+	    if(joystick_axes > 0 && joystick_axes <= MAX_JOYSTICK_AXES){
+		x = 0;
+		COLOR_GREEN
+		GLint table_length = CHARS_PER_AXIS * joystick_axes * fw + 1;
+		/* Horizontal lines */
+		glBegin(GL_LINES);
+		{
+		    SET_VERTEX(x_offset, y + y_offset + 1);
+		    SET_VERTEX(table_length + x_offset, y + 0 * fh + y_offset + 1);
+
+		    SET_VERTEX(x_offset, y + 1 * fh + y_offset + 1);
+		    SET_VERTEX(table_length + x_offset, y + 1 * fh + y_offset + 1);
+
+		    SET_VERTEX(x_offset, y + 2 * fh + y_offset + 1);
+		    SET_VERTEX(table_length + x_offset, y + 2 * fh + y_offset + 1);
+		}
+		glEnd();
+		/* First (left) vertical line */
+		glBegin(GL_LINES);
+		{
+		    SET_VERTEX(x_offset, y + y_offset + 1);
+		    SET_VERTEX(x_offset, y + 2 * fh + y_offset + 1);
+		}
+		glEnd();
+		/* Nexts vertical lines */
+		for (int k = 1; k <= SDL_JoystickNumAxes(sdlstick); k++){
+		    glBegin(GL_LINES);
+		    {
+			SET_VERTEX(CHARS_PER_AXIS * k * fw + x_offset, y + y_offset + 1);
+			SET_VERTEX(CHARS_PER_AXIS * k * fw + x_offset, y + 2 * fh + y_offset + 1);
+		    }
+		    glEnd();
+		}
+	    }
+
+	    /* Fill axis table with roles and values */
+
+	    for (int axis_num = 0; axis_num < SDL_JoystickNumAxes(sdlstick); axis_num++){
+		if(axis_num > MAX_JOYSTICK_AXES)
+		    break;
+
+		/* Print axis role if defined, or just print axis number if not. */
+		if(gc_joystick != NULL){
+		    COLOR_GREEN
+		    /* 's' must have CHARS_PER_AXIS characters */
+		    if(axis_num == gc_joystick->axis_heading)
+			s = " Head.";
+		    else if(axis_num == gc_joystick->axis_bank)
+			s = " Bank";
+		    else if(axis_num == gc_joystick->axis_pitch)
+			s = " Pitch";
+		    else if(axis_num == gc_joystick->axis_throttle)
+			s = " Thro.";
+		    else if(axis_num == gc_joystick->axis_hat_x)
+			s = " POV X";
+		    else if(axis_num == gc_joystick->axis_hat_y)
+			s = " POV Y";
+		    else if(axis_num == gc_joystick->axis_brake_left)
+			s = " L Brk";
+		    else if(axis_num == gc_joystick->axis_brake_right)
+			s = " R Brk";
+		    else{
+			snprintf(ns, sizeof(ns), "  %2i   ", axis_num + 1);
+			s = ns;
+		    }
+		}
+		else{
+		    COLOR_GRAY
+		    snprintf(ns, sizeof(ns), "  %2i   ", axis_num + 1);
+		    s = ns;
+		}
+
+		DRAW_STRING(x + x_offset, y + y_offset, s);
+		y += fh;
+
+		/* Print axes values */
+		/* 'ns' must have CHARS_PER_AXIS characters */
+		snprintf(ns, sizeof(ns), "%6i", SDL_JoystickGetAxis(sdlstick, axis_num));
+		s = ns;
+		COLOR_YELLOW
+		DRAW_STRING(x + x_offset, y + y_offset, s);
+		y -= fh;
+
+		x += STRLEN(s) * fw;
+	    }
+#undef CHARS_PER_AXIS
+	    y += 2.2f * fh + 2;
+
+
+	    /* Joystick buttons */
+
+	    char s_btn_num[2+1];
+	    x = 0;
+	    for(int k = 0; k < SDL_JoystickNumButtons(sdlstick); k++)
+	    {
+		if(k >= MAX_JOYSTICK_BTNS)
+		    break;
+
+		GLint posX, posY;
+
+		posX = x + x_offset + x_min - 2;
+		posY = height - (2 + y + y_offset + y_min + fh + 1);
+
+		COLOR_GREEN
+		glRasterPos2i(posX, posY);
+		glBitmap(22, 22, 0.0f, 0.0f, 22.0f, 0.0f, btn_released_bm);
+
+		/* Button pressed ? */
+		if(SDL_JoystickGetButton(sdlstick, k))
+		{
+		    COLOR_YELLOW
+		    glRasterPos2i(posX, posY);
+		    glBitmap(22, 22, 0.0f, 0.0f, 22.0f, 0.0f, btn_pressed_bm);
+
+		    COLOR_BLACK
+		}
+		else
+		    COLOR_GREEN
+
+		/* Button number */
+		snprintf(s_btn_num, sizeof(s_btn_num), "%d", k + 1);
+		DRAW_STRING( (float)((2 - strlen(s_btn_num)) * fw)/2.0f + x + x_offset, y + y_offset, s_btn_num);
+
+		x += 3 * fw;
+	    }
+	    y += 2 * fh;
+	}
+	else
+	{
+	    /* This joystick is not connected */
+
+	    /* This joystick not mapped? */
+	    if(!( (i == 0 && strlen(opt->js0_sdl_guid_s) > 0) ||
+		  (i == 1 && strlen(opt->js1_sdl_guid_s) > 0) ||
+		  (i == 2 && strlen(opt->js2_sdl_guid_s) > 0)
+		)
+	    )
+		continue;
+
+	    char ns[48+1];
+	    x = 0;
+
+	    COLOR_GREEN
+	    s = "Joystick #";
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+	    COLOR_YELLOW
+	    snprintf(ns, sizeof(ns), "%d", i + 1);
+	    s = ns;
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+	    COLOR_GREEN
+	    s = ": ";
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    x += STRLEN(s) * fw;
+	    COLOR_YELLOW
+	    if(i == 0 && strlen(opt->js0_sdl_guid_s) > 0)
+		snprintf(ns, sizeof(ns), "%s", opt->js0_sdl_name);
+	    else if(i == 1 && strlen(opt->js1_sdl_guid_s) > 0)
+		snprintf(ns, sizeof(ns), "%s", opt->js1_sdl_name);
+	    else if(i == 2 && strlen(opt->js2_sdl_guid_s) > 0)
+		snprintf(ns, sizeof(ns), "%s", opt->js2_sdl_name);
+
+	    s = ns;
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    /* x += STRLEN(s) * fw; */
+	    y += fh;
+	    x = 0;
+	    COLOR_RED
+	    s = "[WARNING: JOYSTICK MAPPED BUT NOT CONNECTED!]";
+	    DRAW_STRING(x + x_offset, y + y_offset, s);
+	    /* x += STRLEN(s) * fw; */
+
+	    y += 2 * fh;
+	}
+    }
+
+    if(gc->total_sdl_joysticks == 0 &&
+	strlen(opt->js0_sdl_guid_s) == 0 &&
+	strlen(opt->js1_sdl_guid_s) == 0 &&
+	strlen(opt->js2_sdl_guid_s) == 0
+    )
+    {
+	const char s0[] = "No Joystick Connected";
+
+	s = s0;
+	x = x_offset + (w - x_offset) / 2 - ((STRLEN(s) * fw) / 2);
+	y = (h - y_offset) / 2 + y_offset / 2 - (fh / 2);
+
+	COLOR_YELLOW
 	DRAW_STRING(x, y, s);
     }
 
+/* It works, but is it a good idea to forbid access to mapping menu when
+ * there is no joystick connected?
+ */
+if(False)
+{
+    /* Set Mapping button sensivity */
+
+    int MB_obj_num;
+    Boolean sensitive;
+
+    if(gc->total_sdl_joysticks == 0)
+	sensitive = False;
+    else
+	sensitive = True;
+
+    /* Get "Mapping" button object number on menu page */
+    SARMenuGetObjectByID(
+	menu,
+	SAR_MENU_ID_GOTO_OPTIONS_CONTROLLER_JS_MAPPING,
+	&MB_obj_num
+    );
+
+    /* Set Mapping button to nonsensitive */
+    SARMenuObjectSetSensitive(
+	display, menu, MB_obj_num,
+	sensitive, True
+	);
+
+    /* Button label object number is button object number - 1 :
+     * see SARMenuBuildStandardButton()
+     * and SARMenuBuildOptionsButton().
+     *
+     * Set button label to nonsensitive
+     */
+    SARMenuObjectSetSensitive(
+	display, menu, MB_obj_num - 1,
+	sensitive, True
+	);
+}
+
+    /* Reinit if a joystick is newly plugged or removed */
+
+    Boolean doJoystickReinit = True;
+    while(SDL_PollEvent(&event))
+    {
+	switch (event.type)
+	{
+	    case SDL_JOYDEVICEADDED:
+	    case SDL_JOYDEVICEREMOVED:
+		if(doJoystickReinit){
+		    SARMenuOptionsJoystickReinit(core_ptr);
+
+		    /* Do not reinit one more time during this loop
+		     * if an other joystick was plugged / unplugged .
+		     */
+		    doJoystickReinit = False;
+		}
+		break;
+	    default:
+		break;
+	}
+    }
+
+#undef COLOR_BLACK
+#undef COLOR_RED
+#undef COLOR_LIGHT_GREEN
+#undef COLOR_GREEN
+#undef COLOR_YELLOW
 #undef DRAW_STRING
 #undef SET_VERTEX
 }
@@ -1458,11 +2112,11 @@ void SARMenuOptionsSoundInfoRefresh(sar_core_struct *core_ptr)
 	core_ptr, SAR_MENU_NAME_OPTIONS_SOUND_INFO
 	);
     sar_menu_struct *m = (i > -1) ? core_ptr->menu[i] : NULL;
-    const sar_option_struct *opt;
+    //const sar_option_struct *opt;
     if((display == NULL) || (m == NULL))
 	return;
 
-    opt = &core_ptr->option;
+    //opt = &core_ptr->option;
 
     /* Recorder Address */
     if((recorder != NULL) && (core_ptr->recorder_address != NULL))
@@ -1726,154 +2380,338 @@ void SARMenuOptionsFetch(sar_core_struct *core_ptr)
 	    sw->state = opt->wind;
     }
 
-    /* Menu: Options->Controller */
-    i = SARMatchMenuByName(core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER);
+    /* Menu: Options->Controller->Joystick->Mapping */
+    i = SARMatchMenuByName(core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_MAPPING);
     m = ((i < 0) ? NULL : core_ptr->menu[i]);
     if(m != NULL)
     {
-	int connection, priority;
-	gctl_js_axis_roles axis_roles;
+	/* Axis mapping spins */
 
-	/* Joystick #1 Axis roles */
-	axis_roles = opt->gctl_js0_axis_roles;
+#define JS0_FIRST_SPIN_VALUE	1
+#define JS1_FIRST_SPIN_VALUE	MAX_JOYSTICK_AXES + 1
+#define JS2_FIRST_SPIN_VALUE	2 * MAX_JOYSTICK_AXES + 1
+
 	spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS0_AXISES, NULL
+	    m, SAR_MENU_ID_OPT_HEADING_AXIS, NULL
 	    );
 	if(spin != NULL)
 	{
-	    /* These value codes should match those in SARBuildMenus()
-	     * that added these values.
-	     */
-	    if(axis_roles)
-	    {
-		if (axis_roles & GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES)
-		    spin->cur_value = 10;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER)
-		    spin->cur_value = 9;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    )
-		    spin->cur_value = 8;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    )
-		    spin->cur_value = 7;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE)
-		    )
-		    spin->cur_value = 6;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_HEADING)
-		    spin->cur_value = 5;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    )
-		    spin->cur_value = 4;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    spin->cur_value = 3;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE)
-		    spin->cur_value = 2;
-		else
-		    spin->cur_value = 1;
-	    }
+	    if(opt->js0_axis_heading > -1)
+		spin->cur_value = opt->js0_axis_heading + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_heading > -1)
+		spin->cur_value = opt->js1_axis_heading + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_heading > -1)
+		spin->cur_value = opt->js2_axis_heading + JS2_FIRST_SPIN_VALUE;
 	    else
-	    {
 		spin->cur_value = 0;
-	    }
 	}
 
-	/* Joystick #2 Axis roles */
-	axis_roles = opt->gctl_js1_axis_roles;
 	spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS1_AXISES, NULL
+	    m, SAR_MENU_ID_OPT_PITCH_AXIS, NULL
 	    );
 	if(spin != NULL)
 	{
-	    /* These value codes should match those in SARBuildMenus()
-	     * that added these values.
-	     */
-	    if(axis_roles)
-	    {
-		if (axis_roles & GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES)
-		    spin->cur_value = 10;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER)
-		    spin->cur_value = 9;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    )
-		    spin->cur_value = 8;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    )
-		    spin->cur_value = 7;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_HEADING) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE)
-		    )
-		    spin->cur_value = 6;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_HEADING)
-		    spin->cur_value = 5;
-		else if((axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE) &&
-			(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    )
-		    spin->cur_value = 4;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_HAT)
-		    spin->cur_value = 3;
-		else if(axis_roles & GCTL_JS_AXIS_ROLE_THROTTLE)
-		    spin->cur_value = 2;
-		else
-		    spin->cur_value = 1;
-	    }
+	    if(opt->js0_axis_pitch > -1)
+		spin->cur_value = opt->js0_axis_pitch + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_pitch > -1)
+		spin->cur_value = opt->js1_axis_pitch + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_pitch > -1)
+		spin->cur_value = opt->js2_axis_pitch + JS2_FIRST_SPIN_VALUE;
 	    else
-	    {
 		spin->cur_value = 0;
-	    }
 	}
-    }
 
-    /* Menu: Options->Controller->Buttons */
-    i = SARMatchMenuByName(
-	core_ptr, SAR_MENU_NAME_OPTIONS_CONTROLLER_JS_BTN
-	);
-    m = (i > -1) ? core_ptr->menu[i] : NULL;
-    if(m != NULL)
-    {
-	sar_menu_spin_struct *btn_action_spin;
-
-
-	/* Joystick 1 (js0) button action */
-	btn_action_spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS0_BUTTON_ACTION, NULL
-	    );
 	spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS0_BUTTON_NUMBER, NULL
+	    m, SAR_MENU_ID_OPT_BANK_AXIS, NULL
 	    );
-	if((spin != NULL) && (btn_action_spin != NULL))
+	if(spin != NULL)
 	{
-	    spin->cur_value = SARGetJSButtonFromButtonRoleSpin(
-		core_ptr,
-		btn_action_spin, SAR_MENU_ID_OPT_JS0_BUTTON_ACTION
-		) + 1;
-	    if(spin->cur_value >= spin->total_values)
+	    if(opt->js0_axis_bank > -1)
+		spin->cur_value = opt->js0_axis_bank + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_bank > -1)
+		spin->cur_value = opt->js1_axis_bank + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_bank > -1)
+		spin->cur_value = opt->js2_axis_bank + JS2_FIRST_SPIN_VALUE;
+	    else
 		spin->cur_value = 0;
 	}
 
-	/* Joystick 2 (js1) button actions */
-	btn_action_spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS1_BUTTON_ACTION, NULL
-	    );
 	spin = SARMenuOptionsGetSpinByID(
-	    m, SAR_MENU_ID_OPT_JS1_BUTTON_NUMBER, NULL
+	    m, SAR_MENU_ID_OPT_THROTTLE_AXIS, NULL
 	    );
-	if((spin != NULL) && (btn_action_spin != NULL))
+	if(spin != NULL)
 	{
-	    spin->cur_value = SARGetJSButtonFromButtonRoleSpin(
-		core_ptr,
-		btn_action_spin, SAR_MENU_ID_OPT_JS1_BUTTON_ACTION
-		) + 1;
-	    if(spin->cur_value >= spin->total_values)
+	    if(opt->js0_axis_throttle > -1)
+		spin->cur_value = opt->js0_axis_throttle + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_throttle > -1)
+		spin->cur_value = opt->js1_axis_throttle + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_throttle > -1)
+		spin->cur_value = opt->js2_axis_throttle + JS2_FIRST_SPIN_VALUE;
+	    else
 		spin->cur_value = 0;
 	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_axis_brake_left > -1)
+		spin->cur_value = opt->js0_axis_brake_left + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_brake_left > -1)
+		spin->cur_value = opt->js1_axis_brake_left + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_brake_left > -1)
+		spin->cur_value = opt->js2_axis_brake_left + JS2_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_axis_brake_right > -1)
+		spin->cur_value = opt->js0_axis_brake_right + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_brake_right > -1)
+		spin->cur_value = opt->js1_axis_brake_right + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_brake_right > -1)
+		spin->cur_value = opt->js2_axis_brake_right + JS2_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_POV_HAT_X, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_axis_hat_x > -1)
+		spin->cur_value = opt->js0_axis_hat_x + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_hat_x > -1)
+		spin->cur_value = opt->js1_axis_hat_x + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_hat_x > -1)
+		spin->cur_value = opt->js2_axis_hat_x + JS2_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_POV_HAT_Y, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_axis_hat_y > -1)
+		spin->cur_value = opt->js0_axis_hat_y + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_axis_hat_y > -1)
+		spin->cur_value = opt->js1_axis_hat_y + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_axis_hat_y > -1)
+		spin->cur_value = opt->js2_axis_hat_y + JS2_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+#undef JS2_FIRST_SPIN_VALUE
+#undef JS1_FIRST_SPIN_VALUE
+#undef JS0_FIRST_SPIN_VALUE
+
+#define JS0_FIRST_SPIN_VALUE	1
+#define JS1_FIRST_SPIN_VALUE	MAX_JOYSTICK_HATS + 1
+#define JS2_FIRST_SPIN_VALUE	2 * MAX_JOYSTICK_HATS + 1
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_POV_HAT, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_pov_hat > -1)
+		spin->cur_value = opt->js0_pov_hat + JS0_FIRST_SPIN_VALUE;
+	    else if(opt->js1_pov_hat > -1)
+		spin->cur_value = opt->js1_pov_hat + JS1_FIRST_SPIN_VALUE;
+	    else if(opt->js2_pov_hat > -1)
+		spin->cur_value = opt->js2_pov_hat + JS2_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+#undef JS2_FIRST_SPIN_VALUE
+#undef JS1_FIRST_SPIN_VALUE
+#undef JS0_FIRST_SPIN_VALUE
+
+	/* Axis mapping switches */
+
+	/* Heading axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_HEADING_AXIS_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_HEADING;
+
+	/* Pitch axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_PITCH_AXIS_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_PITCH;
+
+	/* Bank axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_BANK_AXIS_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_BANK;
+
+	/* Throtle axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_THROTTLE_AXIS_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_THROTTLE;
+
+	/* POV Hat X axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_POV_HAT_X_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_HAT_X;
+
+	/* POV Hat Y axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_POV_HAT_Y_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_HAT_Y;
+
+	/* Joystick POV Hat inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_POV_HAT_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_POV_HAT;
+
+	/* Brake Left axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_BRAKE_LEFT;
+
+	/* Brake Right axis inversion */
+	sw = SARMenuOptionsGetSwitchByID(
+	    m, SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS_INV, NULL
+	    );
+	if(sw != NULL)
+	    sw->state = opt->js_axes_inversion_bits & GCTL_JS_AXIS_INV_BRAKE_RIGHT;
+
+
+	/* Buttons mapping spins */
+#define JS0_BTN_FIRST_SPIN_VALUE	1
+#define JS1_BTN_FIRST_SPIN_VALUE	MAX_JOYSTICK_BTNS + 1
+#define JS2_BTN_FIRST_SPIN_VALUE	2 * MAX_JOYSTICK_BTNS + 1
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_ROTATE_BUTTON, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_btn_rotate > -1)
+		spin->cur_value = opt->js0_btn_rotate + JS0_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js1_btn_rotate > -1)
+		spin->cur_value = opt->js1_btn_rotate + JS1_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js2_btn_rotate > -1)
+		spin->cur_value = opt->js2_btn_rotate + JS2_BTN_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_AIR_BRAKES_BUTTON, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_btn_air_brakes > -1)
+		spin->cur_value = opt->js0_btn_air_brakes + JS0_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js1_btn_air_brakes > -1)
+		spin->cur_value = opt->js1_btn_air_brakes + JS1_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js2_btn_air_brakes > -1)
+		spin->cur_value = opt->js2_btn_air_brakes + JS2_BTN_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_WHEEL_BRAKES_BUTTON, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_btn_wheel_brakes > -1)
+		spin->cur_value = opt->js0_btn_wheel_brakes + JS0_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js1_btn_wheel_brakes > -1)
+		spin->cur_value = opt->js1_btn_wheel_brakes + JS1_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js2_btn_wheel_brakes > -1)
+		spin->cur_value = opt->js2_btn_wheel_brakes + JS2_BTN_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_ZOOM_IN_BUTTON, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_btn_zoom_in > -1)
+		spin->cur_value = opt->js0_btn_zoom_in + JS0_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js1_btn_zoom_in > -1)
+		spin->cur_value = opt->js1_btn_zoom_in + JS1_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js2_btn_zoom_in > -1)
+		spin->cur_value = opt->js2_btn_zoom_in + JS2_BTN_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_ZOOM_OUT_BUTTON, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_btn_zoom_out > -1)
+		spin->cur_value = opt->js0_btn_zoom_out + JS0_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js1_btn_zoom_out > -1)
+		spin->cur_value = opt->js1_btn_zoom_out + JS1_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js2_btn_zoom_out > -1)
+		spin->cur_value = opt->js2_btn_zoom_out + JS2_BTN_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_HOIST_UP_BUTTON, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_btn_hoist_up > -1)
+		spin->cur_value = opt->js0_btn_hoist_up + JS0_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js1_btn_hoist_up > -1)
+		spin->cur_value = opt->js1_btn_hoist_up + JS1_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js2_btn_hoist_up > -1)
+		spin->cur_value = opt->js2_btn_hoist_up + JS2_BTN_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+
+	spin = SARMenuOptionsGetSpinByID(
+	    m, SAR_MENU_ID_OPT_HOIST_DOWN_BUTTON, NULL
+	    );
+	if(spin != NULL)
+	{
+	    if(opt->js0_btn_hoist_down > -1)
+		spin->cur_value = opt->js0_btn_hoist_down + JS0_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js1_btn_hoist_down > -1)
+		spin->cur_value = opt->js1_btn_hoist_down + JS1_BTN_FIRST_SPIN_VALUE;
+	    else if(opt->js2_btn_hoist_down > -1)
+		spin->cur_value = opt->js2_btn_hoist_down + JS2_BTN_FIRST_SPIN_VALUE;
+	    else
+		spin->cur_value = 0;
+	}
+#undef JS2_BTN_FIRST_SPIN_VALUE
+#undef JS1_BTN_FIRST_SPIN_VALUE
+#undef JS0_BTN_FIRST_SPIN_VALUE
     }
 
     /* Menu: Options->Graphics */
@@ -2094,10 +2932,6 @@ void SARMenuOptionsButtonCB(
 
     switch(id)
     {
-	case SAR_MENU_ID_OPT_CONTROLLER_REFRESH:
-	    SARMenuOptionsJoystickReinit(core_ptr);
-	    break;
-
 	case SAR_MENU_ID_OPT_GRAPHICS_INFO_SAVE:
 	    if(core_ptr->text_input != NULL)
 	    {
@@ -2159,14 +2993,15 @@ void SARMenuOptionsSwitchCB(
     Boolean state
     )
 {
+//fprintf(stderr, "%s:%d: Entering SARMenuOptionsSwitchCB()\n", __FILE__, __LINE__);
     sar_core_struct *core_ptr = SAR_CORE(client_data);
-    gw_display_struct *display;
+    //gw_display_struct *display;
     sar_menu_switch_struct *sw = (sar_menu_switch_struct *)object;
     sar_option_struct *opt;
     if((core_ptr == NULL) || (sw == NULL))
 	return;
 
-    display = core_ptr->display;
+    //display = core_ptr->display;
     opt = &core_ptr->option;
 
     /* Handle by switch's ID code */
@@ -2229,7 +3064,71 @@ to visually interprite heightfield objects."
 	case SAR_MENU_ID_OPT_WIND:
 	    opt->wind = state;
 	    break;
+
+	case SAR_MENU_ID_OPT_HEADING_AXIS_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_HEADING;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_HEADING;
+	    break;
+
+	case SAR_MENU_ID_OPT_PITCH_AXIS_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_PITCH;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_PITCH;
+	    break;
+
+	case SAR_MENU_ID_OPT_BANK_AXIS_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_BANK;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_BANK;
+	    break;
+
+	case SAR_MENU_ID_OPT_THROTTLE_AXIS_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_THROTTLE;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_THROTTLE;
+	    break;
+
+	case SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_BRAKE_LEFT;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_BRAKE_LEFT;
+	    break;
+
+	case SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_BRAKE_RIGHT;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_BRAKE_RIGHT;
+	    break;
+
+	case SAR_MENU_ID_OPT_POV_HAT_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_POV_HAT;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_POV_HAT;
+	    break;
+
+	case SAR_MENU_ID_OPT_POV_HAT_X_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_HAT_X;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_HAT_X;
+	    break;
+
+	case SAR_MENU_ID_OPT_POV_HAT_Y_INV:
+	    if(state)
+		opt->js_axes_inversion_bits |= GCTL_JS_AXIS_INV_HAT_Y;
+	    else
+		opt->js_axes_inversion_bits &= ~GCTL_JS_AXIS_INV_HAT_Y;
+	    break;
     }
+//fprintf(stderr, "%s:%d: Exiting SARMenuOptionsSwitchCB()\n", __FILE__, __LINE__);
 }
 
 /*
@@ -2240,12 +3139,14 @@ void SARMenuOptionsSpinCB(
     char *value
     )
 {
+//fprintf(stderr, "%s:%d: Entering SARMenuOptionsSpinCB()\n", __FILE__, __LINE__);
     const char *sound_server_connect_arg = "127.0.0.1:9433";
     sar_menu_struct *m;
     gw_display_struct *display;
     sar_core_struct *core_ptr = SAR_CORE(client_data);
     sar_menu_spin_struct *spin = SAR_MENU_SPIN(object);
     sar_option_struct *opt;
+
     if((core_ptr == NULL) || (spin == NULL))
 	return;
 
@@ -2340,287 +3241,613 @@ void SARMenuOptionsSpinCB(
 		    break;
 	    }
 	    break;
-	case SAR_MENU_ID_OPT_JS0_AXISES:
-	    /* These values should correspond to those used to
-	     * set the values in SARBuildMenus().
-	     */
-#define JS_AXIS_ROLES	opt->gctl_js0_axis_roles
-	    JS_AXIS_ROLES  = 0;
-	    switch(spin->cur_value)
-	    {
-		case 1:   /* 2D */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK;
-		    break;
 
-		case 2:   /* 2D with throttle */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_THROTTLE;
-		    break;
-
-		case 3:   /* 2D with hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 4:   /* 2D with throttle & hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_THROTTLE |
-			GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 5:   /* 3D */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING;
-		    break;
-
-		case 6:   /* 3D with throttle */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING |
-			GCTL_JS_AXIS_ROLE_THROTTLE;
-		    break;
-
-		case 7:   /* 3D with hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING |
-			GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 8:   /* 3D with throttle & hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING |
-			GCTL_JS_AXIS_ROLE_THROTTLE | GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 9:   /* As throttle & rudder */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
-		    break;
-		case 10:  /* As rudder & brakes */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES;
-		    break;
+#define JS1_FIRST_SPIN_VALUE	MAX_JOYSTICK_AXES + 1
+#define JS2_FIRST_SPIN_VALUE	2 * MAX_JOYSTICK_AXES + 1
+#define JS2_LAST_SPIN_VALUE	3 * MAX_JOYSTICK_AXES
+	case SAR_MENU_ID_OPT_HEADING_AXIS:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_heading = -1;
+		opt->js1_axis_heading = -1;
+		opt->js2_axis_heading = -1;
+		break;
 	    }
-#undef JS_AXIS_ROLES
-	    /* Update options.controllers mask and reinitialize the
-	     * game controller.
-	     */
-	    SARMenuOptionsJoystickReinit(core_ptr);
-	    break;
+	    else{
+		/* As Heading is mapped to an axis, force Rotate button
+		* spin value to None.
+		*/
 
-	case SAR_MENU_ID_OPT_JS1_AXISES:
-	    /* These values should correspond to those used to
-	     * set the values in SARBuildMenus().
-	     */
-#define JS_AXIS_ROLES	opt->gctl_js1_axis_roles
-	    JS_AXIS_ROLES = 0;
-	    switch(spin->cur_value)
-	    {
-		case 1:   /* 2D */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK;
-		    break;
-
-		case 2:   /* 2D with throttle */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_THROTTLE;
-		    break;
-
-		case 3:   /* 2D with hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 4:   /* 2D with throttle & hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_THROTTLE |
-			GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 5:   /* 3D */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING;
-		    break;
-
-		case 6:   /* 3D with throttle */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING |
-			GCTL_JS_AXIS_ROLE_THROTTLE;
-		    break;
-
-		case 7:   /* 3D with hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING |
-			GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 8:   /* 3D with throttle & hat */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_PITCH |
-			GCTL_JS_AXIS_ROLE_BANK | GCTL_JS_AXIS_ROLE_HEADING |
-			GCTL_JS_AXIS_ROLE_THROTTLE | GCTL_JS_AXIS_ROLE_HAT;
-		    break;
-
-		case 9:   /* As throttle & rudder */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER;
-		    break;
-		case 10:  /* As rudder & brakes */
-		    JS_AXIS_ROLES |= GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES;
-
-		    break;
-	    }
-#undef JS_AXIS_ROLES
-	    /* Update options.controllers mask and reinitialize the
-	     * game controller.
-	     */
-	    SARMenuOptionsJoystickReinit(core_ptr);
-	    break;
-
-	case SAR_MENU_ID_OPT_JS0_BUTTON_ACTION:
-
-	    if(True)
-	    {
-		int on;
-		sar_menu_spin_struct *btn_num_spin = SARMenuOptionsGetSpinByID(
-		    m, SAR_MENU_ID_OPT_JS0_BUTTON_NUMBER, &on
+		/* Get Rotate button spin object number on menu page */
+		int spin_num;
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_ROTATE_BUTTON, &spin_num
 		    );
-		if(btn_num_spin != NULL)
+		/* Set Rotate spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_axis_heading = spin->cur_value - 1;
+		    opt->js1_axis_heading = -1;
+		    opt->js2_axis_heading = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		    opt->js0_axis_heading = -1;
+		    opt->js1_axis_heading = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_axis_heading = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		    opt->js0_axis_heading = -1;
+		    opt->js1_axis_heading = -1;
+		    opt->js2_axis_heading = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+		else
+		    ;
+	    }
+	    break;
+
+	case SAR_MENU_ID_OPT_PITCH_AXIS:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_pitch = -1;
+		opt->js1_axis_pitch = -1;
+		opt->js2_axis_pitch = -1;
+		break;
+	    }
+	    else if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		opt->js0_axis_pitch = spin->cur_value - 1;
+		opt->js1_axis_pitch = -1;
+		opt->js2_axis_pitch = -1;
+	    }
+	    else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		opt->js0_axis_pitch = -1;
+		opt->js1_axis_pitch = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		opt->js2_axis_pitch = -1;
+	    }
+	    else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		opt->js0_axis_pitch = -1;
+		opt->js1_axis_pitch = -1;
+		opt->js2_axis_pitch = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+	    }
+	    else
+		;
+	    break;
+
+	case SAR_MENU_ID_OPT_BANK_AXIS:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_bank = -1;
+		opt->js1_axis_bank = -1;
+		opt->js2_axis_bank = -1;
+		break;
+	    }
+	    else if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		opt->js0_axis_bank = spin->cur_value - 1;
+		opt->js1_axis_bank = -1;
+		opt->js2_axis_bank = -1;
+	    }
+	    else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		opt->js0_axis_bank = -1;
+		opt->js1_axis_bank = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		opt->js2_axis_bank = -1;
+	    }
+	    else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		opt->js0_axis_bank = -1;
+		opt->js1_axis_bank = -1;
+		opt->js2_axis_bank = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+	    }
+	    else
+		;
+	    break;
+
+	case SAR_MENU_ID_OPT_THROTTLE_AXIS:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_throttle = -1;
+		opt->js1_axis_throttle = -1;
+		opt->js2_axis_throttle = -1;
+		break;
+	    }
+	    else if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		opt->js0_axis_throttle = spin->cur_value - 1;
+		opt->js1_axis_throttle = -1;
+		opt->js2_axis_throttle = -1;
+	    }
+	    else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		opt->js0_axis_throttle = -1;
+		opt->js1_axis_throttle = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		opt->js2_axis_throttle = -1;
+	    }
+	    else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		opt->js0_axis_throttle = -1;
+		opt->js1_axis_throttle = -1;
+		opt->js2_axis_throttle = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+	    }
+	    else
+		;
+	    break;
+
+	case SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_brake_left = -1;
+		opt->js1_axis_brake_left = -1;
+		opt->js2_axis_brake_left = -1;
+		break;
+	    }
+	    else{
+		/* As Left Wheel Break is mapped to an axis, force Wheel Break
+		* button spin value to None.
+		*/
+
+		/* Get Wheel Brake button spin object number on menu page */
+		int spin_num;
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_WHEEL_BRAKES_BUTTON, &spin_num
+		    );
+		/* Set Wheel Brake spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_axis_brake_left = spin->cur_value - 1;
+		    opt->js1_axis_brake_left = -1;
+		    opt->js2_axis_brake_left = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		    opt->js0_axis_brake_left = -1;
+		    opt->js1_axis_brake_left = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_axis_brake_left = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		    opt->js0_axis_brake_left = -1;
+		    opt->js1_axis_brake_left = -1;
+		    opt->js2_axis_brake_left = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+		else
+		    ;
+	    }
+	    break;
+
+	case SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_brake_right = -1;
+		opt->js1_axis_brake_right = -1;
+		opt->js2_axis_brake_right = -1;
+		break;
+	    }
+	    else{
+		/* As right Wheel Break is mapped to an axis, force Wheel Break
+		* button spin value to None.
+		*/
+
+		/* Get Wheel Brake button spin object number on menu page */
+		int spin_num;
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_WHEEL_BRAKES_BUTTON, &spin_num
+		    );
+		/* Set Wheel Brake spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_axis_brake_right = spin->cur_value - 1;
+		    opt->js1_axis_brake_right = -1;
+		    opt->js2_axis_brake_right = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		    opt->js0_axis_brake_right = -1;
+		    opt->js1_axis_brake_right = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_axis_brake_right = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		    opt->js0_axis_brake_right = -1;
+		    opt->js1_axis_brake_right = -1;
+		    opt->js2_axis_brake_right = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+		else
+		    ;
+	    }
+	    break;
+
+	case SAR_MENU_ID_OPT_POV_HAT_X:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_hat_x = -1;
+		opt->js1_axis_hat_x = -1;
+		opt->js2_axis_hat_x = -1;
+	    }
+	    else{
+		/* As POV X is mapped to an analog axis, force "POV Hat" spin
+		 * value to None.
+		 */
+
+		/* Get "POV Hat" spin object number on menu page */
+		int spin_num;
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_POV_HAT, &spin_num
+		    );
+		/* Set "POV Hat" spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_axis_hat_x = spin->cur_value - 1;
+		    opt->js1_axis_hat_x = -1;
+		    opt->js2_axis_hat_x = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
 		{
-		    int value_num = SARGetJSButtonFromButtonRoleSpin(
-			core_ptr,
-			spin, SAR_MENU_ID_OPT_JS0_BUTTON_ACTION
-			) + 1;
-		    if(value_num >= btn_num_spin->total_values)
-			value_num = 0;
-		    SARMenuSpinSelectValueIndex(
-			display, m, on, value_num, True
-			);
+		    opt->js0_axis_hat_x = -1;
+		    opt->js1_axis_hat_x = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_axis_hat_x = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_axis_hat_x = -1;
+		    opt->js1_axis_hat_x = -1;
+		    opt->js2_axis_hat_x = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+
+		/* Clear standard hat values */
+		opt->js0_pov_hat = -1;
+		opt->js1_pov_hat = -1;
+		opt->js2_pov_hat = -1;
+	    }
+	    break;
+
+	case SAR_MENU_ID_OPT_POV_HAT_Y:
+	    if(spin->cur_value == 0){
+		opt->js0_axis_hat_y = -1;
+		opt->js1_axis_hat_y = -1;
+		opt->js2_axis_hat_y = -1;
+	    }
+	    else{
+		/* As POV Y is mapped to an analog axis, force "POV Hat" spin
+		* value to None.
+		*/
+
+		/* Get "POV Hat" spin object number on menu page */
+		int spin_num;
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_POV_HAT, &spin_num
+		    );
+		/* Set "POV Hat" spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_axis_hat_y = spin->cur_value - 1;
+		    opt->js1_axis_hat_y = -1;
+		    opt->js2_axis_hat_y = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		    opt->js0_axis_hat_y = -1;
+		    opt->js1_axis_hat_y = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_axis_hat_y = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		    opt->js0_axis_hat_y = -1;
+		    opt->js1_axis_hat_y = -1;
+		    opt->js2_axis_hat_y = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+
+		/* Clear standard hat values */
+		opt->js0_pov_hat = -1;
+		opt->js1_pov_hat = -1;
+		opt->js2_pov_hat = -1;
+	    }
+	    break;
+#undef JS2_LAST_SPIN_VALUE
+#undef JS2_FIRST_SPIN_VALUE
+#undef JS1_FIRST_SPIN_VALUE
+
+#define JS1_FIRST_SPIN_VALUE	MAX_JOYSTICK_HATS + 1
+#define JS2_FIRST_SPIN_VALUE	2 * MAX_JOYSTICK_HATS + 1
+#define JS2_LAST_SPIN_VALUE	3 * MAX_JOYSTICK_HATS
+	case SAR_MENU_ID_OPT_POV_HAT:
+	    if(spin->cur_value == 0){
+		opt->js0_pov_hat = -1;
+		opt->js1_pov_hat = -1;
+		opt->js2_pov_hat = -1;
+		break;
+	    }
+	    else{
+		/* As POV Hat is mapped to a joystick standard hat, force
+		 * "POV X Axis" and "POV Y Axis" spins value to None.
+		 */
+
+		/* Get "POV X Axis" spin object number */
+		int spin_num;
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_POV_HAT_X, &spin_num
+		    );
+		/* Set "POV X Axis" spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+		/* Get "POV Y Axis" spin object number */
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_POV_HAT_Y, &spin_num
+		    );
+		/* Set "POV Y axis" spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    /* Joystick 1 Hat 1 or Hat 2 */
+		    opt->js0_pov_hat = spin->cur_value - 1;
+		    opt->js1_pov_hat = -1;
+		    opt->js2_pov_hat = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE){
+		    /* Joystick 2 Hat 1 or Hat 2 */
+		    opt->js0_pov_hat = -1;
+		    opt->js1_pov_hat = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_pov_hat = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE){
+		    /* Joystick 3 Hat 1 or Hat 2 */
+		    opt->js0_pov_hat = -1;
+		    opt->js1_pov_hat = -1;
+		    opt->js2_pov_hat = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+
+		/* Clear x and y axes values */
+		opt->js0_axis_hat_x = -1;
+		opt->js0_axis_hat_y = -1;
+		opt->js1_axis_hat_x = -1;
+		opt->js1_axis_hat_y = -1;
+		opt->js2_axis_hat_x = -1;
+		opt->js2_axis_hat_y = -1;
+	    }
+	    break;
+#undef JS2_LAST_SPIN_VALUE
+#undef JS2_FIRST_SPIN_VALUE
+#undef JS1_FIRST_SPIN_VALUE
+
+#define JS1_FIRST_SPIN_VALUE	MAX_JOYSTICK_BTNS + 1
+#define JS2_FIRST_SPIN_VALUE	2 * MAX_JOYSTICK_BTNS + 1
+#define JS2_LAST_SPIN_VALUE	3 * MAX_JOYSTICK_BTNS
+	case SAR_MENU_ID_OPT_ROTATE_BUTTON:
+	    if(spin->cur_value == 0){
+		opt->js0_btn_rotate = -1;
+		opt->js1_btn_rotate = -1;
+		opt->js2_btn_rotate = -1;
+	    }
+	    else{
+		/* As Rotate function is mapped to a button, force Heading axis
+		 * spin value to "None".
+		 */
+
+		/* Get Heading axis spin object number on menu page */
+		int spin_num;
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_HEADING_AXIS, &spin_num
+		    );
+		/* Set Heading spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_btn_rotate = spin->cur_value - 1;
+		    opt->js1_btn_rotate = -1;
+		    opt->js2_btn_rotate = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
+		{
+		    opt->js0_btn_rotate = -1;
+		    opt->js1_btn_rotate = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_btn_rotate = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_btn_rotate = -1;
+		    opt->js1_btn_rotate = -1;
+		    opt->js2_btn_rotate = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
 		}
 	    }
 	    break;
 
-	case SAR_MENU_ID_OPT_JS0_BUTTON_NUMBER:
-	    if(True)
-	    {
-		sar_option_struct *opt = &core_ptr->option;
-		sar_menu_spin_struct *btn_role_spin = SARMenuOptionsGetSpinByID(
-		    m, SAR_MENU_ID_OPT_JS0_BUTTON_ACTION, NULL
-		    );
-		if(btn_role_spin != NULL)
-		{
-		    int new_val = spin->cur_value - 1;
-
-		    /* Set option for button mapping based on which value
-		     * the action spin is on.
-		     */
-		    switch(btn_role_spin->cur_value)
-		    {
-			case 0:	/* Rotate Modifier */
-			    opt->js0_btn_rotate = new_val;
-			    break;
-			case 1:	/* Air Brakes */
-			    opt->js0_btn_air_brakes = new_val;
-			    break;
-			case 2:	/* Wheel Brakes */
-			    opt->js0_btn_wheel_brakes = new_val;
-			    break;
-			case 3:	/* Zoom In */
-			    opt->js0_btn_zoom_in = new_val;
-			    break;
-			case 4:	/* Zoom out */
-			    opt->js0_btn_zoom_out = new_val;
-			    break;
-			case 5:	/* Hoist Up */
-			    opt->js0_btn_hoist_up = new_val;
-			    break;
-			case 6:	/* Hoist Down */
-			    opt->js0_btn_hoist_down = new_val;
-			    break;
-/* When adding new button mappings, be sure to add support for them
- * in SARGetJSButtonFromButtonRoleSpin().
- *
- * Also remember to add support for EACH joystick!
- */
-		    }
-		}
+	case SAR_MENU_ID_OPT_AIR_BRAKES_BUTTON:
+	    if(spin->cur_value == 0){
+		opt->js0_btn_air_brakes = -1;
+		opt->js1_btn_air_brakes = -1;
+		opt->js2_btn_air_brakes = -1;
 	    }
-	    /* Update joystick button mappings from global options
-	     * values to the gctl structure on the core structure.
-	     * No reinitialization will take place.
-	     */
-	    SARMenuOptionsJoystickButtonsRemap(core_ptr);
-	    break;
-
-	case SAR_MENU_ID_OPT_JS1_BUTTON_ACTION:
-	    if(True)
-	    {
-		int on;
-		sar_menu_spin_struct *btn_num_spin = SARMenuOptionsGetSpinByID(
-		    m, SAR_MENU_ID_OPT_JS1_BUTTON_NUMBER, &on
-		    );
-		if(btn_num_spin != NULL)
+	    else{
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_btn_air_brakes = spin->cur_value - 1;
+		    opt->js1_btn_air_brakes = -1;
+		    opt->js2_btn_air_brakes = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
 		{
-		    int value_num = SARGetJSButtonFromButtonRoleSpin(
-			core_ptr,
-			spin, SAR_MENU_ID_OPT_JS1_BUTTON_ACTION
-			) + 1;
-		    if(value_num >= btn_num_spin->total_values)
-			value_num = 0;
-		    SARMenuSpinSelectValueIndex(
-			display, m, on, value_num, True
-			);
+		    opt->js0_btn_air_brakes = -1;
+		    opt->js1_btn_air_brakes = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_btn_air_brakes = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_btn_air_brakes = -1;
+		    opt->js1_btn_air_brakes = -1;
+		    opt->js2_btn_air_brakes = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
 		}
 	    }
 	    break;
 
-	case SAR_MENU_ID_OPT_JS1_BUTTON_NUMBER:
-	    if(True)
-	    {
-		sar_option_struct *opt = &core_ptr->option;
-		sar_menu_spin_struct *btn_role_spin = SARMenuOptionsGetSpinByID(
-		    m, SAR_MENU_ID_OPT_JS1_BUTTON_ACTION, NULL
-		    );
-		if(btn_role_spin != NULL)
-		{
-		    int new_val = spin->cur_value - 1;
+	case SAR_MENU_ID_OPT_WHEEL_BRAKES_BUTTON:
+	    if(spin->cur_value == 0){
+		opt->js0_btn_wheel_brakes = -1;
+		opt->js1_btn_wheel_brakes = -1;
+		opt->js2_btn_wheel_brakes = -1;
+	    }
+	    else{
+		/* As Wheel Brake function is mapped to a button, force Wheel
+		 * Brakes axes spin values to "None".
+		 */
 
-		    /* Set option for button mapping based on which value
-		     * the action spin is on.
-		     */
-		    switch(btn_role_spin->cur_value)
-		    {
-			case 0:   /* Rotate Modifier */
-			    opt->js1_btn_rotate = new_val;
-			    break;
-			case 1:   /* Air Brakes */
-			    opt->js1_btn_air_brakes = new_val;
-			    break;
-			case 2:   /* Wheel Brakes */
-			    opt->js1_btn_wheel_brakes = new_val;
-			    break;
-			case 3:   /* Zoom In */
-			    opt->js1_btn_zoom_in = new_val;
-			    break;
-			case 4:   /* Zoom out */
-			    opt->js1_btn_zoom_out = new_val;
-			    break;
-			case 5:   /* Hoist Up */
-			    opt->js1_btn_hoist_up = new_val;
-			    break;
-			case 6:   /* Hoist Down */
-			    opt->js1_btn_hoist_down = new_val;
-			    break;
-/* When adding new button mappings, be sure to add support for them
- * in SARGetJSButtonFromButtonRoleSpin().
- *
- * Also remember to add support for EACH joystick!
- */
-		    }
+		int spin_num;
+		/* Get Left Brake axis spin object number on menu page */
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_BRAKE_LEFT_AXIS, &spin_num
+		    );
+		/* Set Left Brake spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+		/* Get Right Brake axis spin object number on menu page */
+		SARMenuGetObjectByID(
+		    m, SAR_MENU_ID_OPT_BRAKE_RIGHT_AXIS, &spin_num
+		    );
+		/* Set Right Brake spin value to 0 */
+		SARMenuSpinSelectValueIndex(
+		    display, m, spin_num, 0, True
+		    );
+
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_btn_wheel_brakes = spin->cur_value - 1;
+		    opt->js1_btn_wheel_brakes = -1;
+		    opt->js2_btn_wheel_brakes = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
+		{
+		    opt->js0_btn_wheel_brakes = -1;
+		    opt->js1_btn_wheel_brakes = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_btn_wheel_brakes = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_btn_wheel_brakes = -1;
+		    opt->js1_btn_wheel_brakes = -1;
+		    opt->js2_btn_wheel_brakes = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
 		}
 	    }
-	    /* Update joystick button mappings from global options
-	     * values to the gctl structure on the core structure.
-	     * No reinitialization will take place.
-	     */
-	    SARMenuOptionsJoystickButtonsRemap(core_ptr);
 	    break;
+
+	case SAR_MENU_ID_OPT_ZOOM_IN_BUTTON:
+	    if(spin->cur_value == 0){
+		opt->js0_btn_zoom_in = -1;
+		opt->js1_btn_zoom_in = -1;
+		opt->js2_btn_zoom_in = -1;
+	    }
+	    else{
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_btn_zoom_in = spin->cur_value - 1;
+		    opt->js1_btn_zoom_in = -1;
+		    opt->js2_btn_zoom_in = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
+		{
+		    opt->js0_btn_zoom_in = -1;
+		    opt->js1_btn_zoom_in = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_btn_zoom_in = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_btn_zoom_in = -1;
+		    opt->js1_btn_zoom_in = -1;
+		    opt->js2_btn_zoom_in = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+	    }
+	    break;
+
+	case SAR_MENU_ID_OPT_ZOOM_OUT_BUTTON:
+	    if(spin->cur_value == 0){
+		opt->js0_btn_zoom_out = -1;
+		opt->js1_btn_zoom_out = -1;
+		opt->js2_btn_zoom_out = -1;
+	    }
+	    else{
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_btn_zoom_out = spin->cur_value - 1;
+		    opt->js1_btn_zoom_out = -1;
+		    opt->js2_btn_zoom_out = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
+		{
+		    opt->js0_btn_zoom_out = -1;
+		    opt->js1_btn_zoom_out = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_btn_zoom_out = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_btn_zoom_out = -1;
+		    opt->js1_btn_zoom_out = -1;
+		    opt->js2_btn_zoom_out = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+	    }
+	    break;
+
+	case SAR_MENU_ID_OPT_HOIST_UP_BUTTON:
+	    if(spin->cur_value == 0){
+		opt->js0_btn_hoist_up = -1;
+		opt->js1_btn_hoist_up = -1;
+		opt->js2_btn_hoist_up = -1;
+	    }
+	    else{
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_btn_hoist_up = spin->cur_value - 1;
+		    opt->js1_btn_hoist_up = -1;
+		    opt->js2_btn_hoist_up = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
+		{
+		    opt->js0_btn_hoist_up = -1;
+		    opt->js1_btn_hoist_up = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_btn_hoist_up = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_btn_hoist_up = -1;
+		    opt->js1_btn_hoist_up = -1;
+		    opt->js2_btn_hoist_up = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+	    }
+	    break;
+
+	case SAR_MENU_ID_OPT_HOIST_DOWN_BUTTON:
+	    if(spin->cur_value == 0){
+		opt->js0_btn_hoist_down = -1;
+		opt->js1_btn_hoist_down = -1;
+		opt->js2_btn_hoist_down = -1;
+	    }
+	    else{
+		/* Set option value */
+		if(spin->cur_value < JS1_FIRST_SPIN_VALUE){
+		    opt->js0_btn_hoist_down = spin->cur_value - 1;
+		    opt->js1_btn_hoist_down = -1;
+		    opt->js2_btn_hoist_down = -1;
+		}
+		else if(spin->cur_value < JS2_FIRST_SPIN_VALUE)
+		{
+		    opt->js0_btn_hoist_down = -1;
+		    opt->js1_btn_hoist_down = spin->cur_value - JS1_FIRST_SPIN_VALUE - 2;
+		    opt->js2_btn_hoist_down = -1;
+		}
+		else if(spin->cur_value <= JS2_LAST_SPIN_VALUE)
+		{
+		    opt->js0_btn_hoist_down = -1;
+		    opt->js1_btn_hoist_down = -1;
+		    opt->js2_btn_hoist_down = spin->cur_value - JS2_FIRST_SPIN_VALUE - 2;
+		}
+	    }
+	    break;
+
+#undef JS2_LAST_SPIN_VALUE
+#undef JS2_FIRST_SPIN_VALUE
+#undef JS1_FIRST_SPIN_VALUE
 
 	case SAR_MENU_ID_OPT_VISIBILITY_MAX:
 	    /* These values should correspond to those used to
@@ -2780,6 +4007,7 @@ to connect to it. To start in most cases run `starty'."                 \
 #undef SND_OFF_AS_NEEDED
 
     }
+//fprintf(stderr, "%s:%d: Exiting SARMenuOptionsSpinCB()\n", __FILE__, __LINE__);
 }
 
 /*

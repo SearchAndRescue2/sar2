@@ -640,6 +640,12 @@ extern int SARMenuLabelNew(
 	sar_menu_color_struct *fg_color, GWFont *font,
 	const sar_image_struct *image
 );
+extern int SARMenuLabelSetLabel(
+	gw_display_struct *display, sar_menu_struct *m, int n,
+	const char *label,
+	sar_menu_color_struct *fg_color,
+	Boolean redraw
+);
 
 /* Button */
 extern int SARMenuButtonNew(
