@@ -917,7 +917,7 @@ __ARGUMENTS\
 __range runway visual range, in meters. Beyond this range, runway wil not be visible (not drawn).\
 __length runway length, in meters.\
 __width runway width, in meters.\
-__surface runway surface type: 0 = paved, 1 = gravel, 2 = concrete, 3 = grooved.\
+__surface runway surface type: 0 = paved, 1 = gravel, 2 = concrete, 3 = grooved. <b>Has no effect for now</b> (see sardrawrunway.c &#x21E8; 'Need to add support to draw multiple styles.').\
 __dashes runway middle dashes number (0 for none).\
 __edge_light_spacing distance between two edge lights (0.0 for none), in meters. //FIXME : seems to have no effect...\
 __north_label runway 'north' label.\
