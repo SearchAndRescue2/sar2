@@ -25,11 +25,14 @@
 /*
  * WARNING:
  * For now, this code compiles and works fine with the GTK3(.24) library.
- * With GTK4(.10), on my Linux system, code crashes after a lot of
- * "gdk_gl_context_make_current() failed" statements.
- * Note that as GTK4 code crashes at a very early state, I had to stop its
- * developpment for now thus some stuffs are not yet implemented for this GTK
- * version. Look for "gtk_version =" in the scons script to compile with GTK4
+ * With GTK4(.20), on my Linux system and under X11 code crashes after a
+ * lot of "gdk_gl_context_make_current() failed" statements.
+ * Current compatibility matrix:
+ * GTK3 - X11     : OK
+ * GTK3 - Wayland : OK
+ * GTK4 - X11     : crashes
+ * GTK4 - Wayland : OK (with dropdown glitches on GTK4.20, but usable)
+ * Look for "gtk_version =" in the scons script to compile with GTK4
  * if you want to test it.
  *
  * Programming note:
@@ -101,7 +104,12 @@ gboolean manage_menu_buttons_cb(gpointer user_data);
 void on_data_window_destroy(GtkWidget *widget, gpointer user_data);
 void on_dialog_window_destroy(GtkWidget *widget, gpointer user_data);
 void on_menu_window_destroy(GtkWidget *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_general_type_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_general_type_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_obj_name_changed(void *widget, gpointer user_data);
 void on_pos_x_changed(void *widget, gpointer user_data);
 void on_pos_y_changed(void *widget, gpointer user_data);
@@ -111,7 +119,12 @@ void on_dir_pitch_changed(void *widget, gpointer user_data);
 void on_dir_bank_changed(void *widget, gpointer user_data);
 void on_fire_radius_changed(void *widget, gpointer user_data);
 void on_height_changed(void *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_helipad_style_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_helipad_style_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_length_changed(void *widget, gpointer user_data);
 void on_width_changed(void *widget, gpointer user_data);
 void on_helipad_recession_changed(void *widget, gpointer user_data);
@@ -122,7 +135,12 @@ void on_helipad_repair_toggled(void *widget, gpointer user_data);
 void on_helipad_drop_off_toggled(void *widget, gpointer user_data);
 void on_helipad_is_restarting_toggled(void *widget, gpointer user_data);
 void on_helipad_is_referenced_toggled(void *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_helipad_ref_obj_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_helipad_ref_obj_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_ref_object_pos_x_changed(void *widget, gpointer user_data);
 void on_ref_object_pos_y_changed(void *widget, gpointer user_data);
 void on_ref_object_pos_z_changed(void *widget, gpointer user_data);
@@ -135,7 +153,12 @@ void on_offset_pos_z_changed(void *widget, gpointer user_data);
 void on_offset_dir_heading_changed(void *widget, gpointer user_data);
 void on_offset_dir_pitch_changed(void *widget, gpointer user_data);
 void on_offset_dir_bank_changed(void *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_human_type_name_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_human_type_name_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_human_need_rescue_toggled(void *widget, gpointer user_data);
 void on_human_sit_up_toggled(void *widget, gpointer user_data);
 void on_human_sit_down_toggled(void *widget, gpointer user_data);
@@ -146,30 +169,57 @@ void on_human_aware_toggled(void *widget, gpointer user_data);
 void on_human_human_in_water_toggled(void *widget, gpointer user_data);
 void on_human_on_stretcher_toggled(void *widget, gpointer user_data);
 void on_human_assistants_changed(void *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_human_assist_1_name_changed(void *widget, gpointer user_data);
 void on_human_assist_2_name_changed(void *widget, gpointer user_data);
 void on_human_assist_3_name_changed(void *widget, gpointer user_data);
 void on_human_assist_4_name_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_human_assist_1_name_changed(void *widget, GParamSpec *specs, gpointer user_data);
+void on_human_assist_2_name_changed(void *widget, GParamSpec *specs, gpointer user_data);
+void on_human_assist_3_name_changed(void *widget, GParamSpec *specs, gpointer user_data);
+void on_human_assist_4_name_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_human_has_displacement_toggled(void *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_human_ref_obj_changed(void *widget, gpointer user_data);
 void on_human_displacement_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_human_ref_obj_changed(void *widget, GParamSpec *specs, gpointer user_data);
+void on_human_displacement_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_model_file_name_changed(void *widget, gpointer user_data);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 void on_model_file_name_clicked(void *widget, gpointer user_data);
 void EditorGtk4SetFileWidgetsValues(const char *full_name);
 void FileChoosed(
     GObject* source_object, GAsyncResult* res, gpointer user_data
 );
 #endif
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_premod_type_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_premod_type_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_range_changed(void *widget, gpointer user_data);
 void on_premod_hazard_lights_changed(void *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_premod_walls_tex_changed(void *widget, gpointer user_data);
 void on_premod_walls_tex_night_changed(void *widget, gpointer user_data);
 void on_premod_roof_tex_changed(void *widget, gpointer user_data);
 void on_runway_surface_type_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_premod_walls_tex_changed(void *widget, GParamSpec *specs, gpointer user_data);
+void on_premod_walls_tex_night_changed(void *widget, GParamSpec *specs, gpointer user_data);
+void on_premod_roof_tex_changed(void *widget, GParamSpec *specs, gpointer user_data);
+void on_runway_surface_type_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_runway_dashes_num_changed(void *widget, gpointer user_data);
 void on_runway_edge_light_spacing_changed(void *widget, gpointer user_data);
 void on_runway_north_label_changed(void *widget, gpointer user_data);
@@ -188,7 +238,12 @@ void on_smoke_radius_rate_changed(void *widget, gpointer user_data);
 void on_smoke_hide_at_max_changed(void *widget, gpointer user_data);
 void on_smoke_respawn_int_changed(void *widget, gpointer user_data);
 void on_smoke_total_units_changed(void *widget, gpointer user_data);
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_smoke_color_code_changed(void *widget, gpointer user_data);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_smoke_color_code_changed(void *widget, GParamSpec *specs, gpointer user_data);
+#endif
 void on_button_ok_clicked(void *widget, gpointer user_data);
 void on_button_apply_clicked(void *widget, gpointer user_data);
 void on_button_cancel_clicked(void *widget, gpointer user_data);
@@ -224,7 +279,7 @@ void on_button_print_before_quit_no_clicked(GtkButton *button, gpointer user_dat
 #define EDITORDATAGTK_UI "editordatagtk3.ui"
 #define EDITORASKTOPRINTBEFOREQUITGTK_UI "editorasktoprintbeforequitgtk3.ui"
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 #define EDITORMENUGTK_UI "editormenugtk4.ui"
 #define EDITORDATAGTK_UI "editordatagtk4.ui"
 #define EDITORASKTOPRINTBEFOREQUITGTK_UI "editorasktoprintbeforequitgtk4.ui"
@@ -598,7 +653,7 @@ Whatever is present in this list will be present in the structure
     #define editor_menu_widgets_LIST editor_menu_widgets_gtk3_LIST
     #define editor_ask_to_print_before_quit_widgets_LIST editor_ask_to_print_before_quit_widgets_gtk3_LIST
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     #define editor_data_widgets_LIST editor_data_widgets_gtk4_LIST
     #define editor_menu_widgets_LIST editor_menu_widgets_gtk4_LIST
     #define editor_ask_to_print_before_quit_widgets_LIST editor_ask_to_print_before_quit_widgets_gtk4_LIST
@@ -628,7 +683,6 @@ void app_startup_cb(GApplication *app, gpointer user_data)
 {
     const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     GtkBuilder *builder;
-
 
     /***
      * Menu buttons window
@@ -732,7 +786,7 @@ void app_activate_cb(GApplication *app, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_combo_box_set_active(GTK_COMBO_BOX(editor_data_widgets.human_type_name), 0);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_drop_down_set_selected(editor_data_widgets.human_type_name, 0);
 #endif
 
@@ -757,7 +811,7 @@ void app_activate_cb(GApplication *app, gpointer user_data)
     gtk_widget_hide_on_delete(editor_data_widgets.window);
     gtk_widget_hide(editor_data_widgets.window);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     /////gtk_window_set_child(menu_window, editor_data_widgets.window);
     gtk_window_set_hide_on_close(data_window, TRUE);
     gtk_widget_set_visible(editor_data_widgets.window, FALSE);
@@ -767,13 +821,16 @@ void app_activate_cb(GApplication *app, gpointer user_data)
     gtk_widget_hide_on_delete(editor_ask_to_print_before_quit_widgets.window);
     gtk_widget_hide(editor_ask_to_print_before_quit_widgets.window);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_window_set_hide_on_close(dialog_window, TRUE);
     gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 
     /* Set menu window to non-modal (non-blocking) */
     gtk_window_set_modal(menu_window, FALSE);
+
+    /* Set menu window transparency */
+    gtk_widget_set_opacity(GTK_WIDGET(menu_window), 0.9);
 
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide_on_delete(editor_menu_widgets.window);
@@ -786,7 +843,7 @@ void app_activate_cb(GApplication *app, gpointer user_data)
      */
     gtk_window_set_keep_above(menu_window, TRUE);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_window_set_hide_on_close(menu_window, TRUE);
     /* Show the menu window */
     gtk_window_present(menu_window);
@@ -923,46 +980,56 @@ int gtkAppStart(sar_core_struct *core_ptr, unsigned long flags)
      * position than the sar2 window top right corner.
      */
 
-    /* Get the Gtk buttons window size (from X11) */
-    int menu_x_win_width, menu_x_win_height;
-    XWindowAttributes attr;
+    if(!strcmp(editor_gtk_ui->display_server_name, "x11"))
+    {
+	/* Display server is x11 */
+
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-    GdkWindow *gdk_window = gtk_widget_get_window(editor_menu_widgets.window);
-    Window menu_x_window = gdk_x11_window_get_xid(gdk_window);
-    GdkDisplay *gdk_display = gdk_window_get_display(gdk_window);
-    Display *menu_x_display = gdk_x11_display_get_xdisplay(gdk_display);
+	/* Get the Gtk buttons window size (from X11) */
+	int menu_x_win_width, menu_x_win_height;
+	XWindowAttributes attr;
+
+	GdkWindow *gdk_window = gtk_widget_get_window(editor_menu_widgets.window);
+	Window menu_x_window = gdk_x11_window_get_xid(gdk_window);
+	GdkDisplay *gdk_display = gdk_window_get_display(gdk_window);
+	Display *menu_x_display = gdk_x11_display_get_xdisplay(gdk_display);
+
+	if (XGetWindowAttributes(menu_x_display, menu_x_window, &attr)) {
+	    menu_x_win_width = attr.width;
+	    menu_x_win_height = attr.height;
+	}
+	else
+	{
+	    menu_x_win_width = 1;
+	    menu_x_win_height = 1;
+	}
+
+	/* Get the sar2 window top right corner position */
+	int sar2_x_win_top_right_x, sar2_x_win_top_right_y;
+	GwGetSar2WindowTopRightCornerPos(display,
+				     &sar2_x_win_top_right_x,
+				     &sar2_x_win_top_right_y
+				);
+
+	/* Set the menu Gtk window top left position using an X11 function */
+	XMoveWindow(menu_x_display, menu_x_window,
+		    sar2_x_win_top_right_x - menu_x_win_width,
+		    sar2_x_win_top_right_y
+		);
 #endif
 #if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
 #define NATIVEWINDOW GTK_NATIVE(GTK_WINDOW(editor_menu_widgets.window))
 // Source: https://discourse.gnome.org/t/set-absolut-window-position-in-gtk4/8552/4
 //    GdkSurface *native = gtk_native_get_surface(NATIVEWINDOW);
-    Window menu_x_window = gdk_x11_surface_get_xid(GDK_SURFACE(NATIVEWINDOW));
-    Display *menu_x_display = gdk_x11_display_get_xdisplay(gtk_widget_get_display(editor_menu_widgets.window));
+	//Window menu_x_window = gdk_x11_surface_get_xid(GDK_SURFACE(NATIVEWINDOW));
+	//Display *menu_x_display = gdk_x11_display_get_xdisplay(gtk_widget_get_display(editor_menu_widgets.window));
 #undef NATIVEWINDOW
 #endif
-    if (XGetWindowAttributes(menu_x_display, menu_x_window, &attr)) {
-        menu_x_win_width = attr.width;
-        menu_x_win_height = attr.height;
     }
-    else
+    else if(!strcmp(editor_gtk_ui->display_server_name, "wayland"))
     {
-        menu_x_win_width = 1;
-        menu_x_win_height = 1;
+	/* Display server is wayland (Xwayland) */
     }
-
-    /* Get the sar2 window top right corner position */
-    int sar2_x_win_top_right_x, sar2_x_win_top_right_y;
-    GwGetSar2WindowTopRightCornerPos(display,
-				     &sar2_x_win_top_right_x,
-				     &sar2_x_win_top_right_y
-				);
-
-    /* Set the menu Gtk window top left position using an X11 function */
-    XMoveWindow(menu_x_display, menu_x_window,
-		sar2_x_win_top_right_x - menu_x_win_width,
-		sar2_x_win_top_right_y
-	    );
-
 
     /* Set focus to the Sar2 main window. This will allow user
      * <Home>/<End> and other key press to be transmitted to the Sar2 main
@@ -1017,7 +1084,7 @@ void gtkAppStop(sar_core_struct *core_ptr)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 		gtk_widget_destroy(windows_list->data);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 		gtk_window_destroy(GTK_WINDOW(windows_list->data));
 #endif
 	}
@@ -1045,6 +1112,10 @@ void gtkAppStop(sar_core_struct *core_ptr)
 	editor_gtk_ui->gtk_application = NULL;
     }
 
+    free(editor_gtk_ui->file_chooser_default_path);
+    editor_gtk_ui->file_chooser_default_path = NULL;
+    free(editor_gtk_ui->display_server_name);
+    editor_gtk_ui->display_server_name = NULL;
     free(editor_gtk_ui);
 
     return;
@@ -1060,7 +1131,7 @@ void gtkAppStop(sar_core_struct *core_ptr)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 #define GTK_CHECK_BUTTON_GET_ACTIVE(widget) gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget))
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 #define GTK_CHECK_BUTTON_GET_ACTIVE(widget) gtk_check_button_get_active(widget)
 #endif
 
@@ -1068,7 +1139,7 @@ void gtkAppStop(sar_core_struct *core_ptr)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 #define GTK_CHECK_BUTTON_SET_ACTIVE(widget, setting) gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), setting)
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 #define GTK_CHECK_BUTTON_SET_ACTIVE(widget, is_active) gtk_check_button_set_active(widget, is_active)
 #endif
 
@@ -1079,8 +1150,13 @@ void EditorGtkSetAcceptFocus(GtkWidget *window, gboolean state)
     GdkWindow *gdk_window = gtk_widget_get_window(window);
     gdk_window_set_accept_focus(gdk_window, state);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    fprintf(stderr, "\n%s:%d: FIXME: EditorGtkSetAcceptFocus() is not GTK4 compatible!\n", __FILE__, __LINE__);
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+    if(!state)
+	gtk_window_set_focus(GTK_WINDOW(window), NULL);
+    else
+	; /* TODO gtk_widget_grab_focus(GTK_WINDOW(window))
+	   * or modify function as EditorGtkUnsetAcceptFocus(GtkWidget *window)
+	   */
 #endif
 }
 
@@ -1267,7 +1343,7 @@ gboolean EditorGtkItemChooserSetItemsList(GtkWidget *widget, const char* const* 
     else
 	return FALSE;
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     if(GTK_IS_DROP_DOWN(widget))
     {
 	GtkStringList *stringlist = gtk_string_list_new(string);
@@ -1302,7 +1378,7 @@ char *EditorGtkItemChooserGetSelectedString(void *widget)
     else
 	return_string = strdup("");
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     /* Get drop down selected item string value */
     GObject* g_object = gtk_drop_down_get_selected_item(widget);
     if(g_object != NULL)
@@ -1319,7 +1395,8 @@ char *EditorGtkItemChooserGetSelectedString(void *widget)
  * Set the selected item of a Gtk(3)ComboBoxText OR Gtk(4)DropDown as needed.
  * Item index is found by comparing the given text value to each value of the
  * Gtk(3)ComboBoxText or Gtk(4)DropDown.
- * If text is NULL, item index will be set to -1 (no active item).
+ * If text is NULL, item index will be set to -1 or GTK_INVALID_LIST_POSITION
+ * (i.e. no active item), depending of Gtk version.
  *
  * Return a non-zero value on error.
  */
@@ -1339,7 +1416,7 @@ int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text
 	return 0;
     }
 
-    tree_model = gtk_combo_box_get_model(widget);
+    tree_model = gtk_combo_box_get_model(GTK_COMBO_BOX(widget));
     valid = gtk_tree_model_get_iter_first(tree_model, &iter);
 
     while(valid)
@@ -1362,21 +1439,19 @@ int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text
 	valid = gtk_tree_model_iter_next(tree_model, &iter);
     }
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     GListModel *list_model;
     GObject *g_object;
-    GtkTreeIter iter;
-    gchar *str_data;
-    gboolean valid, found = FALSE;
+    gboolean found = FALSE;
     guint list_items;
 
     if(text == NULL)
     {
-	gtk_drop_down_set_selected(widget, GTK_INVALID_LIST_POSITION);
+	gtk_drop_down_set_selected(GTK_DROP_DOWN(widget), GTK_INVALID_LIST_POSITION);
 	return 0;
     }
 
-    list_model = gtk_drop_down_get_model(widget);
+    list_model = gtk_drop_down_get_model(GTK_DROP_DOWN(widget));
     list_items = g_list_model_get_n_items(list_model);
 
     for(int i = 0; i < list_items; i++)
@@ -1385,7 +1460,7 @@ int EditorGtkItemChooserSetSelectedItemFromString(void *widget, const char *text
 
 	if(!strcasecmp(gtk_string_object_get_string(GTK_STRING_OBJECT(g_object)), text))
 	{
-	    gtk_drop_down_set_selected(widget, i);
+	    gtk_drop_down_set_selected(GTK_DROP_DOWN(widget), i);
 	    found = TRUE;
 	    break;
 	}
@@ -1439,12 +1514,10 @@ int EditorGtkItemChooserGetItemIndexFromString(void *widget, const char *text)
 	valid = gtk_tree_model_iter_next(tree_model, &iter);
     }
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     GListModel *list_model;
     GObject *g_object;
-    GtkTreeIter iter;
-    gchar *str_data;
-    gboolean valid, found = FALSE;
+    gboolean found = FALSE;
     guint list_items;
 
     if(text == NULL)
@@ -1483,7 +1556,7 @@ void EditorGktEntryFilterText(void *widget)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     const char *text = gtk_entry_get_text(widget);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     const char *text = gtk_editable_get_text (GTK_EDITABLE (widget));
 #endif
 
@@ -1519,7 +1592,7 @@ void EditorGktEntryFilterTextNoSpace(void *widget)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     const char *text = gtk_entry_get_text(widget);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     const char *text = gtk_editable_get_text (GTK_EDITABLE (widget));
 #endif
 
@@ -1556,7 +1629,7 @@ void EditoGktEntryAllowInt(void *widget, gboolean non_negative)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     const char *text = gtk_entry_get_text(widget);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     const char *text = gtk_editable_get_text (GTK_EDITABLE (widget));
 #endif
 
@@ -1598,7 +1671,7 @@ int EditorGktEntryToInt(void *widget)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     const char *text = gtk_entry_get_text(widget);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     const char *text = gtk_editable_get_text (GTK_EDITABLE (widget));
 #endif
 
@@ -1621,7 +1694,7 @@ void EditoGktEntryAllowDouble(void *widget, gboolean non_negative)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     const char *text = gtk_entry_get_text(widget);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     const char *text = gtk_editable_get_text(GTK_EDITABLE (widget));
 #endif
 
@@ -1665,7 +1738,7 @@ double EditorGktEntryToDouble(void *widget)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     const char *text = gtk_entry_get_text(widget);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     const char *text = gtk_editable_get_text(GTK_EDITABLE(widget));
 #endif
 
@@ -1697,7 +1770,7 @@ void EditorGtkEntrySetText(void *widget, const char *text)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_entry_set_text(widget, text);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_editable_set_text(GTK_EDITABLE(widget), text);
 #endif
 }
@@ -1712,7 +1785,7 @@ void EditorGtkEntrySetTextFromInt(void *widget, double value)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_entry_set_text(widget, text);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_editable_set_text(GTK_EDITABLE(widget), text);
 #endif
 }
@@ -1741,7 +1814,7 @@ void EditorGtkEntrySetTextFromDouble(void *widget, double value)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_entry_set_text(widget, text);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_editable_set_text(GTK_EDITABLE(widget), text);
 #endif
 }
@@ -1769,7 +1842,7 @@ void EditorGtkAskToPrintBeforeQuit(gpointer user_data)
      */
     gtk_window_set_keep_above(ask_to_print_before_quit_window, TRUE);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     /* Show the window */
     gtk_window_present(ask_to_print_before_quit_window);
 #endif
@@ -1807,7 +1880,7 @@ void set_children_sensitive_by_name(
     }
 }
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 void set_children_sensitive_by_name(
 	GtkWidget* parent,
 	const gchar* name,
@@ -2033,7 +2106,7 @@ void on_data_window_destroy(GtkWidget *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_data_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_data_widgets.window, FALSE);
 #endif
 }
@@ -2044,7 +2117,7 @@ void on_dialog_window_destroy(GtkWidget *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_ask_to_print_before_quit_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 }
@@ -2058,12 +2131,16 @@ void on_menu_window_destroy(GtkWidget *widget, gpointer user_data)
  * Set the sensitivity and visibility of frames and widgets when the type is
  * selected in the "new object" window.
  */
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_general_type_changed(void *widget, gpointer user_data)
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_general_type_changed(void *widget, GParamSpec *specs, gpointer user_data)
+#endif
 {
-    /* WARNING FIXME: GTK4.10 seems to returns bad user_data pointer value.
-     * // const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
-     */
-    const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
+    sar_core_struct *core_ptr = (sar_core_struct *)user_data;
+    sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
     char *selected_s;
 
     selected_s = EditorGtkItemChooserGetSelectedString(widget);
@@ -2165,19 +2242,6 @@ void on_general_type_changed(void *widget, gpointer user_data)
     {
 	char *path;
 
-	/* Clean previous file name and associated model name */
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-	gtk_file_chooser_set_filename(
-		GTK_FILE_CHOOSER(editor_data_widgets.model_file_name),
-		""
-	    );
-	EditorGtkEntrySetText(editor_data_widgets.model_name, "");
-#endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-/* TODO
- */
-#endif
-
 	/* Define file chooser default path */
 	if(!strcasecmp(selected_s, SAR_OBJ_TYPE_AUTOMOBILE_S))
 	{
@@ -2192,24 +2256,28 @@ void on_general_type_changed(void *widget, gpointer user_data)
 	    path = COMPLETE_PATH((const char *)SAR_DEF_WATERCRAFTS_DIR);
 	}
 
-	/* Set file chooser default path */
+	free(editor_gtk_ui->file_chooser_default_path);
+	editor_gtk_ui->file_chooser_default_path = g_filename_from_utf8(path, -1, NULL,NULL,NULL);
+
+	/* Clean previous file name and associated model name */
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
+	gtk_file_chooser_set_filename(
+		GTK_FILE_CHOOSER(editor_data_widgets.model_file_name),
+		""
+	    );
+	EditorGtkEntrySetText(editor_data_widgets.model_name, "");
+
+	/* Set file chooser default path */
 	gtk_file_chooser_set_current_folder(
 		GTK_FILE_CHOOSER(editor_data_widgets.model_file_name),
-		path
+		editor_gtk_ui->file_chooser_default_path
 	    );
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-/* TODO
-	GFile *folder = g_file_new_for_path(const char* path);
-	gtk_file_dialog_set_initial_folder(
-		GTK_FILE_DIALOG(dialog),
-		GFile* folder
-	);
-*/
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+	gtk_label_set_text(editor_data_widgets.model_file_name_hidden, "");
+	gtk_label_set_text(editor_data_widgets.model_file_name_label, "");
+	EditorGtkEntrySetText(editor_data_widgets.model_name, "");
 #endif
-
-	free(path);
 
 	set_children_sensitive_by_name(
 	    GTK_WIDGET(editor_data_widgets.general_frame_grid), "general_data", TRUE);
@@ -2234,7 +2302,7 @@ void on_general_type_changed(void *widget, gpointer user_data)
 	gtk_combo_box_set_active(GTK_COMBO_BOX(editor_data_widgets.premod_walls_tex_night), 0);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(editor_data_widgets.premod_roof_tex), 0);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 	gtk_drop_down_set_selected(editor_data_widgets.premod_type, 0);
 	gtk_drop_down_set_selected(editor_data_widgets.premod_walls_tex, 0);
 	gtk_drop_down_set_selected(editor_data_widgets.premod_walls_tex_night, 0);
@@ -2276,7 +2344,7 @@ void on_general_type_changed(void *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 	gtk_entry_set_text(editor_data_widgets.general_object_name, "");
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 	gtk_editable_set_text(GTK_EDITABLE(editor_data_widgets.general_object_name), "");
 #endif
 	gtk_entry_set_placeholder_text(editor_data_widgets.general_object_name, "");
@@ -2366,7 +2434,12 @@ void on_height_changed(void *widget, gpointer user_data)
     return;
 }
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_helipad_style_changed(void *widget, gpointer user_data)
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_helipad_style_changed(void *widget, GParamSpec *specs, gpointer user_data)
+#endif
 {
     char *selected_s = EditorGtkItemChooserGetSelectedString(widget);
 
@@ -2463,9 +2536,13 @@ void on_helipad_is_referenced_toggled(void *widget, gpointer user_data)
     return;
 }
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_helipad_ref_obj_changed(void *widget, gpointer user_data)
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_helipad_ref_obj_changed(void *widget, GParamSpec *specs, gpointer user_data)
+#endif
 {
-    // const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
     // TODO? set reference object pos and dir values
     return;
 }
@@ -2554,7 +2631,12 @@ void on_offset_dir_bank_changed(void *widget, gpointer user_data)
     return;
 }
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_human_type_name_changed(void *widget, gpointer user_data)
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_human_type_name_changed(void *widget, GParamSpec *specs, gpointer user_data)
+#endif
 {
     return;
 }
@@ -2652,6 +2734,7 @@ void on_human_assistants_changed(void *widget, gpointer user_data)
     return;
 }
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_human_assist_1_name_changed(void *widget, gpointer user_data)
 {
     return;
@@ -2671,6 +2754,28 @@ void on_human_assist_4_name_changed(void *widget, gpointer user_data)
 {
     return;
 }
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_human_assist_1_name_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+
+void on_human_assist_2_name_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+
+void on_human_assist_3_name_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+
+void on_human_assist_4_name_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+#endif
 
 void on_human_has_displacement_toggled(void *widget, gpointer user_data)
 {
@@ -2711,6 +2816,7 @@ void on_human_has_displacement_toggled(void *widget, gpointer user_data)
     return;
 }
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_human_ref_obj_changed(void *widget, gpointer user_data)
 {
     return;
@@ -2720,6 +2826,18 @@ void on_human_displacement_changed(void *widget, gpointer user_data)
 {
     return;
 }
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_human_ref_obj_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+
+void on_human_displacement_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+#endif
 
 /*
  * Model file chooser, GTK3 version.
@@ -2773,14 +2891,21 @@ void on_model_file_name_changed(void *widget, gpointer user_data)
 /*
  * Model file chooser, GTK4 version.
  */
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 void on_model_file_name_clicked(void *widget, gpointer user_data)
 {
+    const sar_core_struct *core_ptr = (sar_core_struct *)user_data;
+    const sar_scenery_editor_struct *scn_ed = core_ptr->in_game_editor;
+    const editor_gtk_ui_struct *editor_gtk_ui = scn_ed->editor_gtk_ui;
+
     GtkFileDialog *file_dialog = gtk_file_dialog_new();
+
+    GFile *folder_name = g_file_new_for_path((gchar *)editor_gtk_ui->file_chooser_default_path);
+    gtk_file_dialog_set_initial_folder(file_dialog, folder_name);
 
     /* Open the file chooser window, then call FileChoosed callback once the
      * chooser window is closed. */
-    gtk_file_dialog_open(file_dialog, NULL, NULL, FileChoosed, (gpointer)user_data);
+    gtk_file_dialog_open(file_dialog, NULL, NULL, FileChoosed, (gpointer)core_ptr);
 
     return;
 }
@@ -2832,7 +2957,12 @@ FileChoosed(GObject* source_object, GAsyncResult* res, gpointer user_data)
 /* GTK4 */
 #endif
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_premod_type_changed(void *widget, gpointer user_data)
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_premod_type_changed(void *widget, GParamSpec *specs, gpointer user_data)
+#endif
 {
     char *selected_s;
 
@@ -2915,6 +3045,7 @@ void on_premod_hazard_lights_changed(void *widget, gpointer user_data)
     return;
 }
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_premod_walls_tex_changed(void *widget, gpointer user_data)
 {
     return;
@@ -2934,6 +3065,28 @@ void on_runway_surface_type_changed(void *widget, gpointer user_data)
 {
     return;
 }
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_premod_walls_tex_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+
+void on_premod_walls_tex_night_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+
+void on_premod_roof_tex_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+
+void on_runway_surface_type_changed(void *widget, GParamSpec *specs, gpointer user_data)
+{
+    return;
+}
+#endif
 
 void on_runway_dashes_num_changed(void *widget, gpointer user_data)
 {
@@ -3049,7 +3202,12 @@ void on_smoke_total_units_changed(void *widget, gpointer user_data)
     return;
 }
 
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 void on_smoke_color_code_changed(void *widget, gpointer user_data)
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+void on_smoke_color_code_changed(void *widget, GParamSpec *specs, gpointer user_data)
+#endif
 {
     return;
 }
@@ -3281,7 +3439,7 @@ void on_button_ok_clicked(void *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_data_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_data_widgets.window, FALSE);
 #endif
 
@@ -3363,7 +3521,7 @@ g_print("button_apply_clicked\n");
     }
 
 
-    // FIXME
+    // FIXME See on_button_apply_clicked() note.
     editor_object_data_struct *editor_obj_data = scn_ed->modification_list[4]->obj_data_new;
 
     switch(scn_ed->current_action)
@@ -3420,7 +3578,7 @@ void on_button_cancel_clicked(void *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_data_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_data_widgets.window, FALSE);
 #endif
 
@@ -3573,27 +3731,10 @@ void on_button_new_clicked(void *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_combo_box_set_active(GTK_COMBO_BOX(editor_data_widgets.general_type), -1);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-    gtk_drop_down_set_selected(editor_data_widgets.general_type, -1);
-#endif
-
-    /* Clean preselected folder name */
-#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
-/*
-	gtk_file_chooser_set_filename(
-		GTK_FILE_CHOOSER(editor_data_widgets.model_file_name),
-		"/foolder/foolder/foo_object.3d"
-	    );
-*/
-#endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
-/* TODO
-	GFile *folder = g_file_new_for_path(const char* path);
-	gtk_file_dialog_set_initial_folder(
-		GTK_FILE_DIALOG(dialog),
-		GFile* folder
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+    gtk_drop_down_set_selected(GTK_DROP_DOWN(editor_data_widgets.general_type),
+			       GTK_INVALID_LIST_POSITION
 	);
-*/
 #endif
 
     /* Hide all object-specific frames.
@@ -3617,7 +3758,7 @@ void on_button_new_clicked(void *widget, gpointer user_data)
     gtk_combo_box_set_active(GTK_COMBO_BOX(editor_data_widgets.human_assist_3_name), 0);
     gtk_combo_box_set_active(GTK_COMBO_BOX(editor_data_widgets.human_assist_4_name), 0);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_drop_down_set_selected(editor_data_widgets.human_type_name, 0);
     gtk_drop_down_set_selected(editor_data_widgets.human_assist_1_name, 0);
     gtk_drop_down_set_selected(editor_data_widgets.human_assist_2_name, 0);
@@ -3631,7 +3772,7 @@ void on_button_new_clicked(void *widget, gpointer user_data)
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_apply));
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_cancel));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_ok), TRUE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_apply), TRUE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_cancel), TRUE);
@@ -3641,7 +3782,7 @@ void on_button_new_clicked(void *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_data_widgets.window, TRUE);
 #endif
 
@@ -3862,7 +4003,12 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
 	);
 
     /* Set visibility of all frames as needed */
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     on_general_type_changed(editor_data_widgets.general_type, (gpointer)core_ptr);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+    on_general_type_changed(editor_data_widgets.general_type, NULL, (gpointer)core_ptr);
+#endif
 
     EditorGtkUiSetFromObjectDataStruct((const editor_object_data_struct *)editor_obj_data);
 
@@ -3935,7 +4081,12 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
     on_helipad_is_referenced_toggled(editor_data_widgets.helipad_is_referenced, (gpointer)core_ptr);
 
     /* Set "recession" entry widget sensitivity as needed */
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     on_helipad_style_changed(editor_data_widgets.helipad_style, (gpointer)core_ptr);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+    on_helipad_style_changed(editor_data_widgets.helipad_style, NULL, (gpointer)core_ptr);
+#endif
 
     /* Set "human assistants" entry widgets sensitivity as needed */
     on_human_assistants_changed(editor_data_widgets.human_assistants, (gpointer)core_ptr);
@@ -3944,7 +4095,12 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
     on_human_has_displacement_toggled(editor_data_widgets.human_has_displacement, (gpointer)core_ptr);
 
     /* Set object specific frames visibility as needed */
+#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     on_premod_type_changed(editor_data_widgets.premod_type, (gpointer)core_ptr);
+#endif
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
+    on_premod_type_changed(editor_data_widgets.premod_type, NULL, (gpointer)core_ptr);
+#endif
 
     /* Get picked object pointer */
     picked_obj_ptr = core_ptr->object[picked_obj_num];
@@ -3976,7 +4132,7 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_apply));
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_cancel));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_ok), TRUE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_apply), TRUE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_cancel), TRUE);
@@ -3989,7 +4145,7 @@ void on_button_modify_clicked(void *widget, gpointer user_data)
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_data_widgets.window, TRUE);
 #endif
 
@@ -4065,7 +4221,7 @@ void on_button_print_before_quit_no_clicked(GtkButton *button, gpointer user_dat
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_ask_to_print_before_quit_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 
@@ -4093,7 +4249,7 @@ void on_button_print_before_quit_yes_clicked(GtkButton *button, gpointer user_da
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_hide(GTK_WIDGET(editor_ask_to_print_before_quit_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_ask_to_print_before_quit_widgets.window, FALSE);
 #endif
 
@@ -4214,7 +4370,7 @@ int EditorObjectDataStructSetFromGtkUi(
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     editor_obj_data->name = STRDUP(gtk_entry_get_text(editor_data_widgets.general_object_name));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     editor_obj_data->name = STRDUP(gtk_editable_get_text(GTK_EDITABLE(editor_data_widgets.general_object_name)));
 #endif
 
@@ -4242,7 +4398,7 @@ int EditorObjectDataStructSetFromGtkUi(
 	    full_file_name = g_file_get_path(g_file);
 	    g_object_unref(g_file);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 	    /* WARNING not tested */
 	    full_file_name = STRDUP(gtk_label_get_text(editor_data_widgets.model_file_name_hidden));
 #endif
@@ -4288,7 +4444,7 @@ int EditorObjectDataStructSetFromGtkUi(
 	    editor_obj_data->north_label = STRDUP(gtk_entry_get_text(editor_data_widgets.runway_north_label));
 	    editor_obj_data->south_label = STRDUP(gtk_entry_get_text(editor_data_widgets.runway_south_label));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 	    editor_obj_data->north_label = STRDUP(gtk_editable_get_text(GTK_EDITABLE(editor_data_widgets.runway_north_label)));
 	    editor_obj_data->south_label = STRDUP(gtk_editable_get_text(GTK_EDITABLE(editor_data_widgets.runway_south_label)));
 #endif
@@ -4364,7 +4520,7 @@ int EditorObjectDataStructSetFromGtkUi(
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 	    editor_obj_data->label = STRDUP(gtk_entry_get_text(editor_data_widgets.helipad_label));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 	    editor_obj_data->label = STRDUP(gtk_editable_get_text (GTK_EDITABLE(editor_data_widgets.helipad_label)));
 #endif
 
@@ -4616,7 +4772,7 @@ int EditorGtkUiSetFromObjectDataStruct(
 		full_file_name
 	    );
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 /* TODO */
 #endif
 
@@ -4890,12 +5046,20 @@ void EditorDataWindowSetDefaultSize()
     gtk_widget_get_preferred_width(GTK_WIDGET(editor_data_widgets.main_box), NULL, &natural_width);
     gtk_window_resize(GTK_WINDOW(editor_data_widgets.window), natural_width, natural_height);
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     GtkRequisition minimum_size, natural_size;
-    gtk_widget_get_preferred_size(GTK_WIDGET(editor_data_widgets.main_box), &minimum_size, &natural_size);
-    natural_width = natural_size.width;
-    natural_height = natural_size.height;
-    gtk_window_set_default_size(GTK_WINDOW(editor_data_widgets.main_box), natural_width, natural_height);
+
+    /* Get the window which contains the "main_box" GtkBox */
+    GtkRoot* root_window = gtk_widget_get_root(GTK_WIDGET(editor_data_widgets.main_box));
+
+    if(root_window != NULL)
+    {
+	gtk_widget_get_preferred_size(GTK_WIDGET(editor_data_widgets.main_box), &minimum_size, &natural_size);
+	natural_width = natural_size.width;
+	natural_height = natural_size.height;
+
+	gtk_window_set_default_size(GTK_WINDOW(root_window), natural_width, natural_height);
+    }
 #endif
 }
 
@@ -4963,7 +5127,7 @@ void EditorGtkUiShowInfoWindow(
     gtk_widget_hide(GTK_WIDGET(editor_data_widgets.button_cancel));
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.button_cancel));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_apply), FALSE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_cancel), FALSE);
     gtk_widget_set_visible(GTK_WIDGET(editor_data_widgets.button_cancel), TRUE);
@@ -4976,7 +5140,7 @@ void EditorGtkUiShowInfoWindow(
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
     gtk_widget_show(GTK_WIDGET(editor_data_widgets.window));
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
     gtk_widget_set_visible(editor_data_widgets.window, TRUE);
 #endif
 

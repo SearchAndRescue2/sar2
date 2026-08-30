@@ -6448,14 +6448,14 @@ snprintf(s, 80, "Object #%d and its %d children have been removed.",
     else if(!strcasecmp(strv[0], "gui"))
     {
 #ifdef COMPILE_EDITOR_WITH_GTK_UI
+	/* WARNING:
+	 * At this writing this code can compile with GTK3(.24) and GTK4(.20)
+	 * libraries, but if display server is X11, GTK4 crashes Sar2.
+	 * See editorgtkui.c fore more information.
+	 */
+
 	editor_gtk_ui_struct *editor_gtk_ui;
 	Boolean is_full_screen = display->fullscreen;
-
-	/* WARNING:
-	 * At this writing, this code can compile on GTK3(.24) and GTK4(.10)
-	 * libraries, but GTK4 turns the main SarII window to black and
-	 * sometimes crashes Sar2.
-	 */
 
 	if(strc > 1 && !strcasecmp(strv[1], "on") && !is_full_screen)
 	{
@@ -6465,7 +6465,7 @@ snprintf(s, 80, "Object #%d and its %d children have been removed.",
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION >= 24
 	    if(gtk_init_check(0, NULL))
 #endif
-#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 10
+#if GTK_MAJOR_VERSION == 4 && GTK_MINOR_VERSION >= 20
 	    if(gtk_init_check())
 #endif
 	    {
@@ -6480,6 +6480,8 @@ snprintf(s, 80, "Object #%d and its %d children have been removed.",
 		    editor_gtk_ui->picked_obj_num = -1;
 		    editor_gtk_ui->temp_obj_data = NULL;
 		    editor_gtk_ui->cmd_flags = flags;
+		    editor_gtk_ui->display_server_name = NULL;
+		    editor_gtk_ui->file_chooser_default_path = NULL;
 
 		    scn_ed->editor_gtk_ui = editor_gtk_ui;
 
@@ -6490,6 +6492,11 @@ snprintf(s, 80, "Object #%d and its %d children have been removed.",
 		     * model shapes on display.
 		     */
 		    setlocale(LC_NUMERIC, "C");
+
+		    if(getenv("WAYLAND_DISPLAY") != NULL)
+			editor_gtk_ui->display_server_name = strdup("wayland");
+		    else
+			editor_gtk_ui->display_server_name = strdup("x11");
 		}
 		else
 		    gtk_is_initialized = False;
@@ -6506,9 +6513,10 @@ snprintf(s, 80, "Object #%d and its %d children have been removed.",
 
 		    char *s = (char *)malloc(64 * sizeof(char));
 		    snprintf(s, 64,
-			    "GTK %d.%d user interface is now ON",
+			    "GTK %d.%d (%s) user interface is now ON",
 			    gtk_get_major_version(),
-			    gtk_get_minor_version()
+			    gtk_get_minor_version(),
+			    editor_gtk_ui->display_server_name
 			    );
 		    NOTIFY(s);
 		    free(s);
