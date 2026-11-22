@@ -4425,9 +4425,6 @@ static void SARDrawObjectCockpit(
 
 	glPushMatrix();
 	{
-	    /* Disable depth testing */
-	    SAR_DRAW_DEPTH_TEST_OFF
-
 	    /* Object counter rotation */
 	    if(dir->heading != 0)
 		glRotatef(
@@ -4457,6 +4454,23 @@ static void SARDrawObjectCockpit(
 		1000.0		/* Reasonable far clip */
 	    );
 	    glMatrixMode(GL_MODELVIEW);
+
+	    /* Draw rotors/propellars */
+	    sar_obj_rotor_struct *rotor;
+	    for(int n = 0; n < aircraft->total_rotors; n++)
+	    {
+		rotor = aircraft->rotor[n];
+		if(rotor == NULL)
+		    continue;
+
+		SARDrawRotor(
+		    dc, obj_ptr, rotor,
+		    aircraft->throttle
+		);
+	    }
+
+	    /* Disable depth testing */
+	    SAR_DRAW_DEPTH_TEST_OFF
 
 	    SARVisualModelCallList(
 		aircraft->visual_model_cockpit
