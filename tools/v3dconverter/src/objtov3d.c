@@ -52,7 +52,7 @@ if ( fpIn != NULL ) fclose( fpIn );
 int readMtlFile( char *mtllibSource, Material **mat, int *mtl ); // read .mtl (material) file
 
 int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) { // special bit nr0 = 1: invert faces
-    FILE *fpIn = NULL, *fpOut = NULL, *fopen();
+    FILE *fpIn = NULL, *fpOut = NULL;
     long lineNr = 1;
     long vertices = 0, textCoords = 0, normals = 0, faces = 0; // counters.
     int materials = 0; // counters.
@@ -1128,7 +1128,7 @@ int objToV3d(const char *source, const char *dest, UserModifier *userModifier ) 
 
 
 int readMtlFile( char *mtllibSource, Material **mat, int *mtl ) { // read a *.mtl file and store materials in a mat[] array
-    FILE *fpIn = NULL, *fopen();
+    FILE *fpIn = NULL;
     char lineBuffer[MAX_LENGTH + 1], fileName[MAX_LENGTH + 1] = "", mtlLibTag[MAX_LENGTH + 1];
     long mtlLibLineNr = 1;
     Material *tmpMat = NULL, *localMat = NULL;

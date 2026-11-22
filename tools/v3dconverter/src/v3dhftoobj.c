@@ -33,7 +33,7 @@ if ( fpTerrainDataOut != NULL ) fclose( fpTerrainDataOut );
 
 
 int v3dHfToObj( const char *source, const char *dest, UserModifier *userModifier ) {
-    FILE *fp3dFileIn = NULL, *fpHfIn = NULL, *fpTexIn = NULL, *fpObjOut = NULL, *fpMtlOut = NULL, *fpTerrainDataOut = NULL, *fopen();
+    FILE *fp3dFileIn = NULL, *fpHfIn = NULL, *fpTexIn = NULL, *fpObjOut = NULL, *fpMtlOut = NULL, *fpTerrainDataOut = NULL;
     char buffer[MAXPATHLENGTH + MAX_LENGTH + 7], lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1];
     char *path = NULL, *baseName = NULL, *extension = NULL; // for output files names
     long lineNr = 1;

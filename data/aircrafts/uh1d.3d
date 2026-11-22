@@ -139,10 +139,10 @@ sound_source_new gear_down 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/gear_do
 sound_source_new gear_up_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/gear_up.wav
 sound_source_new gear_up 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/gear_up.wav
 
-sound_source_new door_open_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_open.wav
-sound_source_new door_open 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_open.wav
-sound_source_new door_close_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_close.wav
-sound_source_new door_close 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_close.wav
+sound_source_new door_open_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_open.wav
+sound_source_new door_open 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_open.wav
+sound_source_new door_close_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_close.wav
+sound_source_new door_close 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_close.wav
 
 sound_source_new stall 100.0 50.0  0 0 0  0.0  0 0 0  11025  sounds/stall.wav
 sound_source_new overspeed 100.0 50.0  0 0 0  0.0  0 0 0  11025  sounds/overspeed.wav
@@ -5636,7 +5636,7 @@ end_quads
 end_model shadow
 # Rescue Door
 #               closed x y z  opened x y z  h   p   b    thres x y z    rate   opened?
-rescue_door_new 0.0 0.0 0.0   0.0 -1.5 0.0  0.0 0.0 0.0  0.95 0.2 -1.3  28000  0
+rescue_door_new 0.0 0.0 0.0   0.0 -1.5 0.0  0.0 0.0 0.0  0.95 0.2 -1.3  38000  0
 begin_model door
 #$model_flags 
 # Left Door

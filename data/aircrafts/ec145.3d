@@ -121,8 +121,8 @@ sound_source_new land_ski_skid_inside 600.0 400.0  0 0 0  0.0  0 0 0  11025  sou
 
 sound_source_new door_open_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_open.wav
 sound_source_new door_open 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_open.wav
-sound_source_new door_close_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_close.wav
-sound_source_new door_close 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_close.wav
+sound_source_new door_close_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_close.wav
+sound_source_new door_close 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/sliding_door_close.wav
 
 #sound_source_new stall 100.0 50.0  0 0 0  0.0  0 0 0  11025  sounds/stall.wav
 sound_source_new overspeed 100.0 50.0  0 0 0  0.0  0 0 0  11025  sounds/overspeed.wav

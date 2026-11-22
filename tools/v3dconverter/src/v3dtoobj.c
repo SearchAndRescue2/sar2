@@ -557,7 +557,7 @@ printf("TEXTURE VERTEX FOUND at line #%ld\n", lineNr);
 }
 
 int v3dToObj( const char *source, const char *dest, UserModifier *userModifier ) {
-    FILE *fpIn, *fpOut, *fpMtl, *fopen();
+    FILE *fpIn, *fpOut, *fpMtl;
     char lineBuffer[MAX_LENGTH + 1], buffer[MAXPATHLENGTH + MAX_LENGTH + 7], tagName[MAX_LENGTH + 1], parameter1[MAX_LENGTH + 1], textureName[MAX_LENGTH + 1], texturePath[MAX_LENGTH + 1];
     char *path = NULL, *baseName = NULL, *extension = NULL; // for output files names
     char textureOrient[MAX_LENGTH + 1];

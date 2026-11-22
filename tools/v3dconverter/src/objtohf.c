@@ -25,7 +25,7 @@ if ( fpHfOut && (fpHfOut != NULL) ) fclose( fpHfOut ); \
 if ( fpConversionDataFileIn != NULL ) fclose( fpConversionDataFileIn );\
 
 int objToHf(const char *source, const char *dest, UserModifier *userModifier ) {
-    FILE *fpObjIn = NULL, *fpHfOut = NULL, *fopen(), *fpConversionDataFileIn = NULL;
+    FILE *fpObjIn = NULL, *fpHfOut = NULL, *fpConversionDataFileIn = NULL;
     char lineBuffer[MAX_LENGTH + 1], objTag[MAX_LENGTH + 1], terrainFileName[MAX_LENGTH + 1];
     long lineNr = 1;
     unsigned long verticesNr = 0;
