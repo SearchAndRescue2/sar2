@@ -33,7 +33,7 @@
 #define AC3DMAXVERTICIES 10000
 
 int ac3dToV3d(const char *source, const char *dest, UserModifier *userModifier) {
-    FILE *fpIn, *fpOut, *fopen();
+    FILE *fpIn, *fpOut;
     char lineBuffer[MAX_LENGTH + 1], buffer[MAXPATHLENGTH + MAX_LENGTH + 7], token[MAX_LENGTH + 1];
     char textureName[MAX_LENGTH + 1];
     char *path = NULL, *baseName = NULL, *extension = NULL; // for output files names
