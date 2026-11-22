@@ -704,8 +704,8 @@ void SARSimUpdatePart(
 		    0
 		);
 
-		/* Play sound if just closed? */
-		if(play_sound && (part_ptr->anim_pos == 0))
+		/* Play sound if starting to close? */
+		if(play_sound && (prev_pos == (sar_grad_anim_t)-1))
 		    SARSoundSourcePlayFromList(
 			recorder,
 			obj_ptr->sndsrc, obj_ptr->total_sndsrcs,

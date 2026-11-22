@@ -141,10 +141,10 @@ sound_source_new gear_down 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/gear_do
 sound_source_new gear_up_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/gear_up.wav
 sound_source_new gear_up 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/gear_up.wav
 
-sound_source_new door_open_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_open.wav
-sound_source_new door_open 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_open.wav
-sound_source_new door_close_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_close.wav
-sound_source_new door_close 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/door_close.wav
+sound_source_new door_open_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/rotating_door_open.wav
+sound_source_new door_open 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/rotating_door_open.wav
+sound_source_new door_close_inside 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/rotating_door_close.wav
+sound_source_new door_close 300.0 150.0  0 0 0  0.0  0 0 0  11025  sounds/rotating_door_close.wav
 
 sound_source_new stall 100.0 50.0  0 0 0  0.0  0 0 0  11025  sounds/stall.wav
 sound_source_new overspeed 100.0 50.0  0 0 0  0.0  0 0 0  11025  sounds/overspeed.wav
