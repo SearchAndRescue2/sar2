@@ -39,8 +39,10 @@ typedef struct {
 	GtkApplication		*gtk_application;
 
 	int			picked_obj_num;
-	void			*temp_obj_data; //editor_object_data_struct
+	void			*temp_obj_data;		/* editor_object_data_struct */
 	unsigned long		cmd_flags;		/* See SAR_CMD_PROTOTYPE */
+	char			*display_server_name;	/* can be: wayland or x11 */
+	gchar			*file_chooser_default_path;
 } editor_gtk_ui_struct;
 
 
