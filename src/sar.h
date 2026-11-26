@@ -171,8 +171,24 @@ typedef struct {
 	/* Game controller options mask */
 	gctl_options		gctl_options;
 
+	/* SDL_GUID, in ASCII string representation.
+	 * If this string is filled, it means that joystick is mapped
+	 * to one or more action(s).
+	 */
+	char 		js0_sdl_guid_s[32+1],
+			js1_sdl_guid_s[32+1],
+			js2_sdl_guid_s[32+1];
+
+	/* Joystick name.
+	 * Name is only given to help player for joystick configuration,
+	 * no treatment is made on it.
+	 */
+	char		*js0_sdl_name,
+			*js1_sdl_name,
+			*js2_sdl_name;
+
 	/* Joystick button mappings */
-	int		js0_btn_rotate,		/* Treat bank to heading axis */
+	int		js0_btn_rotate,		/* Treat bank as heading axis */
 			js0_btn_air_brakes,
 			js0_btn_wheel_brakes,
 			js0_btn_zoom_in,
@@ -188,14 +204,50 @@ typedef struct {
 			js1_btn_hoist_up,
 			js1_btn_hoist_down;
 
-	/* Game controller joystick axis roles, any of
-	 * GCTL_JS_AXIS_ROLE_*
-	 *
-	 * If any of these are all 0 then that implies the joystick is
-	 * not enabled
+	int		js2_btn_rotate,		/* Treat bank as heading axis */
+			js2_btn_air_brakes,
+			js2_btn_wheel_brakes,
+			js2_btn_zoom_in,
+			js2_btn_zoom_out,
+			js2_btn_hoist_up,
+			js2_btn_hoist_down;
+
+
+	/* Axes inversion bits. Bit 0 for axis 0, and so on...
+	 * Each corresponding bit is set if axis movement must be inverted.
 	 */
-	gctl_js_axis_roles	gctl_js0_axis_roles,
-				gctl_js1_axis_roles;
+	gctl_js_axes_inversion_bits	js_axes_inversion_bits;
+
+	/* Joystick axis mappings */
+	int		js0_axis_heading,
+			js0_axis_pitch,
+			js0_axis_bank,
+			js0_axis_throttle,
+			js0_axis_hat_x,
+			js0_axis_hat_y,
+			js0_pov_hat,
+			js0_axis_brake_left,
+			js0_axis_brake_right;
+
+	int		js1_axis_heading,
+			js1_axis_pitch,
+			js1_axis_bank,
+			js1_axis_throttle,
+			js1_axis_hat_x,
+			js1_axis_hat_y,
+			js1_pov_hat,
+			js1_axis_brake_left,
+			js1_axis_brake_right;
+
+	int		js2_axis_heading,
+			js2_axis_pitch,
+			js2_axis_bank,
+			js2_axis_throttle,
+			js2_axis_hat_x,
+			js2_axis_hat_y,
+			js2_pov_hat,
+			js2_axis_brake_left,
+			js2_axis_brake_right;
 
 	/* Simulation difficulty */
 	float				hoist_contact_expansion_coeff;	/* Hoist contact radius coeff */

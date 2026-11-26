@@ -47,21 +47,19 @@ typedef enum {
 
 
 /*
- *	Joystick Axis Roles:
+ *	Joystick Axis Inversion Bits:
  */
 typedef enum {
-	GCTL_JS_AXIS_ROLE_PITCH			= (1 << 0),
-	GCTL_JS_AXIS_ROLE_BANK			= (1 << 1),
-	GCTL_JS_AXIS_ROLE_HEADING		= (1 << 2),
-	GCTL_JS_AXIS_ROLE_THROTTLE		= (1 << 3),
-	GCTL_JS_AXIS_ROLE_HAT			= (1 << 4),
-	/* Throttle and rudder unit joystick */
-	GCTL_JS_AXIS_ROLE_AS_THROTTLE_AND_RUDDER	= (1 << 6),
-	/* Joystick unit with no axises (only buttons) */
-	GCTL_JS_AXIS_ROLE_NONE			= (1 << 7),
-	/* Triggers brakes */
-	GCTL_JS_AXIS_ROLE_AS_RUDDER_AND_BRAKES	= (1 << 8)
-} gctl_js_axis_roles;
+	GCTL_JS_AXIS_INV_HEADING		= (1 << 0),
+	GCTL_JS_AXIS_INV_PITCH			= (1 << 1),
+	GCTL_JS_AXIS_INV_BANK			= (1 << 2),
+	GCTL_JS_AXIS_INV_THROTTLE		= (1 << 3),
+	GCTL_JS_AXIS_INV_HAT_X			= (1 << 4),
+	GCTL_JS_AXIS_INV_HAT_Y			= (1 << 5),
+	GCTL_JS_AXIS_INV_POV_HAT		= (1 << 6),
+	GCTL_JS_AXIS_INV_BRAKE_LEFT		= (1 << 7),
+	GCTL_JS_AXIS_INV_BRAKE_RIGHT		= (1 << 8)
+} gctl_js_axes_inversion_bits;
 
 
 /*
@@ -81,13 +79,37 @@ typedef struct {
 	/* Pointer to the toplevel window handle (for Win32) */
 	void		*window;
 
-	/* Axis role flags (any of GCTL_JS_AXIS_ROLE_*), this basically
-	 * specifies how many axises there are and each of their roles
+	/* SDL_GUID, in ASCII string representation.
+	 * If this string is filled, it means that joystick is mapped
+	 * to at least one role.
 	 */
-	gctl_js_axis_roles	axis_role;
+	char		sdl_guid_s[32+1];
+	/* Joystick name.
+	 * Name is only given to help player for joystick configuration,
+	 * no treatment is made on it.
+	 */
+	char		*sdl_js_name;
+
+	/* Axes inversion bits. Bit 0 for axis role 0, and so on...
+	 * Each corresponding bit is set if axis movement must be inverted.
+	 */
+	gctl_js_axes_inversion_bits	js_axes_inversion_bits;
+
+	/* Joystick axes mappings, indicates which joystick axis
+	 * number corresponds with which role
+	 */
+	int		axis_heading,
+			axis_pitch,
+			axis_bank,
+			axis_throttle,
+			axis_hat_x,
+			axis_hat_y,
+			pov_hat,
+			axis_brake_left,
+			axis_brake_right;
 
 	/* Joystick button mappings, indicates which joystick button
-	 * number corresponds with which action
+	 * number corresponds with which role
 	 */
 	int		button_rotate,		/* Button that treats
 						 * bank as heading axis
@@ -129,11 +151,19 @@ typedef struct {
  *	Used in gctl_struct
  */
 typedef struct {
+	/* SDL_GUID, in ASCII string representation.
+	 * If this string is filled, it means that joystick is mapped
+	 * to at least one role.
+	 */
+	char		sdl_guid_s[32+1];
+	/* Joystick name.
+	 * Name is only given to help player for joystick configuration,
+	 * no treatment is made on it.
+	 */
+	char		*sdl_js_name;
 
-	/* Axis role mappings, reffers an axis by number to a specific
-	 * role
-	 *
-	 * The axis number can be -1 for non-existant
+	/* Joystick axis role mappings, reffers an axis by number to
+	 * a specific role (-1 for none)
 	 */
 	int		axis_heading,
 			axis_bank,
@@ -141,8 +171,14 @@ typedef struct {
 			axis_throttle,
 			axis_hat_x,
 			axis_hat_y,
+			pov_hat,
 			axis_brake_left,
 			axis_brake_right;
+
+	/* Axes inversion bits. Bit 0 for axis role 0, and so on...
+	 * Each corresponding bit is set if axis movement must be inverted.
+	 */
+	int		axes_inversion_bits;
 
 	/* Joystick button role mappings, reffers a button by number to
 	 * a specific role (-1 for none)
@@ -159,6 +195,20 @@ typedef struct {
 
 } gctl_js_struct;
 #define GCTL_JS(p)	((gctl_js_struct *)(p))
+
+
+/*
+ *	Used in gctl_struct.
+ *	Only defined when mapping menu is activated and for each axis
+ *	of each joystick (8 axes * 3 joysticks).
+ */
+typedef struct {
+	/* Joysticks axes min and max reached values. */
+	Sint16		min,
+			max;
+} gctl_js_mapping_menu_data_struct;
+#define GCTL_JS_MAPPING_MENU_DATA(p)	((gctl_js_mapping_menu_data_struct *)(p))
+
 
 /*
  *	Game Controller:
@@ -231,12 +281,15 @@ typedef struct {
 	 *	*_state members specifies a boolean on/off value
 	 *	*_kb_last members record the last keyboard event for this
 	 *	behavior
+	 * 	* air_brakes_js_btn_released is used for joystick air brakes
+	 * 	button rising edge detection.
 	 *	*_coeff members determines the magnitude [0.0 to 1.0] of
 	 *	the state regardless if it is on or off. This is for when
 	 *	the game controller has gone from off to on to off in one
 	 *	call to GCtlUpdate()
 	 */
-	Boolean		air_brakes_state;
+	Boolean		air_brakes_state,
+			air_brakes_js_btn_released;
 	int		wheel_brakes_state;	/* 0 = off
 						 * 1 = on
 						 * 2 = parking brakes
@@ -302,17 +355,38 @@ typedef struct {
 
 	/* Joystick specific stuff */
 
+	/* Maximum number of joysticks and maximum number of analog axes,
+	 * buttons and hats per joystick.
+	 * These numbers cannot be modified without modifying a lot of code:
+	 * opt->jsX, mapping menu spins, option spins call back, and so on...
+	 *
+	 * Three joysticks can hold:
+	 *	Flight stick
+	 *	Throttle controller
+	 *	Rudder controller
+	 */
+#define MAX_JOYSTICKS 3
+#define MAX_JOYSTICK_AXES 8
+#define MAX_JOYSTICK_BTNS 16
+#define MAX_JOYSTICK_HATS 2
+
 	/* Each structure reffers to a joystick */
 	gctl_js_struct	*joystick;
 	int		total_joysticks;
 	/* we add a an array for SDL joystick here. */
-	SDL_Joystick **sdljoystick;
+	SDL_Joystick	**sdljoystick;
+	int		total_sdl_joysticks;
 
+	/* Used only in mapping menu for axes movement detection. */
+	gctl_js_mapping_menu_data_struct    	*js_mapping_axes_values;
 } gctl_struct;
 #define GCTL(p)		((gctl_struct *)(p))
 
 
 extern char *GCtlGetError(void);
+extern void GctlJsOpenAndMapp(gctl_struct *gc, gctl_values_struct *v);
+extern int GetSdlJsIndexFromGuidString(char *guid);
+extern int GetSdlJsIndexFromGcSdlJoystick(gctl_struct *gc, int i);
 extern gctl_struct *GCtlNew(gctl_values_struct *v);
 extern void GCtlUpdate(
 	gctl_struct *gc,
